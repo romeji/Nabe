@@ -1,0 +1,109 @@
+.formulaire-produit {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espace-lg);
+  max-width: 720px;
+}
+
+.formulaire-produit__section {
+  background-color: var(--nabe-blanc);
+  padding: var(--espace-md);
+  border-radius: var(--rayon-bordure);
+  box-shadow: var(--ombre-douce);
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.formulaire-produit__section h2 {
+  font-size: 1rem;
+  margin-bottom: 0.3rem;
+}
+
+.formulaire-produit__section label {
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--texte-secondaire);
+}
+
+.formulaire-produit__section input[type='text'],
+.formulaire-produit__section input[type='number'],
+.formulaire-produit__section textarea,
+.formulaire-produit__section select {
+  padding: 0.7rem;
+  border: 1px solid var(--nabe-beige-fonce);
+  border-radius: var(--rayon-bordure);
+  width: 100%;
+}
+
+.formulaire-produit__tailles {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.formulaire-produit__taille {
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--nabe-beige-fonce);
+  border-radius: var(--rayon-bordure);
+}
+
+.formulaire-produit__taille.actif {
+  background-color: var(--nabe-terracotta);
+  color: var(--texte-clair);
+  border-color: var(--nabe-terracotta);
+}
+
+.formulaire-produit__images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espace-sm);
+  margin-top: var(--espace-sm);
+}
+
+.formulaire-produit__image {
+  position: relative;
+  width: 100px;
+  height: 100px;
+}
+
+.formulaire-produit__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--rayon-bordure);
+}
+
+.formulaire-produit__image button {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 22px;
+  height: 22px;
+  background-color: var(--nabe-terracotta-fonce);
+  color: var(--texte-clair);
+  border-radius: 50%;
+  font-size: 0.7rem;
+}
+
+.formulaire-produit__upload-statut {
+  font-size: 0.85rem;
+  color: var(--texte-secondaire);
+}
+
+.formulaire-produit__erreur {
+  background-color: #fae0db;
+  color: #a8412a;
+  padding: var(--espace-sm);
+  border-radius: var(--rayon-bordure);
+  font-size: 0.9rem;
+}
+
+.formulaire-produit__actions {
+  position: sticky;
+  bottom: 0;
+  background-color: var(--nabe-creme);
+  padding: var(--espace-sm) 0;
+}

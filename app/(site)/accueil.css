@@ -1,0 +1,329 @@
+.accueil-hero {
+  position: relative;
+  min-height: 90vh;
+  display: flex;
+  align-items: center;
+  background-image: url('/images/hero-mains.jpg');
+  background-size: cover;
+  background-position: center;
+  color: var(--texte-clair);
+}
+
+.accueil-hero__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(61, 46, 31, 0.55) 0%, rgba(61, 46, 31, 0.15) 70%);
+}
+
+.accueil-hero__contenu {
+  position: relative;
+  z-index: 1;
+  max-width: 600px;
+  padding: 0 var(--espace-xl);
+}
+
+.accueil-hero__logo {
+  font-family: var(--font-logo);
+  font-size: 5rem;
+  margin-bottom: var(--espace-sm);
+}
+
+.accueil-hero__soustitre {
+  font-size: 1.1rem;
+  margin-bottom: var(--espace-lg);
+  max-width: 480px;
+}
+
+.accueil-hero__actions {
+  display: flex;
+  gap: var(--espace-sm);
+  flex-wrap: wrap;
+}
+
+/* HISTOIRE */
+.accueil-histoire {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--espace-xl);
+  align-items: center;
+  padding: var(--espace-2xl) var(--espace-md);
+}
+
+.accueil-histoire__image img {
+  width: 100%;
+  height: 480px;
+  object-fit: cover;
+  border-radius: var(--rayon-bordure);
+}
+
+.accueil-histoire__label {
+  color: var(--nabe-or);
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.accueil-histoire__texte h2 {
+  font-size: 2.4rem;
+  margin: var(--espace-sm) 0 var(--espace-md);
+}
+
+.accueil-histoire__texte p {
+  color: var(--texte-secondaire);
+  margin-bottom: var(--espace-md);
+}
+
+.accueil-histoire__lien {
+  color: var(--nabe-terracotta);
+  font-weight: 500;
+  text-decoration: underline;
+}
+
+/* COLLECTIONS */
+.accueil-collections {
+  padding: var(--espace-xl) var(--espace-md) var(--espace-2xl);
+  text-align: center;
+}
+
+.accueil-collections__label {
+  color: var(--nabe-or);
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 600;
+  display: block;
+  margin-bottom: var(--espace-md);
+}
+
+.accueil-collections__grille {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--espace-md);
+  margin-top: var(--espace-md);
+}
+
+.accueil-collections__carte {
+  text-align: center;
+}
+
+.accueil-collections__image {
+  background-color: var(--nabe-beige);
+  border-radius: var(--rayon-bordure);
+  overflow: hidden;
+  margin-bottom: var(--espace-sm);
+  aspect-ratio: 1;
+}
+
+.accueil-collections__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: var(--transition-douce);
+}
+
+.accueil-collections__carte:hover .accueil-collections__image img {
+  transform: scale(1.05);
+}
+
+.accueil-collections__placeholder {
+  width: 100%;
+  height: 100%;
+  background-color: var(--nabe-beige-fonce);
+}
+
+.accueil-collections__carte h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.3rem;
+}
+
+.accueil-collections__decouvrir {
+  font-size: 0.8rem;
+  color: var(--nabe-terracotta);
+}
+
+.accueil-collections__vide {
+  grid-column: 1 / -1;
+  color: var(--texte-secondaire);
+  font-style: italic;
+}
+
+/* SAVOIR FAIRE */
+.accueil-savoirfaire {
+  text-align: center;
+  padding: var(--espace-2xl) var(--espace-md);
+}
+
+.accueil-savoirfaire__label {
+  color: var(--nabe-or);
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.accueil-savoirfaire h2 {
+  font-size: 2.4rem;
+  margin: var(--espace-sm) 0 var(--espace-xl);
+}
+
+.accueil-savoirfaire__grille {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--espace-lg);
+}
+
+.accueil-savoirfaire__numero {
+  font-family: var(--font-titres);
+  font-size: 2rem;
+  color: var(--nabe-beige-fonce);
+  display: block;
+  margin-bottom: var(--espace-xs);
+}
+
+.accueil-savoirfaire__etape h3 {
+  margin-bottom: var(--espace-xs);
+}
+
+.accueil-savoirfaire__etape p {
+  color: var(--texte-secondaire);
+  font-size: 0.95rem;
+}
+
+/* SIGNATURE */
+.accueil-signature {
+  position: relative;
+  min-height: 50vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-image: url('/images/signature-bague.jpg');
+  background-size: cover;
+  background-position: center;
+  color: var(--texte-clair);
+}
+
+.accueil-signature__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(61, 46, 31, 0.45);
+}
+
+.accueil-signature__contenu {
+  position: relative;
+  z-index: 1;
+  max-width: 600px;
+  padding: 0 var(--espace-md);
+}
+
+.accueil-signature__contenu span {
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.accueil-signature__contenu h2 {
+  color: var(--texte-clair);
+  font-size: 2.2rem;
+  margin: var(--espace-sm) 0 var(--espace-lg);
+}
+
+/* TEMOIGNAGES */
+.accueil-temoignages {
+  text-align: center;
+  padding: var(--espace-2xl) var(--espace-md);
+}
+
+.accueil-temoignages__label {
+  color: var(--nabe-or);
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.accueil-temoignages h2 {
+  font-size: 2rem;
+  margin: var(--espace-sm) 0 var(--espace-xl);
+}
+
+.accueil-temoignages__grille {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--espace-md);
+}
+
+.accueil-temoignages__carte {
+  background-color: var(--nabe-beige);
+  padding: var(--espace-lg);
+  border-radius: var(--rayon-bordure);
+}
+
+.accueil-temoignages__etoiles {
+  color: var(--nabe-or);
+  margin-bottom: var(--espace-sm);
+}
+
+.accueil-temoignages__carte p {
+  font-style: italic;
+  margin-bottom: var(--espace-sm);
+  color: var(--texte-secondaire);
+}
+
+/* NEWSLETTER */
+.accueil-newsletter {
+  text-align: center;
+  padding: var(--espace-2xl) var(--espace-md);
+}
+
+.accueil-newsletter h2 {
+  font-size: 2rem;
+  margin-bottom: var(--espace-xs);
+}
+
+.accueil-newsletter p {
+  color: var(--texte-secondaire);
+  margin-bottom: var(--espace-md);
+}
+
+.accueil-newsletter__form {
+  display: flex;
+  gap: var(--espace-xs);
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.accueil-newsletter__form input {
+  flex: 1;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--nabe-beige-fonce);
+  border-radius: var(--rayon-bordure);
+  background-color: var(--nabe-blanc);
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .accueil-histoire {
+    grid-template-columns: 1fr;
+  }
+  .accueil-collections__grille {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .accueil-savoirfaire__grille,
+  .accueil-temoignages__grille {
+    grid-template-columns: 1fr;
+  }
+  .accueil-hero__logo {
+    font-size: 3.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .accueil-collections__grille {
+    grid-template-columns: 1fr;
+  }
+  .accueil-newsletter__form {
+    flex-direction: column;
+  }
+}

@@ -1,0 +1,76 @@
+.admin-sidebar {
+  width: 240px;
+  flex-shrink: 0;
+  background-color: var(--nabe-brun-fonce);
+  color: var(--texte-clair);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: var(--espace-lg) 0;
+  position: sticky;
+  top: 0;
+}
+
+.admin-sidebar__logo {
+  font-family: var(--font-logo);
+  font-size: 2.2rem;
+  color: var(--nabe-or-clair);
+  text-align: center;
+  margin-bottom: var(--espace-lg);
+}
+
+.admin-sidebar__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  flex: 1;
+  padding: 0 var(--espace-sm);
+}
+
+.admin-sidebar__lien {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.7rem 1rem;
+  border-radius: var(--rayon-bordure);
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+  transition: var(--transition-douce);
+}
+
+.admin-sidebar__lien:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: var(--texte-clair);
+}
+
+.admin-sidebar__lien.actif {
+  background-color: var(--nabe-terracotta);
+  color: var(--texte-clair);
+}
+
+.admin-sidebar__bas {
+  padding: 0 var(--espace-sm);
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  margin-top: var(--espace-md);
+  padding-top: var(--espace-md);
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.admin-sidebar__deconnexion {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.7rem 1rem;
+  border-radius: var(--rayon-bordure);
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+  text-align: left;
+  width: 100%;
+}
+
+.admin-sidebar__deconnexion:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: var(--texte-clair);
+}

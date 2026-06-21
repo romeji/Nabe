@@ -1,0 +1,17 @@
+.admin-categories__grille {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: var(--espace-lg);
+  align-items: start;
+}
+
+.admin-categories__grille h2 {
+  font-size: 1.1rem;
+  margin-bottom: var(--espace-sm);
+}
+
+@media (max-width: 900px) {
+  .admin-categories__grille {
+    grid-template-columns: 1fr;
+  }
+}

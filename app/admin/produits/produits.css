@@ -1,0 +1,20 @@
+.admin-produits__miniature {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: var(--rayon-bordure);
+}
+
+.admin-produits__miniature-vide {
+  width: 50px;
+  height: 50px;
+  background-color: var(--nabe-beige);
+  border-radius: var(--rayon-bordure);
+}
+
+.admin-produits__vide {
+  text-align: center;
+  color: var(--texte-secondaire);
+  font-style: italic;
+  padding: var(--espace-xl) 0;
+}

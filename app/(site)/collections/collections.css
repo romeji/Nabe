@@ -1,0 +1,130 @@
+.collections-hero {
+  background-image: url('/images/collections-hero.jpg');
+  background-size: cover;
+  background-position: center;
+  background-color: var(--nabe-beige-fonce);
+  min-height: 260px;
+  display: flex;
+  align-items: center;
+  color: var(--texte-clair);
+}
+
+.collections-hero__contenu {
+  max-width: var(--largeur-max);
+  margin: 0 auto;
+  padding: 0 var(--espace-md);
+  width: 100%;
+}
+
+.collections-hero__contenu h1 {
+  font-size: 2.6rem;
+  color: var(--texte-clair);
+  margin-bottom: var(--espace-xs);
+}
+
+.collections-corps {
+  display: flex;
+  gap: var(--espace-xl);
+  padding: var(--espace-xl) var(--espace-md);
+  align-items: flex-start;
+}
+
+.collections-resultats {
+  flex: 1;
+}
+
+.collections-resultats__entete {
+  margin-bottom: var(--espace-md);
+  color: var(--texte-secondaire);
+  font-size: 0.9rem;
+}
+
+.collections-grille {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--espace-md);
+}
+
+.produit-carte {
+  display: block;
+}
+
+.produit-carte__image {
+  position: relative;
+  background-color: var(--nabe-beige);
+  border-radius: var(--rayon-bordure);
+  overflow: hidden;
+  aspect-ratio: 1;
+  margin-bottom: var(--espace-xs);
+}
+
+.produit-carte__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: var(--transition-douce);
+}
+
+.produit-carte:hover .produit-carte__image img {
+  transform: scale(1.05);
+}
+
+.produit-carte__placeholder {
+  width: 100%;
+  height: 100%;
+  background-color: var(--nabe-beige-fonce);
+}
+
+.produit-carte__coeur {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: rgba(255, 255, 255, 0.85);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+}
+
+.produit-carte h3 {
+  font-size: 1rem;
+  margin-bottom: 2px;
+}
+
+.produit-carte__details {
+  font-size: 0.8rem;
+  color: var(--texte-secondaire);
+  margin-bottom: 4px;
+}
+
+.produit-carte__prix {
+  font-weight: 600;
+  color: var(--texte-principal);
+}
+
+.collections-vide {
+  color: var(--texte-secondaire);
+  font-style: italic;
+  padding: var(--espace-xl) 0;
+}
+
+@media (max-width: 1100px) {
+  .collections-grille {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .collections-corps {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 600px) {
+  .collections-grille {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

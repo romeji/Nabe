@@ -1,0 +1,134 @@
+.contact-hero {
+  position: relative;
+  min-height: 40vh;
+  display: flex;
+  align-items: center;
+  background-image: url('/images/contact-hero.jpg');
+  background-size: cover;
+  background-position: center;
+  color: var(--texte-clair);
+}
+
+.contact-hero__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(61, 46, 31, 0.65), rgba(61, 46, 31, 0.15));
+}
+
+.contact-hero__contenu {
+  position: relative;
+  z-index: 1;
+  padding: 0 var(--espace-xl);
+  max-width: 500px;
+}
+
+.contact-hero__contenu h1 {
+  color: var(--texte-clair);
+  font-size: 2.6rem;
+  margin-bottom: var(--espace-xs);
+}
+
+.contact-corps {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: var(--espace-xl);
+  padding: var(--espace-2xl) var(--espace-md);
+}
+
+.contact-corps__infos h2 {
+  font-size: 1.6rem;
+  margin-bottom: var(--espace-sm);
+}
+
+.contact-corps__infos p {
+  color: var(--texte-secondaire);
+  margin-bottom: var(--espace-lg);
+}
+
+.contact-corps__bloc {
+  margin-bottom: var(--espace-md);
+}
+
+.contact-corps__bloc h3 {
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--nabe-or);
+  margin-bottom: 0.2rem;
+}
+
+.contact-formulaire {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.contact-formulaire label {
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--texte-secondaire);
+}
+
+.contact-formulaire input,
+.contact-formulaire textarea {
+  padding: 0.8rem;
+  border: 1px solid var(--nabe-beige-fonce);
+  border-radius: var(--rayon-bordure);
+  background-color: var(--nabe-blanc);
+}
+
+.contact-formulaire button {
+  align-self: flex-start;
+  margin-top: var(--espace-sm);
+}
+
+.contact-formulaire__erreur {
+  color: var(--nabe-terracotta-fonce);
+  font-size: 0.85rem;
+}
+
+.contact-formulaire__succes {
+  background-color: var(--nabe-beige);
+  padding: var(--espace-lg);
+  border-radius: var(--rayon-bordure);
+  color: var(--nabe-terracotta-fonce);
+  font-weight: 500;
+}
+
+.contact-rdv {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 0 var(--espace-md) var(--espace-2xl);
+  gap: var(--espace-xl);
+  align-items: center;
+}
+
+.contact-rdv__image {
+  height: 320px;
+  background-image: url('/images/main-bague.jpg');
+  background-size: cover;
+  background-position: center;
+  border-radius: var(--rayon-bordure);
+  background-color: var(--nabe-beige);
+}
+
+.contact-rdv__texte span {
+  color: var(--nabe-terracotta);
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.contact-rdv__texte h2 {
+  font-size: 1.5rem;
+  margin: var(--espace-sm) 0 var(--espace-md);
+}
+
+@media (max-width: 900px) {
+  .contact-corps,
+  .contact-rdv {
+    grid-template-columns: 1fr;
+  }
+}

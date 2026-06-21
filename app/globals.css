@@ -1,0 +1,179 @@
+/* ============================================================
+   NABE — Design System global
+   Palette extraite des maquettes : beige/champagne/terracotta
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Imperial+Script&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap');
+
+:root {
+  /* Couleurs principales */
+  --nabe-creme: #f7f1e8;
+  --nabe-beige: #ede3d3;
+  --nabe-beige-fonce: #d9c7ab;
+  --nabe-sable: #c9b08e;
+  --nabe-or: #b8923f;
+  --nabe-or-clair: #d4a857;
+  --nabe-terracotta: #a85c3f;
+  --nabe-terracotta-fonce: #8b4a32;
+  --nabe-brun: #5c4632;
+  --nabe-brun-fonce: #3d2e1f;
+  --nabe-noir: #2a2018;
+  --nabe-blanc: #ffffff;
+
+  /* Texte */
+  --texte-principal: var(--nabe-brun-fonce);
+  --texte-secondaire: #7a6a55;
+  --texte-clair: #ffffff;
+
+  /* Typographies */
+  --font-logo: 'Imperial Script', cursive;
+  --font-titres: 'Cormorant Garamond', serif;
+  --font-texte: 'Jost', sans-serif;
+
+  /* Espacements */
+  --espace-xs: 0.5rem;
+  --espace-sm: 1rem;
+  --espace-md: 1.5rem;
+  --espace-lg: 2.5rem;
+  --espace-xl: 4rem;
+  --espace-2xl: 6rem;
+
+  /* Mise en page */
+  --largeur-max: 1280px;
+  --rayon-bordure: 4px;
+  --ombre-douce: 0 4px 20px rgba(61, 46, 31, 0.08);
+  --ombre-moyenne: 0 8px 30px rgba(61, 46, 31, 0.12);
+
+  /* Transitions */
+  --transition-douce: all 0.3s ease;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-texte);
+  color: var(--texte-principal);
+  background-color: var(--nabe-creme);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-titres);
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--texte-principal);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: var(--font-texte);
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+ul {
+  list-style: none;
+}
+
+input, textarea, select {
+  font-family: var(--font-texte);
+  font-size: 1rem;
+}
+
+/* Conteneur centré réutilisable */
+.conteneur {
+  width: 100%;
+  max-width: var(--largeur-max);
+  margin: 0 auto;
+  padding: 0 var(--espace-md);
+}
+
+/* Boutons partagés */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.9rem 2rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: var(--rayon-bordure);
+  transition: var(--transition-douce);
+  cursor: pointer;
+}
+
+.btn-primaire {
+  background-color: var(--nabe-terracotta);
+  color: var(--texte-clair);
+}
+.btn-primaire:hover {
+  background-color: var(--nabe-terracotta-fonce);
+}
+
+.btn-secondaire {
+  background-color: transparent;
+  color: var(--texte-clair);
+  border: 1px solid var(--texte-clair);
+}
+.btn-secondaire:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.btn-or {
+  background-color: var(--nabe-or);
+  color: var(--texte-clair);
+}
+.btn-or:hover {
+  background-color: var(--nabe-or-clair);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Texte accent (mots colorés dans les titres) */
+.accent {
+  color: var(--nabe-terracotta);
+  font-style: italic;
+}
+
+/* Scrollbar discrète */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--nabe-creme);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--nabe-beige-fonce);
+  border-radius: 10px;
+}
+
+/* Utilitaires responsive */
+@media (max-width: 768px) {
+  .conteneur {
+    padding: 0 var(--espace-sm);
+  }
+}

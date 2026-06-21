@@ -1,0 +1,35 @@
+.admin-contenu__intro {
+  color: var(--texte-secondaire);
+  margin-bottom: var(--espace-md);
+  font-size: 0.9rem;
+}
+
+.editeur-contenu {
+  margin-bottom: var(--espace-md);
+}
+
+.editeur-contenu h2 {
+  font-size: 1.1rem;
+  margin-bottom: var(--espace-sm);
+}
+
+.editeur-contenu__champ {
+  margin-bottom: var(--espace-md);
+}
+
+.editeur-contenu__champ label {
+  display: block;
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--texte-secondaire);
+  margin-bottom: 0.3rem;
+}
+
+.editeur-contenu__champ textarea {
+  width: 100%;
+  padding: 0.7rem;
+  border: 1px solid var(--nabe-beige-fonce);
+  border-radius: var(--rayon-bordure);
+  margin-bottom: 0.5rem;
+}
