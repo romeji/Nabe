@@ -31,14 +31,6 @@ export const LABELS_TYPE_BIJOU: Record<string, string> = {
   COFFRET_CADEAU: 'Coffret cadeau',
 };
 
-export const LABELS_MATIERE: Record<string, string> = {
-  OR_JAUNE_18K: 'Or jaune 18 carats',
-  OR_BLANC_18K: 'Or blanc 18 carats',
-  OR_ROSE_18K: 'Or rose 18 carats',
-  ARGENT_925: 'Argent 925',
-  PLAQUE_OR: 'Plaqué or',
-};
-
 export const LABELS_PIERRE: Record<string, string> = {
   DIAMANT: 'Diamant',
   PERLE: 'Perle',

@@ -2,15 +2,15 @@ import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import FormulaireCategorieClient from '@/components/admin/FormulaireCategorieClient';
-import LigneCategorie from '@/components/admin/LigneCategorie';
-import './categories.css';
+import FormulaireMatiereClient from '@/components/admin/FormulaireMatiereClient';
+import LigneMatiere from '@/components/admin/LigneMatiere';
+import '../categories/categories.css';
 
-export default async function PageAdminCategories() {
+export default async function PageAdminMatieres() {
   const session = await getServerSession(authOptions);
   if (!session) redirect('/admin/login');
 
-  const categories = await prisma.categorie.findMany({
+  const matieres = await prisma.matiere.findMany({
     orderBy: { ordre: 'asc' },
     include: { _count: { select: { produits: true } } },
   });
@@ -18,7 +18,7 @@ export default async function PageAdminCategories() {
   return (
     <div className="admin-categories">
       <div className="admin-entete">
-        <h1>Catégories ({categories.length})</h1>
+        <h1>Matières ({matieres.length})</h1>
       </div>
 
       <div className="admin-categories__grille">
@@ -32,14 +32,21 @@ export default async function PageAdminCategories() {
             </tr>
           </thead>
           <tbody>
-            {categories.map((c) => (
-              <LigneCategorie key={c.id} categorie={c} />
+            {matieres.map((m) => (
+              <LigneMatiere key={m.id} matiere={m} />
             ))}
           </tbody>
         </table>
 
-        <FormulaireCategorieClient />
+        <FormulaireMatiereClient />
       </div>
+
+      {matieres.length === 0 && (
+        <p style={{ color: 'var(--texte-secondaire)', fontStyle: 'italic', marginTop: '1rem' }}>
+          Aucune matière pour le moment. Ajoutez votre première matière (ex : Or jaune 18 carats,
+          Argent 925...).
+        </p>
+      )}
     </div>
   );
 }

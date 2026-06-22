@@ -18,6 +18,7 @@ export default async function PageProduit({ params }: Props) {
     include: {
       images: { orderBy: { ordre: 'asc' } },
       categorie: true,
+      matiere: true,
     },
   });
 

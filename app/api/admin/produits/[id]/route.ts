@@ -11,7 +11,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
   const produit = await prisma.produit.findUnique({
     where: { id: params.id },
-    include: { images: { orderBy: { ordre: 'asc' } }, categorie: true, mouvementsStock: { orderBy: { createdAt: 'desc' } } },
+    include: { images: { orderBy: { ordre: 'asc' } }, categorie: true, matiere: true, mouvementsStock: { orderBy: { createdAt: 'desc' } } },
   });
 
   if (!produit) {
@@ -30,7 +30,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   try {
     const body = await req.json();
 
-    const { images, stock, ...autresDonnees } = body;
+    const { images, stock, id, ...autresDonnees } = body;
 
     const produitActuel = await prisma.produit.findUnique({ where: { id: params.id } });
     if (!produitActuel) {

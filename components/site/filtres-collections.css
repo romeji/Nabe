@@ -39,6 +39,12 @@
   margin-bottom: var(--espace-sm);
 }
 
+.filtres-collections__vide {
+  font-size: 0.8rem;
+  color: var(--texte-secondaire);
+  font-style: italic;
+}
+
 .filtres-collections__case {
   display: flex;
   align-items: center;
@@ -62,8 +68,87 @@
   background-color: var(--nabe-blanc);
 }
 
+.filtres-collections__bouton-mobile {
+  display: none;
+}
+
+.filtres-collections__overlay-mobile {
+  display: none;
+}
+
+.filtres-collections__entete-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--espace-sm);
+}
+
+.filtres-collections__fermer-mobile {
+  display: none;
+}
+
+.filtres-collections__appliquer-mobile {
+  display: none;
+}
+
 @media (max-width: 900px) {
-  .filtres-collections {
+  .filtres-collections__bouton-mobile {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
     width: 100%;
+    justify-content: center;
+    padding: 0.8rem;
+    margin-bottom: var(--espace-md);
+    border: 1px solid var(--nabe-beige-fonce);
+    border-radius: var(--rayon-bordure);
+    background-color: var(--nabe-blanc);
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .filtres-collections__overlay-mobile {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 300;
+  }
+
+  .filtres-collections {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    width: 85%;
+    max-width: 340px;
+    background-color: var(--nabe-creme);
+    z-index: 310;
+    padding: var(--espace-md);
+    overflow-y: auto;
+    transform: translateX(100%);
+    transition: transform 0.25s ease;
+  }
+
+  .filtres-collections--ouvert-mobile {
+    transform: translateX(0);
+  }
+
+  .filtres-collections__fermer-mobile {
+    display: inline-flex;
+    font-size: 1.1rem;
+    padding: 0.2rem;
+  }
+
+  .filtres-collections__appliquer-mobile {
+    display: block;
+    width: 100%;
+    padding: 0.9rem;
+    background-color: var(--nabe-terracotta);
+    color: var(--texte-clair);
+    border-radius: var(--rayon-bordure);
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-top: var(--espace-md);
   }
 }

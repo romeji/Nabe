@@ -36,14 +36,6 @@ enum TypeBijou {
   COFFRET_CADEAU
 }
 
-enum Matiere {
-  OR_JAUNE_18K
-  OR_BLANC_18K
-  OR_ROSE_18K
-  ARGENT_925
-  PLAQUE_OR
-}
-
 enum Pierre {
   DIAMANT
   PERLE
@@ -74,6 +66,16 @@ model Categorie {
   updatedAt   DateTime  @updatedAt
 }
 
+model Matiere {
+  id        String    @id @default(cuid())
+  nom       String    @unique // ex: "Or jaune 18 carats", "Argent 925"
+  slug      String    @unique
+  ordre     Int       @default(0)
+  produits  Produit[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
 model Produit {
   id              String         @id @default(cuid())
   nom             String
@@ -81,7 +83,8 @@ model Produit {
   description     String
   prix            Decimal        @db.Decimal(10, 2)
   type            TypeBijou
-  matiere         Matiere
+  matiereId       String?
+  matiere         Matiere?       @relation(fields: [matiereId], references: [id])
   pierre          Pierre         @default(AUCUNE)
   couleurPierre   String? // ex: "Blanc", "Champagne", "Rose"
   delaiFabrication String?       // ex: "2 à 3 semaines"

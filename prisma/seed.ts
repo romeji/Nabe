@@ -40,6 +40,24 @@ async function main() {
   }
   console.log(`✓ ${categories.length} catégories créées/vérifiées`);
 
+  // Matières de base
+  const matieres = [
+    { nom: 'Or jaune 18 carats', slug: 'or-jaune-18-carats', ordre: 1 },
+    { nom: 'Or blanc 18 carats', slug: 'or-blanc-18-carats', ordre: 2 },
+    { nom: 'Or rose 18 carats', slug: 'or-rose-18-carats', ordre: 3 },
+    { nom: 'Argent 925', slug: 'argent-925', ordre: 4 },
+    { nom: 'Plaqué or', slug: 'plaque-or', ordre: 5 },
+  ];
+
+  for (const mat of matieres) {
+    await prisma.matiere.upsert({
+      where: { slug: mat.slug },
+      update: {},
+      create: mat,
+    });
+  }
+  console.log(`✓ ${matieres.length} matières créées/vérifiées`);
+
   // Témoignages de démonstration
   const temoignages = [
     { auteur: 'Claire D.', texte: "Des bijoux d'une finesse incroyable, on sent tout le savoir-faire et l'amour du détail.", note: 5, ordre: 1 },

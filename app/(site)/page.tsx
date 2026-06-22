@@ -115,16 +115,25 @@ export default async function PageAccueil() {
         </h2>
         <div className="accueil-savoirfaire__grille">
           <div className="accueil-savoirfaire__etape">
+            <div className="accueil-savoirfaire__image">
+              <Image src="/images/savoirfaire-inspiration.jpg" alt="Inspiration" width={300} height={220} />
+            </div>
             <span className="accueil-savoirfaire__numero">01</span>
             <h3>Inspiration</h3>
             <p>Chaque création naît d'une émotion, d'un voyage, d'un instant.</p>
           </div>
           <div className="accueil-savoirfaire__etape">
+            <div className="accueil-savoirfaire__image">
+              <Image src="/images/savoirfaire-creation.jpg" alt="Création" width={300} height={220} />
+            </div>
             <span className="accueil-savoirfaire__numero">02</span>
             <h3>Création</h3>
             <p>Croquis, recherches et sélection des plus belles matières.</p>
           </div>
           <div className="accueil-savoirfaire__etape">
+            <div className="accueil-savoirfaire__image">
+              <Image src="/images/savoirfaire-fabrication.jpg" alt="Fabrication" width={300} height={220} />
+            </div>
             <span className="accueil-savoirfaire__numero">03</span>
             <h3>Fabrication</h3>
             <p>Façonnage à la main dans notre atelier, avec exigence et précision.</p>

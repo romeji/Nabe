@@ -187,11 +187,6 @@
   .admin-layout {
     flex-direction: column;
   }
-  .admin-sidebar {
-    width: 100%;
-    min-height: auto;
-    position: relative;
-  }
   .admin-layout__contenu {
     padding: var(--espace-md);
   }

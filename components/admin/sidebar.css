@@ -70,7 +70,61 @@
   width: 100%;
 }
 
-.admin-sidebar__deconnexion:hover {
-  background-color: rgba(255, 255, 255, 0.08);
-  color: var(--texte-clair);
+.admin-sidebar__barre-mobile {
+  display: none;
+}
+
+.admin-sidebar__overlay {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .admin-sidebar__barre-mobile {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--nabe-brun-fonce);
+    padding: 0.8rem var(--espace-md);
+    position: sticky;
+    top: 0;
+    z-index: 200;
+  }
+
+  .admin-sidebar__logo--mobile {
+    margin-bottom: 0;
+    font-size: 1.8rem;
+  }
+
+  .admin-sidebar__burger {
+    color: var(--texte-clair);
+    font-size: 1.3rem;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .admin-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 210;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    box-shadow: var(--ombre-moyenne);
+  }
+
+  .admin-sidebar--ouvert {
+    transform: translateX(0);
+  }
+
+  .admin-sidebar__overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 205;
+  }
 }

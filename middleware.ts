@@ -11,6 +11,7 @@ export const config = {
     '/admin',
     '/admin/produits/:path*',
     '/admin/categories/:path*',
+    '/admin/matieres/:path*',
     '/admin/stock/:path*',
     '/admin/commandes/:path*',
     '/admin/sur-mesure/:path*',

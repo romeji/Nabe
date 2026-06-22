@@ -1,16 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   LABELS_TYPE_BIJOU,
-  LABELS_MATIERE,
   LABELS_PIERRE,
   LABELS_DISPONIBILITE,
 } from '@/lib/utils';
 import './formulaire-produit.css';
 
 type ImageProduit = { url: string; publicId?: string; alt?: string };
+type OptionSimple = { id: string; nom: string };
 
 type ProduitFormData = {
   id?: string;
@@ -18,7 +18,8 @@ type ProduitFormData = {
   description: string;
   prix: number;
   type: string;
-  matiere: string;
+  categorieId: string;
+  matiereId: string;
   pierre: string;
   couleurPierre: string;
   delaiFabrication: string;
@@ -36,12 +37,16 @@ const TAILLES_BAGUE = ['48', '50', '52', '54', '56', '58', '60'];
 
 export default function FormulaireProduit({ produitInitial }: { produitInitial?: Partial<ProduitFormData> }) {
   const router = useRouter();
+  const [categories, setCategories] = useState<OptionSimple[]>([]);
+  const [matieres, setMatieres] = useState<OptionSimple[]>([]);
+  const [chargementOptions, setChargementOptions] = useState(true);
   const [donnees, setDonnees] = useState<ProduitFormData>({
     nom: produitInitial?.nom || '',
     description: produitInitial?.description || '',
     prix: produitInitial?.prix || 0,
     type: produitInitial?.type || 'BAGUE',
-    matiere: produitInitial?.matiere || 'OR_JAUNE_18K',
+    categorieId: produitInitial?.categorieId || '',
+    matiereId: produitInitial?.matiereId || '',
     pierre: produitInitial?.pierre || 'AUCUNE',
     couleurPierre: produitInitial?.couleurPierre || '',
     delaiFabrication: produitInitial?.delaiFabrication || '',
@@ -57,6 +62,27 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
   const [enregistrement, setEnregistrement] = useState(false);
   const [uploadEnCours, setUploadEnCours] = useState(false);
   const [erreur, setErreur] = useState('');
+
+  // Charge les catégories et matières existantes (gérées dans Admin > Catégories / Matières)
+  useEffect(() => {
+    async function chargerOptions() {
+      try {
+        const [resCategories, resMatieres] = await Promise.all([
+          fetch('/api/admin/categories'),
+          fetch('/api/admin/matieres'),
+        ]);
+        const dataCategories = await resCategories.json();
+        const dataMatieres = await resMatieres.json();
+        setCategories(dataCategories);
+        setMatieres(dataMatieres);
+      } catch (err) {
+        console.error('Erreur chargement catégories/matières:', err);
+      } finally {
+        setChargementOptions(false);
+      }
+    }
+    chargerOptions();
+  }, []);
 
   function majChamp<K extends keyof ProduitFormData>(champ: K, valeur: ProduitFormData[K]) {
     setDonnees((d) => ({ ...d, [champ]: valeur }));
@@ -78,8 +104,15 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
     setUploadEnCours(true);
     setErreur('');
 
-    try {
-      for (const fichier of Array.from(fichiers)) {
+    const echecs: string[] = [];
+
+    for (const fichier of Array.from(fichiers)) {
+      try {
+        if (fichier.size > 10 * 1024 * 1024) {
+          echecs.push(`${fichier.name} (fichier trop lourd, max 10 Mo)`);
+          continue;
+        }
+
         const base64 = await new Promise<string>((resolve, reject) => {
           const reader = new FileReader();
           reader.onload = () => resolve(reader.result as string);
@@ -93,19 +126,31 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
           body: JSON.stringify({ fichier: base64 }),
         });
 
-        if (!res.ok) throw new Error("Échec de l'upload");
+        if (!res.ok) {
+          echecs.push(fichier.name);
+          continue;
+        }
+
         const resultat = await res.json();
 
         setDonnees((d) => ({
           ...d,
           images: [...d.images, { url: resultat.url, publicId: resultat.publicId, alt: d.nom }],
         }));
+      } catch (err) {
+        echecs.push(fichier.name);
       }
-    } catch (err) {
-      setErreur("Erreur lors de l'upload de l'image. Vérifiez votre configuration Cloudinary.");
-    } finally {
-      setUploadEnCours(false);
     }
+
+    if (echecs.length > 0) {
+      setErreur(
+        `Échec de l'upload pour : ${echecs.join(', ')}. Vérifiez votre configuration Cloudinary ou réessayez.`
+      );
+    }
+
+    setUploadEnCours(false);
+    // Permet de re-sélectionner les mêmes fichiers si besoin de réessayer
+    e.target.value = '';
   }
 
   function retirerImage(index: number) {
@@ -121,10 +166,16 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
       const url = produitInitial?.id ? `/api/admin/produits/${produitInitial.id}` : '/api/admin/produits';
       const methode = produitInitial?.id ? 'PATCH' : 'POST';
 
+      const payload = {
+        ...donnees,
+        categorieId: donnees.categorieId || null,
+        matiereId: donnees.matiereId || null,
+      };
+
       const res = await fetch(url, {
         method: methode,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(donnees),
+        body: JSON.stringify(payload),
       });
 
       if (!res.ok) {
@@ -190,15 +241,40 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
 
         <div className="admin-form__ligne">
           <div>
-            <label>Matière</label>
-            <select value={donnees.matiere} onChange={(e) => majChamp('matiere', e.target.value)}>
-              {Object.entries(LABELS_MATIERE).map(([v, l]) => (
-                <option key={v} value={v}>
-                  {l}
+            <label>Catégorie</label>
+            <select value={donnees.categorieId} onChange={(e) => majChamp('categorieId', e.target.value)} disabled={chargementOptions}>
+              <option value="">Aucune catégorie</option>
+              {categories.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.nom}
                 </option>
               ))}
             </select>
+            {categories.length === 0 && !chargementOptions && (
+              <p className="formulaire-produit__aide">
+                Aucune catégorie créée. Ajoutez-en depuis <a href="/admin/categories">Admin &gt; Catégories</a>.
+              </p>
+            )}
           </div>
+          <div>
+            <label>Matière</label>
+            <select value={donnees.matiereId} onChange={(e) => majChamp('matiereId', e.target.value)} disabled={chargementOptions}>
+              <option value="">Sélectionner une matière</option>
+              {matieres.map((m) => (
+                <option key={m.id} value={m.id}>
+                  {m.nom}
+                </option>
+              ))}
+            </select>
+            {matieres.length === 0 && !chargementOptions && (
+              <p className="formulaire-produit__aide">
+                Aucune matière créée. Ajoutez-en depuis <a href="/admin/matieres">Admin &gt; Matières</a>.
+              </p>
+            )}
+          </div>
+        </div>
+
+        <div className="admin-form__ligne">
           <div>
             <label>Pierre</label>
             <select value={donnees.pierre} onChange={(e) => majChamp('pierre', e.target.value)}>
@@ -209,9 +285,6 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
               ))}
             </select>
           </div>
-        </div>
-
-        <div className="admin-form__ligne">
           <div>
             <label>Couleur de la pierre</label>
             <input
@@ -221,6 +294,9 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
               onChange={(e) => majChamp('couleurPierre', e.target.value)}
             />
           </div>
+        </div>
+
+        <div className="admin-form__ligne">
           <div>
             <label>Délai de fabrication</label>
             <input
@@ -230,6 +306,7 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
               onChange={(e) => majChamp('delaiFabrication', e.target.value)}
             />
           </div>
+          <div />
         </div>
 
         <label className="admin-form__case">

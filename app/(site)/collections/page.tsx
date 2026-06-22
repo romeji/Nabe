@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { prisma } from '@/lib/prisma';
-import { formaterPrix, LABELS_TYPE_BIJOU, LABELS_MATIERE } from '@/lib/utils';
+import { formaterPrix, LABELS_TYPE_BIJOU } from '@/lib/utils';
 import FiltresCollections from '@/components/site/FiltresCollections';
 import './collections.css';
 
@@ -22,7 +22,7 @@ export default async function PageCollections({ searchParams }: Props) {
   const where: any = { actif: true };
 
   if (searchParams.type) where.type = searchParams.type;
-  if (searchParams.matiere) where.matiere = searchParams.matiere;
+  if (searchParams.matiere) where.matiereId = searchParams.matiere;
   if (searchParams.pierre) where.pierre = searchParams.pierre;
   if (searchParams.prixMax) where.prix = { lte: parseFloat(searchParams.prixMax) };
 
@@ -31,13 +31,14 @@ export default async function PageCollections({ searchParams }: Props) {
   if (searchParams.tri === 'prix-desc') orderBy = { prix: 'desc' };
   if (searchParams.tri === 'nom') orderBy = { nom: 'asc' };
 
-  const [produits, totalActifs] = await Promise.all([
+  const [produits, totalActifs, matieresDisponibles] = await Promise.all([
     prisma.produit.findMany({
       where,
-      include: { images: { orderBy: { ordre: 'asc' }, take: 1 } },
+      include: { images: { orderBy: { ordre: 'asc' }, take: 1 }, matiere: true },
       orderBy,
     }),
     prisma.produit.count({ where: { actif: true } }),
+    prisma.matiere.findMany({ orderBy: { ordre: 'asc' } }),
   ]);
 
   return (
@@ -50,7 +51,7 @@ export default async function PageCollections({ searchParams }: Props) {
       </section>
 
       <div className="collections-corps conteneur">
-        <FiltresCollections />
+        <FiltresCollections matieres={matieresDisponibles} />
 
         <div className="collections-resultats">
           <div className="collections-resultats__entete">
@@ -85,10 +86,7 @@ export default async function PageCollections({ searchParams }: Props) {
                     </button>
                   </div>
                   <h3>{produit.nom}</h3>
-                  <p className="produit-carte__details">
-                    {LABELS_MATIERE[produit.matiere]}
-                    {produit.pierre !== 'AUCUNE' ? `, ${LABELS_MATIERE[produit.matiere] ? '' : ''}` : ''}
-                  </p>
+                  <p className="produit-carte__details">{produit.matiere?.nom || ''}</p>
                   <span className="produit-carte__prix">{formaterPrix(produit.prix.toString())}</span>
                 </Link>
               ))}

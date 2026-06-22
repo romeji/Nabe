@@ -9,7 +9,7 @@ const schemaProduit = z.object({
   description: z.string().min(1),
   prix: z.number().positive(),
   type: z.enum(['BAGUE', 'COLLIER', 'BOUCLES_OREILLES', 'BRACELET', 'PIECE_UNIQUE', 'COFFRET_CADEAU']),
-  matiere: z.enum(['OR_JAUNE_18K', 'OR_BLANC_18K', 'OR_ROSE_18K', 'ARGENT_925', 'PLAQUE_OR']),
+  matiereId: z.string().optional().nullable(),
   pierre: z
     .enum(['DIAMANT', 'PERLE', 'PIERRE_DE_LUNE', 'QUARTZ', 'TOPAZE', 'SAPHIR', 'EMERAUDE', 'AUCUNE'])
     .optional(),
@@ -37,7 +37,7 @@ export async function GET(req: NextRequest) {
   }
 
   const produits = await prisma.produit.findMany({
-    include: { images: { orderBy: { ordre: 'asc' } }, categorie: true },
+    include: { images: { orderBy: { ordre: 'asc' } }, categorie: true, matiere: true },
     orderBy: { createdAt: 'desc' },
   });
 
@@ -67,7 +67,7 @@ export async function POST(req: NextRequest) {
         description: donnees.description,
         prix: donnees.prix,
         type: donnees.type,
-        matiere: donnees.matiere,
+        matiereId: donnees.matiereId || undefined,
         pierre: donnees.pierre || 'AUCUNE',
         couleurPierre: donnees.couleurPierre || undefined,
         delaiFabrication: donnees.delaiFabrication || undefined,

@@ -180,7 +180,10 @@ public/images/
 ├── sur-mesure-hero.jpg         → Page Sur-mesure, bandeau principal
 ├── contact-hero.jpg            → Page Contact, bandeau principal
 ├── main-bague.jpg              → Page Contact, section "Rendez-vous"
-└── collections-hero.jpg        → Page Collections, bandeau principal
+├── collections-hero.jpg        → Page Collections, bandeau principal
+├── savoirfaire-inspiration.jpg → Page d'accueil, étape "01 Inspiration"
+├── savoirfaire-creation.jpg    → Page d'accueil, étape "02 Création"
+└── savoirfaire-fabrication.jpg → Page d'accueil, étape "03 Fabrication"
 ```
 
 Les **photos de bijoux** (catalogue produit), elles, ne sont **pas** stockées dans `/public` — elles s'ajoutent directement depuis le backoffice (`/admin/produits/nouveau`), qui les envoie automatiquement vers Cloudinary.

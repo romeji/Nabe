@@ -11,7 +11,7 @@ export default async function PageAdminProduits() {
   if (!session) redirect('/admin/login');
 
   const produits = await prisma.produit.findMany({
-    include: { images: { orderBy: { ordre: 'asc' }, take: 1 }, categorie: true },
+    include: { images: { orderBy: { ordre: 'asc' }, take: 1 }, categorie: true, matiere: true },
     orderBy: { createdAt: 'desc' },
   });
 
@@ -30,6 +30,8 @@ export default async function PageAdminProduits() {
             <th>Image</th>
             <th>Nom</th>
             <th>Type</th>
+            <th>Catégorie</th>
+            <th>Matière</th>
             <th>Prix</th>
             <th>Stock</th>
             <th>Disponibilité</th>
@@ -49,6 +51,8 @@ export default async function PageAdminProduits() {
               </td>
               <td>{p.nom}</td>
               <td>{LABELS_TYPE_BIJOU[p.type]}</td>
+              <td>{p.categorie?.nom || '—'}</td>
+              <td>{p.matiere?.nom || '—'}</td>
               <td>{formaterPrix(p.prix.toString())}</td>
               <td>
                 <span className={`admin-badge ${p.stock <= 3 ? 'admin-badge--danger' : 'admin-badge--succes'}`}>

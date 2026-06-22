@@ -6,7 +6,6 @@ import Image from 'next/image';
 import { usePanierStore } from '@/lib/store-panier';
 import {
   formaterPrix,
-  LABELS_MATIERE,
   LABELS_PIERRE,
   LABELS_DISPONIBILITE,
 } from '@/lib/utils';
@@ -18,7 +17,7 @@ type Produit = {
   slug: string;
   description: string;
   prix: string;
-  matiere: string;
+  matiere: { nom: string } | null;
   pierre: string;
   delaiFabrication: string | null;
   fabriqueEnFrance: boolean;
@@ -100,9 +99,11 @@ export default function ProduitDetailClient({
           <p className="produit-infos__description">{produit.description}</p>
 
           <ul className="produit-infos__caracteristiques">
-            <li>
-              <strong>Matière :</strong> {LABELS_MATIERE[produit.matiere]}
-            </li>
+            {produit.matiere && (
+              <li>
+                <strong>Matière :</strong> {produit.matiere.nom}
+              </li>
+            )}
             {produit.pierre !== 'AUCUNE' && (
               <li>
                 <strong>Pierre :</strong> {LABELS_PIERRE[produit.pierre]}
