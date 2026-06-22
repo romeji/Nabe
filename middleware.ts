@@ -17,5 +17,6 @@ export const config = {
     '/admin/sur-mesure/:path*',
     '/admin/messages/:path*',
     '/admin/contenu/:path*',
+    '/admin/newsletters/:path*',
   ],
 };

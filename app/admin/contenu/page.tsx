@@ -2,27 +2,33 @@ import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { REGISTRE_CONTENU } from '@/lib/registre-contenu';
+import SelecteurPageContenu from '@/components/admin/SelecteurPageContenu';
 import EditeurContenuClient from '@/components/admin/EditeurContenuClient';
 import './contenu.css';
 
-const CHAMPS_PAR_PAGE: Record<string, { cle: string; label: string; type: 'texte' | 'html' }[]> = {
-  accueil: [
-    { cle: 'hero_soustitre', label: 'Sous-titre du hero', type: 'texte' },
-    { cle: 'histoire_texte', label: 'Texte "Notre histoire"', type: 'html' },
-  ],
-  'la-maison': [
-    { cle: 'parcours_texte', label: 'Texte "Mon parcours"', type: 'html' },
-    { cle: 'savoirfaire_texte', label: 'Texte "Un savoir-faire artisanal"', type: 'html' },
-  ],
-};
-
-export default async function PageAdminContenu() {
+export default async function PageAdminContenu({
+  searchParams,
+}: {
+  searchParams: { page?: string };
+}) {
   const session = await getServerSession(authOptions);
   if (!session) redirect('/admin/login');
 
-  const tousLesContenus = await prisma.contenuPage.findMany();
-  const map: Record<string, string> = {};
-  tousLesContenus.forEach((c) => (map[`${c.page}.${c.cle}`] = c.valeur));
+  const slugActif = searchParams.page || REGISTRE_CONTENU[0].slug;
+  const pageRegistre = REGISTRE_CONTENU.find((p) => p.slug === slugActif) || REGISTRE_CONTENU[0];
+
+  // Récupère ce qui est déjà enregistré en base pour cette page précise
+  const enregistres = await prisma.contenuPage.findMany({ where: { page: pageRegistre.slug } });
+  const valeursEnDb: Record<string, string> = {};
+  enregistres.forEach((item) => (valeursEnDb[item.cle] = item.valeur));
+
+  // Pré-remplit chaque champ : valeur en DB si elle existe et n'est pas vide, sinon le texte par défaut du code
+  const valeursInitiales = pageRegistre.champs.reduce((acc, champ) => {
+    const valeurDb = valeursEnDb[champ.cle];
+    acc[champ.cle] = valeurDb && valeurDb.trim() !== '' ? valeurDb : champ.defaut;
+    return acc;
+  }, {} as Record<string, string>);
 
   return (
     <div className="admin-contenu">
@@ -30,22 +36,20 @@ export default async function PageAdminContenu() {
         <h1>Contenu du site</h1>
       </div>
       <p className="admin-contenu__intro">
-        Modifiez les textes affichés sur les pages publiques sans toucher au code. Les champs non
-        renseignés ici affichent le texte par défaut prévu dans le design.
+        Modifiez les textes affichés sur les pages publiques sans toucher au code. Chaque champ
+        affiche le texte actuellement en ligne sur le site — vous pouvez le corriger ou le
+        remplacer entièrement.
       </p>
 
-      {Object.entries(CHAMPS_PAR_PAGE).map(([page, champs]) => (
-        <EditeurContenuClient
-          key={page}
-          page={page}
-          titrePage={page === 'accueil' ? 'Accueil' : 'La Maison'}
-          champs={champs}
-          valeursInitiales={champs.reduce((acc, c) => {
-            acc[c.cle] = map[`${page}.${c.cle}`] || '';
-            return acc;
-          }, {} as Record<string, string>)}
-        />
-      ))}
+      <SelecteurPageContenu pages={REGISTRE_CONTENU} slugActif={pageRegistre.slug} />
+
+      <EditeurContenuClient
+        key={pageRegistre.slug}
+        page={pageRegistre.slug}
+        titrePage={pageRegistre.titre}
+        champs={pageRegistre.champs}
+        valeursInitiales={valeursInitiales}
+      />
     </div>
   );
 }

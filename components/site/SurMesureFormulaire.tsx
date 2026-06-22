@@ -17,7 +17,19 @@ const ONGLETS = [
   { valeur: 'BRACELET', label: 'Bracelets' },
 ];
 
-export default function SurMesureFormulaire({ produits }: { produits: Produit[] }) {
+export default function SurMesureFormulaire({
+  produits,
+  colonne1Titre = '1. Choisissez votre modèle',
+  colonne1Texte = 'Sélectionnez le bijou que vous souhaitez commander.',
+  colonne2Titre = '2. Personnalisez votre demande',
+  colonne2Texte = 'Indiquez vos préférences et nous vous recontacterons rapidement.',
+}: {
+  produits: Produit[];
+  colonne1Titre?: string;
+  colonne1Texte?: string;
+  colonne2Titre?: string;
+  colonne2Texte?: string;
+}) {
   const [ongletActif, setOngletActif] = useState('BAGUE');
   const [modeleId, setModeleId] = useState('');
   const [envoye, setEnvoye] = useState(false);
@@ -63,10 +75,8 @@ export default function SurMesureFormulaire({ produits }: { produits: Produit[] 
   return (
     <div className="surmesure-formulaire conteneur">
       <div className="surmesure-formulaire__colonne">
-        <h2>1. Choisissez votre modèle</h2>
-        <p className="surmesure-formulaire__sous-titre">
-          Sélectionnez le bijou que vous souhaitez commander.
-        </p>
+        <h2>{colonne1Titre}</h2>
+        <p className="surmesure-formulaire__sous-titre">{colonne1Texte}</p>
 
         <div className="surmesure-formulaire__onglets">
           {ONGLETS.map((o) => (

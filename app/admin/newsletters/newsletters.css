@@ -1,0 +1,25 @@
+.admin-newsletters__bandeau {
+  display: flex;
+  align-items: center;
+  gap: var(--espace-sm);
+  background-color: var(--nabe-beige);
+  padding: var(--espace-md);
+  border-radius: var(--rayon-bordure);
+  margin-bottom: var(--espace-lg);
+}
+
+.admin-newsletters__bandeau span {
+  font-size: 1.5rem;
+}
+
+.admin-newsletters__bandeau p {
+  font-size: 0.9rem;
+  color: var(--texte-secondaire);
+}
+
+.admin-newsletters__vide {
+  text-align: center;
+  color: var(--texte-secondaire);
+  font-style: italic;
+  padding: var(--espace-xl) 0;
+}

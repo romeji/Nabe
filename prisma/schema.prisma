@@ -263,6 +263,22 @@ model AbonneNewsletter {
   createdAt DateTime @default(now())
 }
 
+enum StatutNewsletter {
+  BROUILLON
+  ENVOYEE
+}
+
+model Newsletter {
+  id              String           @id @default(cuid())
+  sujet           String
+  contenu         String           @db.Text // texte de l'email (paragraphes séparés par des retours à la ligne)
+  statut          StatutNewsletter @default(BROUILLON)
+  nombreDestinataires Int          @default(0)
+  envoyeeLe       DateTime?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+}
+
 // ============================================================
 // TEMOIGNAGES (page Maison)
 // ============================================================

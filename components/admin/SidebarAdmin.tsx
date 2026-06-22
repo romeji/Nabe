@@ -16,6 +16,7 @@ const LIENS = [
   { href: '/admin/sur-mesure', label: 'Sur-mesure', icone: '✏️' },
   { href: '/admin/messages', label: 'Messages', icone: '✉️' },
   { href: '/admin/contenu', label: 'Contenu du site', icone: '🖊️' },
+  { href: '/admin/newsletters', label: 'Newsletters', icone: '📬' },
 ];
 
 export default function SidebarAdmin() {

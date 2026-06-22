@@ -1,21 +1,14 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { prisma } from '@/lib/prisma';
-import { formaterPrix } from '@/lib/utils';
+import { getContenuPage } from '@/lib/contenu';
 import './accueil.css';
 
 export const revalidate = 60;
 
-async function getContenu(page: string) {
-  const items = await prisma.contenuPage.findMany({ where: { page } });
-  const map: Record<string, string> = {};
-  items.forEach((i) => (map[i.cle] = i.valeur));
-  return map;
-}
-
 export default async function PageAccueil() {
   const [contenu, produitsEnAvant, temoignages] = await Promise.all([
-    getContenu('accueil'),
+    getContenuPage('accueil'),
     prisma.produit.findMany({
       where: { enAvant: true, actif: true },
       include: { images: { orderBy: { ordre: 'asc' }, take: 1 } },
@@ -31,17 +24,14 @@ export default async function PageAccueil() {
       <section className="accueil-hero">
         <div className="accueil-hero__overlay" />
         <div className="accueil-hero__contenu">
-          <h1 className="accueil-hero__logo">{contenu.hero_logo || 'Nabe'}</h1>
-          <p className="accueil-hero__soustitre">
-            {contenu.hero_soustitre ||
-              "Des bijoux façonnés à la main, inspirés par l'émotion, la matière et le temps."}
-          </p>
+          <h1 className="accueil-hero__logo">{contenu.hero_logo}</h1>
+          <p className="accueil-hero__soustitre">{contenu.hero_soustitre}</p>
           <div className="accueil-hero__actions">
             <Link href="/collections" className="btn btn-primaire">
-              Découvrir la collection
+              {contenu.hero_bouton_1}
             </Link>
             <Link href="/la-maison" className="btn btn-secondaire">
-              Mon histoire
+              {contenu.hero_bouton_2}
             </Link>
           </div>
         </div>
@@ -51,30 +41,27 @@ export default async function PageAccueil() {
       <section className="accueil-histoire conteneur">
         <div className="accueil-histoire__image">
           <Image
-            src={contenu.histoire_image || '/images/atelier-mains.jpg'}
+            src="/images/atelier-mains.jpg"
             alt="Artisan façonnant un bijou"
             width={600}
             height={500}
           />
         </div>
         <div className="accueil-histoire__texte">
-          <span className="accueil-histoire__label">Notre histoire</span>
+          <span className="accueil-histoire__label">{contenu.histoire_label}</span>
           <h2>
             Chaque bijou <span className="accent">raconte une histoire.</span>
           </h2>
-          <p>
-            {contenu.histoire_texte ||
-              "Nabe est une maison de joaillerie artisanale née d'une passion pour la beauté des matières et le savoir-faire traditionnel. Chaque pièce est imaginée et façonnée à la main dans notre atelier, avec exigence, sensibilité et authenticité."}
-          </p>
+          <p>{contenu.histoire_texte}</p>
           <Link href="/la-maison" className="accueil-histoire__lien">
-            Découvrir la maison →
+            {contenu.histoire_lien}
           </Link>
         </div>
       </section>
 
       {/* NOS COLLECTIONS */}
       <section className="accueil-collections conteneur">
-        <span className="accueil-collections__label">Nos collections</span>
+        <span className="accueil-collections__label">{contenu.collections_label}</span>
         <div className="accueil-collections__grille">
           {produitsEnAvant.length > 0 ? (
             produitsEnAvant.map((produit) => (
@@ -100,16 +87,14 @@ export default async function PageAccueil() {
               </Link>
             ))
           ) : (
-            <p className="accueil-collections__vide">
-              Ajoutez des bijoux « en avant » depuis le backoffice pour les afficher ici.
-            </p>
+            <p className="accueil-collections__vide">{contenu.collections_vide}</p>
           )}
         </div>
       </section>
 
       {/* SAVOIR-FAIRE */}
       <section className="accueil-savoirfaire conteneur">
-        <span className="accueil-savoirfaire__label">Le savoir-faire</span>
+        <span className="accueil-savoirfaire__label">{contenu.savoirfaire_label}</span>
         <h2>
           L'art de créer avec <span className="accent">passion</span>
         </h2>
@@ -119,24 +104,24 @@ export default async function PageAccueil() {
               <Image src="/images/savoirfaire-inspiration.jpg" alt="Inspiration" width={300} height={220} />
             </div>
             <span className="accueil-savoirfaire__numero">01</span>
-            <h3>Inspiration</h3>
-            <p>Chaque création naît d'une émotion, d'un voyage, d'un instant.</p>
+            <h3>{contenu.savoirfaire_etape1_titre}</h3>
+            <p>{contenu.savoirfaire_etape1_texte}</p>
           </div>
           <div className="accueil-savoirfaire__etape">
             <div className="accueil-savoirfaire__image">
               <Image src="/images/savoirfaire-creation.jpg" alt="Création" width={300} height={220} />
             </div>
             <span className="accueil-savoirfaire__numero">02</span>
-            <h3>Création</h3>
-            <p>Croquis, recherches et sélection des plus belles matières.</p>
+            <h3>{contenu.savoirfaire_etape2_titre}</h3>
+            <p>{contenu.savoirfaire_etape2_texte}</p>
           </div>
           <div className="accueil-savoirfaire__etape">
             <div className="accueil-savoirfaire__image">
               <Image src="/images/savoirfaire-fabrication.jpg" alt="Fabrication" width={300} height={220} />
             </div>
             <span className="accueil-savoirfaire__numero">03</span>
-            <h3>Fabrication</h3>
-            <p>Façonnage à la main dans notre atelier, avec exigence et précision.</p>
+            <h3>{contenu.savoirfaire_etape3_titre}</h3>
+            <p>{contenu.savoirfaire_etape3_texte}</p>
           </div>
         </div>
       </section>
@@ -145,12 +130,12 @@ export default async function PageAccueil() {
       <section className="accueil-signature">
         <div className="accueil-signature__overlay" />
         <div className="accueil-signature__contenu">
-          <span>Pièce signature</span>
+          <span>{contenu.signature_label}</span>
           <h2>
             Une création pensée pour traverser <span className="accent">les générations.</span>
           </h2>
           <Link href="/collections" className="btn btn-primaire">
-            Découvrir
+            {contenu.signature_bouton}
           </Link>
         </div>
       </section>
@@ -158,8 +143,8 @@ export default async function PageAccueil() {
       {/* TEMOIGNAGES */}
       {temoignages.length > 0 && (
         <section className="accueil-temoignages conteneur">
-          <span className="accueil-temoignages__label">Ils nous font confiance</span>
-          <h2>Vos mots précieux</h2>
+          <span className="accueil-temoignages__label">{contenu.temoignages_label}</span>
+          <h2>{contenu.temoignages_titre}</h2>
           <div className="accueil-temoignages__grille">
             {temoignages.map((t) => (
               <div key={t.id} className="accueil-temoignages__carte">
@@ -177,11 +162,11 @@ export default async function PageAccueil() {
         <h2>
           Entrez dans <span className="accent">l'univers Nabe</span>
         </h2>
-        <p>Inscrivez-vous à notre newsletter et découvrez nos nouveautés en avant-première.</p>
+        <p>{contenu.newsletter_texte}</p>
         <form className="accueil-newsletter__form" action="/api/newsletter" method="POST">
           <input type="email" name="email" placeholder="Votre e-mail" required />
           <button type="submit" className="btn btn-or">
-            S'inscrire
+            {contenu.newsletter_bouton}
           </button>
         </form>
       </section>

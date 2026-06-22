@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma';
+import { getContenuPage } from '@/lib/contenu';
 import SurMesureFormulaire from '@/components/site/SurMesureFormulaire';
 import './sur-mesure.css';
 
@@ -6,12 +7,15 @@ export const metadata = { title: 'Sur mesure' };
 export const revalidate = 60;
 
 export default async function PageSurMesure() {
-  const produits = await prisma.produit.findMany({
-    where: { actif: true },
-    include: { images: { orderBy: { ordre: 'asc' }, take: 1 } },
-    orderBy: { createdAt: 'desc' },
-    take: 50,
-  });
+  const [contenu, produits] = await Promise.all([
+    getContenuPage('sur-mesure'),
+    prisma.produit.findMany({
+      where: { actif: true },
+      include: { images: { orderBy: { ordre: 'asc' }, take: 1 } },
+      orderBy: { createdAt: 'desc' },
+      take: 50,
+    }),
+  ]);
 
   const produitsSerialises = produits.map((p) => ({
     id: p.id,
@@ -25,9 +29,9 @@ export default async function PageSurMesure() {
       <section className="surmesure-hero">
         <div className="surmesure-hero__overlay" />
         <div className="surmesure-hero__contenu">
-          <h1>Sur-mesure</h1>
-          <p>Une création unique, pensée pour vous.</p>
-          <span>Chaque bijou raconte une histoire. La vôtre mérite une attention toute particulière.</span>
+          <h1>{contenu.hero_titre}</h1>
+          <p>{contenu.hero_soustitre}</p>
+          <span>{contenu.hero_texte}</span>
         </div>
       </section>
 
@@ -35,27 +39,26 @@ export default async function PageSurMesure() {
         <div className="surmesure-infos__item">
           <span className="surmesure-infos__icone">📅</span>
           <div>
-            <h3>Pré-commande</h3>
-            <p>
-              Une pré-commande pour une taille non disponible nécessite un délai approximatif d'un
-              mois. En renseignant votre email, vous serez prévenu de la mise à disposition du
-              modèle.
-            </p>
+            <h3>{contenu.precommande_titre}</h3>
+            <p>{contenu.precommande_texte}</p>
           </div>
         </div>
         <div className="surmesure-infos__item">
           <span className="surmesure-infos__icone">💍</span>
           <div>
-            <h3>Taille non disponible ?</h3>
-            <p>
-              Si une bague n'est pas disponible dans votre taille, je peux la réaliser sur demande,
-              avec un délai de préparation d'environ deux mois et paiement en amont.
-            </p>
+            <h3>{contenu.taille_titre}</h3>
+            <p>{contenu.taille_texte}</p>
           </div>
         </div>
       </section>
 
-      <SurMesureFormulaire produits={produitsSerialises} />
+      <SurMesureFormulaire
+        produits={produitsSerialises}
+        colonne1Titre={contenu.colonne1_titre}
+        colonne1Texte={contenu.colonne1_texte}
+        colonne2Titre={contenu.colonne2_titre}
+        colonne2Texte={contenu.colonne2_texte}
+      />
     </div>
   );
 }

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { prisma } from '@/lib/prisma';
 import { formaterPrix, LABELS_TYPE_BIJOU } from '@/lib/utils';
+import { getContenuPage } from '@/lib/contenu';
 import FiltresCollections from '@/components/site/FiltresCollections';
 import './collections.css';
 
@@ -31,7 +32,8 @@ export default async function PageCollections({ searchParams }: Props) {
   if (searchParams.tri === 'prix-desc') orderBy = { prix: 'desc' };
   if (searchParams.tri === 'nom') orderBy = { nom: 'asc' };
 
-  const [produits, totalActifs, matieresDisponibles] = await Promise.all([
+  const [contenu, produits, totalActifs, matieresDisponibles] = await Promise.all([
+    getContenuPage('collections'),
     prisma.produit.findMany({
       where,
       include: { images: { orderBy: { ordre: 'asc' }, take: 1 }, matiere: true },
@@ -45,8 +47,8 @@ export default async function PageCollections({ searchParams }: Props) {
     <div className="page-collections">
       <section className="collections-hero">
         <div className="collections-hero__contenu">
-          <h1>Nos Collections</h1>
-          <p>Des bijoux intemporels, façonnés à la main avec passion.</p>
+          <h1>{contenu.hero_titre}</h1>
+          <p>{contenu.hero_soustitre}</p>
         </div>
       </section>
 

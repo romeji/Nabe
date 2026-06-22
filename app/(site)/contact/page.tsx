@@ -1,38 +1,39 @@
+import { getContenuPage } from '@/lib/contenu';
 import ContactFormulaire from '@/components/site/ContactFormulaire';
 import './contact.css';
 
 export const metadata = { title: 'Contact' };
+export const revalidate = 60;
 
-export default function PageContact() {
+export default async function PageContact() {
+  const c = await getContenuPage('contact');
+
   return (
     <div className="page-contact">
       <section className="contact-hero">
         <div className="contact-hero__overlay" />
         <div className="contact-hero__contenu">
-          <h1>Contact</h1>
-          <p>Une question, une envie, un projet ? Je serais ravie d'échanger avec vous.</p>
+          <h1>{c.hero_titre}</h1>
+          <p>{c.hero_soustitre}</p>
         </div>
       </section>
 
       <section className="contact-corps conteneur">
         <div className="contact-corps__infos">
-          <h2>Écrivez-moi</h2>
-          <p>
-            Pour toute demande d'information, collaboration ou projet sur-mesure, remplissez le
-            formulaire ci-contre.
-          </p>
+          <h2>{c.ecrivez_titre}</h2>
+          <p>{c.ecrivez_texte}</p>
 
           <div className="contact-corps__bloc">
             <h3>Email</h3>
-            <p>bonjour@nabe-bijoux.fr</p>
+            <p>{c.email}</p>
           </div>
           <div className="contact-corps__bloc">
             <h3>Téléphone</h3>
-            <p>+33 6 12 34 56 78</p>
+            <p>{c.telephone}</p>
           </div>
           <div className="contact-corps__bloc">
             <h3>Atelier</h3>
-            <p>Lyon, France</p>
+            <p>{c.adresse_atelier}</p>
           </div>
         </div>
 
@@ -42,10 +43,10 @@ export default function PageContact() {
       <section className="contact-rdv conteneur">
         <div className="contact-rdv__image" />
         <div className="contact-rdv__texte">
-          <span>Rendez-vous à l'atelier</span>
-          <h2>L'atelier Nabe vous accueille sur rendez-vous pour découvrir les collections et échanger sur vos envies.</h2>
+          <span>{c.rdv_label}</span>
+          <h2>{c.rdv_texte}</h2>
           <a href="/contact" className="btn btn-primaire">
-            Prendre rendez-vous
+            {c.rdv_bouton}
           </a>
         </div>
       </section>
