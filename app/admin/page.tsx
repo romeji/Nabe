@@ -45,7 +45,7 @@ export default async function PageDashboardAdmin() {
       <div className="admin-stat-grille">
         <div className="admin-stat">
           <div className="admin-stat__label">Chiffre d'affaires (30j)</div>
-          <div className="admin-stat__valeur">{formaterPrix(chiffreAffaires30j._sum.total || 0)}</div>
+          <div className="admin-stat__valeur">{formaterPrix(Number(chiffreAffaires30j._sum.total || 0))}</div>
         </div>
         <div className="admin-stat">
           <div className="admin-stat__label">Bijoux actifs</div>
