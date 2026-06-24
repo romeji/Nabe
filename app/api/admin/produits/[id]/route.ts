@@ -11,7 +11,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
   const produit = await prisma.produit.findUnique({
     where: { id: params.id },
-    include: { images: { orderBy: { ordre: 'asc' } }, categorie: true, matiere: true, mouvementsStock: { orderBy: { createdAt: 'desc' } } },
+    include: { images: { orderBy: { ordre: 'asc' } }, categorie: true, matiere: true, couleurPierre: true, collection: true, mouvementsStock: { orderBy: { createdAt: 'desc' } } },
   });
 
   if (!produit) {

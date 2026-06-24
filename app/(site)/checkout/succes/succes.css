@@ -6,7 +6,7 @@
   justify-content: center;
   text-align: center;
   gap: var(--espace-md);
-  padding: var(--espace-2xl) var(--espace-md);
+  padding: calc(var(--espace-2xl) + 5.5rem) var(--espace-md) var(--espace-2xl);
 }
 
 .page-succes__icone {

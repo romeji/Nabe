@@ -1,0 +1,86 @@
+.gestion-paiement__ajouter {
+  margin-bottom: var(--espace-lg);
+}
+
+.gestion-paiement__formulaire {
+  background-color: var(--nabe-blanc);
+  border: 1px solid var(--nabe-beige-fonce);
+  border-radius: var(--rayon-bordure);
+  padding: var(--espace-md);
+  margin-bottom: var(--espace-lg);
+  max-width: 480px;
+}
+
+.gestion-paiement__erreur {
+  color: var(--nabe-terracotta-fonce);
+  font-size: 0.85rem;
+  margin-top: var(--espace-sm);
+}
+
+.gestion-paiement__actions-form {
+  display: flex;
+  gap: var(--espace-sm);
+  margin-top: var(--espace-md);
+}
+
+.gestion-paiement__vide,
+.gestion-paiement__chargement {
+  color: var(--texte-secondaire);
+  font-style: italic;
+}
+
+.gestion-paiement__liste {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espace-sm);
+  max-width: 480px;
+}
+
+.gestion-paiement__carte {
+  position: relative;
+  background-color: var(--nabe-blanc);
+  border: 1px solid var(--nabe-beige-fonce);
+  border-radius: var(--rayon-bordure);
+  padding: var(--espace-md);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.gestion-paiement__infos strong {
+  display: block;
+  font-size: 0.95rem;
+}
+
+.gestion-paiement__infos span {
+  font-size: 0.8rem;
+  color: var(--texte-secondaire);
+}
+
+.gestion-paiement__badge {
+  position: absolute;
+  top: -8px;
+  right: var(--espace-sm);
+  background-color: var(--nabe-beige);
+  color: var(--nabe-terracotta-fonce);
+  font-size: 0.68rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 10px;
+}
+
+.gestion-paiement__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  align-items: flex-end;
+}
+
+.gestion-paiement__actions button {
+  font-size: 0.75rem;
+  color: var(--nabe-terracotta);
+  text-decoration: underline;
+}
+
+.gestion-paiement__supprimer {
+  color: var(--nabe-terracotta-fonce) !important;
+}

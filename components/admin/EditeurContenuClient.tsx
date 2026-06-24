@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import type { ChampContenu } from '@/lib/registre-contenu';
+import EditeurRiche from './EditeurRiche';
 
 export default function EditeurContenuClient({
   page,
@@ -93,10 +94,9 @@ export default function EditeurContenuClient({
             </div>
 
             {champ.type === 'texte_long' ? (
-              <textarea
-                value={valeurs[champ.cle] ?? ''}
-                onChange={(e) => setValeurs((v) => ({ ...v, [champ.cle]: e.target.value }))}
-                rows={4}
+              <EditeurRiche
+                valeur={valeurs[champ.cle] ?? ''}
+                onChange={(html) => setValeurs((v) => ({ ...v, [champ.cle]: html }))}
               />
             ) : (
               <input

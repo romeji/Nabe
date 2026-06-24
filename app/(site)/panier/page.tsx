@@ -1,16 +1,63 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePanierStore } from '@/lib/store-panier';
 import { formaterPrix } from '@/lib/utils';
+import PopupPanierVide from '@/components/site/PopupPanierVide';
+import '@/components/site/popup-panier-vide.css';
 import './panier.css';
 
 export default function PagePanier() {
   const { articles, retirerArticle, modifierQuantite, total } = usePanierStore();
   const [chargement, setChargement] = useState(false);
   const [erreur, setErreur] = useState('');
+  const [popupVideActive, setPopupVideActive] = useState(false);
+  const [afficherPopupVide, setAfficherPopupVide] = useState(false);
+
+  const [codePromoInput, setCodePromoInput] = useState('');
+  const [codeApplique, setCodeApplique] = useState<{ code: string; reduction: number } | null>(null);
+  const [erreurCode, setErreurCode] = useState('');
+  const [validationEnCours, setValidationEnCours] = useState(false);
+
+  useEffect(() => {
+    fetch('/api/config-public')
+      .then((res) => res.json())
+      .then((data) => {
+        const actif = data.popup_panier_vide_actif === 'true';
+        setPopupVideActive(actif);
+        if (actif && articles.length === 0) setAfficherPopupVide(true);
+      })
+      .catch(() => {});
+  }, [articles.length]);
+
+  async function appliquerCode() {
+    if (!codePromoInput.trim()) return;
+    setValidationEnCours(true);
+    setErreurCode('');
+    try {
+      const res = await fetch('/api/codes-promo/valider', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: codePromoInput, sousTotal: total() }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      setCodeApplique({ code: data.code, reduction: data.reduction });
+    } catch (err: any) {
+      setErreurCode(err.message || 'Code invalide.');
+      setCodeApplique(null);
+    } finally {
+      setValidationEnCours(false);
+    }
+  }
+
+  function retirerCode() {
+    setCodeApplique(null);
+    setCodePromoInput('');
+    setErreurCode('');
+  }
 
   async function gererCheckout() {
     setChargement(true);
@@ -19,7 +66,7 @@ export default function PagePanier() {
       const res = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ articles }),
+        body: JSON.stringify({ articles, codeReduction: codeApplique?.code }),
       });
       const data = await res.json();
       if (data.url) {
@@ -33,6 +80,8 @@ export default function PagePanier() {
     }
   }
 
+  const totalAvecReduction = Math.max(0, total() - (codeApplique?.reduction || 0));
+
   if (articles.length === 0) {
     return (
       <div className="page-panier page-panier--vide conteneur">
@@ -41,6 +90,9 @@ export default function PagePanier() {
         <Link href="/collections" className="btn btn-primaire">
           Découvrir les collections
         </Link>
+        {popupVideActive && afficherPopupVide && (
+          <PopupPanierVide onFermer={() => setAfficherPopupVide(false)} />
+        )}
       </div>
     );
   }
@@ -98,17 +150,48 @@ export default function PagePanier() {
 
         <div className="page-panier__resume">
           <h2>Résumé</h2>
+
+          <div className="page-panier__code-promo">
+            {codeApplique ? (
+              <div className="page-panier__code-applique">
+                <span>✓ Code « {codeApplique.code} » appliqué</span>
+                <button onClick={retirerCode}>Retirer</button>
+              </div>
+            ) : (
+              <>
+                <div className="page-panier__code-champ">
+                  <input
+                    type="text"
+                    placeholder="Code promo"
+                    value={codePromoInput}
+                    onChange={(e) => setCodePromoInput(e.target.value)}
+                  />
+                  <button onClick={appliquerCode} disabled={validationEnCours}>
+                    {validationEnCours ? '...' : 'Appliquer'}
+                  </button>
+                </div>
+                {erreurCode && <p className="page-panier__erreur-code">{erreurCode}</p>}
+              </>
+            )}
+          </div>
+
           <div className="page-panier__ligne">
             <span>Sous-total</span>
             <span>{formaterPrix(total())}</span>
           </div>
+          {codeApplique && (
+            <div className="page-panier__ligne page-panier__ligne-reduction">
+              <span>Réduction</span>
+              <span>−{formaterPrix(codeApplique.reduction)}</span>
+            </div>
+          )}
           <div className="page-panier__ligne">
             <span>Livraison</span>
             <span>Offerte</span>
           </div>
           <div className="page-panier__ligne page-panier__total">
             <span>Total</span>
-            <span>{formaterPrix(total())}</span>
+            <span>{formaterPrix(totalAvecReduction)}</span>
           </div>
 
           {erreur && <p className="page-panier__erreur">{erreur}</p>}

@@ -45,6 +45,7 @@ export const LABELS_PIERRE: Record<string, string> = {
 export const LABELS_DISPONIBILITE: Record<string, string> = {
   EN_STOCK: 'En stock',
   FABRICATION_SUR_COMMANDE: 'Fabrication sur commande',
+  CREATION_SUR_MESURE: 'Création sur mesure',
   PIECE_UNIQUE_DISPO: 'Pièce unique disponible',
   EPUISE: 'Épuisé',
 };

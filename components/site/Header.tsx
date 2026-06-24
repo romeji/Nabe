@@ -1,65 +1,75 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import { usePanierStore } from '@/lib/store-panier';
+import PanneauNavigation from './PanneauNavigation';
+import PanneauRecherche from './PanneauRecherche';
 import './header.css';
-
-const LIENS_NAV = [
-  { href: '/', label: 'Accueil' },
-  { href: '/la-maison', label: 'La Maison' },
-  { href: '/collections', label: 'Collections' },
-  { href: '/sur-mesure', label: 'Sur mesure' },
-  { href: '/journal', label: 'Journal' },
-  { href: '/contact', label: 'Contact' },
-];
 
 export default function Header() {
   const [menuOuvert, setMenuOuvert] = useState(false);
-  const pathname = usePathname();
+  const [rechercheOuverte, setRechercheOuverte] = useState(false);
+  const [aDefile, setADefile] = useState(false);
   const nombreArticles = usePanierStore((state) => state.nombreArticles());
+  const { data: session } = useSession();
+
+  useEffect(() => {
+    function gererScroll() {
+      setADefile(window.scrollY > 20);
+    }
+    gererScroll();
+    window.addEventListener('scroll', gererScroll, { passive: true });
+    return () => window.removeEventListener('scroll', gererScroll);
+  }, []);
 
   return (
-    <header className="nabe-header">
+    <header className={`nabe-header ${aDefile ? 'nabe-header--defile' : ''}`}>
       <div className="nabe-header__conteneur">
         <button
           className="nabe-header__burger"
-          onClick={() => setMenuOuvert(!menuOuvert)}
+          onClick={() => setMenuOuvert(true)}
           aria-label="Menu"
         >
-          ☰
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="nabe-header__svg">
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
         </button>
 
         <Link href="/" className="nabe-header__logo">
           Nabe
         </Link>
 
-        <nav className={`nabe-header__nav ${menuOuvert ? 'ouvert' : ''}`}>
-          {LIENS_NAV.map((lien) => (
-            <Link
-              key={lien.href}
-              href={lien.href}
-              className={`nabe-header__lien ${pathname === lien.href ? 'actif' : ''}`}
-              onClick={() => setMenuOuvert(false)}
-            >
-              {lien.label}
-            </Link>
-          ))}
-        </nav>
-
         <div className="nabe-header__actions">
-          <button className="nabe-header__icone" aria-label="Rechercher">
-            🔍
+          <button className="nabe-header__icone" aria-label="Rechercher" onClick={() => setRechercheOuverte(true)}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="nabe-header__svg">
+              <circle cx="11" cy="11" r="7" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
           </button>
+          <Link href={session?.user ? '/mon-compte' : '/connexion'} className="nabe-header__icone" aria-label="Mon compte">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="nabe-header__svg">
+              <circle cx="12" cy="8" r="4" />
+              <path d="M4 21c0-4 3.5-7 8-7s8 3 8 7" />
+            </svg>
+          </Link>
           <Link href="/panier" className="nabe-header__icone nabe-header__panier" aria-label="Panier">
-            🛍️
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="nabe-header__svg">
+              <path d="M6 8h12l-1 12H7L6 8z" />
+              <path d="M9 8a3 3 0 0 1 6 0" />
+            </svg>
             {nombreArticles > 0 && (
               <span className="nabe-header__badge">{nombreArticles}</span>
             )}
           </Link>
         </div>
       </div>
+
+      <PanneauNavigation ouvert={menuOuvert} onFermer={() => setMenuOuvert(false)} />
+      <PanneauRecherche ouvert={rechercheOuverte} onFermer={() => setRechercheOuverte(false)} />
     </header>
   );
 }

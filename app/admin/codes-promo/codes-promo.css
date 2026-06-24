@@ -1,0 +1,17 @@
+.admin-codes-promo__grille {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: var(--espace-lg);
+  align-items: start;
+}
+
+.admin-codes-promo__grille h2 {
+  font-size: 1.1rem;
+  margin-bottom: var(--espace-sm);
+}
+
+@media (max-width: 1000px) {
+  .admin-codes-promo__grille {
+    grid-template-columns: 1fr;
+  }
+}

@@ -20,8 +20,9 @@ type ProduitFormData = {
   type: string;
   categorieId: string;
   matiereId: string;
+  collectionId: string;
   pierre: string;
-  couleurPierre: string;
+  couleurPierreId: string;
   delaiFabrication: string;
   fabriqueEnFrance: boolean;
   tailleSurMesure: boolean;
@@ -39,6 +40,8 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
   const router = useRouter();
   const [categories, setCategories] = useState<OptionSimple[]>([]);
   const [matieres, setMatieres] = useState<OptionSimple[]>([]);
+  const [collections, setCollections] = useState<OptionSimple[]>([]);
+  const [couleursPierre, setCouleursPierre] = useState<OptionSimple[]>([]);
   const [chargementOptions, setChargementOptions] = useState(true);
   const [donnees, setDonnees] = useState<ProduitFormData>({
     nom: produitInitial?.nom || '',
@@ -47,8 +50,9 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
     type: produitInitial?.type || 'BAGUE',
     categorieId: produitInitial?.categorieId || '',
     matiereId: produitInitial?.matiereId || '',
+    collectionId: produitInitial?.collectionId || '',
     pierre: produitInitial?.pierre || 'AUCUNE',
-    couleurPierre: produitInitial?.couleurPierre || '',
+    couleurPierreId: produitInitial?.couleurPierreId || '',
     delaiFabrication: produitInitial?.delaiFabrication || '',
     fabriqueEnFrance: produitInitial?.fabriqueEnFrance ?? true,
     tailleSurMesure: produitInitial?.tailleSurMesure ?? false,
@@ -63,20 +67,26 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
   const [uploadEnCours, setUploadEnCours] = useState(false);
   const [erreur, setErreur] = useState('');
 
-  // Charge les catégories et matières existantes (gérées dans Admin > Catégories / Matières)
+  // Charge les catégories, matières, collections et couleurs de pierre existantes
   useEffect(() => {
     async function chargerOptions() {
       try {
-        const [resCategories, resMatieres] = await Promise.all([
+        const [resCategories, resMatieres, resCollections, resCouleurs] = await Promise.all([
           fetch('/api/admin/categories'),
           fetch('/api/admin/matieres'),
+          fetch('/api/admin/collections'),
+          fetch('/api/admin/couleurs-pierre'),
         ]);
         const dataCategories = await resCategories.json();
         const dataMatieres = await resMatieres.json();
+        const dataCollections = await resCollections.json();
+        const dataCouleurs = await resCouleurs.json();
+        setCouleursPierre(dataCouleurs);
         setCategories(dataCategories);
         setMatieres(dataMatieres);
+        setCollections(dataCollections);
       } catch (err) {
-        console.error('Erreur chargement catégories/matières:', err);
+        console.error('Erreur chargement catégories/matières/collections:', err);
       } finally {
         setChargementOptions(false);
       }
@@ -170,6 +180,8 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
         ...donnees,
         categorieId: donnees.categorieId || null,
         matiereId: donnees.matiereId || null,
+        collectionId: donnees.collectionId || null,
+        couleurPierreId: donnees.couleurPierreId || null,
       };
 
       const res = await fetch(url, {
@@ -287,16 +299,39 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
           </div>
           <div>
             <label>Couleur de la pierre</label>
-            <input
-              type="text"
-              placeholder="Ex : Blanc, Champagne, Rose"
-              value={donnees.couleurPierre}
-              onChange={(e) => majChamp('couleurPierre', e.target.value)}
-            />
+            <select value={donnees.couleurPierreId} onChange={(e) => majChamp('couleurPierreId', e.target.value)} disabled={chargementOptions}>
+              <option value="">Aucune couleur</option>
+              {couleursPierre.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.nom}
+                </option>
+              ))}
+            </select>
+            {couleursPierre.length === 0 && !chargementOptions && (
+              <p className="formulaire-produit__aide">
+                Aucune couleur créée. Ajoutez-en depuis <a href="/admin/couleurs-pierre">Admin &gt; Couleurs de pierre</a>.
+              </p>
+            )}
           </div>
         </div>
 
         <div className="admin-form__ligne">
+          <div>
+            <label>Collection (facultatif)</label>
+            <select value={donnees.collectionId} onChange={(e) => majChamp('collectionId', e.target.value)} disabled={chargementOptions}>
+              <option value="">Aucune collection</option>
+              {collections.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.nom}
+                </option>
+              ))}
+            </select>
+            {collections.length === 0 && !chargementOptions && (
+              <p className="formulaire-produit__aide">
+                Aucune collection créée. Ajoutez-en depuis <a href="/admin/collections">Admin &gt; Collections</a>.
+              </p>
+            )}
+          </div>
           <div>
             <label>Délai de fabrication</label>
             <input
@@ -306,7 +341,6 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
               onChange={(e) => majChamp('delaiFabrication', e.target.value)}
             />
           </div>
-          <div />
         </div>
 
         <label className="admin-form__case">

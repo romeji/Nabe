@@ -154,6 +154,22 @@ input, textarea, select {
 }
 
 /* Texte accent (mots colorés dans les titres) */
+/* Bouton favori (coeur), réutilisé sur plusieurs pages */
+.bouton-favori {
+  font-size: 1.1rem;
+  color: var(--texte-secondaire);
+  transition: var(--transition-douce);
+  line-height: 1;
+}
+
+.bouton-favori:hover {
+  color: var(--nabe-terracotta);
+}
+
+.bouton-favori.actif {
+  color: var(--nabe-terracotta);
+}
+
 .accent {
   color: var(--nabe-terracotta);
   font-style: italic;

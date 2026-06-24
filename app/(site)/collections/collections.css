@@ -1,27 +1,3 @@
-.collections-hero {
-  background-image: url('/images/collections-hero.jpg');
-  background-size: cover;
-  background-position: center;
-  background-color: var(--nabe-beige-fonce);
-  min-height: 260px;
-  display: flex;
-  align-items: center;
-  color: var(--texte-clair);
-}
-
-.collections-hero__contenu {
-  max-width: var(--largeur-max);
-  margin: 0 auto;
-  padding: 0 var(--espace-md);
-  width: 100%;
-}
-
-.collections-hero__contenu h1 {
-  font-size: 2.6rem;
-  color: var(--texte-clair);
-  margin-bottom: var(--espace-xs);
-}
-
 .collections-corps {
   display: flex;
   gap: var(--espace-xl);
@@ -34,9 +10,14 @@
 }
 
 .collections-resultats__entete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: var(--espace-md);
   color: var(--texte-secondaire);
   font-size: 0.9rem;
+  flex-wrap: wrap;
+  gap: var(--espace-sm);
 }
 
 .collections-grille {
@@ -46,6 +27,11 @@
 }
 
 .produit-carte {
+  display: block;
+  position: relative;
+}
+
+.produit-carte__lien {
   display: block;
 }
 
@@ -87,6 +73,7 @@
   align-items: center;
   justify-content: center;
   font-size: 1rem;
+  z-index: 1;
 }
 
 .produit-carte h3 {

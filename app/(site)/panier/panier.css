@@ -1,5 +1,5 @@
 .page-panier {
-  padding: var(--espace-xl) var(--espace-md) var(--espace-2xl);
+  padding: calc(var(--espace-xl) + 5.5rem) var(--espace-md) var(--espace-2xl);
   min-height: 60vh;
 }
 
@@ -110,6 +110,58 @@
 .page-panier__resume h2 {
   font-size: 1.2rem;
   margin-bottom: var(--espace-md);
+}
+
+.page-panier__code-promo {
+  margin-bottom: var(--espace-md);
+}
+
+.page-panier__code-champ {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.page-panier__code-champ input {
+  flex: 1;
+  padding: 0.6rem;
+  border: 1px solid var(--nabe-beige-fonce);
+  border-radius: var(--rayon-bordure);
+  font-size: 0.85rem;
+}
+
+.page-panier__code-champ button {
+  padding: 0.6rem 0.9rem;
+  background-color: var(--nabe-brun);
+  color: var(--texte-clair);
+  border-radius: var(--rayon-bordure);
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.page-panier__erreur-code {
+  color: var(--nabe-terracotta-fonce);
+  font-size: 0.78rem;
+  margin-top: 0.3rem;
+}
+
+.page-panier__code-applique {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #e3f0e3;
+  color: #2e6b2e;
+  padding: 0.6rem;
+  border-radius: var(--rayon-bordure);
+  font-size: 0.85rem;
+}
+
+.page-panier__code-applique button {
+  text-decoration: underline;
+  font-size: 0.78rem;
+}
+
+.page-panier__ligne-reduction {
+  color: #2e6b2e !important;
 }
 
 .page-panier__ligne {

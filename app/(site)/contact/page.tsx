@@ -1,5 +1,7 @@
 import { getContenuPage } from '@/lib/contenu';
+import TexteRiche from '@/components/site/TexteRiche';
 import ContactFormulaire from '@/components/site/ContactFormulaire';
+import '../hero-commun.css';
 import './contact.css';
 
 export const metadata = { title: 'Contact' };
@@ -10,18 +12,18 @@ export default async function PageContact() {
 
   return (
     <div className="page-contact">
-      <section className="contact-hero">
-        <div className="contact-hero__overlay" />
-        <div className="contact-hero__contenu">
+      <section className="hero-commun" style={{ backgroundImage: "url('/images/contact-hero.jpg')" }}>
+        <div className="hero-commun__overlay" />
+        <div className="hero-commun__contenu">
           <h1>{c.hero_titre}</h1>
-          <p>{c.hero_soustitre}</p>
+          <TexteRiche html={c.hero_soustitre} as="span" />
         </div>
       </section>
 
       <section className="contact-corps conteneur">
         <div className="contact-corps__infos">
           <h2>{c.ecrivez_titre}</h2>
-          <p>{c.ecrivez_texte}</p>
+          <TexteRiche html={c.ecrivez_texte} />
 
           <div className="contact-corps__bloc">
             <h3>Email</h3>
@@ -44,7 +46,7 @@ export default async function PageContact() {
         <div className="contact-rdv__image" />
         <div className="contact-rdv__texte">
           <span>{c.rdv_label}</span>
-          <h2>{c.rdv_texte}</h2>
+          <h2><TexteRiche html={c.rdv_texte} as="span" /></h2>
           <a href="/contact" className="btn btn-primaire">
             {c.rdv_bouton}
           </a>

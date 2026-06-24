@@ -1,22 +1,78 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import { getServerSession } from 'next-auth';
 import { prisma } from '@/lib/prisma';
 import { getContenuPage } from '@/lib/contenu';
+import { getConfigSite, configEstActive } from '@/lib/config-site';
+import { authClientOptions } from '@/lib/auth-client';
+import CarrouselProduits from '@/components/site/CarrouselProduits';
+import TexteRiche from '@/components/site/TexteRiche';
+import CategoriesAccueil from '@/components/site/CategoriesAccueil';
 import './accueil.css';
 
 export const revalidate = 60;
 
+function serialiser(produits: any[]) {
+  return produits.map((p) => ({
+    id: p.id,
+    nom: p.nom,
+    slug: p.slug,
+    prix: p.prix.toString(),
+    image: p.images[0]?.url || null,
+  }));
+}
+
 export default async function PageAccueil() {
-  const [contenu, produitsEnAvant, temoignages] = await Promise.all([
-    getContenuPage('accueil'),
-    prisma.produit.findMany({
-      where: { enAvant: true, actif: true },
-      include: { images: { orderBy: { ordre: 'asc' }, take: 1 } },
-      take: 4,
-      orderBy: { createdAt: 'desc' },
-    }),
-    prisma.temoignage.findMany({ where: { actif: true }, orderBy: { ordre: 'asc' }, take: 3 }),
-  ]);
+  const config = await getConfigSite();
+  const session = await getServerSession(authClientOptions);
+  const clientId = (session?.user as any)?.id as string | undefined;
+
+  const carrousselSelectionActif = configEstActive(config, 'carrousel_selection_actif');
+  const carrousselBestsellerActif = configEstActive(config, 'carrousel_bestseller_actif');
+  const carrousselNouvelleCollectionActif = configEstActive(config, 'carrousel_nouvelle_collection_actif');
+  const categoriesAccueilActif = configEstActive(config, 'categories_accueil_actif');
+  const idsCategoriesAccueil = (config.categories_accueil_ids || '').split(',').filter(Boolean);
+
+  const [contenu, produitsEnAvant, bestsellers, produitsNouvelleCollection, temoignages, favorisIds, categoriesAccueil] =
+    await Promise.all([
+      getContenuPage('accueil'),
+      carrousselSelectionActif
+        ? prisma.produit.findMany({
+            where: { enAvant: true, actif: true },
+            include: { images: { orderBy: { ordre: 'asc' }, take: 1 } },
+            take: 8,
+            orderBy: { createdAt: 'desc' },
+          })
+        : Promise.resolve([]),
+      carrousselBestsellerActif
+        ? prisma.produit.findMany({
+            where: { actif: true },
+            include: { images: { orderBy: { ordre: 'asc' }, take: 1 } },
+            orderBy: { nombreVentes: 'desc' },
+            take: 8,
+          })
+        : Promise.resolve([]),
+      carrousselNouvelleCollectionActif && config.carrousel_nouvelle_collection_id
+        ? prisma.produit.findMany({
+            where: { actif: true, collectionId: config.carrousel_nouvelle_collection_id },
+            include: { images: { orderBy: { ordre: 'asc' }, take: 1 } },
+            take: 8,
+          })
+        : Promise.resolve([]),
+      prisma.temoignage.findMany({ where: { actif: true }, orderBy: { ordre: 'asc' }, take: 3 }),
+      clientId
+        ? prisma.favori.findMany({ where: { clientId }, select: { produitId: true } })
+        : Promise.resolve([]),
+      categoriesAccueilActif && idsCategoriesAccueil.length > 0
+        ? prisma.categorie.findMany({ where: { id: { in: idsCategoriesAccueil } } })
+        : Promise.resolve([]),
+    ]);
+
+  const idsFavoris = favorisIds.map((f) => f.produitId);
+  // On respecte l'ordre choisi par l'admin plutôt que l'ordre renvoyé par la requête
+  const categoriesAccueilOrdonnees = idsCategoriesAccueil
+    .map((id) => categoriesAccueil.find((c) => c.id === id))
+    .filter(Boolean) as typeof categoriesAccueil;
 
   return (
     <div className="page-accueil">
@@ -25,7 +81,7 @@ export default async function PageAccueil() {
         <div className="accueil-hero__overlay" />
         <div className="accueil-hero__contenu">
           <h1 className="accueil-hero__logo">{contenu.hero_logo}</h1>
-          <p className="accueil-hero__soustitre">{contenu.hero_soustitre}</p>
+          <TexteRiche className="accueil-hero__soustitre" html={contenu.hero_soustitre} />
           <div className="accueil-hero__actions">
             <Link href="/collections" className="btn btn-primaire">
               {contenu.hero_bouton_1}
@@ -36,6 +92,27 @@ export default async function PageAccueil() {
           </div>
         </div>
       </section>
+
+      {/* CATEGORIES EN AVANT (togglable, juste sous le hero) */}
+      {categoriesAccueilActif && (
+        <CategoriesAccueil
+          categories={categoriesAccueilOrdonnees.map((c) => ({
+            id: c.id,
+            nom: c.nom,
+            slug: c.slug,
+            image: c.image,
+          }))}
+        />
+      )}
+
+      {/* NOUVELLE COLLECTION (togglable, au-dessus de "Notre histoire") */}
+      {carrousselNouvelleCollectionActif && produitsNouvelleCollection.length > 0 && (
+        <section className="accueil-carrousel conteneur">
+          <span className="accueil-carrousel__label">Nouvelle collection</span>
+          <h2>Nos toutes dernières créations</h2>
+          <CarrouselProduits produits={serialiser(produitsNouvelleCollection)} favorisIds={idsFavoris} />
+        </section>
+      )}
 
       {/* NOTRE HISTOIRE */}
       <section className="accueil-histoire conteneur">
@@ -52,45 +129,25 @@ export default async function PageAccueil() {
           <h2>
             Chaque bijou <span className="accent">raconte une histoire.</span>
           </h2>
-          <p>{contenu.histoire_texte}</p>
+          <TexteRiche html={contenu.histoire_texte} />
           <Link href="/la-maison" className="accueil-histoire__lien">
             {contenu.histoire_lien}
           </Link>
         </div>
       </section>
 
-      {/* NOS COLLECTIONS */}
-      <section className="accueil-collections conteneur">
-        <span className="accueil-collections__label">{contenu.collections_label}</span>
-        <div className="accueil-collections__grille">
+      {/* SELECTION (carrousel des bijoux mis en avant) */}
+      {carrousselSelectionActif && (
+        <section className="accueil-carrousel conteneur">
+          <span className="accueil-carrousel__label">{contenu.collections_label}</span>
+          <h2>Notre sélection</h2>
           {produitsEnAvant.length > 0 ? (
-            produitsEnAvant.map((produit) => (
-              <Link
-                key={produit.id}
-                href={`/collections/${produit.slug}`}
-                className="accueil-collections__carte"
-              >
-                <div className="accueil-collections__image">
-                  {produit.images[0] ? (
-                    <Image
-                      src={produit.images[0].url}
-                      alt={produit.images[0].alt || produit.nom}
-                      width={300}
-                      height={300}
-                    />
-                  ) : (
-                    <div className="accueil-collections__placeholder" />
-                  )}
-                </div>
-                <h3>{produit.nom}</h3>
-                <span className="accueil-collections__decouvrir">Découvrir →</span>
-              </Link>
-            ))
+            <CarrouselProduits produits={serialiser(produitsEnAvant)} favorisIds={idsFavoris} />
           ) : (
             <p className="accueil-collections__vide">{contenu.collections_vide}</p>
           )}
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* SAVOIR-FAIRE */}
       <section className="accueil-savoirfaire conteneur">
@@ -105,7 +162,7 @@ export default async function PageAccueil() {
             </div>
             <span className="accueil-savoirfaire__numero">01</span>
             <h3>{contenu.savoirfaire_etape1_titre}</h3>
-            <p>{contenu.savoirfaire_etape1_texte}</p>
+            <TexteRiche html={contenu.savoirfaire_etape1_texte} />
           </div>
           <div className="accueil-savoirfaire__etape">
             <div className="accueil-savoirfaire__image">
@@ -113,7 +170,7 @@ export default async function PageAccueil() {
             </div>
             <span className="accueil-savoirfaire__numero">02</span>
             <h3>{contenu.savoirfaire_etape2_titre}</h3>
-            <p>{contenu.savoirfaire_etape2_texte}</p>
+            <TexteRiche html={contenu.savoirfaire_etape2_texte} />
           </div>
           <div className="accueil-savoirfaire__etape">
             <div className="accueil-savoirfaire__image">
@@ -121,10 +178,19 @@ export default async function PageAccueil() {
             </div>
             <span className="accueil-savoirfaire__numero">03</span>
             <h3>{contenu.savoirfaire_etape3_titre}</h3>
-            <p>{contenu.savoirfaire_etape3_texte}</p>
+            <TexteRiche html={contenu.savoirfaire_etape3_texte} />
           </div>
         </div>
       </section>
+
+      {/* BESTSELLERS (togglable, au-dessus de "Pièce signature") */}
+      {carrousselBestsellerActif && bestsellers.length > 0 && (
+        <section className="accueil-carrousel conteneur">
+          <span className="accueil-carrousel__label">Meilleures ventes</span>
+          <h2>Vos bijoux préférés</h2>
+          <CarrouselProduits produits={serialiser(bestsellers)} favorisIds={idsFavoris} />
+        </section>
+      )}
 
       {/* PIECE SIGNATURE */}
       <section className="accueil-signature">
@@ -162,7 +228,7 @@ export default async function PageAccueil() {
         <h2>
           Entrez dans <span className="accent">l'univers Nabe</span>
         </h2>
-        <p>{contenu.newsletter_texte}</p>
+        <TexteRiche html={contenu.newsletter_texte} />
         <form className="accueil-newsletter__form" action="/api/newsletter" method="POST">
           <input type="email" name="email" placeholder="Votre e-mail" required />
           <button type="submit" className="btn btn-or">

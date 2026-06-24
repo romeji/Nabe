@@ -36,6 +36,8 @@ export async function POST(req: NextRequest) {
       const articlesMeta: { id: string; q: number; taille: string }[] = JSON.parse(
         session.metadata?.articles || '[]'
       );
+      const clientId = session.metadata?.clientId || undefined;
+      const codeReductionId = session.metadata?.codeReductionId || undefined;
 
       const produitsDb = await prisma.produit.findMany({
         where: { id: { in: articlesMeta.map((a) => a.id) } },
@@ -43,17 +45,21 @@ export async function POST(req: NextRequest) {
 
       const sousTotal = (session.amount_subtotal || 0) / 100;
       const total = (session.amount_total || 0) / 100;
+      const montantReduction = Math.max(0, sousTotal - total);
 
       const commande = await prisma.commande.create({
         data: {
           numero: genererNumeroCommande(),
           statut: 'PAYEE',
+          clientId,
           clientNom: session.customer_details?.name || 'Client',
           clientEmail: session.customer_details?.email || '',
           adresseLivraison: session.shipping_details?.address?.line1 || undefined,
           ville: session.shipping_details?.address?.city || undefined,
           codePostal: session.shipping_details?.address?.postal_code || undefined,
           pays: session.shipping_details?.address?.country || 'France',
+          codeReductionId,
+          montantReduction,
           sousTotal,
           fraisLivraison: 0,
           total,
@@ -75,13 +81,13 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      // Décrémente le stock et enregistre le mouvement
+      // Décrémente le stock, incrémente le compteur de ventes et enregistre le mouvement
       for (const a of articlesMeta) {
         const produit = produitsDb.find((p) => p.id === a.id);
         if (produit) {
           await prisma.produit.update({
             where: { id: produit.id },
-            data: { stock: { decrement: a.q } },
+            data: { stock: { decrement: a.q }, nombreVentes: { increment: a.q } },
           });
           await prisma.mouvementStock.create({
             data: {
@@ -93,6 +99,10 @@ export async function POST(req: NextRequest) {
           });
         }
       }
+
+      // Le compteur d'utilisation du code de réduction est dérivé en comptant
+      // les commandes liées (relation Commande -> CodeReduction), pas besoin
+      // d'incrément manuel séparé ici.
     } catch (error) {
       console.error('Erreur traitement webhook:', error);
       return NextResponse.json({ error: 'Erreur traitement' }, { status: 500 });

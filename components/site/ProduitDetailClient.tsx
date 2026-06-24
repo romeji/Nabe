@@ -4,11 +4,11 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePanierStore } from '@/lib/store-panier';
-import {
-  formaterPrix,
-  LABELS_PIERRE,
-  LABELS_DISPONIBILITE,
-} from '@/lib/utils';
+import { formaterPrix, LABELS_PIERRE } from '@/lib/utils';
+import BoutonFavori from './BoutonFavori';
+import GuideTailles from './GuideTailles';
+import AccordeonProduit from './AccordeonProduit';
+import ReassuranceProduit from './ReassuranceProduit';
 
 type ImageProduit = { id: string; url: string; alt: string | null };
 type Produit = {
@@ -18,6 +18,7 @@ type Produit = {
   description: string;
   prix: string;
   matiere: { nom: string } | null;
+  collection: { nom: string; slug: string } | null;
   pierre: string;
   delaiFabrication: string | null;
   fabriqueEnFrance: boolean;
@@ -27,12 +28,24 @@ type Produit = {
   images: ImageProduit[];
 };
 
+type Suggestion = {
+  id: string;
+  nom: string;
+  slug: string;
+  prix: string;
+  images: { url: string }[];
+};
+
 export default function ProduitDetailClient({
   produit,
   suggestions,
+  suggestionsActives,
+  estFavori,
 }: {
   produit: Produit;
-  suggestions: any[];
+  suggestions: Suggestion[];
+  suggestionsActives: boolean;
+  estFavori: boolean;
 }) {
   const [imageActive, setImageActive] = useState(0);
   const [tailleChoisie, setTailleChoisie] = useState('');
@@ -94,9 +107,19 @@ export default function ProduitDetailClient({
         </div>
 
         <div className="produit-infos">
-          <h1>{produit.nom}</h1>
+          <div className="produit-infos__entete">
+            <div>
+              {produit.collection && (
+                <Link href={`/collections?collection=${produit.collection.slug}`} className="produit-infos__collection">
+                  {produit.collection.nom}
+                </Link>
+              )}
+              <h1>{produit.nom}</h1>
+            </div>
+            <BoutonFavori produitId={produit.id} initialementFavori={estFavori} className="produit-infos__coeur" />
+          </div>
+
           <p className="produit-infos__prix">{formaterPrix(produit.prix)}</p>
-          <p className="produit-infos__description">{produit.description}</p>
 
           <ul className="produit-infos__caracteristiques">
             {produit.matiere && (
@@ -115,15 +138,14 @@ export default function ProduitDetailClient({
               </li>
             )}
             {produit.fabriqueEnFrance && <li>Fabriqué à la main en France</li>}
-            <li>
-              <strong>Taille :</strong>{' '}
-              {produit.tailleSurMesure ? 'Sur mesure' : 'Voir tailles disponibles'}
-            </li>
           </ul>
 
           {produit.taillesDisponibles.length > 0 && (
             <div className="produit-infos__champ">
-              <label>Taille</label>
+              <div className="produit-infos__label-taille">
+                <label>Taille</label>
+                <GuideTailles trigger={<span className="guide-tailles__lien">Trouver ma taille</span>} />
+              </div>
               <select value={tailleChoisie} onChange={(e) => setTailleChoisie(e.target.value)}>
                 <option value="">Choisir une taille</option>
                 {produit.taillesDisponibles.map((t) => (
@@ -132,6 +154,10 @@ export default function ProduitDetailClient({
                   </option>
                 ))}
               </select>
+              <p className="produit-infos__precommande">
+                Vous ne trouvez pas votre taille,{' '}
+                <Link href="/sur-mesure">contactez-moi pour une pré-commande</Link>.
+              </p>
             </div>
           )}
 
@@ -156,13 +182,13 @@ export default function ProduitDetailClient({
               : 'Ajouter au panier 🛍️'}
           </button>
 
-          <p className="produit-infos__rassurance">
-            Livraison offerte · Retours sous 14 jours · Paiement sécurisé
-          </p>
+          <ReassuranceProduit />
+
+          <AccordeonProduit description={produit.description} />
         </div>
       </div>
 
-      {suggestions.length > 0 && (
+      {suggestionsActives && suggestions.length > 0 && (
         <div className="produit-suggestions conteneur">
           <h2>Vous aimerez aussi</h2>
           <div className="produit-suggestions__grille">
@@ -174,6 +200,7 @@ export default function ProduitDetailClient({
                   <div className="produit-suggestions__placeholder" />
                 )}
                 <p>{s.nom}</p>
+                <span>{formaterPrix(s.prix)}</span>
               </Link>
             ))}
           </div>

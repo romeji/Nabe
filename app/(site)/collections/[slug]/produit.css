@@ -69,9 +69,31 @@
   background-color: var(--nabe-beige-fonce);
 }
 
+.produit-infos__entete {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--espace-sm);
+}
+
+.produit-infos__collection {
+  display: inline-block;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--nabe-terracotta);
+  margin-bottom: 0.3rem;
+}
+
 .produit-infos h1 {
   font-size: 2.2rem;
   margin-bottom: var(--espace-xs);
+}
+
+.produit-infos__coeur {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+  margin-top: 0.3rem;
 }
 
 .produit-infos__prix {
@@ -111,6 +133,12 @@
   margin-bottom: var(--espace-md);
 }
 
+.produit-infos__label-taille {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
 .produit-infos__champ label {
   display: block;
   font-size: 0.8rem;
@@ -118,6 +146,17 @@
   text-transform: uppercase;
   margin-bottom: 0.4rem;
   color: var(--texte-secondaire);
+}
+
+.produit-infos__precommande {
+  font-size: 0.8rem;
+  color: var(--texte-secondaire);
+  margin-top: 0.4rem;
+}
+
+.produit-infos__precommande a {
+  color: var(--nabe-terracotta);
+  text-decoration: underline;
 }
 
 .produit-infos__champ select {
@@ -151,10 +190,62 @@
   margin-bottom: var(--espace-md);
 }
 
-.produit-infos__rassurance {
-  font-size: 0.75rem;
-  color: var(--texte-secondaire);
+/* Réassurance (fabrication / livraison / paiement) */
+.reassurance-produit {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--espace-sm);
+  margin-bottom: var(--espace-lg);
+  padding: var(--espace-sm) 0;
+  border-top: 1px solid var(--nabe-beige-fonce);
+  border-bottom: 1px solid var(--nabe-beige-fonce);
+}
+
+.reassurance-produit__item {
   text-align: center;
+}
+
+.reassurance-produit__item span {
+  font-size: 1.2rem;
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+.reassurance-produit__item p {
+  font-size: 0.72rem;
+  color: var(--texte-secondaire);
+}
+
+/* Accordéon produit (description / satisfait ou remboursé) */
+.accordeon-produit__item {
+  border-bottom: 1px solid var(--nabe-beige-fonce);
+}
+
+.accordeon-produit__entete {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--espace-sm) 0;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.accordeon-produit__entete span {
+  color: var(--nabe-terracotta);
+  font-size: 1.1rem;
+}
+
+.accordeon-produit__contenu {
+  padding-bottom: var(--espace-md);
+  color: var(--texte-secondaire);
+  font-size: 0.9rem;
+}
+
+.accordeon-produit__contenu h4 {
+  font-size: 0.95rem;
+  margin-bottom: 0.3rem;
+  color: var(--texte-principal);
 }
 
 .produit-suggestions {
@@ -194,6 +285,14 @@
 .produit-suggestions__carte p {
   font-size: 0.9rem;
   text-align: center;
+  margin-bottom: 0.2rem;
+}
+
+.produit-suggestions__carte span {
+  display: block;
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.85rem;
 }
 
 @media (max-width: 900px) {

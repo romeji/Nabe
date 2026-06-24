@@ -10,17 +10,10 @@ export const resend = new Resend(process.env.RESEND_API_KEY || '');
 export const EMAIL_EXPEDITEUR = process.env.RESEND_FROM_EMAIL || 'Nabe <onboarding@resend.dev>';
 
 /**
- * Génère un email HTML simple et élégant à partir d'un sujet et d'un contenu texte.
- * Le contenu est découpé en paragraphes sur les doubles retours à la ligne.
+ * Génère un email HTML élégant à partir d'un sujet et d'un contenu déjà au
+ * format HTML (produit par l'éditeur de texte riche du backoffice).
  */
-export function genererHtmlNewsletter(sujet: string, contenu: string): string {
-  const paragraphes = contenu
-    .split(/\n\s*\n/)
-    .map((p) => p.trim())
-    .filter(Boolean)
-    .map((p) => `<p style="margin: 0 0 16px; color: #5c4632; line-height: 1.6;">${p.replace(/\n/g, '<br/>')}</p>`)
-    .join('');
-
+export function genererHtmlNewsletter(sujet: string, contenuHtml: string): string {
   return `
   <!DOCTYPE html>
   <html lang="fr">
@@ -35,9 +28,9 @@ export function genererHtmlNewsletter(sujet: string, contenu: string): string {
                 </td>
               </tr>
               <tr>
-                <td style="padding: 32px;">
+                <td style="padding: 32px; color:#5c4632; line-height:1.6;">
                   <h1 style="font-size: 20px; color:#3d2e1f; margin: 0 0 20px;">${sujet}</h1>
-                  ${paragraphes}
+                  ${contenuHtml}
                 </td>
               </tr>
               <tr>

@@ -13,16 +13,17 @@ const schemaProduit = z.object({
   pierre: z
     .enum(['DIAMANT', 'PERLE', 'PIERRE_DE_LUNE', 'QUARTZ', 'TOPAZE', 'SAPHIR', 'EMERAUDE', 'AUCUNE'])
     .optional(),
-  couleurPierre: z.string().optional().nullable(),
+  couleurPierreId: z.string().optional().nullable(),
   delaiFabrication: z.string().optional().nullable(),
   fabriqueEnFrance: z.boolean().optional(),
   tailleSurMesure: z.boolean().optional(),
   taillesDisponibles: z.array(z.string()).optional(),
   disponibilite: z
-    .enum(['EN_STOCK', 'FABRICATION_SUR_COMMANDE', 'PIECE_UNIQUE_DISPO', 'EPUISE'])
+    .enum(['EN_STOCK', 'FABRICATION_SUR_COMMANDE', 'CREATION_SUR_MESURE', 'PIECE_UNIQUE_DISPO', 'EPUISE'])
     .optional(),
   stock: z.number().int().min(0).optional(),
   categorieId: z.string().optional().nullable(),
+  collectionId: z.string().optional().nullable(),
   actif: z.boolean().optional(),
   enAvant: z.boolean().optional(),
   images: z
@@ -37,7 +38,7 @@ export async function GET(req: NextRequest) {
   }
 
   const produits = await prisma.produit.findMany({
-    include: { images: { orderBy: { ordre: 'asc' } }, categorie: true, matiere: true },
+    include: { images: { orderBy: { ordre: 'asc' } }, categorie: true, matiere: true, couleurPierre: true },
     orderBy: { createdAt: 'desc' },
   });
 
@@ -69,7 +70,7 @@ export async function POST(req: NextRequest) {
         type: donnees.type,
         matiereId: donnees.matiereId || undefined,
         pierre: donnees.pierre || 'AUCUNE',
-        couleurPierre: donnees.couleurPierre || undefined,
+        couleurPierreId: donnees.couleurPierreId || undefined,
         delaiFabrication: donnees.delaiFabrication || undefined,
         fabriqueEnFrance: donnees.fabriqueEnFrance ?? true,
         tailleSurMesure: donnees.tailleSurMesure ?? false,
@@ -77,6 +78,7 @@ export async function POST(req: NextRequest) {
         disponibilite: donnees.disponibilite || 'EN_STOCK',
         stock: donnees.stock ?? 0,
         categorieId: donnees.categorieId || undefined,
+        collectionId: donnees.collectionId || undefined,
         actif: donnees.actif ?? true,
         enAvant: donnees.enAvant ?? false,
         images: donnees.images

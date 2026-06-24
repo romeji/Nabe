@@ -1,0 +1,117 @@
+.gestion-adresses__ajouter {
+  margin-bottom: var(--espace-lg);
+}
+
+.gestion-adresses__formulaire {
+  background-color: var(--nabe-blanc);
+  border: 1px solid var(--nabe-beige-fonce);
+  border-radius: var(--rayon-bordure);
+  padding: var(--espace-md);
+  margin-bottom: var(--espace-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  max-width: 560px;
+}
+
+.gestion-adresses__formulaire label {
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--texte-secondaire);
+}
+
+.gestion-adresses__formulaire input {
+  padding: 0.7rem;
+  border: 1px solid var(--nabe-beige-fonce);
+  border-radius: var(--rayon-bordure);
+  width: 100%;
+}
+
+.gestion-adresses__case {
+  display: flex !important;
+  align-items: center;
+  gap: 0.5rem;
+  text-transform: none !important;
+  font-size: 0.9rem !important;
+  color: var(--texte-principal) !important;
+}
+
+.gestion-adresses__erreur {
+  color: var(--nabe-terracotta-fonce);
+  font-size: 0.85rem;
+}
+
+.gestion-adresses__actions-form {
+  display: flex;
+  gap: var(--espace-sm);
+  margin-top: var(--espace-sm);
+}
+
+.gestion-adresses__vide {
+  color: var(--texte-secondaire);
+  font-style: italic;
+}
+
+.gestion-adresses__liste {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--espace-md);
+}
+
+.gestion-adresses__carte {
+  position: relative;
+  background-color: var(--nabe-blanc);
+  border: 1px solid var(--nabe-beige-fonce);
+  border-radius: var(--rayon-bordure);
+  padding: var(--espace-md);
+  font-size: 0.9rem;
+}
+
+.gestion-adresses__carte p {
+  color: var(--texte-secondaire);
+  margin-bottom: 0.2rem;
+}
+
+.gestion-adresses__carte strong {
+  display: block;
+  margin-bottom: 0.3rem;
+}
+
+.gestion-adresses__badge {
+  position: absolute;
+  top: var(--espace-sm);
+  right: var(--espace-sm);
+  background-color: var(--nabe-beige);
+  color: var(--nabe-terracotta-fonce);
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 10px;
+}
+
+.gestion-adresses__actions {
+  display: flex;
+  gap: 0.7rem;
+  margin-top: var(--espace-sm);
+  flex-wrap: wrap;
+}
+
+.gestion-adresses__actions button {
+  font-size: 0.78rem;
+  color: var(--nabe-terracotta);
+  text-decoration: underline;
+}
+
+.gestion-adresses__supprimer {
+  color: var(--nabe-terracotta-fonce) !important;
+}
+
+.gestion-adresses__chargement {
+  color: var(--texte-secondaire);
+}
+
+@media (max-width: 700px) {
+  .gestion-adresses__liste {
+    grid-template-columns: 1fr;
+  }
+}

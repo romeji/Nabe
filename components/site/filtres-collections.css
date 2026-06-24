@@ -68,6 +68,73 @@
   background-color: var(--nabe-blanc);
 }
 
+.filtres-collections__prix {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.filtres-collections__prix-valeurs {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: var(--texte-secondaire);
+  margin-bottom: 0.2rem;
+}
+
+.filtres-collections__prix input[type='range'] {
+  width: 100%;
+  accent-color: var(--nabe-terracotta);
+}
+
+.filtres-collections__tailles {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.filtres-collections__taille {
+  min-width: 38px;
+  height: 38px;
+  padding: 0 0.5rem;
+  border: 1px solid var(--nabe-beige-fonce);
+  border-radius: var(--rayon-bordure);
+  font-size: 0.85rem;
+}
+
+.filtres-collections__taille.actif {
+  background-color: var(--nabe-terracotta);
+  color: var(--texte-clair);
+  border-color: var(--nabe-terracotta);
+}
+
+.filtres-collections__couleurs {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.filtres-collections__pastille {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid var(--nabe-beige-fonce);
+  padding: 0;
+}
+
+.filtres-collections__pastille.actif {
+  border-color: var(--nabe-terracotta);
+  box-shadow: 0 0 0 2px var(--nabe-creme), 0 0 0 3px var(--nabe-terracotta);
+}
+
+.tri-collections {
+  padding: 0.5rem 0.8rem;
+  border: 1px solid var(--nabe-beige-fonce);
+  border-radius: var(--rayon-bordure);
+  background-color: var(--nabe-blanc);
+  font-size: 0.85rem;
+}
+
 .filtres-collections__bouton-mobile {
   display: none;
 }

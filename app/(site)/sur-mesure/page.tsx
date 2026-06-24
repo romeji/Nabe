@@ -1,6 +1,8 @@
 import { prisma } from '@/lib/prisma';
 import { getContenuPage } from '@/lib/contenu';
+import TexteRiche from '@/components/site/TexteRiche';
 import SurMesureFormulaire from '@/components/site/SurMesureFormulaire';
+import '../hero-commun.css';
 import './sur-mesure.css';
 
 export const metadata = { title: 'Sur mesure' };
@@ -26,12 +28,12 @@ export default async function PageSurMesure() {
 
   return (
     <div className="page-sur-mesure">
-      <section className="surmesure-hero">
-        <div className="surmesure-hero__overlay" />
-        <div className="surmesure-hero__contenu">
+      <section className="hero-commun" style={{ backgroundImage: "url('/images/sur-mesure-hero.jpg')" }}>
+        <div className="hero-commun__overlay" />
+        <div className="hero-commun__contenu">
           <h1>{contenu.hero_titre}</h1>
           <p>{contenu.hero_soustitre}</p>
-          <span>{contenu.hero_texte}</span>
+          <TexteRiche html={contenu.hero_texte} as="span" />
         </div>
       </section>
 
@@ -40,14 +42,14 @@ export default async function PageSurMesure() {
           <span className="surmesure-infos__icone">📅</span>
           <div>
             <h3>{contenu.precommande_titre}</h3>
-            <p>{contenu.precommande_texte}</p>
+            <TexteRiche html={contenu.precommande_texte} />
           </div>
         </div>
         <div className="surmesure-infos__item">
           <span className="surmesure-infos__icone">💍</span>
           <div>
             <h3>{contenu.taille_titre}</h3>
-            <p>{contenu.taille_texte}</p>
+            <TexteRiche html={contenu.taille_texte} />
           </div>
         </div>
       </section>

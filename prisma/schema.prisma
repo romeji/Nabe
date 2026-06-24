@@ -24,6 +24,90 @@ model Admin {
 }
 
 // ============================================================
+// COMPTES CLIENTS (différents du compte Admin)
+// ============================================================
+// Modèles imposés par l'adapter NextAuth/Prisma pour supporter
+// à la fois email+mot de passe (Credentials) et Google OAuth.
+
+model Client {
+  id              String    @id @default(cuid())
+  nom             String?
+  email           String    @unique
+  emailVerifie    DateTime?
+  password        String? // null si connecté uniquement via Google
+  image           String?
+  telephone       String?
+  stripeCustomerId String?  @unique // référence Stripe Customer (jamais de numéro de carte stocké ici)
+  comptes         CompteOAuth[]
+  favoris         Favori[]
+  commandes       Commande[]
+  adresses        AdressePostale[]
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model AdressePostale {
+  id           String   @id @default(cuid())
+  clientId     String
+  client       Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  libelle      String? // ex: "Domicile", "Travail"
+  destinataire String // nom complet du destinataire
+  ligne1       String
+  ligne2       String?
+  ville        String
+  codePostal   String
+  pays         String   @default("France")
+  telephone    String?
+  parDefaut    Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model CompteOAuth {
+  id                String  @id @default(cuid())
+  clientId          String
+  client            Client  @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  @@unique([provider, providerAccountId])
+}
+
+model SessionClient {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  clientId     String
+  expires      DateTime
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Favori {
+  id        String   @id @default(cuid())
+  clientId  String
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  produitId String
+  produit   Produit  @relation(fields: [produitId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([clientId, produitId])
+}
+
+// ============================================================
 // CATALOGUE
 // ============================================================
 
@@ -50,6 +134,7 @@ enum Pierre {
 enum Disponibilite {
   EN_STOCK
   FABRICATION_SUR_COMMANDE
+  CREATION_SUR_MESURE
   PIECE_UNIQUE_DISPO
   EPUISE
 }
@@ -76,6 +161,29 @@ model Matiere {
   updatedAt DateTime  @updatedAt
 }
 
+model CouleurPierre {
+  id         String    @id @default(cuid())
+  nom        String    @unique // ex: "Blanc", "Champagne", "Rose"
+  codeHex    String // ex: "#F5F0E6", utilisé pour afficher la pastille de couleur dans les filtres
+  ordre      Int       @default(0)
+  produits   Produit[]
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+model Collection {
+  id          String    @id @default(cuid())
+  nom         String    @unique
+  slug        String    @unique
+  description String?
+  image       String? // url Cloudinary
+  ordre       Int       @default(0)
+  actif       Boolean   @default(true)
+  produits    Produit[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
 model Produit {
   id              String         @id @default(cuid())
   nom             String
@@ -86,7 +194,8 @@ model Produit {
   matiereId       String?
   matiere         Matiere?       @relation(fields: [matiereId], references: [id])
   pierre          Pierre         @default(AUCUNE)
-  couleurPierre   String? // ex: "Blanc", "Champagne", "Rose"
+  couleurPierreId String?
+  couleurPierre   CouleurPierre? @relation(fields: [couleurPierreId], references: [id])
   delaiFabrication String?       // ex: "2 à 3 semaines"
   fabriqueEnFrance Boolean       @default(true)
   tailleSurMesure  Boolean       @default(false)
@@ -96,8 +205,12 @@ model Produit {
   images          ProduitImage[]
   categorieId     String?
   categorie       Categorie?     @relation(fields: [categorieId], references: [id])
+  collectionId    String?
+  collection      Collection?    @relation(fields: [collectionId], references: [id])
   actif           Boolean        @default(true)
-  enAvant         Boolean        @default(false) // mis en avant sur l'accueil
+  enAvant         Boolean        @default(false) // mis en avant sur l'accueil (carrousel "sélection")
+  nombreVentes    Int            @default(0) // incrémenté à chaque vente, utile pour les critères de recommandation
+  favoris         Favori[]
   lignesCommande  LigneCommande[]
   mouvementsStock MouvementStock[]
   createdAt       DateTime       @default(now())
@@ -140,6 +253,32 @@ model MouvementStock {
 }
 
 // ============================================================
+// CODES DE REDUCTION
+// ============================================================
+
+enum TypeReduction {
+  POURCENTAGE
+  MONTANT_FIXE
+}
+
+model CodeReduction {
+  id              String          @id @default(cuid())
+  code            String          @unique // ex: "BIENVENUE10"
+  type            TypeReduction   @default(POURCENTAGE)
+  valeur          Decimal         @db.Decimal(10, 2) // ex: 10 (pour 10%) ou 15.00 (pour 15€)
+  actif           Boolean         @default(true)
+  // Pour une future rémunération de collaborateurs/affiliés sur ce code :
+  nomCollaborateur String?
+  commissionPourcentage Decimal?  @db.Decimal(5, 2) // ex: 10.00 = 10% du montant de la commande reversé
+  dateExpiration  DateTime?
+  utilisationMax  Int? // null = illimité
+  montantMinimum  Decimal?        @db.Decimal(10, 2) // panier minimum requis pour appliquer le code
+  commandes       Commande[]
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+}
+
+// ============================================================
 // VENTES / COMMANDES
 // ============================================================
 
@@ -157,6 +296,8 @@ model Commande {
   id                    String          @id @default(cuid())
   numero                String          @unique // ex: NABE-2026-0001
   statut                StatutCommande  @default(EN_ATTENTE)
+  clientId              String?
+  client                Client?         @relation(fields: [clientId], references: [id])
   clientNom             String
   clientEmail           String
   clientTelephone       String?
@@ -164,6 +305,9 @@ model Commande {
   ville                 String?
   codePostal            String?
   pays                  String?         @default("France")
+  codeReductionId       String?
+  codeReduction         CodeReduction?  @relation(fields: [codeReductionId], references: [id])
+  montantReduction      Decimal         @db.Decimal(10, 2) @default(0)
   sousTotal             Decimal         @db.Decimal(10, 2)
   fraisLivraison         Decimal        @db.Decimal(10, 2) @default(0)
   total                 Decimal         @db.Decimal(10, 2)
@@ -277,6 +421,19 @@ model Newsletter {
   envoyeeLe       DateTime?
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
+}
+
+// ============================================================
+// REGLAGES DU SITE (toggles et configurations diverses)
+// ============================================================
+// Stockage clé/valeur générique pour tout réglage simple piloté
+// depuis l'admin : activer/désactiver un carrousel, configurer le
+// pourcentage de la popup de bienvenue, etc.
+
+model ConfigSite {
+  cle       String   @id // ex: "carrousel_bestseller_actif", "popup_bienvenue_pourcentage"
+  valeur    String   @db.Text
+  updatedAt DateTime @updatedAt
 }
 
 // ============================================================

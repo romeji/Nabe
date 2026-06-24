@@ -1,5 +1,5 @@
 .page-journal {
-  padding: var(--espace-2xl) var(--espace-md);
+  padding: calc(var(--espace-2xl) + 5.5rem) var(--espace-md) var(--espace-2xl);
   min-height: 60vh;
 }
 

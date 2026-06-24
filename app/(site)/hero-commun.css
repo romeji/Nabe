@@ -1,0 +1,58 @@
+/* ============================================================
+   HERO COMMUN — utilisé par toutes les pages SAUF l'Accueil
+   (La Maison, Collections, Sur-mesure, Contact)
+   Garantit une taille d'image et une typographie identiques.
+   ============================================================ */
+
+.hero-commun {
+  position: relative;
+  min-height: 50vh;
+  display: flex;
+  align-items: center;
+  background-size: cover;
+  background-position: center;
+  color: var(--texte-clair);
+}
+
+.hero-commun__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(61, 46, 31, 0.6), rgba(61, 46, 31, 0.1));
+}
+
+.hero-commun__contenu {
+  position: relative;
+  z-index: 1;
+  padding: 0 var(--espace-xl);
+  max-width: 540px;
+}
+
+.hero-commun__contenu h1 {
+  color: var(--texte-clair);
+  font-size: 2.6rem;
+  margin-bottom: var(--espace-xs);
+}
+
+.hero-commun__contenu p {
+  font-size: 1.05rem;
+  opacity: 0.95;
+}
+
+.hero-commun__contenu span {
+  display: block;
+  font-size: 0.9rem;
+  opacity: 0.9;
+  margin-top: var(--espace-xs);
+}
+
+@media (max-width: 600px) {
+  .hero-commun {
+    min-height: 40vh;
+  }
+  .hero-commun__contenu {
+    padding: 0 var(--espace-md);
+  }
+  .hero-commun__contenu h1 {
+    font-size: 2rem;
+  }
+}

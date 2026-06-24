@@ -1,5 +1,5 @@
 .page-info {
-  padding: var(--espace-xl) var(--espace-md) var(--espace-2xl);
+  padding: calc(var(--espace-xl) + 5.5rem) var(--espace-md) var(--espace-2xl);
   max-width: 820px;
   margin: 0 auto;
 }

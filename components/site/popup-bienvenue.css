@@ -1,0 +1,82 @@
+.popup-bienvenue__overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 550;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--espace-md);
+}
+
+.popup-bienvenue__modal {
+  background-color: var(--nabe-blanc);
+  border-radius: var(--rayon-bordure);
+  max-width: 440px;
+  width: 100%;
+  padding: var(--espace-xl) var(--espace-lg);
+  text-align: center;
+  position: relative;
+}
+
+.popup-bienvenue__fermer {
+  position: absolute;
+  top: var(--espace-sm);
+  right: var(--espace-sm);
+  font-size: 1.1rem;
+  color: var(--texte-secondaire);
+}
+
+.popup-bienvenue__modal h2 {
+  font-size: 1.5rem;
+  margin-bottom: var(--espace-sm);
+}
+
+.popup-bienvenue__modal p {
+  color: var(--texte-secondaire);
+  margin-bottom: var(--espace-md);
+  font-size: 0.92rem;
+}
+
+.popup-bienvenue__modal form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.popup-bienvenue__modal input {
+  padding: 0.8rem;
+  border: 1px solid var(--nabe-beige-fonce);
+  border-radius: var(--rayon-bordure);
+}
+
+.popup-bienvenue__modal form button[type='submit'] {
+  margin-top: 0.4rem;
+}
+
+.popup-bienvenue__erreur {
+  color: var(--nabe-terracotta-fonce);
+  font-size: 0.82rem;
+}
+
+.popup-bienvenue__plus-tard {
+  margin-top: var(--espace-md);
+  font-size: 0.8rem;
+  color: var(--texte-secondaire);
+  text-decoration: underline;
+}
+
+.popup-bienvenue__succes h2 {
+  margin-bottom: var(--espace-sm);
+}
+
+.popup-bienvenue__code {
+  font-size: 1.5rem;
+  letter-spacing: 0.15em;
+  background-color: var(--nabe-beige);
+  color: var(--nabe-terracotta-fonce);
+  font-weight: 700;
+  padding: var(--espace-sm);
+  border-radius: var(--rayon-bordure);
+  margin-bottom: var(--espace-md);
+}

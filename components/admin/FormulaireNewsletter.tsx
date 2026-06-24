@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import EditeurRiche from './EditeurRiche';
 import './formulaire-newsletter.css';
 
 type NewsletterInitiale = {
@@ -112,16 +113,17 @@ export default function FormulaireNewsletter({
         />
 
         <label>Contenu</label>
-        <textarea
-          value={contenu}
-          onChange={(e) => setContenu(e.target.value)}
-          rows={12}
-          placeholder={"Bonjour,\n\nDécouvrez nos nouvelles créations...\n\nÀ très vite,\nL'équipe Nabe"}
-          disabled={dejaEnvoyee}
-        />
+        {!dejaEnvoyee ? (
+          <EditeurRiche
+            valeur={contenu}
+            onChange={setContenu}
+            placeholder="Bonjour, découvrez nos nouvelles créations..."
+          />
+        ) : (
+          <div className="formulaire-newsletter__contenu-figé" dangerouslySetInnerHTML={{ __html: contenu }} />
+        )}
         <p className="formulaire-newsletter__aide">
-          Séparez vos paragraphes par une ligne vide — la mise en forme sera appliquée
-          automatiquement à l'envoi.
+          Utilisez la barre d'outils pour mettre en gras, en couleur, ajouter des liens ou des listes.
         </p>
 
         {erreur && <p className="formulaire-newsletter__erreur">{erreur}</p>}
@@ -183,12 +185,11 @@ export default function FormulaireNewsletter({
           <div className="formulaire-newsletter__apercu-entete">Nabe</div>
           <div className="formulaire-newsletter__apercu-corps">
             <h4>{sujet || 'Sujet de votre newsletter'}</h4>
-            {(contenu || 'Le contenu de votre newsletter apparaîtra ici...')
-              .split(/\n\s*\n/)
-              .filter(Boolean)
-              .map((paragraphe, i) => (
-                <p key={i}>{paragraphe}</p>
-              ))}
+            <div
+              dangerouslySetInnerHTML={{
+                __html: contenu || '<p>Le contenu de votre newsletter apparaîtra ici...</p>',
+              }}
+            />
           </div>
         </div>
       </div>

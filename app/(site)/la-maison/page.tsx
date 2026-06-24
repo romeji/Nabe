@@ -1,5 +1,7 @@
 import Image from 'next/image';
 import { getContenuPage } from '@/lib/contenu';
+import TexteRiche from '@/components/site/TexteRiche';
+import '../hero-commun.css';
 import './la-maison.css';
 
 export const metadata = { title: 'La Maison' };
@@ -10,9 +12,9 @@ export default async function PageLaMaison() {
 
   return (
     <div className="page-la-maison">
-      <section className="maison-hero">
-        <div className="maison-hero__overlay" />
-        <div className="maison-hero__contenu">
+      <section className="hero-commun" style={{ backgroundImage: "url('/images/atelier-portrait.jpg')" }}>
+        <div className="hero-commun__overlay" />
+        <div className="hero-commun__contenu">
           <h1>{c.hero_titre}</h1>
           <p>{c.hero_soustitre}</p>
         </div>
@@ -22,7 +24,7 @@ export default async function PageLaMaison() {
         <div className="maison-parcours__texte">
           <span>{c.parcours_label}</span>
           <h2>{c.parcours_titre}</h2>
-          <p>{c.parcours_texte}</p>
+          <TexteRiche html={c.parcours_texte} />
         </div>
         <div className="maison-parcours__image">
           <Image src="/images/croquis.jpg" alt="Croquis d'atelier" width={500} height={400} />
@@ -36,7 +38,7 @@ export default async function PageLaMaison() {
         <div className="maison-savoirfaire__texte">
           <span>{c.savoirfaire_label}</span>
           <h2>{c.savoirfaire_titre}</h2>
-          <p>{c.savoirfaire_texte}</p>
+          <TexteRiche html={c.savoirfaire_texte} />
         </div>
       </section>
 

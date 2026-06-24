@@ -18,6 +18,15 @@
   margin-top: 0;
 }
 
+.formulaire-newsletter__contenu-figé {
+  border: 1px solid var(--nabe-beige-fonce);
+  border-radius: var(--rayon-bordure);
+  padding: var(--espace-md);
+  background-color: var(--nabe-creme);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
 .formulaire-newsletter__edition input,
 .formulaire-newsletter__edition textarea {
   width: 100%;

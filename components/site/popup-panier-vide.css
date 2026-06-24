@@ -1,0 +1,85 @@
+.popup-panier-vide__overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--espace-md);
+}
+
+.popup-panier-vide__modal {
+  background-color: var(--nabe-blanc);
+  border-radius: var(--rayon-bordure);
+  max-width: 480px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: var(--espace-xl) var(--espace-lg);
+  text-align: center;
+  position: relative;
+}
+
+.popup-panier-vide__fermer {
+  position: absolute;
+  top: var(--espace-sm);
+  right: var(--espace-sm);
+  font-size: 1.1rem;
+  color: var(--texte-secondaire);
+}
+
+.popup-panier-vide__modal h2 {
+  font-size: 1.6rem;
+  margin-bottom: var(--espace-md);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.popup-panier-vide__continuer {
+  width: 100%;
+  margin-bottom: var(--espace-lg);
+}
+
+.popup-panier-vide__bestsellers h3 {
+  font-size: 1rem;
+  margin-bottom: var(--espace-md);
+  text-align: left;
+}
+
+.popup-panier-vide__grille {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--espace-sm);
+}
+
+.popup-panier-vide__carte {
+  text-align: center;
+}
+
+.popup-panier-vide__carte img,
+.popup-panier-vide__placeholder {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: var(--rayon-bordure);
+  background-color: var(--nabe-beige);
+  margin-bottom: 0.4rem;
+}
+
+.popup-panier-vide__carte span {
+  display: block;
+  font-size: 0.85rem;
+  margin-bottom: 0.2rem;
+}
+
+.popup-panier-vide__carte strong {
+  font-size: 0.85rem;
+}
+
+@media (max-width: 480px) {
+  .popup-panier-vide__grille {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--espace-xs);
+  }
+}

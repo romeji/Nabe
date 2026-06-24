@@ -10,13 +10,17 @@ const LIENS = [
   { href: '/admin', label: 'Tableau de bord', icone: '📊' },
   { href: '/admin/produits', label: 'Bijoux', icone: '💍' },
   { href: '/admin/categories', label: 'Catégories', icone: '🏷️' },
+  { href: '/admin/collections', label: 'Collections', icone: '✨' },
   { href: '/admin/matieres', label: 'Matières', icone: '⚜️' },
+  { href: '/admin/couleurs-pierre', label: 'Couleurs de pierre', icone: '🎨' },
   { href: '/admin/stock', label: 'Stock', icone: '📦' },
   { href: '/admin/commandes', label: 'Ventes', icone: '🛍️' },
   { href: '/admin/sur-mesure', label: 'Sur-mesure', icone: '✏️' },
   { href: '/admin/messages', label: 'Messages', icone: '✉️' },
   { href: '/admin/contenu', label: 'Contenu du site', icone: '🖊️' },
   { href: '/admin/newsletters', label: 'Newsletters', icone: '📬' },
+  { href: '/admin/codes-promo', label: 'Codes promo', icone: '🎁' },
+  { href: '/admin/reglages', label: 'Réglages', icone: '⚙️' },
 ];
 
 export default function SidebarAdmin() {
