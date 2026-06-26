@@ -93,6 +93,72 @@
   color: var(--texte-secondaire);
 }
 
+.formulaire-produit__compose-avec {
+  margin-top: 0.5rem;
+}
+
+.formulaire-produit__produits-liste {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  max-height: 220px;
+  overflow-y: auto;
+  padding: 0.5rem;
+  border: 1px solid var(--nabe-argile);
+  border-radius: var(--rayon-bordure);
+}
+
+.formulaire-produit__produit-bouton {
+  padding: 0.45rem 0.85rem;
+  border: 1px solid var(--nabe-argile);
+  border-radius: 999px;
+  font-size: 0.82rem;
+  background-color: var(--nabe-blanc);
+}
+
+.formulaire-produit__produit-bouton.actif {
+  background-color: var(--nabe-or);
+  color: var(--texte-clair);
+  border-color: var(--nabe-or);
+}
+
+.formulaire-produit__produit-bouton:disabled:not(.actif) {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.formulaire-produit__pierres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.formulaire-produit__pierre-bouton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--nabe-argile);
+  border-radius: 999px;
+  font-size: 0.85rem;
+  background-color: var(--nabe-blanc);
+}
+
+.formulaire-produit__pierre-bouton.actif {
+  background-color: var(--nabe-terracotta);
+  color: var(--texte-clair);
+  border-color: var(--nabe-terracotta);
+}
+
+.formulaire-produit__pierre-pastille {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
 .formulaire-produit__aide {
   font-size: 0.78rem;
   color: var(--texte-secondaire);

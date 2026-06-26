@@ -24,11 +24,12 @@
 }
 
 .carrousel-produits__image {
-  background-color: var(--nabe-beige);
-  border-radius: var(--rayon-bordure);
+  background-color: var(--nabe-sable);
+  border-radius: 28px 28px 8px 8px;
   overflow: hidden;
   aspect-ratio: 1;
   margin-bottom: var(--espace-xs);
+  box-shadow: var(--ombre-douce);
 }
 
 .carrousel-produits__image img {
@@ -45,7 +46,7 @@
 .carrousel-produits__placeholder {
   width: 100%;
   height: 100%;
-  background-color: var(--nabe-beige-fonce);
+  background-color: var(--nabe-argile);
 }
 
 .carrousel-produits__carte h3 {

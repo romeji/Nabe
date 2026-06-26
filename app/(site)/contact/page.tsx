@@ -45,7 +45,7 @@ export default async function PageContact() {
       <section className="contact-rdv conteneur">
         <div className="contact-rdv__image" />
         <div className="contact-rdv__texte">
-          <span>{c.rdv_label}</span>
+          <span className="etiquette">{c.rdv_label}</span>
           <h2><TexteRiche html={c.rdv_texte} as="span" /></h2>
           <a href="/contact" className="btn btn-primaire">
             {c.rdv_bouton}

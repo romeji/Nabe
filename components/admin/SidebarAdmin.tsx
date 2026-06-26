@@ -13,6 +13,7 @@ const LIENS = [
   { href: '/admin/collections', label: 'Collections', icone: '✨' },
   { href: '/admin/matieres', label: 'Matières', icone: '⚜️' },
   { href: '/admin/couleurs-pierre', label: 'Couleurs de pierre', icone: '🎨' },
+  { href: '/admin/pierres', label: 'Pierres', icone: '💎' },
   { href: '/admin/stock', label: 'Stock', icone: '📦' },
   { href: '/admin/commandes', label: 'Ventes', icone: '🛍️' },
   { href: '/admin/sur-mesure', label: 'Sur-mesure', icone: '✏️' },

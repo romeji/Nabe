@@ -15,7 +15,8 @@
 
 .nabe-footer__logo {
   font-family: var(--font-logo);
-  font-size: 2.5rem;
+  font-size: 3rem;
+  color: var(--nabe-sable);
   display: block;
   margin-bottom: var(--espace-sm);
 }

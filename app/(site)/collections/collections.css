@@ -37,11 +37,12 @@
 
 .produit-carte__image {
   position: relative;
-  background-color: var(--nabe-beige);
-  border-radius: var(--rayon-bordure);
+  background-color: var(--nabe-sable);
+  border-radius: 26px 26px 8px 8px;
   overflow: hidden;
   aspect-ratio: 1;
-  margin-bottom: var(--espace-xs);
+  margin-bottom: var(--espace-sm);
+  box-shadow: var(--ombre-douce);
 }
 
 .produit-carte__image img {
@@ -58,27 +59,29 @@
 .produit-carte__placeholder {
   width: 100%;
   height: 100%;
-  background-color: var(--nabe-beige-fonce);
+  background-color: var(--nabe-sable-fonce);
 }
 
 .produit-carte__coeur {
   position: absolute;
-  top: 10px;
-  right: 10px;
-  background-color: rgba(255, 255, 255, 0.85);
-  width: 32px;
-  height: 32px;
+  top: 12px;
+  right: 12px;
+  background-color: rgba(255, 255, 255, 0.9);
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1rem;
   z-index: 1;
+  box-shadow: var(--ombre-douce);
 }
 
 .produit-carte h3 {
-  font-size: 1rem;
+  font-size: 1.05rem;
   margin-bottom: 2px;
+  font-family: var(--font-titres);
 }
 
 .produit-carte__details {

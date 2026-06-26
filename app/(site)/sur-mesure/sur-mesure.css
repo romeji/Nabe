@@ -34,8 +34,9 @@
 }
 
 .surmesure-formulaire__colonne h2 {
-  font-size: 1.3rem;
+  font-size: 1.5rem;
   margin-bottom: 0.3rem;
+  font-family: var(--font-titres);
 }
 
 .surmesure-formulaire__sous-titre {
@@ -73,7 +74,7 @@
 .surmesure-formulaire__modele {
   text-align: center;
   border: 2px solid transparent;
-  border-radius: var(--rayon-bordure);
+  border-radius: 20px;
   padding: 4px;
 }
 
@@ -85,15 +86,15 @@
   width: 100%;
   aspect-ratio: 1;
   object-fit: cover;
-  border-radius: var(--rayon-bordure);
+  border-radius: 18px 18px 6px 6px;
   margin-bottom: 4px;
 }
 
 .surmesure-formulaire__placeholder {
   width: 100%;
   aspect-ratio: 1;
-  background-color: var(--nabe-beige);
-  border-radius: var(--rayon-bordure);
+  background-color: var(--nabe-sable);
+  border-radius: 18px 18px 6px 6px;
   margin-bottom: 4px;
 }
 
@@ -125,8 +126,8 @@
 .surmesure-formulaire__form input,
 .surmesure-formulaire__form select,
 .surmesure-formulaire__form textarea {
-  padding: 0.7rem;
-  border: 1px solid var(--nabe-beige-fonce);
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--nabe-argile);
   border-radius: var(--rayon-bordure);
   background-color: var(--nabe-blanc);
   width: 100%;
@@ -149,9 +150,9 @@
 }
 
 .surmesure-formulaire__succes {
-  background-color: var(--nabe-beige);
+  background-color: var(--nabe-sable);
   padding: var(--espace-md);
-  border-radius: var(--rayon-bordure);
+  border-radius: 20px;
   color: var(--nabe-terracotta-fonce);
   font-weight: 500;
 }

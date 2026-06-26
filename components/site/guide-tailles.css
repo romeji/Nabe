@@ -27,7 +27,7 @@
 
 .guide-tailles__onglets {
   display: flex;
-  border-bottom: 1px solid var(--nabe-beige-fonce);
+  border-bottom: 1px solid var(--nabe-argile);
   position: sticky;
   top: 0;
   background-color: var(--nabe-blanc);
@@ -74,7 +74,7 @@
 }
 
 .guide-tailles__astuce {
-  background-color: var(--nabe-beige);
+  background-color: var(--nabe-sable);
   padding: var(--espace-sm);
   border-radius: var(--rayon-bordure);
   font-size: 0.85rem;
@@ -91,7 +91,7 @@
 }
 
 .guide-tailles__tableau th {
-  background-color: var(--nabe-beige);
+  background-color: var(--nabe-sable);
   padding: 0.5rem;
   text-align: left;
   white-space: nowrap;
@@ -99,7 +99,7 @@
 
 .guide-tailles__tableau td {
   padding: 0.5rem;
-  border-bottom: 1px solid var(--nabe-beige);
+  border-bottom: 1px solid var(--nabe-sable);
 }
 
 .guide-tailles__tableau tr:nth-child(even) td {

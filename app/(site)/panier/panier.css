@@ -4,7 +4,7 @@
 }
 
 .page-panier h1 {
-  font-size: 2rem;
+  font-size: 2.2rem;
   margin-bottom: var(--espace-lg);
 }
 
@@ -43,11 +43,11 @@
 
 .panier-article__image img,
 .panier-article__placeholder {
-  width: 90px;
-  height: 90px;
+  width: 96px;
+  height: 96px;
   object-fit: cover;
-  border-radius: var(--rayon-bordure);
-  background-color: var(--nabe-beige);
+  border-radius: 22px 22px 8px 8px;
+  background-color: var(--nabe-sable);
 }
 
 .panier-article__infos {
@@ -68,8 +68,9 @@
 .panier-article__quantite {
   display: inline-flex;
   align-items: center;
-  border: 1px solid var(--nabe-beige-fonce);
-  border-radius: var(--rayon-bordure);
+  border: 1px solid var(--nabe-argile);
+  border-radius: 999px;
+  overflow: hidden;
 }
 
 .panier-article__quantite button {
@@ -101,15 +102,16 @@
 }
 
 .page-panier__resume {
-  background-color: var(--nabe-beige);
+  background-color: var(--nabe-sable);
   padding: var(--espace-lg);
-  border-radius: var(--rayon-bordure);
+  border-radius: 32px 32px 14px 14px;
   align-self: start;
 }
 
 .page-panier__resume h2 {
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   margin-bottom: var(--espace-md);
+  font-family: var(--font-titres);
 }
 
 .page-panier__code-promo {
@@ -123,17 +125,17 @@
 
 .page-panier__code-champ input {
   flex: 1;
-  padding: 0.6rem;
-  border: 1px solid var(--nabe-beige-fonce);
-  border-radius: var(--rayon-bordure);
+  padding: 0.7rem 1rem;
+  border: 1px solid var(--nabe-argile);
+  border-radius: 999px;
   font-size: 0.85rem;
 }
 
 .page-panier__code-champ button {
-  padding: 0.6rem 0.9rem;
-  background-color: var(--nabe-brun);
+  padding: 0.7rem 1.1rem;
+  background-color: var(--nabe-or);
   color: var(--texte-clair);
-  border-radius: var(--rayon-bordure);
+  border-radius: 999px;
   font-size: 0.8rem;
   white-space: nowrap;
 }
@@ -150,8 +152,8 @@
   justify-content: space-between;
   background-color: #e3f0e3;
   color: #2e6b2e;
-  padding: 0.6rem;
-  border-radius: var(--rayon-bordure);
+  padding: 0.7rem 1rem;
+  border-radius: 999px;
   font-size: 0.85rem;
 }
 

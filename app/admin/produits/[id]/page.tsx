@@ -11,7 +11,11 @@ export default async function PageEditionProduit({ params }: { params: { id: str
 
   const produit = await prisma.produit.findUnique({
     where: { id: params.id },
-    include: { images: { orderBy: { ordre: 'asc' } } },
+    include: {
+      images: { orderBy: { ordre: 'asc' } },
+      pierres: { include: { pierre: true } },
+      composeAvec: { orderBy: { ordre: 'asc' } },
+    },
   });
 
   if (!produit) notFound();
@@ -25,8 +29,7 @@ export default async function PageEditionProduit({ params }: { params: { id: str
     categorieId: produit.categorieId || '',
     collectionId: produit.collectionId || '',
     matiereId: produit.matiereId || '',
-    pierre: produit.pierre,
-    couleurPierreId: produit.couleurPierreId || '',
+    pierresIds: produit.pierres.map((pp) => pp.pierreId),
     delaiFabrication: produit.delaiFabrication || '',
     fabriqueEnFrance: produit.fabriqueEnFrance,
     tailleSurMesure: produit.tailleSurMesure,
@@ -35,6 +38,8 @@ export default async function PageEditionProduit({ params }: { params: { id: str
     stock: produit.stock,
     actif: produit.actif,
     enAvant: produit.enAvant,
+    composerAvecActif: produit.composerAvecActif,
+    composeAvecIds: produit.composeAvec.map((c) => c.produitSuggereId),
     images: produit.images.map((img) => ({ url: img.url, publicId: img.publicId || undefined, alt: img.alt || undefined })),
   };
 

@@ -4,13 +4,14 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   LABELS_TYPE_BIJOU,
-  LABELS_PIERRE,
   LABELS_DISPONIBILITE,
 } from '@/lib/utils';
 import './formulaire-produit.css';
 
 type ImageProduit = { url: string; publicId?: string; alt?: string };
 type OptionSimple = { id: string; nom: string };
+type OptionCouleur = { id: string; nom: string; codeHex: string };
+type OptionPierre = { id: string; nom: string; couleurPierre: OptionCouleur | null };
 
 type ProduitFormData = {
   id?: string;
@@ -21,8 +22,7 @@ type ProduitFormData = {
   categorieId: string;
   matiereId: string;
   collectionId: string;
-  pierre: string;
-  couleurPierreId: string;
+  pierresIds: string[];
   delaiFabrication: string;
   fabriqueEnFrance: boolean;
   tailleSurMesure: boolean;
@@ -31,6 +31,8 @@ type ProduitFormData = {
   stock: number;
   actif: boolean;
   enAvant: boolean;
+  composerAvecActif: boolean;
+  composeAvecIds: string[];
   images: ImageProduit[];
 };
 
@@ -41,7 +43,8 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
   const [categories, setCategories] = useState<OptionSimple[]>([]);
   const [matieres, setMatieres] = useState<OptionSimple[]>([]);
   const [collections, setCollections] = useState<OptionSimple[]>([]);
-  const [couleursPierre, setCouleursPierre] = useState<OptionSimple[]>([]);
+  const [pierres, setPierres] = useState<OptionPierre[]>([]);
+  const [tousLesProduits, setTousLesProduits] = useState<OptionSimple[]>([]);
   const [chargementOptions, setChargementOptions] = useState(true);
   const [donnees, setDonnees] = useState<ProduitFormData>({
     nom: produitInitial?.nom || '',
@@ -51,8 +54,7 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
     categorieId: produitInitial?.categorieId || '',
     matiereId: produitInitial?.matiereId || '',
     collectionId: produitInitial?.collectionId || '',
-    pierre: produitInitial?.pierre || 'AUCUNE',
-    couleurPierreId: produitInitial?.couleurPierreId || '',
+    pierresIds: produitInitial?.pierresIds || [],
     delaiFabrication: produitInitial?.delaiFabrication || '',
     fabriqueEnFrance: produitInitial?.fabriqueEnFrance ?? true,
     tailleSurMesure: produitInitial?.tailleSurMesure ?? false,
@@ -61,41 +63,70 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
     stock: produitInitial?.stock || 0,
     actif: produitInitial?.actif ?? true,
     enAvant: produitInitial?.enAvant ?? false,
+    composerAvecActif: produitInitial?.composerAvecActif ?? true,
+    composeAvecIds: produitInitial?.composeAvecIds || [],
     images: produitInitial?.images || [],
   });
   const [enregistrement, setEnregistrement] = useState(false);
   const [uploadEnCours, setUploadEnCours] = useState(false);
   const [erreur, setErreur] = useState('');
 
-  // Charge les catégories, matières, collections et couleurs de pierre existantes
+  // Charge les catégories, matières, collections, pierres et la liste des produits existante
   useEffect(() => {
     async function chargerOptions() {
       try {
-        const [resCategories, resMatieres, resCollections, resCouleurs] = await Promise.all([
+        const [resCategories, resMatieres, resCollections, resPierres, resProduits] = await Promise.all([
           fetch('/api/admin/categories'),
           fetch('/api/admin/matieres'),
           fetch('/api/admin/collections'),
-          fetch('/api/admin/couleurs-pierre'),
+          fetch('/api/admin/pierres'),
+          fetch('/api/admin/produits'),
         ]);
         const dataCategories = await resCategories.json();
         const dataMatieres = await resMatieres.json();
         const dataCollections = await resCollections.json();
-        const dataCouleurs = await resCouleurs.json();
-        setCouleursPierre(dataCouleurs);
+        const dataPierres = await resPierres.json();
+        const dataProduits = await resProduits.json();
+        setPierres(dataPierres);
         setCategories(dataCategories);
         setMatieres(dataMatieres);
         setCollections(dataCollections);
+        setTousLesProduits(
+          dataProduits
+            .filter((p: any) => p.id !== produitInitial?.id)
+            .map((p: any) => ({ id: p.id, nom: p.nom }))
+        );
       } catch (err) {
-        console.error('Erreur chargement catégories/matières/collections:', err);
+        console.error('Erreur chargement catégories/matières/collections/pierres/produits:', err);
       } finally {
         setChargementOptions(false);
       }
     }
     chargerOptions();
-  }, []);
+  }, [produitInitial?.id]);
 
   function majChamp<K extends keyof ProduitFormData>(champ: K, valeur: ProduitFormData[K]) {
     setDonnees((d) => ({ ...d, [champ]: valeur }));
+  }
+
+  function basculerPierre(pierreId: string) {
+    setDonnees((d) => ({
+      ...d,
+      pierresIds: d.pierresIds.includes(pierreId)
+        ? d.pierresIds.filter((id) => id !== pierreId)
+        : [...d.pierresIds, pierreId],
+    }));
+  }
+  function basculerComposeAvec(produitId: string) {
+    setDonnees((d) => {
+      if (d.composeAvecIds.includes(produitId)) {
+        return { ...d, composeAvecIds: d.composeAvecIds.filter((id) => id !== produitId) };
+      }
+      if (d.composeAvecIds.length >= 2) {
+        return d; // déjà 2 sélectionnés, on ignore le clic
+      }
+      return { ...d, composeAvecIds: [...d.composeAvecIds, produitId] };
+    });
   }
 
   function basculerTaille(taille: string) {
@@ -181,7 +212,6 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
         categorieId: donnees.categorieId || null,
         matiereId: donnees.matiereId || null,
         collectionId: donnees.collectionId || null,
-        couleurPierreId: donnees.couleurPierreId || null,
       };
 
       const res = await fetch(url, {
@@ -286,33 +316,31 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
           </div>
         </div>
 
-        <div className="admin-form__ligne">
-          <div>
-            <label>Pierre</label>
-            <select value={donnees.pierre} onChange={(e) => majChamp('pierre', e.target.value)}>
-              {Object.entries(LABELS_PIERRE).map(([v, l]) => (
-                <option key={v} value={v}>
-                  {l}
-                </option>
-              ))}
-            </select>
+        <div className="admin-form__champ-pleine-largeur">
+          <label>Pierres (sélection multiple, facultatif)</label>
+          <div className="formulaire-produit__pierres">
+            {pierres.map((p) => (
+              <button
+                key={p.id}
+                type="button"
+                className={`formulaire-produit__pierre-bouton ${donnees.pierresIds.includes(p.id) ? 'actif' : ''}`}
+                onClick={() => basculerPierre(p.id)}
+              >
+                {p.couleurPierre && (
+                  <span
+                    className="formulaire-produit__pierre-pastille"
+                    style={{ backgroundColor: p.couleurPierre.codeHex }}
+                  />
+                )}
+                {p.nom}
+              </button>
+            ))}
           </div>
-          <div>
-            <label>Couleur de la pierre</label>
-            <select value={donnees.couleurPierreId} onChange={(e) => majChamp('couleurPierreId', e.target.value)} disabled={chargementOptions}>
-              <option value="">Aucune couleur</option>
-              {couleursPierre.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.nom}
-                </option>
-              ))}
-            </select>
-            {couleursPierre.length === 0 && !chargementOptions && (
-              <p className="formulaire-produit__aide">
-                Aucune couleur créée. Ajoutez-en depuis <a href="/admin/couleurs-pierre">Admin &gt; Couleurs de pierre</a>.
-              </p>
-            )}
-          </div>
+          {pierres.length === 0 && !chargementOptions && (
+            <p className="formulaire-produit__aide">
+              Aucune pierre créée. Ajoutez-en depuis <a href="/admin/pierres">Admin &gt; Pierres</a>.
+            </p>
+          )}
         </div>
 
         <div className="admin-form__ligne">
@@ -418,6 +446,45 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
           />
           Mettre en avant sur la page d'accueil
         </label>
+      </div>
+
+      <div className="formulaire-produit__section">
+        <h2>"À composer avec" — suggestions sur la fiche produit</h2>
+        <label className="admin-form__case">
+          <input
+            type="checkbox"
+            checked={donnees.composerAvecActif}
+            onChange={(e) => majChamp('composerAvecActif', e.target.checked)}
+          />
+          Afficher ce bloc sur la fiche de ce bijou
+        </label>
+
+        {donnees.composerAvecActif && (
+          <div className="formulaire-produit__compose-avec">
+            <p className="formulaire-produit__aide">
+              Choisissez jusqu'à 2 bijoux à suggérer ({donnees.composeAvecIds.length} / 2 sélectionné(s)).
+              Si aucun n'est choisi, le bloc ne s'affichera pas.
+            </p>
+            <div className="formulaire-produit__produits-liste">
+              {tousLesProduits.map((p) => (
+                <button
+                  key={p.id}
+                  type="button"
+                  className={`formulaire-produit__produit-bouton ${donnees.composeAvecIds.includes(p.id) ? 'actif' : ''}`}
+                  onClick={() => basculerComposeAvec(p.id)}
+                  disabled={!donnees.composeAvecIds.includes(p.id) && donnees.composeAvecIds.length >= 2}
+                >
+                  {p.nom}
+                </button>
+              ))}
+            </div>
+            {tousLesProduits.length === 0 && !chargementOptions && (
+              <p className="formulaire-produit__aide">
+                Aucun autre bijou disponible pour le moment.
+              </p>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="formulaire-produit__section">

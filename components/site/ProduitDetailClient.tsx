@@ -4,13 +4,21 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePanierStore } from '@/lib/store-panier';
-import { formaterPrix, LABELS_PIERRE } from '@/lib/utils';
+import { formaterPrix } from '@/lib/utils';
 import BoutonFavori from './BoutonFavori';
 import GuideTailles from './GuideTailles';
 import AccordeonProduit from './AccordeonProduit';
 import ReassuranceProduit from './ReassuranceProduit';
+import PopupPierres from './PopupPierres';
+import ComposerAvec from './ComposerAvec';
 
 type ImageProduit = { id: string; url: string; alt: string | null };
+type PierreInfo = {
+  id: string;
+  nom: string;
+  description: string | null;
+  couleurPierre: { nom: string; codeHex: string } | null;
+};
 type Produit = {
   id: string;
   nom: string;
@@ -19,7 +27,7 @@ type Produit = {
   prix: string;
   matiere: { nom: string } | null;
   collection: { nom: string; slug: string } | null;
-  pierre: string;
+  pierres: PierreInfo[];
   delaiFabrication: string | null;
   fabriqueEnFrance: boolean;
   tailleSurMesure: boolean;
@@ -36,16 +44,28 @@ type Suggestion = {
   images: { url: string }[];
 };
 
+type ProduitComposable = {
+  id: string;
+  nom: string;
+  slug: string;
+  prix: string;
+  image: string | null;
+};
+
 export default function ProduitDetailClient({
   produit,
   suggestions,
   suggestionsActives,
   estFavori,
+  composables,
+  galeriePosition = 'gauche',
 }: {
   produit: Produit;
   suggestions: Suggestion[];
   suggestionsActives: boolean;
   estFavori: boolean;
+  composables: ProduitComposable[];
+  galeriePosition?: 'gauche' | 'bas';
 }) {
   const [imageActive, setImageActive] = useState(0);
   const [tailleChoisie, setTailleChoisie] = useState('');
@@ -78,8 +98,8 @@ export default function ProduitDetailClient({
         <span>{produit.nom}</span>
       </div>
 
-      <div className="produit-principal conteneur">
-        <div className="produit-galerie">
+      <div className={`produit-principal conteneur produit-principal--${galeriePosition}`}>
+        <div className={`produit-galerie produit-galerie--${galeriePosition}`}>
           <div className="produit-galerie__vignettes">
             {imagesAffichees.map((img, i) => (
               <button
@@ -127,9 +147,10 @@ export default function ProduitDetailClient({
                 <strong>Matière :</strong> {produit.matiere.nom}
               </li>
             )}
-            {produit.pierre !== 'AUCUNE' && (
+            {produit.pierres.length > 0 && (
               <li>
-                <strong>Pierre :</strong> {LABELS_PIERRE[produit.pierre]}
+                <strong>{produit.pierres.length > 1 ? 'Pierres' : 'Pierre'} :</strong>{' '}
+                {produit.pierres.map((p) => p.nom).join(', ')}
               </li>
             )}
             {produit.delaiFabrication && (
@@ -139,6 +160,8 @@ export default function ProduitDetailClient({
             )}
             {produit.fabriqueEnFrance && <li>Fabriqué à la main en France</li>}
           </ul>
+
+          {produit.pierres.length > 0 && <PopupPierres pierres={produit.pierres} />}
 
           {produit.taillesDisponibles.length > 0 && (
             <div className="produit-infos__champ">
@@ -185,12 +208,14 @@ export default function ProduitDetailClient({
           <ReassuranceProduit />
 
           <AccordeonProduit description={produit.description} />
+
+          <ComposerAvec produits={composables} />
         </div>
       </div>
 
       {suggestionsActives && suggestions.length > 0 && (
         <div className="produit-suggestions conteneur">
-          <h2>Vous aimerez aussi</h2>
+          <h2>Découvrez également ces créations</h2>
           <div className="produit-suggestions__grille">
             {suggestions.map((s) => (
               <Link key={s.id} href={`/collections/${s.slug}`} className="produit-suggestions__carte">

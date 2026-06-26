@@ -6,7 +6,7 @@
 }
 
 .contact-corps__infos h2 {
-  font-size: 1.6rem;
+  font-size: 1.8rem;
   margin-bottom: var(--espace-sm);
 }
 
@@ -42,8 +42,8 @@
 
 .contact-formulaire input,
 .contact-formulaire textarea {
-  padding: 0.8rem;
-  border: 1px solid var(--nabe-beige-fonce);
+  padding: 0.9rem 1.1rem;
+  border: 1px solid var(--nabe-argile);
   border-radius: var(--rayon-bordure);
   background-color: var(--nabe-blanc);
 }
@@ -59,9 +59,9 @@
 }
 
 .contact-formulaire__succes {
-  background-color: var(--nabe-beige);
+  background-color: var(--nabe-sable);
   padding: var(--espace-lg);
-  border-radius: var(--rayon-bordure);
+  border-radius: 24px;
   color: var(--nabe-terracotta-fonce);
   font-weight: 500;
 }
@@ -75,24 +75,17 @@
 }
 
 .contact-rdv__image {
-  height: 320px;
+  height: 360px;
   background-image: url('/images/main-bague.jpg');
   background-size: cover;
   background-position: center;
-  border-radius: var(--rayon-bordure);
-  background-color: var(--nabe-beige);
-}
-
-.contact-rdv__texte span {
-  color: var(--nabe-terracotta);
-  font-size: 0.8rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  font-weight: 600;
+  border-radius: 50% 50% 10px 10px / 26% 26% 4px 4px;
+  background-color: var(--nabe-sable);
+  box-shadow: var(--ombre-moyenne);
 }
 
 .contact-rdv__texte h2 {
-  font-size: 1.5rem;
+  font-size: 1.7rem;
   margin: var(--espace-sm) 0 var(--espace-md);
 }
 

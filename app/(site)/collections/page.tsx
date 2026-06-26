@@ -18,8 +18,8 @@ type Props = {
   searchParams: {
     type?: string;
     matiere?: string;
-    pierre?: string;
-    couleur?: string;
+    pierre?: string; // id de la Pierre sélectionnée
+    couleur?: string; // id de la CouleurPierre sélectionnée
     disponibilite?: string; // valeurs séparées par des virgules
     taille?: string;
     tri?: string;
@@ -35,8 +35,8 @@ export default async function PageCollections({ searchParams }: Props) {
 
   if (searchParams.type) where.type = searchParams.type;
   if (searchParams.matiere) where.matiereId = searchParams.matiere;
-  if (searchParams.pierre) where.pierre = searchParams.pierre;
-  if (searchParams.couleur) where.couleurPierreId = searchParams.couleur;
+  if (searchParams.pierre) where.pierres = { some: { pierreId: searchParams.pierre } };
+  if (searchParams.couleur) where.pierres = { some: { pierre: { couleurPierreId: searchParams.couleur } } };
   if (searchParams.categorie) where.categorie = { slug: searchParams.categorie };
   if (searchParams.collection) where.collection = { slug: searchParams.collection };
   if (searchParams.taille) where.taillesDisponibles = { has: searchParams.taille };
@@ -58,7 +58,7 @@ export default async function PageCollections({ searchParams }: Props) {
   const session = await getServerSession(authClientOptions);
   const clientId = (session?.user as any)?.id as string | undefined;
 
-  const [contenu, produits, totalActifs, matieresDisponibles, couleursDisponibles, bornesPrix, favorisIds] =
+  const [contenu, produits, totalActifs, matieresDisponibles, pierresDisponibles, couleursBrutes, bornesPrix, favorisIds] =
     await Promise.all([
       getContenuPage('collections'),
       prisma.produit.findMany({
@@ -68,7 +68,11 @@ export default async function PageCollections({ searchParams }: Props) {
       }),
       prisma.produit.count({ where: { actif: true } }),
       prisma.matiere.findMany({ orderBy: { ordre: 'asc' } }),
-      prisma.couleurPierre.findMany({ orderBy: { ordre: 'asc' } }),
+      prisma.pierre.findMany({ orderBy: { ordre: 'asc' } }),
+      prisma.couleurPierre.findMany({
+        orderBy: { ordre: 'asc' },
+        include: { pierres: { include: { produits: { include: { produit: true } } } } },
+      }),
       prisma.produit.aggregate({
         where: { actif: true },
         _min: { prix: true },
@@ -83,6 +87,17 @@ export default async function PageCollections({ searchParams }: Props) {
   const prixMinGlobal = Math.floor(parseFloat(bornesPrix._min.prix?.toString() || '0'));
   const prixMaxGlobal = Math.ceil(parseFloat(bornesPrix._max.prix?.toString() || '1000'));
 
+  // Calcule, pour chaque couleur, le nombre de bijoux actifs distincts qui ont une pierre de cette couleur
+  const couleursDisponibles = couleursBrutes.map((couleur) => {
+    const idsProduits = new Set<string>();
+    couleur.pierres.forEach((pierre) => {
+      pierre.produits.forEach((pp) => {
+        if (pp.produit.actif) idsProduits.add(pp.produitId);
+      });
+    });
+    return { id: couleur.id, nom: couleur.nom, codeHex: couleur.codeHex, nombreProduits: idsProduits.size };
+  });
+
   return (
     <div className="page-collections">
       <section className="hero-commun" style={{ backgroundImage: "url('/images/collections-hero.jpg')" }}>
@@ -96,6 +111,7 @@ export default async function PageCollections({ searchParams }: Props) {
       <div className="collections-corps conteneur">
         <FiltresCollections
           matieres={matieresDisponibles}
+          pierres={pierresDisponibles}
           couleurs={couleursDisponibles}
           prixMinGlobal={prixMinGlobal}
           prixMaxGlobal={prixMaxGlobal}

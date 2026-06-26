@@ -1,5 +1,5 @@
 .produit-fil-ariane {
-  padding: var(--espace-md) var(--espace-md) 0;
+  padding: calc(var(--espace-md) + 5.5rem) var(--espace-md) 0;
   font-size: 0.8rem;
   color: var(--texte-secondaire);
 }
@@ -14,14 +14,29 @@
 
 .produit-principal {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--espace-xl);
+  grid-template-columns: 1.1fr 1fr;
+  gap: var(--espace-2xl);
   padding: var(--espace-lg) var(--espace-md) var(--espace-xl);
+  max-width: 1100px;
+  margin: 0 auto;
 }
 
 .produit-galerie {
   display: flex;
   gap: var(--espace-sm);
+}
+
+.produit-galerie--bas {
+  flex-direction: column;
+}
+
+.produit-galerie--bas .produit-galerie__vignettes {
+  flex-direction: row;
+  order: 2;
+}
+
+.produit-galerie--bas .produit-galerie__principale {
+  order: 1;
 }
 
 .produit-galerie__vignettes {
@@ -31,12 +46,13 @@
 }
 
 .produit-galerie__vignette {
-  width: 70px;
-  height: 70px;
-  border-radius: var(--rayon-bordure);
+  width: 64px;
+  height: 64px;
+  border-radius: 14px;
   overflow: hidden;
-  background-color: var(--nabe-beige);
+  background-color: var(--nabe-sable);
   border: 2px solid transparent;
+  flex-shrink: 0;
 }
 
 .produit-galerie__vignette.actif {
@@ -51,10 +67,12 @@
 
 .produit-galerie__principale {
   flex: 1;
-  background-color: var(--nabe-beige);
-  border-radius: var(--rayon-bordure);
+  background-color: var(--nabe-sable);
+  border-radius: 32px 32px 14px 14px;
   overflow: hidden;
   aspect-ratio: 4/5;
+  max-width: 420px;
+  box-shadow: var(--ombre-moyenne);
 }
 
 .produit-galerie__principale img {
@@ -66,7 +84,7 @@
 .produit-galerie__placeholder {
   width: 100%;
   height: 100%;
-  background-color: var(--nabe-beige-fonce);
+  background-color: var(--nabe-sable-fonce);
 }
 
 .produit-infos__entete {
@@ -86,7 +104,7 @@
 }
 
 .produit-infos h1 {
-  font-size: 2.2rem;
+  font-size: 2.4rem;
   margin-bottom: var(--espace-xs);
 }
 
@@ -161,17 +179,18 @@
 
 .produit-infos__champ select {
   width: 100%;
-  padding: 0.7rem;
-  border: 1px solid var(--nabe-beige-fonce);
-  border-radius: var(--rayon-bordure);
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--nabe-argile);
+  border-radius: 999px;
   background-color: var(--nabe-blanc);
 }
 
 .produit-infos__quantite {
   display: inline-flex;
   align-items: center;
-  border: 1px solid var(--nabe-beige-fonce);
-  border-radius: var(--rayon-bordure);
+  border: 1px solid var(--nabe-argile);
+  border-radius: 999px;
+  overflow: hidden;
 }
 
 .produit-infos__quantite button {
@@ -248,16 +267,68 @@
   color: var(--texte-principal);
 }
 
+.composer-avec {
+  margin-top: var(--espace-lg);
+  padding-top: var(--espace-md);
+  border-top: 1px solid var(--nabe-argile);
+}
+
+.composer-avec h3 {
+  font-size: 1.05rem;
+  margin-bottom: var(--espace-sm);
+}
+
+.composer-avec__grille {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--espace-sm);
+}
+
+.composer-avec__carte {
+  display: flex;
+  align-items: center;
+  gap: var(--espace-sm);
+  padding: 0.6rem;
+  border-radius: 16px;
+  background-color: var(--nabe-creme);
+  transition: var(--transition-douce);
+}
+
+.composer-avec__carte:hover {
+  background-color: var(--nabe-sable);
+}
+
+.composer-avec__carte img,
+.composer-avec__placeholder {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 12px;
+  background-color: var(--nabe-sable);
+  flex-shrink: 0;
+}
+
+.composer-avec__carte span {
+  display: block;
+  font-size: 0.85rem;
+}
+
+.composer-avec__carte strong {
+  font-size: 0.85rem;
+  color: var(--nabe-terracotta);
+}
+
 .produit-suggestions {
   padding: var(--espace-xl) var(--espace-md) var(--espace-2xl);
-  border-top: 1px solid var(--nabe-beige-fonce);
+  border-top: 1px solid var(--nabe-argile);
+  text-align: center;
 }
 
 .produit-suggestions h2 {
-  font-size: 1.4rem;
-  margin-bottom: var(--espace-md);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
+  font-size: 1.8rem;
+  margin-bottom: var(--espace-xl);
+  font-family: var(--font-titres);
+  letter-spacing: 0.04em;
 }
 
 .produit-suggestions__grille {
@@ -270,15 +341,16 @@
   width: 100%;
   aspect-ratio: 1;
   object-fit: cover;
-  border-radius: var(--rayon-bordure);
+  border-radius: 24px 24px 8px 8px;
   margin-bottom: var(--espace-xs);
+  box-shadow: var(--ombre-douce);
 }
 
 .produit-suggestions__placeholder {
   width: 100%;
   aspect-ratio: 1;
-  background-color: var(--nabe-beige);
-  border-radius: var(--rayon-bordure);
+  background-color: var(--nabe-sable);
+  border-radius: 24px 24px 8px 8px;
   margin-bottom: var(--espace-xs);
 }
 

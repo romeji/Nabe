@@ -63,7 +63,7 @@
   aspect-ratio: 1;
   object-fit: cover;
   border-radius: var(--rayon-bordure);
-  background-color: var(--nabe-beige);
+  background-color: var(--nabe-sable);
   margin-bottom: 0.4rem;
 }
 

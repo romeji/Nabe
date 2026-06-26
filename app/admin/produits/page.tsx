@@ -11,7 +11,7 @@ export default async function PageAdminProduits() {
   if (!session) redirect('/admin/login');
 
   const produits = await prisma.produit.findMany({
-    include: { images: { orderBy: { ordre: 'asc' }, take: 1 }, categorie: true, matiere: true, couleurPierre: true },
+    include: { images: { orderBy: { ordre: 'asc' }, take: 1 }, categorie: true, matiere: true, pierres: { include: { pierre: true } } },
     orderBy: { createdAt: 'desc' },
   });
 

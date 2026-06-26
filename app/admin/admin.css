@@ -125,6 +125,19 @@
   gap: 1rem;
 }
 
+.admin-form__champ-pleine-largeur {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.admin-form__champ-pleine-largeur > label {
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--texte-secondaire);
+}
+
 .admin-form__case {
   display: flex;
   align-items: center;

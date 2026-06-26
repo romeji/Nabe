@@ -22,7 +22,7 @@ export default async function PageLaMaison() {
 
       <section className="maison-parcours conteneur">
         <div className="maison-parcours__texte">
-          <span>{c.parcours_label}</span>
+          <span className="etiquette">{c.parcours_label}</span>
           <h2>{c.parcours_titre}</h2>
           <TexteRiche html={c.parcours_texte} />
         </div>
@@ -36,7 +36,7 @@ export default async function PageLaMaison() {
           <Image src="/images/bague-atelier.jpg" alt="Bague en atelier" width={500} height={400} />
         </div>
         <div className="maison-savoirfaire__texte">
-          <span>{c.savoirfaire_label}</span>
+          <span className="etiquette">{c.savoirfaire_label}</span>
           <h2>{c.savoirfaire_titre}</h2>
           <TexteRiche html={c.savoirfaire_texte} />
         </div>

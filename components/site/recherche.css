@@ -21,7 +21,7 @@
 .panneau-recherche__barre {
   display: flex;
   align-items: center;
-  border-bottom: 1px solid var(--nabe-beige-fonce);
+  border-bottom: 1px solid var(--nabe-argile);
   padding: var(--espace-sm) var(--espace-md);
   position: sticky;
   top: 0;
@@ -73,7 +73,7 @@
   height: 56px;
   object-fit: cover;
   border-radius: var(--rayon-bordure);
-  background-color: var(--nabe-beige);
+  background-color: var(--nabe-sable);
   flex-shrink: 0;
 }
 

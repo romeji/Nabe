@@ -1,28 +1,39 @@
 /* ============================================================
    NABE — Design System global
-   Palette extraite des maquettes : beige/champagne/terracotta
+   Palette : Cream / Yellow Sand / Clay / Terracotta + Or
+   Inspiration : arches, bohème-chic, cocooning, minimaliste
    ============================================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Imperial+Script&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap');
 
 :root {
-  /* Couleurs principales */
-  --nabe-creme: #f7f1e8;
-  --nabe-beige: #ede3d3;
-  --nabe-beige-fonce: #d9c7ab;
-  --nabe-sable: #c9b08e;
+  /* Couleurs principales — palette de référence */
+  --nabe-creme: #f5f2ee;
+  --nabe-sable: #f1e0cb;
+  --nabe-argile: #cfa999;
+  --nabe-terracotta: #9f5434;
+  --nabe-terracotta-fonce: #7c4027;
+
+  /* Or — identité du logo */
   --nabe-or: #b8923f;
-  --nabe-or-clair: #d4a857;
-  --nabe-terracotta: #a85c3f;
-  --nabe-terracotta-fonce: #8b4a32;
-  --nabe-brun: #5c4632;
-  --nabe-brun-fonce: #3d2e1f;
-  --nabe-noir: #2a2018;
+  --nabe-or-clair: #d4b06a;
+  --nabe-or-fonce: #96752f;
+
+  /* Tons additionnels dérivés de la palette, pour la profondeur */
+  --nabe-sable-fonce: #e3c9a3;
+  --nabe-argile-clair: #e3c7bb;
+  --nabe-brun: #6b4a3a;
+  --nabe-brun-fonce: #45291e;
+  --nabe-noir: #2a1c14;
   --nabe-blanc: #ffffff;
+
+  /* Alias conservés pour compatibilité avec le code existant */
+  --nabe-beige: var(--nabe-sable);
+  --nabe-beige-fonce: var(--nabe-sable-fonce);
 
   /* Texte */
   --texte-principal: var(--nabe-brun-fonce);
-  --texte-secondaire: #7a6a55;
+  --texte-secondaire: #8a6f5c;
   --texte-clair: #ffffff;
 
   /* Typographies */
@@ -35,17 +46,18 @@
   --espace-sm: 1rem;
   --espace-md: 1.5rem;
   --espace-lg: 2.5rem;
-  --espace-xl: 4rem;
-  --espace-2xl: 6rem;
+  --espace-xl: 3rem;
+  --espace-2xl: 4.5rem;
 
-  /* Mise en page */
+  /* Mise en page — formes arrondies, esprit arche */
   --largeur-max: 1280px;
-  --rayon-bordure: 4px;
-  --ombre-douce: 0 4px 20px rgba(61, 46, 31, 0.08);
-  --ombre-moyenne: 0 8px 30px rgba(61, 46, 31, 0.12);
+  --rayon-bordure: 10px;
+  --rayon-arche: 40px 40px 4px 4px;
+  --ombre-douce: 0 4px 24px rgba(69, 41, 30, 0.07);
+  --ombre-moyenne: 0 10px 36px rgba(69, 41, 30, 0.13);
 
   /* Transitions */
-  --transition-douce: all 0.3s ease;
+  --transition-douce: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 * {
@@ -62,7 +74,7 @@ body {
   font-family: var(--font-texte);
   color: var(--texte-principal);
   background-color: var(--nabe-creme);
-  line-height: 1.6;
+  line-height: 1.65;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -71,6 +83,7 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 500;
   line-height: 1.2;
   color: var(--texte-principal);
+  letter-spacing: 0.01em;
 }
 
 a {
@@ -107,18 +120,32 @@ input, textarea, select {
   padding: 0 var(--espace-md);
 }
 
+/* ============================================================
+   FORME ARCHE — élément signature du design bohème-chic
+   À utiliser pour les cadres d'images, blocs hero secondaires
+   ============================================================ */
+.forme-arche {
+  border-radius: 50% 50% 6px 6px / 28% 28% 4px 4px;
+  overflow: hidden;
+}
+
+.forme-arche-haut {
+  border-radius: 200px 200px 0 0;
+  overflow: hidden;
+}
+
 /* Boutons partagés */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0.9rem 2rem;
-  font-size: 0.85rem;
+  padding: 0.95rem 2.2rem;
+  font-size: 0.82rem;
   font-weight: 500;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  border-radius: var(--rayon-bordure);
+  border-radius: 999px;
   transition: var(--transition-douce);
   cursor: pointer;
 }
@@ -129,15 +156,17 @@ input, textarea, select {
 }
 .btn-primaire:hover {
   background-color: var(--nabe-terracotta-fonce);
+  transform: translateY(-1px);
+  box-shadow: var(--ombre-douce);
 }
 
 .btn-secondaire {
   background-color: transparent;
   color: var(--texte-clair);
-  border: 1px solid var(--texte-clair);
+  border: 1.5px solid var(--texte-clair);
 }
 .btn-secondaire:hover {
-  background-color: rgba(255, 255, 255, 0.15);
+  background-color: rgba(255, 255, 255, 0.18);
 }
 
 .btn-or {
@@ -145,15 +174,27 @@ input, textarea, select {
   color: var(--texte-clair);
 }
 .btn-or:hover {
-  background-color: var(--nabe-or-clair);
+  background-color: var(--nabe-or-fonce);
+  transform: translateY(-1px);
+  box-shadow: var(--ombre-douce);
+}
+
+.btn-contour {
+  background-color: transparent;
+  color: var(--nabe-terracotta);
+  border: 1.5px solid var(--nabe-terracotta);
+}
+.btn-contour:hover {
+  background-color: var(--nabe-terracotta);
+  color: var(--texte-clair);
 }
 
 .btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  transform: none !important;
 }
 
-/* Texte accent (mots colorés dans les titres) */
 /* Bouton favori (coeur), réutilisé sur plusieurs pages */
 .bouton-favori {
   font-size: 1.1rem;
@@ -170,9 +211,62 @@ input, textarea, select {
   color: var(--nabe-terracotta);
 }
 
+/* Texte accent (mots colorés dans les titres) */
 .accent {
   color: var(--nabe-terracotta);
   font-style: italic;
+}
+
+.accent-or {
+  color: var(--nabe-or);
+  font-style: italic;
+}
+
+/* Étiquette discrète au-dessus des titres de section */
+.etiquette {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--nabe-or-fonce);
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.etiquette::before {
+  content: '';
+  width: 18px;
+  height: 1px;
+  background-color: var(--nabe-or);
+  display: inline-block;
+}
+
+/* Carte douce réutilisable (témoignages, infos, etc.) */
+.carte-douce {
+  background-color: var(--nabe-blanc);
+  border-radius: var(--rayon-bordure);
+  box-shadow: var(--ombre-douce);
+}
+
+/* Séparateur orné discret */
+.separateur-orne {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--espace-sm);
+  color: var(--nabe-or);
+  margin: var(--espace-md) 0;
+}
+.separateur-orne::before,
+.separateur-orne::after {
+  content: '';
+  width: 50px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--nabe-or));
+}
+.separateur-orne::after {
+  background: linear-gradient(90deg, var(--nabe-or), transparent);
 }
 
 /* Scrollbar discrète */
@@ -183,7 +277,7 @@ input, textarea, select {
   background: var(--nabe-creme);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--nabe-beige-fonce);
+  background: var(--nabe-argile);
   border-radius: 10px;
 }
 

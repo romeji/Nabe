@@ -11,7 +11,14 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
   const produit = await prisma.produit.findUnique({
     where: { id: params.id },
-    include: { images: { orderBy: { ordre: 'asc' } }, categorie: true, matiere: true, couleurPierre: true, collection: true, mouvementsStock: { orderBy: { createdAt: 'desc' } } },
+    include: {
+      images: { orderBy: { ordre: 'asc' } },
+      categorie: true,
+      matiere: true,
+      pierres: { include: { pierre: { include: { couleurPierre: true } } } },
+      collection: true,
+      mouvementsStock: { orderBy: { createdAt: 'desc' } },
+    },
   });
 
   if (!produit) {
@@ -30,7 +37,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   try {
     const body = await req.json();
 
-    const { images, stock, id, ...autresDonnees } = body;
+    const { images, stock, id, pierresIds, composeAvecIds, ...autresDonnees } = body;
 
     const produitActuel = await prisma.produit.findUnique({ where: { id: params.id } });
     if (!produitActuel) {
@@ -66,8 +73,22 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
               })),
             }
           : undefined,
+        pierres: Array.isArray(pierresIds)
+          ? {
+              deleteMany: {},
+              create: pierresIds.map((pierreId: string) => ({ pierreId })),
+            }
+          : undefined,
+        composeAvec: Array.isArray(composeAvecIds)
+          ? {
+              deleteMany: {},
+              create: composeAvecIds
+                .slice(0, 2)
+                .map((produitSuggereId: string, i: number) => ({ produitSuggereId, ordre: i })),
+            }
+          : undefined,
       },
-      include: { images: true },
+      include: { images: true, pierres: true },
     });
 
     return NextResponse.json(produit);

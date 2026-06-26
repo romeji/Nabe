@@ -1,10 +1,12 @@
 .maison-parcours,
 .maison-savoirfaire {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 0.85fr 1fr;
   gap: var(--espace-xl);
   align-items: center;
   padding: var(--espace-2xl) var(--espace-md);
+  max-width: var(--largeur-max);
+  margin: 0 auto;
 }
 
 .maison-savoirfaire {
@@ -15,32 +17,30 @@
   direction: ltr;
 }
 
-.maison-parcours__texte span,
-.maison-savoirfaire__texte span {
-  color: var(--nabe-or);
-  font-size: 0.8rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  font-weight: 600;
-}
-
 .maison-parcours__texte h2,
 .maison-savoirfaire__texte h2 {
-  font-size: 2rem;
+  font-size: 2.2rem;
   margin: var(--espace-sm) 0 var(--espace-md);
 }
 
 .maison-parcours__texte p,
 .maison-savoirfaire__texte p {
   color: var(--texte-secondaire);
+  font-size: 1.02rem;
+}
+
+.maison-parcours__image,
+.maison-savoirfaire__image {
+  border-radius: 50% 50% 10px 10px / 24% 24% 4px 4px;
+  overflow: hidden;
+  box-shadow: var(--ombre-moyenne);
 }
 
 .maison-parcours__image img,
 .maison-savoirfaire__image img {
   width: 100%;
-  height: 420px;
+  height: 460px;
   object-fit: cover;
-  border-radius: var(--rayon-bordure);
 }
 
 .maison-valeurs {
@@ -49,22 +49,27 @@
   gap: var(--espace-lg);
   padding: var(--espace-2xl) var(--espace-md);
   text-align: center;
-  background-color: var(--nabe-beige);
+  background-color: var(--nabe-sable);
+  max-width: var(--largeur-max);
+  margin: 0 auto;
+  border-radius: 40px;
 }
 
 .maison-valeurs__icone {
-  font-size: 1.8rem;
+  font-size: 1.9rem;
   display: block;
   margin-bottom: var(--espace-xs);
+  color: var(--nabe-or);
 }
 
 .maison-valeurs__item h3 {
   margin-bottom: 0.3rem;
+  font-size: 1.2rem;
 }
 
 .maison-valeurs__item p {
   color: var(--texte-secondaire);
-  font-size: 0.9rem;
+  font-size: 0.92rem;
 }
 
 @media (max-width: 900px) {
@@ -73,7 +78,12 @@
     grid-template-columns: 1fr;
     direction: ltr;
   }
+  .maison-parcours__image img,
+  .maison-savoirfaire__image img {
+    height: 360px;
+  }
   .maison-valeurs {
     grid-template-columns: 1fr;
+    border-radius: 28px;
   }
 }

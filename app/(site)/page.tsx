@@ -108,7 +108,7 @@ export default async function PageAccueil() {
       {/* NOUVELLE COLLECTION (togglable, au-dessus de "Notre histoire") */}
       {carrousselNouvelleCollectionActif && produitsNouvelleCollection.length > 0 && (
         <section className="accueil-carrousel conteneur">
-          <span className="accueil-carrousel__label">Nouvelle collection</span>
+          <span className="etiquette">Nouvelle collection</span>
           <h2>Nos toutes dernières créations</h2>
           <CarrouselProduits produits={serialiser(produitsNouvelleCollection)} favorisIds={idsFavoris} />
         </section>
@@ -125,7 +125,7 @@ export default async function PageAccueil() {
           />
         </div>
         <div className="accueil-histoire__texte">
-          <span className="accueil-histoire__label">{contenu.histoire_label}</span>
+          <span className="etiquette">{contenu.histoire_label}</span>
           <h2>
             Chaque bijou <span className="accent">raconte une histoire.</span>
           </h2>
@@ -139,7 +139,7 @@ export default async function PageAccueil() {
       {/* SELECTION (carrousel des bijoux mis en avant) */}
       {carrousselSelectionActif && (
         <section className="accueil-carrousel conteneur">
-          <span className="accueil-carrousel__label">{contenu.collections_label}</span>
+          <span className="etiquette">{contenu.collections_label}</span>
           <h2>Notre sélection</h2>
           {produitsEnAvant.length > 0 ? (
             <CarrouselProduits produits={serialiser(produitsEnAvant)} favorisIds={idsFavoris} />
@@ -151,7 +151,7 @@ export default async function PageAccueil() {
 
       {/* SAVOIR-FAIRE */}
       <section className="accueil-savoirfaire conteneur">
-        <span className="accueil-savoirfaire__label">{contenu.savoirfaire_label}</span>
+        <span className="etiquette">{contenu.savoirfaire_label}</span>
         <h2>
           L'art de créer avec <span className="accent">passion</span>
         </h2>
@@ -186,7 +186,7 @@ export default async function PageAccueil() {
       {/* BESTSELLERS (togglable, au-dessus de "Pièce signature") */}
       {carrousselBestsellerActif && bestsellers.length > 0 && (
         <section className="accueil-carrousel conteneur">
-          <span className="accueil-carrousel__label">Meilleures ventes</span>
+          <span className="etiquette">Meilleures ventes</span>
           <h2>Vos bijoux préférés</h2>
           <CarrouselProduits produits={serialiser(bestsellers)} favorisIds={idsFavoris} />
         </section>
@@ -196,7 +196,7 @@ export default async function PageAccueil() {
       <section className="accueil-signature">
         <div className="accueil-signature__overlay" />
         <div className="accueil-signature__contenu">
-          <span>{contenu.signature_label}</span>
+          <span className="etiquette" style={{ color: 'var(--nabe-sable)' }}>{contenu.signature_label}</span>
           <h2>
             Une création pensée pour traverser <span className="accent">les générations.</span>
           </h2>
@@ -209,7 +209,7 @@ export default async function PageAccueil() {
       {/* TEMOIGNAGES */}
       {temoignages.length > 0 && (
         <section className="accueil-temoignages conteneur">
-          <span className="accueil-temoignages__label">{contenu.temoignages_label}</span>
+          <span className="etiquette">{contenu.temoignages_label}</span>
           <h2>{contenu.temoignages_titre}</h2>
           <div className="accueil-temoignages__grille">
             {temoignages.map((t) => (

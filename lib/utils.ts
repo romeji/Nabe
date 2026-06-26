@@ -31,17 +31,6 @@ export const LABELS_TYPE_BIJOU: Record<string, string> = {
   COFFRET_CADEAU: 'Coffret cadeau',
 };
 
-export const LABELS_PIERRE: Record<string, string> = {
-  DIAMANT: 'Diamant',
-  PERLE: 'Perle',
-  PIERRE_DE_LUNE: 'Pierre de lune',
-  QUARTZ: 'Quartz',
-  TOPAZE: 'Topaze',
-  SAPHIR: 'Saphir',
-  EMERAUDE: 'Émeraude',
-  AUCUNE: '—',
-};
-
 export const LABELS_DISPONIBILITE: Record<string, string> = {
   EN_STOCK: 'En stock',
   FABRICATION_SUR_COMMANDE: 'Fabrication sur commande',

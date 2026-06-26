@@ -2,22 +2,25 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { LABELS_TYPE_BIJOU, LABELS_PIERRE, LABELS_DISPONIBILITE } from '@/lib/utils';
+import { LABELS_TYPE_BIJOU, LABELS_DISPONIBILITE } from '@/lib/utils';
 import './filtres-collections.css';
 
 type Matiere = { id: string; nom: string };
-type Couleur = { id: string; nom: string; codeHex: string };
+type Couleur = { id: string; nom: string; codeHex: string; nombreProduits?: number };
+type PierreOption = { id: string; nom: string };
 
 const TAILLES_BAGUE = ['48', '50', '52', '54', '56', '58', '60'];
 const TAILLES_BRACELET = ['S', 'M', 'L'];
 
 export default function FiltresCollections({
   matieres = [],
+  pierres = [],
   couleurs = [],
   prixMinGlobal = 0,
   prixMaxGlobal = 1000,
 }: {
   matieres?: Matiere[];
+  pierres?: PierreOption[];
   couleurs?: Couleur[];
   prixMinGlobal?: number;
   prixMaxGlobal?: number;
@@ -186,35 +189,40 @@ export default function FiltresCollections({
           ))}
         </div>
 
-        <div className="filtres-collections__groupe">
-          <h3>Pierre</h3>
-          {Object.entries(LABELS_PIERRE)
-            .filter(([valeur]) => valeur !== 'AUCUNE')
-            .map(([valeur, label]) => (
-              <label key={valeur} className="filtres-collections__case">
+        {pierres.length > 0 && (
+          <div className="filtres-collections__groupe">
+            <h3>Pierre</h3>
+            {pierres.map((p) => (
+              <label key={p.id} className="filtres-collections__case">
                 <input
                   type="checkbox"
-                  checked={pierreActive === valeur}
-                  onChange={() => appliquerFiltre('pierre', pierreActive === valeur ? null : valeur)}
+                  checked={pierreActive === p.id}
+                  onChange={() => appliquerFiltre('pierre', pierreActive === p.id ? null : p.id)}
                 />
-                {label}
+                {p.nom}
               </label>
             ))}
-        </div>
+          </div>
+        )}
 
         {couleurs.length > 0 && (
           <div className="filtres-collections__groupe">
-            <h3>Couleur de la pierre</h3>
-            <div className="filtres-collections__couleurs">
+            <h3>Couleur de pierre</h3>
+            <div className="filtres-collections__couleurs-liste">
               {couleurs.map((c) => (
-                <button
-                  key={c.id}
-                  type="button"
-                  className={`filtres-collections__pastille ${couleurActive === c.id ? 'actif' : ''}`}
-                  style={{ backgroundColor: c.codeHex }}
-                  title={c.nom}
-                  onClick={() => appliquerFiltre('couleur', couleurActive === c.id ? null : c.id)}
-                />
+                <label key={c.id} className="filtres-collections__case filtres-collections__case-couleur">
+                  <input
+                    type="radio"
+                    name="couleur-pierre"
+                    checked={couleurActive === c.id}
+                    onChange={() => appliquerFiltre('couleur', couleurActive === c.id ? null : c.id)}
+                  />
+                  <span className="filtres-collections__rond" style={{ backgroundColor: c.codeHex }} />
+                  {c.nom}
+                  {typeof c.nombreProduits === 'number' && (
+                    <span className="filtres-collections__compteur">({c.nombreProduits})</span>
+                  )}
+                </label>
               ))}
             </div>
           </div>

@@ -10,6 +10,22 @@
   margin-bottom: var(--espace-md);
 }
 
+.reglages-client__section > label {
+  display: block;
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--texte-secondaire);
+  margin-bottom: 0.4rem;
+}
+
+.reglages-client__section > select {
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--nabe-argile);
+  border-radius: 999px;
+  background-color: var(--nabe-blanc);
+}
+
 .reglages-client__toggle {
   display: flex;
   gap: var(--espace-sm);

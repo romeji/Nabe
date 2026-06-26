@@ -161,6 +161,18 @@ export default function ReglagesClient({
       </div>
 
       <div className="admin-carte reglages-client__section">
+        <h2>Page produit — Présentation</h2>
+        <label>Position des vignettes de la galerie</label>
+        <select
+          value={config.galerie_produit_position}
+          onChange={(e) => maj('galerie_produit_position', e.target.value)}
+        >
+          <option value="gauche">À gauche de l'image (classique)</option>
+          <option value="bas">Sous l'image (plus aéré)</option>
+        </select>
+      </div>
+
+      <div className="admin-carte reglages-client__section">
         <h2>Page produit — Suggestions</h2>
 
         <label className="reglages-client__toggle">

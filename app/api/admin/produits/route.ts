@@ -10,10 +10,7 @@ const schemaProduit = z.object({
   prix: z.number().positive(),
   type: z.enum(['BAGUE', 'COLLIER', 'BOUCLES_OREILLES', 'BRACELET', 'PIECE_UNIQUE', 'COFFRET_CADEAU']),
   matiereId: z.string().optional().nullable(),
-  pierre: z
-    .enum(['DIAMANT', 'PERLE', 'PIERRE_DE_LUNE', 'QUARTZ', 'TOPAZE', 'SAPHIR', 'EMERAUDE', 'AUCUNE'])
-    .optional(),
-  couleurPierreId: z.string().optional().nullable(),
+  pierresIds: z.array(z.string()).optional(),
   delaiFabrication: z.string().optional().nullable(),
   fabriqueEnFrance: z.boolean().optional(),
   tailleSurMesure: z.boolean().optional(),
@@ -26,6 +23,8 @@ const schemaProduit = z.object({
   collectionId: z.string().optional().nullable(),
   actif: z.boolean().optional(),
   enAvant: z.boolean().optional(),
+  composerAvecActif: z.boolean().optional(),
+  composeAvecIds: z.array(z.string()).max(2).optional(),
   images: z
     .array(z.object({ url: z.string(), publicId: z.string().optional(), alt: z.string().optional() }))
     .optional(),
@@ -38,7 +37,12 @@ export async function GET(req: NextRequest) {
   }
 
   const produits = await prisma.produit.findMany({
-    include: { images: { orderBy: { ordre: 'asc' } }, categorie: true, matiere: true, couleurPierre: true },
+    include: {
+      images: { orderBy: { ordre: 'asc' } },
+      categorie: true,
+      matiere: true,
+      pierres: { include: { pierre: { include: { couleurPierre: true } } } },
+    },
     orderBy: { createdAt: 'desc' },
   });
 
@@ -69,8 +73,6 @@ export async function POST(req: NextRequest) {
         prix: donnees.prix,
         type: donnees.type,
         matiereId: donnees.matiereId || undefined,
-        pierre: donnees.pierre || 'AUCUNE',
-        couleurPierreId: donnees.couleurPierreId || undefined,
         delaiFabrication: donnees.delaiFabrication || undefined,
         fabriqueEnFrance: donnees.fabriqueEnFrance ?? true,
         tailleSurMesure: donnees.tailleSurMesure ?? false,
@@ -81,6 +83,7 @@ export async function POST(req: NextRequest) {
         collectionId: donnees.collectionId || undefined,
         actif: donnees.actif ?? true,
         enAvant: donnees.enAvant ?? false,
+        composerAvecActif: donnees.composerAvecActif ?? true,
         images: donnees.images
           ? {
               create: donnees.images.map((img, i) => ({
@@ -91,8 +94,18 @@ export async function POST(req: NextRequest) {
               })),
             }
           : undefined,
+        pierres: donnees.pierresIds
+          ? {
+              create: donnees.pierresIds.map((pierreId) => ({ pierreId })),
+            }
+          : undefined,
+        composeAvec: donnees.composeAvecIds
+          ? {
+              create: donnees.composeAvecIds.map((produitSuggereId, i) => ({ produitSuggereId, ordre: i })),
+            }
+          : undefined,
       },
-      include: { images: true },
+      include: { images: true, pierres: true },
     });
 
     if (donnees.stock && donnees.stock > 0) {

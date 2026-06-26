@@ -8,7 +8,7 @@
 }
 
 .mon-compte__entete h1 {
-  font-size: 1.8rem;
+  font-size: 2.2rem;
   margin-bottom: 0.2rem;
 }
 
@@ -25,21 +25,24 @@
 }
 
 .mon-compte__carte {
-  background-color: var(--nabe-beige);
+  background-color: var(--nabe-sable);
   padding: var(--espace-lg);
-  border-radius: var(--rayon-bordure);
+  border-radius: 30px 30px 10px 10px;
   text-align: center;
   transition: var(--transition-douce);
 }
 
 .mon-compte__carte:hover {
-  background-color: var(--nabe-beige-fonce);
+  background-color: var(--nabe-sable-fonce);
+  transform: translateY(-3px);
+  box-shadow: var(--ombre-douce);
 }
 
 .mon-compte__icone {
   font-size: 1.8rem;
   display: block;
   margin-bottom: var(--espace-xs);
+  color: var(--nabe-or);
 }
 
 .mon-compte__carte h3 {
@@ -85,8 +88,8 @@
 
 .formulaire-profil__section input {
   width: 100%;
-  padding: 0.7rem;
-  border: 1px solid var(--nabe-beige-fonce);
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--nabe-argile);
   border-radius: var(--rayon-bordure);
 }
 

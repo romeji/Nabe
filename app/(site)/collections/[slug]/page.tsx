@@ -22,8 +22,12 @@ export default async function PageProduit({ params }: Props) {
       images: { orderBy: { ordre: 'asc' } },
       categorie: true,
       matiere: true,
-      couleurPierre: true,
+      pierres: { include: { pierre: { include: { couleurPierre: true } } } },
       collection: true,
+      composeAvec: {
+        orderBy: { ordre: 'asc' },
+        include: { produitSuggere: { include: { images: { orderBy: { ordre: 'asc' }, take: 1 } } } },
+      },
     },
   });
 
@@ -34,6 +38,7 @@ export default async function PageProduit({ params }: Props) {
   const config = await getConfigSite();
   const suggestionsActives = configEstActive(config, 'suggestions_produit_actif');
   const critere = config.suggestions_produit_critere || 'meme_type';
+  const galeriePosition = (config.galerie_produit_position as 'gauche' | 'bas') || 'gauche';
 
   const session = await getServerSession(authClientOptions);
   const clientId = (session?.user as any)?.id as string | undefined;
@@ -73,11 +78,22 @@ export default async function PageProduit({ params }: Props) {
     : false;
 
   // On sérialise les champs Decimal (non transmissibles tels quels du serveur au client)
+  // et on met les pierres / produits composables à plat pour le composant client.
   const produitSerialise = {
     ...produit,
     prix: produit.prix.toString(),
+    pierres: produit.pierres.map((pp) => pp.pierre),
   };
   const suggestionsSerialisees = suggestions.map((s) => ({ ...s, prix: s.prix.toString() }));
+  const composables = produit.composerAvecActif
+    ? produit.composeAvec.map((c) => ({
+        id: c.produitSuggere.id,
+        nom: c.produitSuggere.nom,
+        slug: c.produitSuggere.slug,
+        prix: c.produitSuggere.prix.toString(),
+        image: c.produitSuggere.images[0]?.url || null,
+      }))
+    : [];
 
   return (
     <ProduitDetailClient
@@ -85,6 +101,8 @@ export default async function PageProduit({ params }: Props) {
       suggestions={suggestionsSerialisees as any}
       suggestionsActives={suggestionsActives}
       estFavori={estFavori}
+      composables={composables}
+      galeriePosition={galeriePosition}
     />
   );
 }

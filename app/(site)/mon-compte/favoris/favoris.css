@@ -20,11 +20,12 @@
 
 .favoris-carte__image {
   display: block;
-  background-color: var(--nabe-beige);
-  border-radius: var(--rayon-bordure);
+  background-color: var(--nabe-sable);
+  border-radius: 24px 24px 8px 8px;
   overflow: hidden;
   aspect-ratio: 1;
   margin-bottom: var(--espace-xs);
+  box-shadow: var(--ombre-douce);
 }
 
 .favoris-carte__image img {
@@ -36,7 +37,7 @@
 .favoris-carte__placeholder {
   width: 100%;
   height: 100%;
-  background-color: var(--nabe-beige-fonce);
+  background-color: var(--nabe-sable-fonce);
 }
 
 .favoris-carte__coeur {

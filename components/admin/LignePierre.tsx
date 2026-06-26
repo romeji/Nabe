@@ -1,0 +1,144 @@
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+
+type CouleurOption = { id: string; nom: string; codeHex: string };
+type PierreLigne = {
+  id: string;
+  nom: string;
+  description: string | null;
+  couleurPierreId: string | null;
+  couleurPierre: { nom: string; codeHex: string } | null;
+  _count: { produits: number };
+};
+
+export default function LignePierre({ pierre, couleurs }: { pierre: PierreLigne; couleurs: CouleurOption[] }) {
+  const router = useRouter();
+  const [edition, setEdition] = useState(false);
+  const [nom, setNom] = useState(pierre.nom);
+  const [description, setDescription] = useState(pierre.description || '');
+  const [couleurPierreId, setCouleurPierreId] = useState(pierre.couleurPierreId || '');
+  const [confirmationSuppression, setConfirmationSuppression] = useState(false);
+  const [enCours, setEnCours] = useState(false);
+  const [erreur, setErreur] = useState('');
+
+  async function sauvegarder() {
+    if (!nom.trim()) {
+      setErreur('Le nom ne peut pas être vide.');
+      return;
+    }
+    setEnCours(true);
+    setErreur('');
+    try {
+      const res = await fetch(`/api/admin/pierres/${pierre.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nom, description, couleurPierreId: couleurPierreId || null }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Erreur');
+      }
+      setEdition(false);
+      router.refresh();
+    } catch (err: any) {
+      setErreur(err.message || 'Erreur lors de la mise à jour.');
+    } finally {
+      setEnCours(false);
+    }
+  }
+
+  async function supprimer() {
+    setEnCours(true);
+    try {
+      const res = await fetch(`/api/admin/pierres/${pierre.id}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error();
+      router.refresh();
+    } catch {
+      alert('Erreur lors de la suppression.');
+      setEnCours(false);
+    }
+  }
+
+  if (edition) {
+    return (
+      <tr>
+        <td colSpan={5}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', padding: '0.5rem 0' }}>
+            <input type="text" value={nom} onChange={(e) => setNom(e.target.value)} placeholder="Nom" />
+            <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={3} placeholder="Description" />
+            <select value={couleurPierreId} onChange={(e) => setCouleurPierreId(e.target.value)}>
+              <option value="">Aucune couleur</option>
+              {couleurs.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.nom}
+                </option>
+              ))}
+            </select>
+            {erreur && <p className="admin-categories__erreur">{erreur}</p>}
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <button className="admin-btn-icone" onClick={sauvegarder} disabled={enCours}>
+                {enCours ? '...' : 'Enregistrer'}
+              </button>
+              <button className="admin-btn-icone" onClick={() => setEdition(false)}>
+                Annuler
+              </button>
+            </div>
+          </div>
+        </td>
+      </tr>
+    );
+  }
+
+  return (
+    <tr>
+      <td>{pierre.nom}</td>
+      <td style={{ maxWidth: 280, fontSize: '0.85rem', color: 'var(--texte-secondaire)' }}>
+        {pierre.description ? pierre.description.slice(0, 80) + (pierre.description.length > 80 ? '…' : '') : '—'}
+      </td>
+      <td>
+        {pierre.couleurPierre ? (
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+            <span
+              style={{
+                display: 'inline-block',
+                width: 16,
+                height: 16,
+                borderRadius: '50%',
+                backgroundColor: pierre.couleurPierre.codeHex,
+                border: '1px solid var(--nabe-argile)',
+              }}
+            />
+            {pierre.couleurPierre.nom}
+          </span>
+        ) : (
+          '—'
+        )}
+      </td>
+      <td>{pierre._count.produits}</td>
+      <td className="admin-categories__actions">
+        {confirmationSuppression ? (
+          <>
+            <span className="admin-categories__confirmation">Confirmer ?</span>
+            <button className="admin-btn-icone admin-btn-supprimer" onClick={supprimer} disabled={enCours}>
+              Oui
+            </button>
+            <button className="admin-btn-icone" onClick={() => setConfirmationSuppression(false)}>
+              Annuler
+            </button>
+          </>
+        ) : (
+          <>
+            <button className="admin-btn-icone" onClick={() => setEdition(true)}>
+              Modifier
+            </button>
+            <button className="admin-btn-icone admin-btn-supprimer" onClick={() => setConfirmationSuppression(true)}>
+              Supprimer
+            </button>
+          </>
+        )}
+      </td>
+    </tr>
+  );
+}

@@ -4,7 +4,7 @@
 
 .gestion-paiement__formulaire {
   background-color: var(--nabe-blanc);
-  border: 1px solid var(--nabe-beige-fonce);
+  border: 1px solid var(--nabe-argile);
   border-radius: var(--rayon-bordure);
   padding: var(--espace-md);
   margin-bottom: var(--espace-lg);
@@ -39,7 +39,7 @@
 .gestion-paiement__carte {
   position: relative;
   background-color: var(--nabe-blanc);
-  border: 1px solid var(--nabe-beige-fonce);
+  border: 1px solid var(--nabe-argile);
   border-radius: var(--rayon-bordure);
   padding: var(--espace-md);
   display: flex;
@@ -61,7 +61,7 @@
   position: absolute;
   top: -8px;
   right: var(--espace-sm);
-  background-color: var(--nabe-beige);
+  background-color: var(--nabe-sable);
   color: var(--nabe-terracotta-fonce);
   font-size: 0.68rem;
   padding: 0.15rem 0.5rem;

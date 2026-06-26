@@ -46,7 +46,7 @@
 
 .popup-bienvenue__modal input {
   padding: 0.8rem;
-  border: 1px solid var(--nabe-beige-fonce);
+  border: 1px solid var(--nabe-argile);
   border-radius: var(--rayon-bordure);
 }
 
@@ -73,7 +73,7 @@
 .popup-bienvenue__code {
   font-size: 1.5rem;
   letter-spacing: 0.15em;
-  background-color: var(--nabe-beige);
+  background-color: var(--nabe-sable);
   color: var(--nabe-terracotta-fonce);
   font-weight: 700;
   padding: var(--espace-sm);
