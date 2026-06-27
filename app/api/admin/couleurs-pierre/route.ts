@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
 
   const couleurs = await prisma.couleurPierre.findMany({
     orderBy: { ordre: 'asc' },
-    include: { _count: { select: { produits: true } } },
+    include: { _count: { select: { pierres: true } } },
   });
 
   return NextResponse.json(couleurs);

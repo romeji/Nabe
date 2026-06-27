@@ -7,7 +7,7 @@ type CouleurPierre = {
   id: string;
   nom: string;
   codeHex: string;
-  _count: { produits: number };
+  _count: { pierres: number };
 };
 
 export default function LigneCouleurPierre({ couleur }: { couleur: CouleurPierre }) {
@@ -88,7 +88,7 @@ export default function LigneCouleurPierre({ couleur }: { couleur: CouleurPierre
         )}
         {erreur && <p className="admin-categories__erreur">{erreur}</p>}
       </td>
-      <td>{couleur._count.produits}</td>
+      <td>{couleur._count.pierres}</td>
       <td className="admin-categories__actions">
         {confirmationSuppression ? (
           <>

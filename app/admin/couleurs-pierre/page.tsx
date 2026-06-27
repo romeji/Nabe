@@ -12,7 +12,7 @@ export default async function PageAdminCouleursPierre() {
 
   const couleurs = await prisma.couleurPierre.findMany({
     orderBy: { ordre: 'asc' },
-    include: { _count: { select: { produits: true } } },
+    include: { _count: { select: { pierres: true } } },
   });
 
   return (
@@ -27,7 +27,7 @@ export default async function PageAdminCouleursPierre() {
             <tr>
               <th></th>
               <th>Nom</th>
-              <th>Bijoux associés</th>
+              <th>Pierres associées</th>
               <th>Actions</th>
             </tr>
           </thead>

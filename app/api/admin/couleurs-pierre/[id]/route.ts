@@ -38,7 +38,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
   }
 
   try {
-    await prisma.produit.updateMany({
+    await prisma.pierre.updateMany({
       where: { couleurPierreId: params.id },
       data: { couleurPierreId: null },
     });

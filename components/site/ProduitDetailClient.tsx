@@ -11,6 +11,7 @@ import AccordeonProduit from './AccordeonProduit';
 import ReassuranceProduit from './ReassuranceProduit';
 import PopupPierres from './PopupPierres';
 import ComposerAvec from './ComposerAvec';
+import BandeauReassurance from './BandeauReassurance';
 
 type ImageProduit = { id: string; url: string; alt: string | null };
 type PierreInfo = {
@@ -116,8 +117,9 @@ export default function ProduitDetailClient({
               <Image
                 src={imagesAffichees[imageActive].url}
                 alt={imagesAffichees[imageActive].alt || produit.nom}
-                width={600}
-                height={700}
+                fill
+                sizes="(max-width: 900px) 90vw, 420px"
+                style={{ objectFit: 'cover' }}
                 priority
               />
             ) : (
@@ -231,6 +233,8 @@ export default function ProduitDetailClient({
           </div>
         </div>
       )}
+
+      <BandeauReassurance />
     </div>
   );
 }
