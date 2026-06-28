@@ -23,6 +23,7 @@
 
 .produit-galerie {
   display: flex;
+  align-items: flex-start;
   gap: var(--espace-sm);
 }
 
@@ -67,17 +68,18 @@
 
 .produit-galerie__principale {
   position: relative;
-  flex: 1;
+  width: 100%;
+  max-width: 480px;
+  aspect-ratio: 1 / 1;
   background-color: var(--nabe-sable);
   border-radius: 32px 32px 14px 14px;
   overflow: hidden;
-  aspect-ratio: 4/5;
-  max-width: 420px;
   box-shadow: var(--ombre-moyenne);
 }
 
 .produit-galerie__principale img {
   border-radius: inherit;
+  object-fit: cover;
 }
 
 .produit-galerie__placeholder {
@@ -113,33 +115,53 @@
   margin-top: 0.3rem;
 }
 
+.produit-infos__matiere-pierre {
+  font-size: 0.92rem;
+  color: var(--texte-secondaire);
+  margin-bottom: var(--espace-xs);
+}
+
+.produit-infos__lien-details {
+  display: inline-block;
+  font-size: 0.85rem;
+  color: var(--texte-secondaire);
+  text-decoration: underline;
+  margin-bottom: var(--espace-md);
+}
+
+.produit-infos__lien-details:hover {
+  color: var(--nabe-terracotta);
+}
+
 .produit-infos__prix {
   font-size: 1.4rem;
   font-weight: 600;
   color: var(--nabe-terracotta);
-  margin-bottom: var(--espace-md);
-}
-
-.produit-infos__description {
-  color: var(--texte-secondaire);
-  margin-bottom: var(--espace-md);
-}
-
-.produit-infos__caracteristiques {
   margin-bottom: var(--espace-lg);
-  border-top: 1px solid var(--nabe-beige-fonce);
-  padding-top: var(--espace-md);
+  padding-bottom: var(--espace-md);
+  border-bottom: 1px solid var(--nabe-argile);
 }
 
-.produit-infos__caracteristiques li {
-  font-size: 0.9rem;
+.produit-infos__prix span {
+  font-size: 0.78rem;
+  font-weight: 400;
   color: var(--texte-secondaire);
-  margin-bottom: 0.5rem;
+  margin-left: 0.4rem;
+}
+
+.accordeon-produit__details-liste {
+  margin-top: var(--espace-sm);
+}
+
+.accordeon-produit__details-liste li {
+  font-size: 0.88rem;
+  color: var(--texte-secondaire);
+  margin-bottom: 0.4rem;
   padding-left: 1rem;
   position: relative;
 }
 
-.produit-infos__caracteristiques li::before {
+.accordeon-produit__details-liste li::before {
   content: '•';
   position: absolute;
   left: 0;

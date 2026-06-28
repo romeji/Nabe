@@ -72,6 +72,7 @@ export default function ProduitDetailClient({
   const [tailleChoisie, setTailleChoisie] = useState('');
   const [quantite, setQuantite] = useState(1);
   const [ajoute, setAjoute] = useState(false);
+  const [ouvrirDescriptionSignal, setOuvrirDescriptionSignal] = useState(0);
   const ajouterArticle = usePanierStore((state) => state.ajouterArticle);
 
   const imagesAffichees = produit.images.length > 0 ? produit.images : [{ id: 'placeholder', url: '', alt: '' }];
@@ -141,27 +142,21 @@ export default function ProduitDetailClient({
             <BoutonFavori produitId={produit.id} initialementFavori={estFavori} className="produit-infos__coeur" />
           </div>
 
-          <p className="produit-infos__prix">{formaterPrix(produit.prix)}</p>
+          <p className="produit-infos__matiere-pierre">
+            {[produit.matiere?.nom, ...produit.pierres.map((p) => p.nom)].filter(Boolean).join(', ')}
+          </p>
 
-          <ul className="produit-infos__caracteristiques">
-            {produit.matiere && (
-              <li>
-                <strong>Matière :</strong> {produit.matiere.nom}
-              </li>
-            )}
-            {produit.pierres.length > 0 && (
-              <li>
-                <strong>{produit.pierres.length > 1 ? 'Pierres' : 'Pierre'} :</strong>{' '}
-                {produit.pierres.map((p) => p.nom).join(', ')}
-              </li>
-            )}
-            {produit.delaiFabrication && (
-              <li>
-                <strong>Délai de fabrication :</strong> {produit.delaiFabrication}
-              </li>
-            )}
-            {produit.fabriqueEnFrance && <li>Fabriqué à la main en France</li>}
-          </ul>
+          <button
+            type="button"
+            className="produit-infos__lien-details"
+            onClick={() => setOuvrirDescriptionSignal((n) => n + 1)}
+          >
+            Détails produits
+          </button>
+
+          <p className="produit-infos__prix">
+            {formaterPrix(produit.prix)} <span>Taxes comprises</span>
+          </p>
 
           {produit.pierres.length > 0 && <PopupPierres pierres={produit.pierres} />}
 
@@ -209,7 +204,12 @@ export default function ProduitDetailClient({
 
           <ReassuranceProduit />
 
-          <AccordeonProduit description={produit.description} />
+          <AccordeonProduit
+            description={produit.description}
+            delaiFabrication={produit.delaiFabrication}
+            fabriqueEnFrance={produit.fabriqueEnFrance}
+            signalOuverture={ouvrirDescriptionSignal}
+          />
 
           <ComposerAvec produits={composables} />
         </div>

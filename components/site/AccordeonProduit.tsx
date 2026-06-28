@@ -1,9 +1,28 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-export default function AccordeonProduit({ description }: { description: string }) {
+export default function AccordeonProduit({
+  description,
+  delaiFabrication,
+  fabriqueEnFrance,
+  signalOuverture,
+}: {
+  description: string;
+  delaiFabrication?: string | null;
+  fabriqueEnFrance?: boolean;
+  signalOuverture?: number;
+}) {
   const [ouvert, setOuvert] = useState<string | null>('description');
+
+  // Quand le parent déclenche le signal (clic sur "Détails produits"), on force
+  // l'ouverture de la description et on scrolle doucement jusqu'à elle.
+  useEffect(() => {
+    if (signalOuverture && signalOuverture > 0) {
+      setOuvert('description');
+      document.getElementById('accordeon-description')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, [signalOuverture]);
 
   function basculer(id: string) {
     setOuvert(ouvert === id ? null : id);
@@ -11,7 +30,7 @@ export default function AccordeonProduit({ description }: { description: string 
 
   return (
     <div className="accordeon-produit">
-      <div className="accordeon-produit__item">
+      <div className="accordeon-produit__item" id="accordeon-description">
         <button className="accordeon-produit__entete" onClick={() => basculer('description')}>
           Description du bijou
           <span>{ouvert === 'description' ? '−' : '+'}</span>
@@ -19,6 +38,16 @@ export default function AccordeonProduit({ description }: { description: string 
         {ouvert === 'description' && (
           <div className="accordeon-produit__contenu">
             <p>{description}</p>
+            {(delaiFabrication || fabriqueEnFrance) && (
+              <ul className="accordeon-produit__details-liste">
+                {delaiFabrication && (
+                  <li>
+                    <strong>Délai de fabrication :</strong> {delaiFabrication}
+                  </li>
+                )}
+                {fabriqueEnFrance && <li>Fabriqué à la main en France</li>}
+              </ul>
+            )}
           </div>
         )}
       </div>
