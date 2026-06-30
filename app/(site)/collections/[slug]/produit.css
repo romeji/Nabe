@@ -241,13 +241,13 @@
 
 .guide-tailles__lien:hover { color: var(--nabe-terracotta); }
 
-/* Bouton Ajouter au panier en rose (argile), pleine largeur, style VCA */
+/* Bouton Ajouter au panier — terracotta foncé, pleine largeur, style VCA */
 .produit-infos__ajouter {
   width: 100%;
   padding: 1.1rem;
   border-radius: 999px;
-  background: var(--nabe-argile);
-  color: var(--nabe-blanc);
+  background: var(--nabe-terracotta-fonce, #7c4027);
+  color: #ffffff;
   border: none;
   font-size: 0.9rem;
   font-weight: 600;
@@ -259,12 +259,12 @@
 }
 
 .produit-infos__ajouter:hover:not(:disabled) {
-  background: var(--nabe-terracotta);
+  background: var(--nabe-terracotta, #9f5434);
 }
 
 .produit-infos__ajouter:disabled {
-  background: var(--nabe-sable-fonce);
-  color: var(--texte-secondaire);
+  background: #c4b5a8;
+  color: #f5f0ea;
   cursor: not-allowed;
 }
 
