@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePanierStore } from '@/lib/store-panier';
@@ -13,7 +13,6 @@ import PopupDetailsProduit from './popups/PopupDetailsProduit';
 import LiensInfoProduit from './LiensInfoProduit';
 import ComposerAvec from './ComposerAvec';
 import BandeauReassurance from './BandeauReassurance';
-import PopupPanier from './PopupPanier';
 
 type ImageProduit = { id: string; url: string; alt: string | null };
 type PierreInfo = {
@@ -65,11 +64,6 @@ export default function ProduitDetailClient({
   estFavori,
   composables,
   galeriePosition = 'gauche',
-  boiteCadeauActif = false,
-  boiteCadeauNom,
-  boiteCadeauPrix,
-  boiteCadeauImage,
-  boiteCadeauProduitId,
   popupOuvertureActive = true,
 }: {
   produit: Produit;
@@ -78,20 +72,31 @@ export default function ProduitDetailClient({
   estFavori: boolean;
   composables: ProduitComposable[];
   galeriePosition?: 'gauche' | 'bas';
-  boiteCadeauActif?: boolean;
-  boiteCadeauNom?: string;
-  boiteCadeauPrix?: number;
-  boiteCadeauImage?: string;
-  boiteCadeauProduitId?: string;
   popupOuvertureActive?: boolean;
 }) {
   const [imageActive, setImageActive] = useState(0);
   const [tailleChoisie, setTailleChoisie] = useState('');
   const [popupDetailsOuverte, setPopupDetailsOuverte] = useState(false);
-  const [popupPanierOuverte, setPopupPanierOuverte] = useState(false);
   const [erreurTaille, setErreurTaille] = useState(false);
   const [erreurStock, setErreurStock] = useState(false);
   const ajouterArticle = usePanierStore((state) => state.ajouterArticle);
+
+  // Synchronise la max-height de la colonne droite avec la hauteur réelle de la galerie gauche
+  const galerieRef = useRef<HTMLDivElement>(null);
+  const infosRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function syncHauteur() {
+      if (galerieRef.current && infosRef.current) {
+        const h = galerieRef.current.getBoundingClientRect().height;
+        if (h > 0) infosRef.current.style.maxHeight = `${h}px`;
+      }
+    }
+    // Delay pour laisser l'image se rendre
+    const timer = setTimeout(syncHauteur, 100);
+    window.addEventListener('resize', syncHauteur);
+    return () => { clearTimeout(timer); window.removeEventListener('resize', syncHauteur); };
+  }, []);
 
   const imagesAffichees = produit.images.length > 0 ? produit.images : [{ id: 'placeholder', url: '', alt: '' }];
 
@@ -127,9 +132,8 @@ export default function ProduitDetailClient({
       quantite: 1,
       stockMax: stockDispo,
     });
-
     if (popupOuvertureActive) {
-      setPopupPanierOuverte(true);
+      window.dispatchEvent(new CustomEvent('nabe:ouvrir-panier'));
     }
   }
 
@@ -141,7 +145,7 @@ export default function ProduitDetailClient({
       </div>
 
       <div className={`produit-principal conteneur produit-principal--${galeriePosition}`}>
-        <div className={`produit-galerie produit-galerie--${galeriePosition}`}>
+        <div ref={galerieRef} className={`produit-galerie produit-galerie--${galeriePosition}`}>
           <div className="produit-galerie__vignettes">
             {imagesAffichees.map((img, i) => (
               <button
@@ -169,7 +173,7 @@ export default function ProduitDetailClient({
           </div>
         </div>
 
-        <div className="produit-infos">
+        <div ref={infosRef} className="produit-infos produit-infos--scroll">
           <div className="produit-infos__entete">
             <div>
               {produit.collection && (
@@ -211,7 +215,13 @@ export default function ProduitDetailClient({
                 <label>Taille</label>
               </div>
               <div className="produit-infos__tailles-boutons">
-                {produit.taillesDisponibles.map((t) => {
+                {[...produit.taillesDisponibles]
+                  .sort((a, b) => {
+                    const na = parseFloat(a), nb = parseFloat(b);
+                    if (!isNaN(na) && !isNaN(nb)) return na - nb;
+                    return a.localeCompare(b);
+                  })
+                  .map((t) => {
                   const stockTaille = stockDisponiblePour(t);
                   const epuisee = produit.stockTailles.length > 0 && stockTaille <= 0;
                   return (
@@ -289,16 +299,6 @@ export default function ProduitDetailClient({
         description={produit.description}
         pierres={produit.pierres}
         taillesDisponibles={produit.taillesDisponibles}
-      />
-
-      <PopupPanier
-        ouverte={popupPanierOuverte}
-        onFermer={() => setPopupPanierOuverte(false)}
-        boiteCadeauActif={boiteCadeauActif}
-        boiteCadeauNom={boiteCadeauNom}
-        boiteCadeauPrix={boiteCadeauPrix}
-        boiteCadeauImage={boiteCadeauImage}
-        boiteCadeauProduitId={boiteCadeauProduitId}
       />
     </div>
   );

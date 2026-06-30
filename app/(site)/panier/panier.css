@@ -205,3 +205,8 @@
   color: var(--nabe-terracotta-fonce, #a8412a);
   margin-top: 0.3rem;
 }
+
+.page-panier__btn-checkout {
+  margin-top: var(--espace-md);
+  width: 100%;
+}

@@ -5,37 +5,25 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePanierStore } from '@/lib/store-panier';
 import { formaterPrix } from '@/lib/utils';
-import PopupPanierVide from '@/components/site/PopupPanierVide';
-import '@/components/site/popup-panier-vide.css';
 import './panier.css';
 
+/**
+ * Page de récapitulatif et paiement.
+ * Le panier principal est géré via la popup (Header > PopupPanier).
+ * Cette page sert de page de finalisation : code promo + checkout Stripe.
+ */
 export default function PagePanier() {
   const { articles, retirerArticle, modifierQuantite, total } = usePanierStore();
   const [monte, setMonte] = useState(false);
   const [chargement, setChargement] = useState(false);
   const [erreur, setErreur] = useState('');
-  const [popupVideActive, setPopupVideActive] = useState(false);
-  const [afficherPopupVide, setAfficherPopupVide] = useState(false);
 
   const [codePromoInput, setCodePromoInput] = useState('');
   const [codeApplique, setCodeApplique] = useState<{ code: string; reduction: number } | null>(null);
   const [erreurCode, setErreurCode] = useState('');
   const [validationEnCours, setValidationEnCours] = useState(false);
 
-  useEffect(() => {
-    setMonte(true);
-  }, []);
-
-  useEffect(() => {
-    fetch('/api/config-public')
-      .then((res) => res.json())
-      .then((data) => {
-        const actif = data.popup_panier_vide_actif === 'true';
-        setPopupVideActive(actif);
-        if (actif && articles.length === 0) setAfficherPopupVide(true);
-      })
-      .catch(() => {});
-  }, [articles.length]);
+  useEffect(() => { setMonte(true); }, []);
 
   async function appliquerCode() {
     if (!codePromoInput.trim()) return;
@@ -87,8 +75,7 @@ export default function PagePanier() {
 
   const totalAvecReduction = Math.max(0, total() - (codeApplique?.reduction || 0));
 
-  // Tant que le panier (persisté en localStorage) n'a pas été lu côté client,
-  // on affiche un état neutre identique au rendu serveur pour éviter tout mismatch d'hydratation.
+  // Avant hydratation : état neutre pour éviter le mismatch SSR
   if (!monte) {
     return (
       <div className="page-panier conteneur">
@@ -105,9 +92,6 @@ export default function PagePanier() {
         <Link href="/collections" className="btn btn-primaire">
           Découvrir les collections
         </Link>
-        {popupVideActive && afficherPopupVide && (
-          <PopupPanierVide onFermer={() => setAfficherPopupVide(false)} />
-        )}
       </div>
     );
   }
@@ -117,12 +101,13 @@ export default function PagePanier() {
       <h1>Votre panier</h1>
 
       <div className="page-panier__corps">
+        {/* Liste des articles */}
         <div className="page-panier__articles">
           {articles.map((article) => (
-            <div key={`${article.produitId}-${article.taille}`} className="panier-article">
+            <div key={`${article.produitId}-${article.taille ?? ''}`} className="panier-article">
               <div className="panier-article__image">
                 {article.image ? (
-                  <Image src={article.image} alt={article.nom} width={100} height={100} />
+                  <Image src={article.image} alt={article.nom} width={100} height={100} style={{ objectFit: 'cover', borderRadius: 8 }} />
                 ) : (
                   <div className="panier-article__placeholder" />
                 )}
@@ -131,35 +116,20 @@ export default function PagePanier() {
                 <h3>{article.nom}</h3>
                 {article.taille && <p>Taille : {article.taille}</p>}
                 <div className="panier-article__quantite">
-                  <button
-                    onClick={() =>
-                      modifierQuantite(article.produitId, Math.max(1, article.quantite - 1), article.taille)
-                    }
-                  >
-                    −
-                  </button>
+                  <button onClick={() => modifierQuantite(article.produitId, Math.max(1, article.quantite - 1), article.taille)}>−</button>
                   <span>{article.quantite}</span>
                   <button
-                    onClick={() =>
-                      modifierQuantite(article.produitId, article.quantite + 1, article.taille)
-                    }
+                    onClick={() => modifierQuantite(article.produitId, article.quantite + 1, article.taille)}
                     disabled={typeof article.stockMax === 'number' && article.quantite >= article.stockMax}
-                  >
-                    +
-                  </button>
+                  >+</button>
                 </div>
                 {typeof article.stockMax === 'number' && article.quantite >= article.stockMax && (
                   <p className="panier-article__stock-max">Stock maximum atteint pour cette taille</p>
                 )}
               </div>
               <div className="panier-article__droite">
-                <span className="panier-article__prix">
-                  {formaterPrix(article.prix * article.quantite)}
-                </span>
-                <button
-                  className="panier-article__retirer"
-                  onClick={() => retirerArticle(article.produitId, article.taille)}
-                >
+                <span className="panier-article__prix">{formaterPrix(article.prix * article.quantite)}</span>
+                <button className="panier-article__retirer" onClick={() => retirerArticle(article.produitId, article.taille)}>
                   Retirer
                 </button>
               </div>
@@ -167,9 +137,11 @@ export default function PagePanier() {
           ))}
         </div>
 
+        {/* Résumé et paiement */}
         <div className="page-panier__resume">
-          <h2>Résumé</h2>
+          <h2>Récapitulatif</h2>
 
+          {/* Code promo */}
           <div className="page-panier__code-promo">
             {codeApplique ? (
               <div className="page-panier__code-applique">
@@ -184,6 +156,7 @@ export default function PagePanier() {
                     placeholder="Code promo"
                     value={codePromoInput}
                     onChange={(e) => setCodePromoInput(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && appliquerCode()}
                   />
                   <button onClick={appliquerCode} disabled={validationEnCours}>
                     {validationEnCours ? '...' : 'Appliquer'}
@@ -215,8 +188,8 @@ export default function PagePanier() {
 
           {erreur && <p className="page-panier__erreur">{erreur}</p>}
 
-          <button className="btn btn-or" onClick={gererCheckout} disabled={chargement}>
-            {chargement ? 'Redirection...' : 'Procéder au paiement'}
+          <button className="btn btn-or page-panier__btn-checkout" onClick={gererCheckout} disabled={chargement}>
+            {chargement ? 'Redirection...' : 'Procéder au paiement →'}
           </button>
         </div>
       </div>

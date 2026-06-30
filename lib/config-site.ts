@@ -20,6 +20,13 @@ export const DEFAUTS_CONFIG: Record<string, string> = {
   boite_cadeau_actif: 'false',
   boite_cadeau_produit_id: '', // id du Produit (catégorie "Coffret cadeau" typiquement) utilisé comme boîte cadeau
   popup_panier_ouverture_actif: 'true', // ouvre la popup panier automatiquement après un ajout au panier
+  // ── Popup panier ──
+  popup_panier_seuil_livraison: '60',
+  popup_panier_seuil_livraison_actif: 'true',
+  popup_panier_seuil_surprise: '100',
+  popup_panier_surprise_actif: 'false',
+  popup_panier_article_bonus_actif: 'false',
+  popup_panier_article_bonus_id: '',
 };
 
 /** Récupère toutes les valeurs de config, fusionnées avec les défauts. */

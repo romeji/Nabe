@@ -12,6 +12,7 @@
   color: var(--nabe-terracotta);
 }
 
+/* ── Layout principal produit ── */
 .produit-principal {
   display: grid;
   grid-template-columns: 1.1fr 1fr;
@@ -19,6 +20,18 @@
   padding: var(--espace-lg) var(--espace-md) var(--espace-xl);
   max-width: 1100px;
   margin: 0 auto;
+  align-items: start;
+}
+
+/* La colonne droite (infos) a un ascenseur invisible — max-height fixée par JS via ref */
+.produit-infos--scroll {
+  overflow-y: auto;
+  padding-right: 4px;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+.produit-infos--scroll::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
 }
 
 .produit-galerie {

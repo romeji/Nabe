@@ -266,19 +266,101 @@ export default function ReglagesClient({
       </div>
 
       <div className="admin-carte reglages-client__section">
-        <h2>Popups</h2>
+        <h2>Popup Panier — Barre de progression</h2>
 
         <label className="reglages-client__toggle">
           <input
             type="checkbox"
-            checked={config.popup_panier_vide_actif === 'true'}
-            onChange={(e) => maj('popup_panier_vide_actif', e.target.checked ? 'true' : 'false')}
+            checked={config.popup_panier_seuil_livraison_actif === 'true'}
+            onChange={(e) => maj('popup_panier_seuil_livraison_actif', e.target.checked ? 'true' : 'false')}
           />
           <div>
-            <strong>Popup "Panier vide"</strong>
-            <p>S'affiche quand le client ouvre un panier vide, avec les meilleures ventes en suggestion.</p>
+            <strong>Afficher la barre de progression livraison</strong>
+            <p>Affiche "Plus que X € pour la livraison offerte" avec une barre de progression dans la popup panier.</p>
           </div>
         </label>
+
+        {config.popup_panier_seuil_livraison_actif === 'true' && (
+          <div className="reglages-client__sous-champ">
+            <label>Seuil livraison offerte (€)</label>
+            <input
+              type="number"
+              min="0"
+              step="1"
+              value={config.popup_panier_seuil_livraison}
+              onChange={(e) => maj('popup_panier_seuil_livraison', e.target.value)}
+            />
+          </div>
+        )}
+
+        <label className="reglages-client__toggle">
+          <input
+            type="checkbox"
+            checked={config.popup_panier_surprise_actif === 'true'}
+            onChange={(e) => maj('popup_panier_surprise_actif', e.target.checked ? 'true' : 'false')}
+          />
+          <div>
+            <strong>Activer le palier "Bijou surprise offert"</strong>
+            <p>Ajoute un deuxième palier sur la barre de progression (ex: à 100 €, bijou surprise offert).</p>
+          </div>
+        </label>
+
+        {config.popup_panier_surprise_actif === 'true' && (
+          <div className="reglages-client__sous-champ">
+            <label>Seuil bijou surprise (€)</label>
+            <input
+              type="number"
+              min="0"
+              step="1"
+              value={config.popup_panier_seuil_surprise}
+              onChange={(e) => maj('popup_panier_seuil_surprise', e.target.value)}
+            />
+          </div>
+        )}
+      </div>
+
+      <div className="admin-carte reglages-client__section">
+        <h2>Popup Panier — Article bonus</h2>
+
+        <label className="reglages-client__toggle">
+          <input
+            type="checkbox"
+            checked={config.popup_panier_article_bonus_actif === 'true'}
+            onChange={(e) => maj('popup_panier_article_bonus_actif', e.target.checked ? 'true' : 'false')}
+          />
+          <div>
+            <strong>Proposer un article bonus dans le panier</strong>
+            <p>Affiche un article optionnel (ex : boîte cadeau) que le client peut cocher pour l'ajouter à sa commande.</p>
+          </div>
+        </label>
+
+        {config.popup_panier_article_bonus_actif === 'true' && (
+          <div className="reglages-client__sous-champ">
+            <label>Article à proposer comme bonus</label>
+            {produits.length === 0 ? (
+              <p className="formulaire-produit__aide">
+                Créez d'abord un article (ex. "Boîte cadeau") depuis{' '}
+                <a href="/admin/produits/nouveau">Admin › Bijoux › Nouveau</a>, puis revenez ici le sélectionner.
+              </p>
+            ) : (
+              <select
+                value={config.popup_panier_article_bonus_id}
+                onChange={(e) => maj('popup_panier_article_bonus_id', e.target.value)}
+              >
+                <option value="">— Choisir un article —</option>
+                {produits.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.nom} — {parseFloat(p.prix).toFixed(2)} €
+                  </option>
+                ))}
+              </select>
+            )}
+          </div>
+        )}
+      </div>
+
+      <div className="admin-carte reglages-client__section">
+        <h2>Popups</h2>
 
         <label className="reglages-client__toggle">
           <input

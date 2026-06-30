@@ -10,6 +10,7 @@ import './popup-panier.css';
 interface PopupPanierProps {
   ouverte: boolean;
   onFermer: () => void;
+  // Props optionnelles transmises depuis la fiche produit (ignorées si la popup vient du header)
   boiteCadeauActif?: boolean;
   boiteCadeauNom?: string;
   boiteCadeauPrix?: number;
@@ -17,13 +18,33 @@ interface PopupPanierProps {
   boiteCadeauProduitId?: string;
 }
 
+type ConfigPopup = {
+  seuilLivraison: number;
+  seuilLivraisonActif: boolean;
+  seuilSurprise: number;
+  surpriseActif: boolean;
+  articleBonusActif: boolean;
+  articleBonusId: string;
+  // Champs du vrai produit article bonus (chargé depuis la DB)
+  articleBonusNom: string;
+  articleBonusPrix: number;
+  articleBonusImage: string;
+};
+
+const CONFIG_DEFAUT: ConfigPopup = {
+  seuilLivraison: 60,
+  seuilLivraisonActif: true,
+  seuilSurprise: 100,
+  surpriseActif: false,
+  articleBonusActif: false,
+  articleBonusId: '',
+  articleBonusNom: '',
+  articleBonusPrix: 0,
+  articleBonusImage: '',
+};
+
 export default function PopupPanier({
   ouverte, onFermer,
-  boiteCadeauActif = false,
-  boiteCadeauNom = 'Boîte cadeau Nabe',
-  boiteCadeauPrix = 3.9,
-  boiteCadeauImage = '/images/boite-cadeau.jpg',
-  boiteCadeauProduitId,
 }: PopupPanierProps) {
   const articles = usePanierStore(s => s.articles);
   const retirerArticle = usePanierStore(s => s.retirerArticle);
@@ -31,8 +52,47 @@ export default function PopupPanier({
   const ajouterArticle = usePanierStore(s => s.ajouterArticle);
   const [codePromo, setCodePromo] = useState('');
   const [mounted, setMounted] = useState(false);
+  const [cfg, setCfg] = useState<ConfigPopup>(CONFIG_DEFAUT);
 
   useEffect(() => { setMounted(true); }, []);
+
+  // Charge la config une seule fois à l'ouverture
+  useEffect(() => {
+    if (!ouverte) return;
+    fetch('/api/config-public')
+      .then(r => r.json())
+      .then(async (data) => {
+        const bonusId = data.popup_panier_article_bonus_id || '';
+        let bonusNom = '', bonusPrix = 0, bonusImage = '';
+
+        // Charge les infos du vrai produit si un ID est défini
+        if (bonusId && data.popup_panier_article_bonus_actif === 'true') {
+          try {
+            const res = await fetch(`/api/produits/${bonusId}`);
+            if (res.ok) {
+              const p = await res.json();
+              bonusNom = p.nom || '';
+              bonusPrix = parseFloat(p.prix) || 0;
+              bonusImage = p.images?.[0]?.url || '';
+            }
+          } catch {}
+        }
+
+        setCfg({
+          seuilLivraison: parseFloat(data.popup_panier_seuil_livraison) || 60,
+          seuilLivraisonActif: data.popup_panier_seuil_livraison_actif !== 'false',
+          seuilSurprise: parseFloat(data.popup_panier_seuil_surprise) || 100,
+          surpriseActif: data.popup_panier_surprise_actif === 'true',
+          articleBonusActif: data.popup_panier_article_bonus_actif === 'true',
+          articleBonusId: bonusId,
+          articleBonusNom: bonusNom,
+          articleBonusPrix: bonusPrix,
+          articleBonusImage: bonusImage,
+        });
+      })
+      .catch(() => {});
+  }, [ouverte]);
+
   useEffect(() => {
     if (ouverte) document.body.style.overflow = 'hidden';
     else document.body.style.overflow = '';
@@ -41,28 +101,41 @@ export default function PopupPanier({
 
   if (!mounted) return null;
 
-  const boiteDansPanier = !!(boiteCadeauProduitId && articles.find(a => a.produitId === boiteCadeauProduitId));
+  const articleBonus = cfg.articleBonusActif && cfg.articleBonusId;
+  const bonusDansPanier = !!(articleBonus && articles.find(a => a.produitId === cfg.articleBonusId));
 
-  function basculerBoiteCadeau(coche: boolean) {
-    if (!boiteCadeauProduitId) return;
+  function basculerBonus(coche: boolean) {
+    if (!cfg.articleBonusId) return;
     if (coche) {
-      ajouterArticle({ produitId: boiteCadeauProduitId, nom: boiteCadeauNom, prix: boiteCadeauPrix, image: boiteCadeauImage, quantite: 1 });
+      ajouterArticle({
+        produitId: cfg.articleBonusId,
+        nom: cfg.articleBonusNom,
+        prix: cfg.articleBonusPrix,
+        image: cfg.articleBonusImage,
+        quantite: 1,
+      });
     } else {
-      retirerArticle(boiteCadeauProduitId, undefined);
+      retirerArticle(cfg.articleBonusId, undefined);
     }
   }
 
-  const articlesFiltres = articles.filter(a => a.produitId !== boiteCadeauProduitId);
+  const articlesFiltres = articles.filter(a => a.produitId !== cfg.articleBonusId);
   const total = articles.reduce((sum, a) => sum + a.prix * a.quantite, 0);
 
-  const SEUIL_LIVRAISON = 60;
-  const SEUIL_SURPRISE = 100;
-  const progressPct = Math.min((total / SEUIL_SURPRISE) * 100, 100);
-  const messageProgress = total >= SEUIL_SURPRISE
-    ? '🎁 Bijou surprise offert !'
-    : total >= SEUIL_LIVRAISON
-    ? `Livraison offerte ! Plus que ${formaterPrix(SEUIL_SURPRISE - total)} pour ton bijou surprise`
-    : `Plus que ${formaterPrix(SEUIL_LIVRAISON - total)} et profite de ta livraison à domicile offerte !`;
+  // Barre de progression : seuil livraison obligatoire, surprise optionnel
+  const seuilMax = cfg.surpriseActif ? cfg.seuilSurprise : cfg.seuilLivraison;
+  const progressPct = cfg.seuilLivraisonActif ? Math.min((total / seuilMax) * 100, 100) : 0;
+
+  let messageProgress = '';
+  if (cfg.seuilLivraisonActif) {
+    if (total >= (cfg.surpriseActif ? cfg.seuilSurprise : cfg.seuilLivraison)) {
+      messageProgress = cfg.surpriseActif ? '🎁 Bijou surprise offert !' : '🚚 Livraison offerte !';
+    } else if (cfg.surpriseActif && total >= cfg.seuilLivraison) {
+      messageProgress = `Livraison offerte ! Plus que ${formaterPrix(cfg.seuilSurprise - total)} pour ton bijou surprise`;
+    } else {
+      messageProgress = `Plus que ${formaterPrix(cfg.seuilLivraison - total)} et profite de ta livraison à domicile offerte !`;
+    }
+  }
 
   return createPortal(
     <>
@@ -83,7 +156,7 @@ export default function PopupPanier({
           </button>
         </div>
 
-        {articlesFiltres.length === 0 && !boiteCadeauActif ? (
+        {articlesFiltres.length === 0 && !articleBonus ? (
           <div className="popup-panier__vide">
             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
               <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
@@ -103,7 +176,7 @@ export default function PopupPanier({
               <span>TOTAL</span>
             </div>
 
-            {/* Articles (zone scrollable) */}
+            {/* Articles scrollables */}
             <div className="popup-panier__articles">
               {articlesFiltres.map(article => (
                 <div key={`${article.produitId}-${article.taille ?? ''}`} className="popup-panier__article">
@@ -136,37 +209,45 @@ export default function PopupPanier({
                 </div>
               ))}
 
-              {/* Boîte cadeau optionnelle */}
-              {boiteCadeauActif && (
+              {/* Article bonus optionnel (boîte cadeau, etc.) */}
+              {articleBonus && cfg.articleBonusNom && (
                 <div className="popup-panier__boite">
                   <div className="popup-panier__boite-img">
-                    <Image src={boiteCadeauImage} alt={boiteCadeauNom} width={52} height={52} style={{ objectFit: 'cover' }} />
+                    {cfg.articleBonusImage ? (
+                      <Image src={cfg.articleBonusImage} alt={cfg.articleBonusNom} width={52} height={52} style={{ objectFit: 'cover' }} />
+                    ) : (
+                      <div style={{ width: 52, height: 52, background: '#f1e0cb', borderRadius: 4 }} />
+                    )}
                   </div>
-                  <span className="popup-panier__boite-nom">{boiteCadeauNom.toUpperCase()}</span>
-                  <span className="popup-panier__boite-prix">{formaterPrix(boiteCadeauPrix)}</span>
+                  <span className="popup-panier__boite-nom">{cfg.articleBonusNom.toUpperCase()}</span>
+                  <span className="popup-panier__boite-prix">{formaterPrix(cfg.articleBonusPrix)}</span>
                   <input
                     type="checkbox"
-                    checked={boiteDansPanier}
-                    onChange={e => basculerBoiteCadeau(e.target.checked)}
+                    checked={bonusDansPanier}
+                    onChange={e => basculerBonus(e.target.checked)}
                     className="popup-panier__boite-check"
                   />
                 </div>
               )}
             </div>
 
-            {/* Barre de progression livraison/surprise */}
-            <div className="popup-panier__progress">
-              <p className="popup-panier__progress-msg">{messageProgress}</p>
-              <div className="popup-panier__progress-barre">
-                <div className="popup-panier__progress-fill" style={{ width: `${progressPct}%` }} />
+            {/* Barre de progression livraison */}
+            {cfg.seuilLivraisonActif && (
+              <div className="popup-panier__progress">
+                <p className="popup-panier__progress-msg">{messageProgress}</p>
+                <div className="popup-panier__progress-barre">
+                  <div className="popup-panier__progress-fill" style={{ width: `${progressPct}%` }} />
+                </div>
+                <div className="popup-panier__progress-labels">
+                  <span>{formaterPrix(cfg.seuilLivraison)}<br /><small>Livraison offerte</small></span>
+                  {cfg.surpriseActif && (
+                    <span style={{ textAlign: 'right' }}>{formaterPrix(cfg.seuilSurprise)}<br /><small>Bijou surprise offert</small></span>
+                  )}
+                </div>
               </div>
-              <div className="popup-panier__progress-labels">
-                <span>{formaterPrix(SEUIL_LIVRAISON)}<br /><small>Livraison offerte</small></span>
-                <span style={{ textAlign: 'right' }}>{formaterPrix(SEUIL_SURPRISE)}<br /><small>Bijou surprise offert</small></span>
-              </div>
-            </div>
+            )}
 
-            {/* Pied fixe : total + code promo + bouton */}
+            {/* Pied fixe */}
             <div className="popup-panier__pied">
               <div className="popup-panier__total">
                 <span>Total</span>
