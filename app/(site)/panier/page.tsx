@@ -11,6 +11,7 @@ import './panier.css';
 
 export default function PagePanier() {
   const { articles, retirerArticle, modifierQuantite, total } = usePanierStore();
+  const [monte, setMonte] = useState(false);
   const [chargement, setChargement] = useState(false);
   const [erreur, setErreur] = useState('');
   const [popupVideActive, setPopupVideActive] = useState(false);
@@ -20,6 +21,10 @@ export default function PagePanier() {
   const [codeApplique, setCodeApplique] = useState<{ code: string; reduction: number } | null>(null);
   const [erreurCode, setErreurCode] = useState('');
   const [validationEnCours, setValidationEnCours] = useState(false);
+
+  useEffect(() => {
+    setMonte(true);
+  }, []);
 
   useEffect(() => {
     fetch('/api/config-public')
@@ -82,6 +87,16 @@ export default function PagePanier() {
 
   const totalAvecReduction = Math.max(0, total() - (codeApplique?.reduction || 0));
 
+  // Tant que le panier (persisté en localStorage) n'a pas été lu côté client,
+  // on affiche un état neutre identique au rendu serveur pour éviter tout mismatch d'hydratation.
+  if (!monte) {
+    return (
+      <div className="page-panier conteneur">
+        <h1>Votre panier</h1>
+      </div>
+    );
+  }
+
   if (articles.length === 0) {
     return (
       <div className="page-panier page-panier--vide conteneur">
@@ -128,10 +143,14 @@ export default function PagePanier() {
                     onClick={() =>
                       modifierQuantite(article.produitId, article.quantite + 1, article.taille)
                     }
+                    disabled={typeof article.stockMax === 'number' && article.quantite >= article.stockMax}
                   >
                     +
                   </button>
                 </div>
+                {typeof article.stockMax === 'number' && article.quantite >= article.stockMax && (
+                  <p className="panier-article__stock-max">Stock maximum atteint pour cette taille</p>
+                )}
               </div>
               <div className="panier-article__droite">
                 <span className="panier-article__prix">

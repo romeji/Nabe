@@ -10,10 +10,11 @@ export default async function PageAdminReglages() {
   const session = await getServerSession(authOptions);
   if (!session) redirect('/admin/login');
 
-  const [config, collections, categories] = await Promise.all([
+  const [config, collections, categories, produits] = await Promise.all([
     getConfigSite(),
     prisma.collection.findMany({ where: { actif: true }, orderBy: { ordre: 'asc' } }),
     prisma.categorie.findMany({ orderBy: { ordre: 'asc' } }),
+    prisma.produit.findMany({ orderBy: { nom: 'asc' }, select: { id: true, nom: true, prix: true } }),
   ]);
 
   return (
@@ -25,6 +26,7 @@ export default async function PageAdminReglages() {
         configInitiale={config}
         collections={collections.map((c) => ({ id: c.id, nom: c.nom }))}
         categories={categories.map((c) => ({ id: c.id, nom: c.nom }))}
+        produits={produits.map((p) => ({ id: p.id, nom: p.nom, prix: p.prix.toString() }))}
       />
     </div>
   );

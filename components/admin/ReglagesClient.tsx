@@ -3,15 +3,18 @@
 import { useState } from 'react';
 
 type OptionSimple = { id: string; nom: string };
+type OptionProduit = { id: string; nom: string; prix: string };
 
 export default function ReglagesClient({
   configInitiale,
   collections,
   categories,
+  produits,
 }: {
   configInitiale: Record<string, string>;
   collections: OptionSimple[];
   categories: OptionSimple[];
+  produits: OptionProduit[];
 }) {
   const [config, setConfig] = useState(configInitiale);
   const [enregistrement, setEnregistrement] = useState(false);
@@ -200,6 +203,66 @@ export default function ReglagesClient({
             </select>
           </div>
         )}
+      </div>
+
+      <div className="admin-carte reglages-client__section">
+        <h2>Panier — Boîte cadeau</h2>
+
+        <label className="reglages-client__toggle">
+          <input
+            type="checkbox"
+            checked={config.boite_cadeau_actif === 'true'}
+            onChange={(e) => maj('boite_cadeau_actif', e.target.checked ? 'true' : 'false')}
+          />
+          <div>
+            <strong>Proposer une boîte cadeau dans le panier</strong>
+            <p>Affichée comme article optionnel dans la popup panier, en plus des bijoux.</p>
+          </div>
+        </label>
+
+        {config.boite_cadeau_actif === 'true' && (
+          <div className="reglages-client__sous-champ">
+            <label>Article à utiliser comme boîte cadeau</label>
+            {produits.length === 0 ? (
+              <p className="formulaire-produit__aide">
+                Aucun bijou créé pour le moment. Créez d'abord un article "Boîte cadeau" depuis{' '}
+                <a href="/admin/produits/nouveau">Admin &gt; Bijoux &gt; Nouveau</a>, puis revenez ici pour le sélectionner.
+              </p>
+            ) : (
+              <select
+                value={config.boite_cadeau_produit_id}
+                onChange={(e) => maj('boite_cadeau_produit_id', e.target.value)}
+              >
+                <option value="">— Choisir un article —</option>
+                {produits.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.nom} — {parseFloat(p.prix).toFixed(2)} €
+                  </option>
+                ))}
+              </select>
+            )}
+            <p className="formulaire-produit__aide">
+              Astuce : créez un bijou dédié (ex. "Boîte cadeau Nabe", prix 3,90 €) dans le backoffice, marquez-le inactif
+              sur le catalogue si vous ne voulez pas qu'il apparaisse comme un bijou normal, puis sélectionnez-le ici.
+            </p>
+          </div>
+        )}
+      </div>
+
+      <div className="admin-carte reglages-client__section">
+        <h2>Panier — Comportement</h2>
+
+        <label className="reglages-client__toggle">
+          <input
+            type="checkbox"
+            checked={config.popup_panier_ouverture_actif === 'true'}
+            onChange={(e) => maj('popup_panier_ouverture_actif', e.target.checked ? 'true' : 'false')}
+          />
+          <div>
+            <strong>Ouvrir la popup panier après un ajout</strong>
+            <p>Quand activé, la popup panier s'ouvre automatiquement dès qu'un client clique sur "Ajouter au panier".</p>
+          </div>
+        </label>
       </div>
 
       <div className="admin-carte reglages-client__section">

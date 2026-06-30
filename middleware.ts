@@ -15,6 +15,7 @@ export const config = {
     '/admin/matieres/:path*',
     '/admin/couleurs-pierre/:path*',
     '/admin/pierres/:path*',
+    '/admin/politiques/:path*',
     '/admin/stock/:path*',
     '/admin/commandes/:path*',
     '/admin/sur-mesure/:path*',

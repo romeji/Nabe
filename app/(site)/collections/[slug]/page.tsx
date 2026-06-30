@@ -22,8 +22,9 @@ export default async function PageProduit({ params }: Props) {
       images: { orderBy: { ordre: 'asc' } },
       categorie: true,
       matiere: true,
-      pierres: { include: { pierre: { include: { couleurPierre: true } } } },
+      pierres: { include: { pierre: { include: { couleurs: { include: { couleurPierre: true } } } } } },
       collection: true,
+      stockTailles: true,
       composeAvec: {
         orderBy: { ordre: 'asc' },
         include: { produitSuggere: { include: { images: { orderBy: { ordre: 'asc' }, take: 1 } } } },
@@ -82,7 +83,10 @@ export default async function PageProduit({ params }: Props) {
   const produitSerialise = {
     ...produit,
     prix: produit.prix.toString(),
-    pierres: produit.pierres.map((pp) => pp.pierre),
+    pierres: produit.pierres.map((pp) => ({
+      ...pp.pierre,
+      couleurs: pp.pierre.couleurs.map((pc) => ({ nom: pc.couleurPierre.nom, codeHex: pc.couleurPierre.codeHex })),
+    })),
   };
   const suggestionsSerialisees = suggestions.map((s) => ({ ...s, prix: s.prix.toString() }));
   const composables = produit.composerAvecActif
@@ -95,6 +99,23 @@ export default async function PageProduit({ params }: Props) {
       }))
     : [];
 
+  // Boîte cadeau : on récupère le vrai produit choisi en admin (catégorie/produit "Coffret cadeau" par exemple)
+  let boiteCadeauProduit: { id: string; nom: string; prix: number; image: string | null } | null = null;
+  if (configEstActive(config, 'boite_cadeau_actif') && config.boite_cadeau_produit_id) {
+    const pBoite = await prisma.produit.findUnique({
+      where: { id: config.boite_cadeau_produit_id },
+      include: { images: { orderBy: { ordre: 'asc' }, take: 1 } },
+    });
+    if (pBoite) {
+      boiteCadeauProduit = {
+        id: pBoite.id,
+        nom: pBoite.nom,
+        prix: parseFloat(pBoite.prix.toString()),
+        image: pBoite.images[0]?.url || null,
+      };
+    }
+  }
+
   return (
     <ProduitDetailClient
       produit={produitSerialise as any}
@@ -103,6 +124,12 @@ export default async function PageProduit({ params }: Props) {
       estFavori={estFavori}
       composables={composables}
       galeriePosition={galeriePosition}
+      boiteCadeauActif={!!boiteCadeauProduit}
+      boiteCadeauNom={boiteCadeauProduit?.nom}
+      boiteCadeauPrix={boiteCadeauProduit?.prix}
+      boiteCadeauImage={boiteCadeauProduit?.image || undefined}
+      boiteCadeauProduitId={boiteCadeauProduit?.id}
+      popupOuvertureActive={configEstActive(config, 'popup_panier_ouverture_actif')}
     />
   );
 }

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { verifierSessionAdmin } from '@/lib/auth-helpers';
 import { slugify } from '@/lib/utils';
+import { genererReference } from '@/lib/reference-produit';
 import { z } from 'zod';
 
 const schemaProduit = z.object({
@@ -15,6 +16,7 @@ const schemaProduit = z.object({
   fabriqueEnFrance: z.boolean().optional(),
   tailleSurMesure: z.boolean().optional(),
   taillesDisponibles: z.array(z.string()).optional(),
+  stockParTaille: z.record(z.string(), z.number().int().min(0)).optional(), // ex: { "52": 3, "54": 0 }
   disponibilite: z
     .enum(['EN_STOCK', 'FABRICATION_SUR_COMMANDE', 'CREATION_SUR_MESURE', 'PIECE_UNIQUE_DISPO', 'EPUISE'])
     .optional(),
@@ -41,7 +43,8 @@ export async function GET(req: NextRequest) {
       images: { orderBy: { ordre: 'asc' } },
       categorie: true,
       matiere: true,
-      pierres: { include: { pierre: { include: { couleurPierre: true } } } },
+      pierres: { include: { pierre: { include: { couleurs: { include: { couleurPierre: true } } } } } },
+      stockTailles: true,
     },
     orderBy: { createdAt: 'desc' },
   });
@@ -65,20 +68,30 @@ export async function POST(req: NextRequest) {
       slug = `${slug}-${Date.now().toString().slice(-4)}`;
     }
 
+    // Générer la référence automatiquement
+    const reference = await genererReference(donnees.type as any);
+
+    // Si un stock par taille est fourni, le stock global = somme des quantités par taille
+    const stockTotalCalcule =
+      donnees.stockParTaille && Object.keys(donnees.stockParTaille).length > 0
+        ? Object.values(donnees.stockParTaille).reduce((a, b) => a + b, 0)
+        : donnees.stock ?? 0;
+
     const produit = await prisma.produit.create({
       data: {
+        reference,
         nom: donnees.nom,
         slug,
         description: donnees.description,
         prix: donnees.prix,
-        type: donnees.type,
+        type: donnees.type as any,
         matiereId: donnees.matiereId || undefined,
         delaiFabrication: donnees.delaiFabrication || undefined,
         fabriqueEnFrance: donnees.fabriqueEnFrance ?? true,
         tailleSurMesure: donnees.tailleSurMesure ?? false,
         taillesDisponibles: donnees.taillesDisponibles || [],
         disponibilite: donnees.disponibilite || 'EN_STOCK',
-        stock: donnees.stock ?? 0,
+        stock: stockTotalCalcule,
         categorieId: donnees.categorieId || undefined,
         collectionId: donnees.collectionId || undefined,
         actif: donnees.actif ?? true,
@@ -104,16 +117,21 @@ export async function POST(req: NextRequest) {
               create: donnees.composeAvecIds.map((produitSuggereId, i) => ({ produitSuggereId, ordre: i })),
             }
           : undefined,
+        stockTailles: donnees.stockParTaille && Object.keys(donnees.stockParTaille).length > 0
+          ? {
+              create: Object.entries(donnees.stockParTaille).map(([taille, quantite]) => ({ taille, quantite })),
+            }
+          : undefined,
       },
-      include: { images: true, pierres: true },
+      include: { images: true, pierres: true, stockTailles: true },
     });
 
-    if (donnees.stock && donnees.stock > 0) {
+    if (stockTotalCalcule > 0) {
       await prisma.mouvementStock.create({
         data: {
           produitId: produit.id,
           type: 'ENTREE',
-          quantite: donnees.stock,
+          quantite: stockTotalCalcule,
           motif: 'Stock initial à la création',
         },
       });

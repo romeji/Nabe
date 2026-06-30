@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
         { matiere: { nom: { contains: q, mode: 'insensitive' } } },
         { collection: { nom: { contains: q, mode: 'insensitive' } } },
         { pierres: { some: { pierre: { nom: { contains: q, mode: 'insensitive' } } } } },
-        { pierres: { some: { pierre: { couleurPierre: { nom: { contains: q, mode: 'insensitive' } } } } } },
+        { pierres: { some: { pierre: { couleurs: { some: { couleurPierre: { nom: { contains: q, mode: 'insensitive' } } } } } } } },
       ],
     },
     include: {

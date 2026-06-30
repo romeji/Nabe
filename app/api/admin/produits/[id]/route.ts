@@ -15,9 +15,10 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
       images: { orderBy: { ordre: 'asc' } },
       categorie: true,
       matiere: true,
-      pierres: { include: { pierre: { include: { couleurPierre: true } } } },
+      pierres: { include: { pierre: { include: { couleurs: { include: { couleurPierre: true } } } } } },
       collection: true,
       mouvementsStock: { orderBy: { createdAt: 'desc' } },
+      stockTailles: true,
     },
   });
 
@@ -37,16 +38,24 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   try {
     const body = await req.json();
 
-    const { images, stock, id, pierresIds, composeAvecIds, ...autresDonnees } = body;
+    const { images, stock, id, pierresIds, composeAvecIds, stockParTaille, ...autresDonnees } = body;
 
     const produitActuel = await prisma.produit.findUnique({ where: { id: params.id } });
     if (!produitActuel) {
       return NextResponse.json({ error: 'Produit introuvable' }, { status: 404 });
     }
 
+    // Si un stock par taille est fourni, le stock global = somme des quantités par taille
+    const aStockParTaille = stockParTaille && Object.keys(stockParTaille).length > 0;
+    const stockFinal = aStockParTaille
+      ? Object.values(stockParTaille as Record<string, number>).reduce((a, b) => a + b, 0)
+      : typeof stock === 'number'
+      ? stock
+      : undefined;
+
     // Si le stock est modifié manuellement, on enregistre l'ajustement
-    if (typeof stock === 'number' && stock !== produitActuel.stock) {
-      const difference = stock - produitActuel.stock;
+    if (typeof stockFinal === 'number' && stockFinal !== produitActuel.stock) {
+      const difference = stockFinal - produitActuel.stock;
       await prisma.mouvementStock.create({
         data: {
           produitId: params.id,
@@ -61,7 +70,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
       where: { id: params.id },
       data: {
         ...autresDonnees,
-        stock: typeof stock === 'number' ? stock : undefined,
+        stock: typeof stockFinal === 'number' ? stockFinal : undefined,
         images: images
           ? {
               deleteMany: {},
@@ -87,8 +96,17 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
                 .map((produitSuggereId: string, i: number) => ({ produitSuggereId, ordre: i })),
             }
           : undefined,
+        stockTailles: aStockParTaille
+          ? {
+              deleteMany: {},
+              create: Object.entries(stockParTaille as Record<string, number>).map(([taille, quantite]) => ({
+                taille,
+                quantite,
+              })),
+            }
+          : undefined,
       },
-      include: { images: true, pierres: true },
+      include: { images: true, pierres: true, stockTailles: true },
     });
 
     return NextResponse.json(produit);

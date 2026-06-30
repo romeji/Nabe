@@ -199,3 +199,9 @@
     grid-template-columns: 1fr;
   }
 }
+
+.panier-article__stock-max {
+  font-size: 0.75rem;
+  color: var(--nabe-terracotta-fonce, #a8412a);
+  margin-top: 0.3rem;
+}

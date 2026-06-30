@@ -19,6 +19,7 @@ const LIENS = [
   { href: '/admin/sur-mesure', label: 'Sur-mesure', icone: '✏️' },
   { href: '/admin/messages', label: 'Messages', icone: '✉️' },
   { href: '/admin/contenu', label: 'Contenu du site', icone: '🖊️' },
+  { href: '/admin/politiques', label: 'Popups fiche produit', icone: '📋' },
   { href: '/admin/newsletters', label: 'Newsletters', icone: '📬' },
   { href: '/admin/codes-promo', label: 'Codes promo', icone: '🎁' },
   { href: '/admin/reglages', label: 'Réglages', icone: '⚙️' },

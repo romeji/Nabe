@@ -28,6 +28,7 @@ export default async function PageAdminProduits() {
         <thead>
           <tr>
             <th>Image</th>
+            <th>Référence</th>
             <th>Nom</th>
             <th>Type</th>
             <th>Catégorie</th>
@@ -48,6 +49,9 @@ export default async function PageAdminProduits() {
                 ) : (
                   <div className="admin-produits__miniature-vide" />
                 )}
+              </td>
+              <td>
+                <span style={{ fontSize: '0.78rem', color: 'var(--texte-secondaire)' }}>{p.reference}</span>
               </td>
               <td>{p.nom}</td>
               <td>{LABELS_TYPE_BIJOU[p.type]}</td>

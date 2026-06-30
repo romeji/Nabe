@@ -8,6 +8,7 @@ export type ArticlePanier = {
   image: string;
   taille?: string;
   quantite: number;
+  stockMax?: number; // quantité maximum disponible pour ce produit/taille au moment de l'ajout
 };
 
 type PanierState = {
@@ -31,15 +32,20 @@ export const usePanierStore = create<PanierState>()(
             (a) => a.produitId === article.produitId && a.taille === article.taille
           );
           if (existant) {
+            const plafond = article.stockMax ?? existant.stockMax;
+            const quantiteVoulue = existant.quantite + article.quantite;
+            const quantiteFinale = typeof plafond === 'number' ? Math.min(quantiteVoulue, plafond) : quantiteVoulue;
             return {
               articles: state.articles.map((a) =>
                 a.produitId === article.produitId && a.taille === article.taille
-                  ? { ...a, quantite: a.quantite + article.quantite }
+                  ? { ...a, quantite: quantiteFinale, stockMax: plafond }
                   : a
               ),
             };
           }
-          return { articles: [...state.articles, article] };
+          const quantiteInitiale =
+            typeof article.stockMax === 'number' ? Math.min(article.quantite, Math.max(article.stockMax, 0)) : article.quantite;
+          return { articles: [...state.articles, { ...article, quantite: quantiteInitiale }] };
         });
       },
 
@@ -53,9 +59,11 @@ export const usePanierStore = create<PanierState>()(
 
       modifierQuantite: (produitId, quantite, taille) => {
         set((state) => ({
-          articles: state.articles.map((a) =>
-            a.produitId === produitId && a.taille === taille ? { ...a, quantite } : a
-          ),
+          articles: state.articles.map((a) => {
+            if (a.produitId !== produitId || a.taille !== taille) return a;
+            const plafonnee = typeof a.stockMax === 'number' ? Math.min(quantite, Math.max(a.stockMax, 1)) : quantite;
+            return { ...a, quantite: plafonnee };
+          }),
         }));
       },
 

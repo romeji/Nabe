@@ -7,21 +7,24 @@ import { usePanierStore } from '@/lib/store-panier';
 import { formaterPrix } from '@/lib/utils';
 import BoutonFavori from './BoutonFavori';
 import GuideTailles from './GuideTailles';
-import AccordeonProduit from './AccordeonProduit';
 import ReassuranceProduit from './ReassuranceProduit';
 import PopupPierres from './PopupPierres';
+import PopupDetailsProduit from './popups/PopupDetailsProduit';
+import LiensInfoProduit from './LiensInfoProduit';
 import ComposerAvec from './ComposerAvec';
 import BandeauReassurance from './BandeauReassurance';
+import PopupPanier from './PopupPanier';
 
 type ImageProduit = { id: string; url: string; alt: string | null };
 type PierreInfo = {
   id: string;
   nom: string;
   description: string | null;
-  couleurPierre: { nom: string; codeHex: string } | null;
+  couleurs: { nom: string; codeHex: string }[];
 };
 type Produit = {
   id: string;
+  reference: string;
   nom: string;
   slug: string;
   description: string;
@@ -34,6 +37,8 @@ type Produit = {
   tailleSurMesure: boolean;
   taillesDisponibles: string[];
   disponibilite: string;
+  stock: number;
+  stockTailles: { taille: string; quantite: number }[];
   images: ImageProduit[];
 };
 
@@ -60,6 +65,12 @@ export default function ProduitDetailClient({
   estFavori,
   composables,
   galeriePosition = 'gauche',
+  boiteCadeauActif = false,
+  boiteCadeauNom,
+  boiteCadeauPrix,
+  boiteCadeauImage,
+  boiteCadeauProduitId,
+  popupOuvertureActive = true,
 }: {
   produit: Produit;
   suggestions: Suggestion[];
@@ -67,30 +78,59 @@ export default function ProduitDetailClient({
   estFavori: boolean;
   composables: ProduitComposable[];
   galeriePosition?: 'gauche' | 'bas';
+  boiteCadeauActif?: boolean;
+  boiteCadeauNom?: string;
+  boiteCadeauPrix?: number;
+  boiteCadeauImage?: string;
+  boiteCadeauProduitId?: string;
+  popupOuvertureActive?: boolean;
 }) {
   const [imageActive, setImageActive] = useState(0);
   const [tailleChoisie, setTailleChoisie] = useState('');
-  const [quantite, setQuantite] = useState(1);
-  const [ajoute, setAjoute] = useState(false);
-  const [ouvrirDescriptionSignal, setOuvrirDescriptionSignal] = useState(0);
+  const [popupDetailsOuverte, setPopupDetailsOuverte] = useState(false);
+  const [popupPanierOuverte, setPopupPanierOuverte] = useState(false);
+  const [erreurTaille, setErreurTaille] = useState(false);
+  const [erreurStock, setErreurStock] = useState(false);
   const ajouterArticle = usePanierStore((state) => state.ajouterArticle);
 
   const imagesAffichees = produit.images.length > 0 ? produit.images : [{ id: 'placeholder', url: '', alt: '' }];
 
+  // Stock disponible pour la taille choisie (ou stock global si pas de système de taille)
+  function stockDisponiblePour(taille: string): number {
+    if (produit.stockTailles.length > 0) {
+      const ligne = produit.stockTailles.find((s) => s.taille === taille);
+      return ligne?.quantite ?? 0;
+    }
+    return produit.stock;
+  }
+
   function gererAjoutPanier() {
     if (produit.taillesDisponibles.length > 0 && !tailleChoisie) {
+      setErreurTaille(true);
       return;
     }
+    setErreurTaille(false);
+
+    const stockDispo = stockDisponiblePour(tailleChoisie);
+    if (stockDispo <= 0) {
+      setErreurStock(true);
+      return;
+    }
+    setErreurStock(false);
+
     ajouterArticle({
       produitId: produit.id,
       nom: produit.nom,
       prix: parseFloat(produit.prix),
       image: produit.images[0]?.url || '',
       taille: tailleChoisie || undefined,
-      quantite,
+      quantite: 1,
+      stockMax: stockDispo,
     });
-    setAjoute(true);
-    setTimeout(() => setAjoute(false), 2000);
+
+    if (popupOuvertureActive) {
+      setPopupPanierOuverte(true);
+    }
   }
 
   return (
@@ -146,13 +186,17 @@ export default function ProduitDetailClient({
             {[produit.matiere?.nom, ...produit.pierres.map((p) => p.nom)].filter(Boolean).join(', ')}
           </p>
 
-          <button
-            type="button"
-            className="produit-infos__lien-details"
-            onClick={() => setOuvrirDescriptionSignal((n) => n + 1)}
-          >
-            Détails produits
-          </button>
+          {/* Référence + lien Détails produits */}
+          <div className="produit-infos__reference-ligne">
+            <span className="produit-infos__reference">{produit.reference}</span>
+            <button
+              type="button"
+              className="produit-infos__lien-details"
+              onClick={() => setPopupDetailsOuverte(true)}
+            >
+              Détails produits
+            </button>
+          </div>
 
           <p className="produit-infos__prix">
             {formaterPrix(produit.prix)} <span>Taxes comprises</span>
@@ -160,20 +204,36 @@ export default function ProduitDetailClient({
 
           {produit.pierres.length > 0 && <PopupPierres pierres={produit.pierres} />}
 
+          {/* Sélecteur de taille en boutons façon VCA */}
           {produit.taillesDisponibles.length > 0 && (
             <div className="produit-infos__champ">
               <div className="produit-infos__label-taille">
                 <label>Taille</label>
+              </div>
+              <div className="produit-infos__tailles-boutons">
+                {produit.taillesDisponibles.map((t) => {
+                  const stockTaille = stockDisponiblePour(t);
+                  const epuisee = produit.stockTailles.length > 0 && stockTaille <= 0;
+                  return (
+                    <button
+                      key={t}
+                      type="button"
+                      disabled={epuisee}
+                      className={`produit-infos__taille-bouton${tailleChoisie === t ? ' produit-infos__taille-bouton--actif' : ''}${epuisee ? ' produit-infos__taille-bouton--epuise' : ''}`}
+                      onClick={() => { setTailleChoisie(t); setErreurTaille(false); setErreurStock(false); }}
+                    >
+                      {t}
+                    </button>
+                  );
+                })}
                 <GuideTailles trigger={<span className="guide-tailles__lien">Trouver ma taille</span>} />
               </div>
-              <select value={tailleChoisie} onChange={(e) => setTailleChoisie(e.target.value)}>
-                <option value="">Choisir une taille</option>
-                {produit.taillesDisponibles.map((t) => (
-                  <option key={t} value={t}>
-                    {t}
-                  </option>
-                ))}
-              </select>
+              {erreurTaille && (
+                <p className="produit-infos__erreur-taille">Merci de choisir une taille.</p>
+              )}
+              {erreurStock && (
+                <p className="produit-infos__erreur-taille">Cette taille n'est plus en stock.</p>
+              )}
               <p className="produit-infos__precommande">
                 Vous ne trouvez pas votre taille,{' '}
                 <Link href="/sur-mesure">contactez-moi pour une pré-commande</Link>.
@@ -181,39 +241,25 @@ export default function ProduitDetailClient({
             </div>
           )}
 
-          <div className="produit-infos__champ">
-            <label>Quantité</label>
-            <div className="produit-infos__quantite">
-              <button onClick={() => setQuantite(Math.max(1, quantite - 1))}>−</button>
-              <span>{quantite}</span>
-              <button onClick={() => setQuantite(quantite + 1)}>+</button>
-            </div>
-          </div>
-
           <button
-            className="btn btn-or produit-infos__ajouter"
+            className="produit-infos__ajouter"
             onClick={gererAjoutPanier}
-            disabled={produit.disponibilite === 'EPUISE'}
+            disabled={produit.disponibilite === 'EPUISE' || (produit.taillesDisponibles.length === 0 && produit.stock <= 0)}
           >
-            {produit.disponibilite === 'EPUISE'
-              ? 'Épuisé'
-              : ajoute
-              ? 'Ajouté ✓'
-              : 'Ajouter au panier 🛍️'}
+            {produit.disponibilite === 'EPUISE' || (produit.taillesDisponibles.length === 0 && produit.stock <= 0)
+              ? 'ÉPUISÉ'
+              : `AJOUTER AU PANIER · ${formaterPrix(produit.prix)}`}
           </button>
 
-          <ReassuranceProduit />
+          <p className="produit-infos__retours">Retours sans frais dans un délai de 30 jours</p>
 
-          <AccordeonProduit
-            description={produit.description}
-            delaiFabrication={produit.delaiFabrication}
-            fabriqueEnFrance={produit.fabriqueEnFrance}
-            signalOuverture={ouvrirDescriptionSignal}
-          />
+          <LiensInfoProduit />
 
           <ComposerAvec produits={composables} />
         </div>
       </div>
+
+      <ReassuranceProduit />
 
       {suggestionsActives && suggestions.length > 0 && (
         <div className="produit-suggestions conteneur">
@@ -235,6 +281,25 @@ export default function ProduitDetailClient({
       )}
 
       <BandeauReassurance />
+
+      <PopupDetailsProduit
+        ouverte={popupDetailsOuverte}
+        onFermer={() => setPopupDetailsOuverte(false)}
+        reference={produit.reference}
+        description={produit.description}
+        pierres={produit.pierres}
+        taillesDisponibles={produit.taillesDisponibles}
+      />
+
+      <PopupPanier
+        ouverte={popupPanierOuverte}
+        onFermer={() => setPopupPanierOuverte(false)}
+        boiteCadeauActif={boiteCadeauActif}
+        boiteCadeauNom={boiteCadeauNom}
+        boiteCadeauPrix={boiteCadeauPrix}
+        boiteCadeauImage={boiteCadeauImage}
+        boiteCadeauProduitId={boiteCadeauProduitId}
+      />
     </div>
   );
 }

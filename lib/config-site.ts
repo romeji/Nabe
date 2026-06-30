@@ -17,6 +17,9 @@ export const DEFAUTS_CONFIG: Record<string, string> = {
   galerie_produit_position: 'gauche', // 'gauche' (vignettes à gauche, classique) ou 'bas' (vignettes sous l'image, plus aéré)
   categories_accueil_actif: 'false',
   categories_accueil_ids: '', // jusqu'à 4 ids de Categorie séparés par des virgules
+  boite_cadeau_actif: 'false',
+  boite_cadeau_produit_id: '', // id du Produit (catégorie "Coffret cadeau" typiquement) utilisé comme boîte cadeau
+  popup_panier_ouverture_actif: 'true', // ouvre la popup panier automatiquement après un ajout au panier
 };
 
 /** Récupère toutes les valeurs de config, fusionnées avec les défauts. */

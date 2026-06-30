@@ -69,3 +69,33 @@
   color: var(--nabe-terracotta);
   text-decoration: underline;
 }
+
+.editeur-riche__select-taille {
+  padding: 0.3rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.78rem;
+  background-color: var(--nabe-blanc);
+  border: 1px solid var(--nabe-beige-fonce);
+}
+
+.editeur-riche__bouton-image {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  background-color: var(--nabe-blanc);
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+
+.editeur-riche__bouton-image:hover {
+  border-color: var(--nabe-beige-fonce);
+}
+
+.editeur-riche__zone img {
+  max-width: 100%;
+  border-radius: 8px;
+  margin: 0.5rem 0;
+  display: block;
+}

@@ -36,7 +36,14 @@ export default async function PageCollections({ searchParams }: Props) {
   if (searchParams.type) where.type = searchParams.type;
   if (searchParams.matiere) where.matiereId = searchParams.matiere;
   if (searchParams.pierre) where.pierres = { some: { pierreId: searchParams.pierre } };
-  if (searchParams.couleur) where.pierres = { some: { pierre: { couleurPierreId: searchParams.couleur } } };
+  if (searchParams.couleur) {
+    where.pierres = {
+      some: {
+        ...(searchParams.pierre ? { pierreId: searchParams.pierre } : {}),
+        pierre: { couleurs: { some: { couleurPierreId: searchParams.couleur } } },
+      },
+    };
+  }
   if (searchParams.categorie) where.categorie = { slug: searchParams.categorie };
   if (searchParams.collection) where.collection = { slug: searchParams.collection };
   if (searchParams.taille) where.taillesDisponibles = { has: searchParams.taille };
@@ -71,7 +78,7 @@ export default async function PageCollections({ searchParams }: Props) {
       prisma.pierre.findMany({ orderBy: { ordre: 'asc' } }),
       prisma.couleurPierre.findMany({
         orderBy: { ordre: 'asc' },
-        include: { pierres: { include: { produits: { include: { produit: true } } } } },
+        include: { pierres: { include: { pierre: { include: { produits: { include: { produit: true } } } } } } },
       }),
       prisma.produit.aggregate({
         where: { actif: true },
@@ -90,8 +97,8 @@ export default async function PageCollections({ searchParams }: Props) {
   // Calcule, pour chaque couleur, le nombre de bijoux actifs distincts qui ont une pierre de cette couleur
   const couleursDisponibles = couleursBrutes.map((couleur) => {
     const idsProduits = new Set<string>();
-    couleur.pierres.forEach((pierre) => {
-      pierre.produits.forEach((pp) => {
+    couleur.pierres.forEach((pierreCouleur) => {
+      pierreCouleur.pierre.produits.forEach((pp) => {
         if (pp.produit.actif) idsProduits.add(pp.produitId);
       });
     });

@@ -41,6 +41,7 @@ export async function POST(req: NextRequest) {
 
       const produitsDb = await prisma.produit.findMany({
         where: { id: { in: articlesMeta.map((a) => a.id) } },
+        include: { stockTailles: true },
       });
 
       const sousTotal = (session.amount_subtotal || 0) / 100;
@@ -89,6 +90,18 @@ export async function POST(req: NextRequest) {
             where: { id: produit.id },
             data: { stock: { decrement: a.q }, nombreVentes: { increment: a.q } },
           });
+
+          // Si le produit a un stock détaillé par taille, on décrémente la ligne correspondante
+          if (produit.stockTailles.length > 0 && a.taille) {
+            const ligne = produit.stockTailles.find((s) => s.taille === a.taille);
+            if (ligne) {
+              await prisma.stockTaille.update({
+                where: { id: ligne.id },
+                data: { quantite: { decrement: a.q } },
+              });
+            }
+          }
+
           await prisma.mouvementStock.create({
             data: {
               produitId: produit.id,

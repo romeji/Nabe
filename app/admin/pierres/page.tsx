@@ -1,19 +1,21 @@
-import { getServerSession } from 'next-auth';
+import { verifierSessionAdmin } from '@/lib/auth-helpers';
 import { redirect } from 'next/navigation';
-import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import FormulairePierre from '@/components/admin/FormulairePierre';
 import LignePierre from '@/components/admin/LignePierre';
 import '../categories/categories.css';
 
 export default async function PageAdminPierres() {
-  const session = await getServerSession(authOptions);
+  const session = await verifierSessionAdmin();
   if (!session) redirect('/admin/login');
 
   const [pierres, couleurs] = await Promise.all([
     prisma.pierre.findMany({
       orderBy: { ordre: 'asc' },
-      include: { couleurPierre: true, _count: { select: { produits: true } } },
+      include: {
+        couleurs: { include: { couleurPierre: true } },
+        _count: { select: { produits: true } },
+      },
     }),
     prisma.couleurPierre.findMany({ orderBy: { ordre: 'asc' } }),
   ]);
@@ -22,6 +24,9 @@ export default async function PageAdminPierres() {
     <div className="admin-categories">
       <div className="admin-entete">
         <h1>Pierres ({pierres.length})</h1>
+        <p style={{ color: 'var(--texte-secondaire)', fontSize: '0.9rem', marginTop: '0.25rem' }}>
+          Gérez vos pierres précieuses. Chaque pierre peut avoir plusieurs couleurs.
+        </p>
       </div>
 
       <div className="admin-categories__grille">
@@ -30,7 +35,7 @@ export default async function PageAdminPierres() {
             <tr>
               <th>Nom</th>
               <th>Description</th>
-              <th>Couleur</th>
+              <th>Couleurs</th>
               <th>Bijoux associés</th>
               <th>Actions</th>
             </tr>

@@ -12,8 +12,13 @@ export default function Header() {
   const [menuOuvert, setMenuOuvert] = useState(false);
   const [rechercheOuverte, setRechercheOuverte] = useState(false);
   const [aDefile, setADefile] = useState(false);
+  const [monte, setMonte] = useState(false);
   const nombreArticles = usePanierStore((state) => state.nombreArticles());
   const { data: session } = useSession();
+
+  useEffect(() => {
+    setMonte(true);
+  }, []);
 
   useEffect(() => {
     function gererScroll() {
@@ -50,7 +55,7 @@ export default function Header() {
               <line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
           </button>
-          <Link href={session?.user ? '/mon-compte' : '/connexion'} className="nabe-header__icone" aria-label="Mon compte">
+          <Link href={monte && session?.user ? '/mon-compte' : '/connexion'} className="nabe-header__icone" aria-label="Mon compte">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="nabe-header__svg">
               <circle cx="12" cy="8" r="4" />
               <path d="M4 21c0-4 3.5-7 8-7s8 3 8 7" />
@@ -61,7 +66,7 @@ export default function Header() {
               <path d="M6 8h12l-1 12H7L6 8z" />
               <path d="M9 8a3 3 0 0 1 6 0" />
             </svg>
-            {nombreArticles > 0 && (
+            {monte && nombreArticles > 0 && (
               <span className="nabe-header__badge">{nombreArticles}</span>
             )}
           </Link>

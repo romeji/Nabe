@@ -15,6 +15,7 @@ export default async function PageEditionProduit({ params }: { params: { id: str
       images: { orderBy: { ordre: 'asc' } },
       pierres: { include: { pierre: true } },
       composeAvec: { orderBy: { ordre: 'asc' } },
+      stockTailles: true,
     },
   });
 
@@ -36,6 +37,7 @@ export default async function PageEditionProduit({ params }: { params: { id: str
     taillesDisponibles: produit.taillesDisponibles,
     disponibilite: produit.disponibilite,
     stock: produit.stock,
+    stockParTaille: Object.fromEntries(produit.stockTailles.map((st) => [st.taille, st.quantite])),
     actif: produit.actif,
     enAvant: produit.enAvant,
     composerAvecActif: produit.composerAvecActif,

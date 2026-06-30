@@ -30,6 +30,7 @@ export async function POST(req: NextRequest) {
     const idsProduits = articles.map((a) => a.produitId);
     const produitsDb = await prisma.produit.findMany({
       where: { id: { in: idsProduits } },
+      include: { stockTailles: true },
     });
 
     const lineItems = [];
@@ -45,6 +46,26 @@ export async function POST(req: NextRequest) {
       if (produitDb.disponibilite === 'EPUISE') {
         return NextResponse.json(
           { error: `${produitDb.nom} n'est plus disponible.` },
+          { status: 400 }
+        );
+      }
+
+      // Vérification réelle du stock disponible (par taille si applicable, sinon stock global)
+      let stockDisponible: number;
+      if (produitDb.stockTailles.length > 0) {
+        const ligne = produitDb.stockTailles.find((s) => s.taille === article.taille);
+        stockDisponible = ligne?.quantite ?? 0;
+      } else {
+        stockDisponible = produitDb.stock;
+      }
+      if (article.quantite > stockDisponible) {
+        return NextResponse.json(
+          {
+            error:
+              stockDisponible <= 0
+                ? `${produitDb.nom}${article.taille ? ` (taille ${article.taille})` : ''} n'est plus en stock.`
+                : `Il ne reste que ${stockDisponible} exemplaire(s) de ${produitDb.nom}${article.taille ? ` (taille ${article.taille})` : ''}.`,
+          },
           { status: 400 }
         );
       }

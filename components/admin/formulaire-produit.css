@@ -185,3 +185,32 @@
   background-color: var(--nabe-creme);
   padding: var(--espace-sm) 0;
 }
+
+.formulaire-produit__stock-tailles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.formulaire-produit__stock-taille-ligne {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  background: var(--nabe-sable, #f5f0e6);
+  border-radius: 8px;
+  padding: 0.6rem 0.75rem;
+}
+
+.formulaire-produit__stock-taille-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--texte-secondaire, #6b6b6b);
+}
+
+.formulaire-produit__stock-taille-ligne input {
+  width: 100%;
+  border: 1px solid var(--nabe-argile, #ccc);
+  border-radius: 6px;
+  padding: 0.4rem 0.5rem;
+}

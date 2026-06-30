@@ -11,7 +11,7 @@ import './formulaire-produit.css';
 type ImageProduit = { url: string; publicId?: string; alt?: string };
 type OptionSimple = { id: string; nom: string };
 type OptionCouleur = { id: string; nom: string; codeHex: string };
-type OptionPierre = { id: string; nom: string; couleurPierre: OptionCouleur | null };
+type OptionPierre = { id: string; nom: string; couleurs: { couleurPierre: OptionCouleur }[] };
 
 type ProduitFormData = {
   id?: string;
@@ -29,6 +29,7 @@ type ProduitFormData = {
   taillesDisponibles: string[];
   disponibilite: string;
   stock: number;
+  stockParTaille: Record<string, number>;
   actif: boolean;
   enAvant: boolean;
   composerAvecActif: boolean;
@@ -61,6 +62,7 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
     taillesDisponibles: produitInitial?.taillesDisponibles || [],
     disponibilite: produitInitial?.disponibilite || 'EN_STOCK',
     stock: produitInitial?.stock || 0,
+    stockParTaille: produitInitial?.stockParTaille || {},
     actif: produitInitial?.actif ?? true,
     enAvant: produitInitial?.enAvant ?? false,
     composerAvecActif: produitInitial?.composerAvecActif ?? true,
@@ -326,11 +328,16 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
                 className={`formulaire-produit__pierre-bouton ${donnees.pierresIds.includes(p.id) ? 'actif' : ''}`}
                 onClick={() => basculerPierre(p.id)}
               >
-                {p.couleurPierre && (
-                  <span
-                    className="formulaire-produit__pierre-pastille"
-                    style={{ backgroundColor: p.couleurPierre.codeHex }}
-                  />
+                {p.couleurs.length > 0 && (
+                  <span style={{ display: 'inline-flex', gap: 2, marginRight: 4 }}>
+                    {p.couleurs.slice(0, 3).map((c, i) => (
+                      <span
+                        key={i}
+                        className="formulaire-produit__pierre-pastille"
+                        style={{ backgroundColor: c.couleurPierre.codeHex }}
+                      />
+                    ))}
+                  </span>
                 )}
                 {p.nom}
               </button>
@@ -412,16 +419,47 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
 
       <div className="formulaire-produit__section">
         <h2>Stock & disponibilité</h2>
-        <div className="admin-form__ligne">
+
+        {donnees.taillesDisponibles.length > 0 ? (
           <div>
-            <label>Quantité en stock</label>
-            <input
-              type="number"
-              min="0"
-              value={donnees.stock}
-              onChange={(e) => majChamp('stock', parseInt(e.target.value) || 0)}
-            />
+            <label>Quantité en stock par taille</label>
+            <div className="formulaire-produit__stock-tailles">
+              {donnees.taillesDisponibles.map((t) => (
+                <div key={t} className="formulaire-produit__stock-taille-ligne">
+                  <span className="formulaire-produit__stock-taille-label">Taille {t}</span>
+                  <input
+                    type="number"
+                    min="0"
+                    value={donnees.stockParTaille[t] ?? 0}
+                    onChange={(e) =>
+                      majChamp('stockParTaille', {
+                        ...donnees.stockParTaille,
+                        [t]: parseInt(e.target.value) || 0,
+                      })
+                    }
+                  />
+                </div>
+              ))}
+            </div>
+            <p className="formulaire-produit__aide">
+              Stock total : {Object.values(donnees.stockParTaille).reduce((a, b) => a + (b || 0), 0)}
+            </p>
           </div>
+        ) : (
+          <div className="admin-form__ligne">
+            <div>
+              <label>Quantité en stock</label>
+              <input
+                type="number"
+                min="0"
+                value={donnees.stock}
+                onChange={(e) => majChamp('stock', parseInt(e.target.value) || 0)}
+              />
+            </div>
+          </div>
+        )}
+
+        <div className="admin-form__ligne">
           <div>
             <label>Disponibilité</label>
             <select value={donnees.disponibilite} onChange={(e) => majChamp('disponibilite', e.target.value)}>
