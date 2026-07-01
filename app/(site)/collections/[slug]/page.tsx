@@ -39,7 +39,7 @@ export default async function PageProduit({ params }: Props) {
   const config = await getConfigSite();
   const suggestionsActives = configEstActive(config, 'suggestions_produit_actif');
   const critere = config.suggestions_produit_critere || 'meme_type';
-  const galeriePosition = (config.galerie_produit_position as 'gauche' | 'bas') || 'gauche';
+  const galeriePosition = (config.galerie_produit_position as 'gauche' | 'bas') || 'bas';
 
   const session = await getServerSession(authClientOptions);
   const clientId = (session?.user as any)?.id as string | undefined;
@@ -83,6 +83,9 @@ export default async function PageProduit({ params }: Props) {
   const produitSerialise = {
     ...produit,
     prix: produit.prix.toString(),
+    prixPromo: produit.prixPromo ? produit.prixPromo.toString() : null,
+    promoDebut: produit.promoDebut ? produit.promoDebut.toISOString() : null,
+    promoFin: produit.promoFin ? produit.promoFin.toISOString() : null,
     pierres: produit.pierres.map((pp) => ({
       ...pp.pierre,
       couleurs: pp.pierre.couleurs.map((pc) => ({ nom: pc.couleurPierre.nom, codeHex: pc.couleurPierre.codeHex })),

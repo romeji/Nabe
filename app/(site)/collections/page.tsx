@@ -2,7 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { getServerSession } from 'next-auth';
 import { prisma } from '@/lib/prisma';
-import { formaterPrix } from '@/lib/utils';
+import { formaterPrix, promoEstActive, pourcentageReduction } from '@/lib/utils';
 import { getContenuPage } from '@/lib/contenu';
 import { authClientOptions } from '@/lib/auth-client';
 import FiltresCollections from '@/components/site/FiltresCollections';
@@ -153,7 +153,22 @@ export default async function PageCollections({ searchParams }: Props) {
                     </div>
                     <h3>{produit.nom}</h3>
                     <p className="produit-carte__details">{produit.matiere?.nom || ''}</p>
-                    <span className="produit-carte__prix">{formaterPrix(produit.prix.toString())}</span>
+                    {promoEstActive({
+                      promoActive: produit.promoActive,
+                      prixPromo: produit.prixPromo?.toString() ?? null,
+                      promoDebut: produit.promoDebut,
+                      promoFin: produit.promoFin,
+                    }) ? (
+                      <span className="produit-carte__prix produit-carte__prix--promo">
+                        <span className="produit-carte__prix-barre">{formaterPrix(produit.prix.toString())}</span>
+                        <span className="produit-carte__prix-reduit">{formaterPrix(produit.prixPromo!.toString())}</span>
+                        <span className="produit-carte__badge-promo">
+                          -{pourcentageReduction(produit.prix.toString(), produit.prixPromo!.toString())}%
+                        </span>
+                      </span>
+                    ) : (
+                      <span className="produit-carte__prix">{formaterPrix(produit.prix.toString())}</span>
+                    )}
                   </Link>
                   <BoutonFavori
                     produitId={produit.id}

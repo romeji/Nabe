@@ -10,6 +10,7 @@ export const config = {
   matcher: [
     '/admin',
     '/admin/produits/:path*',
+    '/admin/promotions/:path*',
     '/admin/categories/:path*',
     '/admin/collections/:path*',
     '/admin/matieres/:path*',

@@ -48,3 +48,44 @@ export const LABELS_STATUT_COMMANDE: Record<string, string> = {
   ANNULEE: 'Annulée',
   REMBOURSEE: 'Remboursée',
 };
+
+/**
+ * Détermine si la promotion d'un produit est actuellement effective,
+ * en tenant compte du toggle et des dates optionnelles de début/fin.
+ */
+export function promoEstActive(produit: {
+  promoActive: boolean;
+  prixPromo: string | number | null;
+  promoDebut?: string | Date | null;
+  promoFin?: string | Date | null;
+}): boolean {
+  if (!produit.promoActive || produit.prixPromo == null) return false;
+  const maintenant = new Date();
+  if (produit.promoDebut && new Date(produit.promoDebut) > maintenant) return false;
+  if (produit.promoFin && new Date(produit.promoFin) < maintenant) return false;
+  return true;
+}
+
+/**
+ * Retourne le prix effectif à facturer (promo si active, sinon prix normal).
+ */
+export function prixEffectif(produit: {
+  prix: string | number;
+  promoActive: boolean;
+  prixPromo: string | number | null;
+  promoDebut?: string | Date | null;
+  promoFin?: string | Date | null;
+}): number {
+  if (promoEstActive(produit)) return parseFloat(produit.prixPromo as string);
+  return parseFloat(produit.prix as string);
+}
+
+/**
+ * Calcule le pourcentage de réduction arrondi (ex: -20%).
+ */
+export function pourcentageReduction(prix: string | number, prixPromo: string | number): number {
+  const p = parseFloat(prix as string);
+  const pp = parseFloat(prixPromo as string);
+  if (!p || p <= 0 || pp >= p) return 0;
+  return Math.round(((p - pp) / p) * 100);
+}

@@ -95,6 +95,34 @@
   color: var(--texte-principal);
 }
 
+.produit-carte__prix--promo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.produit-carte__prix-barre {
+  font-weight: 400;
+  font-size: 0.85em;
+  color: var(--texte-secondaire);
+  text-decoration: line-through;
+}
+
+.produit-carte__prix-reduit {
+  font-weight: 700;
+  color: var(--nabe-terracotta, #9f5434);
+}
+
+.produit-carte__badge-promo {
+  background: var(--nabe-terracotta, #9f5434);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 0.1rem 0.4rem;
+  border-radius: 999px;
+}
+
 .collections-vide {
   color: var(--texte-secondaire);
   font-style: italic;

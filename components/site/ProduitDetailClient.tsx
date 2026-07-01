@@ -4,10 +4,9 @@ import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePanierStore } from '@/lib/store-panier';
-import { formaterPrix } from '@/lib/utils';
+import { formaterPrix, promoEstActive, pourcentageReduction } from '@/lib/utils';
 import BoutonFavori from './BoutonFavori';
 import GuideTailles from './GuideTailles';
-import ReassuranceProduit from './ReassuranceProduit';
 import PopupPierres from './PopupPierres';
 import PopupDetailsProduit from './popups/PopupDetailsProduit';
 import LiensInfoProduit from './LiensInfoProduit';
@@ -39,6 +38,10 @@ type Produit = {
   stock: number;
   stockTailles: { taille: string; quantite: number }[];
   images: ImageProduit[];
+  prixPromo: string | null;
+  promoActive: boolean;
+  promoDebut: string | null;
+  promoFin: string | null;
 };
 
 type Suggestion = {
@@ -63,7 +66,7 @@ export default function ProduitDetailClient({
   suggestionsActives,
   estFavori,
   composables,
-  galeriePosition = 'gauche',
+  galeriePosition = 'bas',
   popupOuvertureActive = true,
 }: {
   produit: Produit;
@@ -98,6 +101,40 @@ export default function ProduitDetailClient({
     return () => { clearTimeout(timer); window.removeEventListener('resize', syncHauteur); };
   }, []);
 
+  // Fait défiler prioritairement la colonne infos (à droite) quand l'utilisateur
+  // scrolle n'importe où sur la page, tant que la section produit est visible
+  // et que la colonne n'a pas atteint sa propre fin de scroll.
+  useEffect(() => {
+    function gererMolette(e: WheelEvent) {
+      const infos = infosRef.current;
+      const galerie = galerieRef.current;
+      if (!infos || !galerie) return;
+
+      // On ne détourne le scroll que si la section produit (image + infos) est visible à l'écran
+      const rectGalerie = galerie.getBoundingClientRect();
+      const sectionVisible = rectGalerie.top < window.innerHeight && rectGalerie.bottom > 0;
+      if (!sectionVisible) return;
+
+      // La colonne infos n'a pas de scroll interne (contenu plus court que l'image) : rien à faire
+      if (infos.scrollHeight <= infos.clientHeight + 1) return;
+
+      const scrollDescendant = e.deltaY > 0;
+      const auDebut = infos.scrollTop <= 0;
+      const aLaFin = infos.scrollTop + infos.clientHeight >= infos.scrollHeight - 1;
+
+      // Si on peut encore faire défiler la colonne dans le sens voulu, on intercepte
+      // le scroll de la page et on l'applique à la colonne infos à la place.
+      if ((scrollDescendant && !aLaFin) || (!scrollDescendant && !auDebut)) {
+        e.preventDefault();
+        infos.scrollTop += e.deltaY;
+      }
+      // Sinon (colonne déjà à sa limite dans ce sens) : on laisse la page défiler normalement.
+    }
+
+    window.addEventListener('wheel', gererMolette, { passive: false });
+    return () => window.removeEventListener('wheel', gererMolette);
+  }, []);
+
   const imagesAffichees = produit.images.length > 0 ? produit.images : [{ id: 'placeholder', url: '', alt: '' }];
 
   // Stock disponible pour la taille choisie (ou stock global si pas de système de taille)
@@ -126,7 +163,7 @@ export default function ProduitDetailClient({
     ajouterArticle({
       produitId: produit.id,
       nom: produit.nom,
-      prix: parseFloat(produit.prix),
+      prix: promoEstActive(produit) ? parseFloat(produit.prixPromo!) : parseFloat(produit.prix),
       image: produit.images[0]?.url || '',
       taille: tailleChoisie || undefined,
       quantite: 1,
@@ -203,7 +240,20 @@ export default function ProduitDetailClient({
           </div>
 
           <p className="produit-infos__prix">
-            {formaterPrix(produit.prix)} <span>Taxes comprises</span>
+            {promoEstActive(produit) ? (
+              <>
+                <span className="produit-infos__prix-barre">{formaterPrix(produit.prix)}</span>{' '}
+                <span className="produit-infos__prix-promo">{formaterPrix(produit.prixPromo!)}</span>{' '}
+                <span className="produit-infos__badge-promo">
+                  -{pourcentageReduction(produit.prix, produit.prixPromo!)}%
+                </span>{' '}
+                <span>Taxes comprises</span>
+              </>
+            ) : (
+              <>
+                {formaterPrix(produit.prix)} <span>Taxes comprises</span>
+              </>
+            )}
           </p>
 
           {produit.pierres.length > 0 && <PopupPierres pierres={produit.pierres} />}
@@ -258,7 +308,7 @@ export default function ProduitDetailClient({
           >
             {produit.disponibilite === 'EPUISE' || (produit.taillesDisponibles.length === 0 && produit.stock <= 0)
               ? 'ÉPUISÉ'
-              : `AJOUTER AU PANIER · ${formaterPrix(produit.prix)}`}
+              : `AJOUTER AU PANIER · ${formaterPrix(promoEstActive(produit) ? produit.prixPromo! : produit.prix)}`}
           </button>
 
           <p className="produit-infos__retours">Retours sans frais dans un délai de 30 jours</p>
@@ -268,8 +318,6 @@ export default function ProduitDetailClient({
           <ComposerAvec produits={composables} />
         </div>
       </div>
-
-      <ReassuranceProduit />
 
       {suggestionsActives && suggestions.length > 0 && (
         <div className="produit-suggestions conteneur">

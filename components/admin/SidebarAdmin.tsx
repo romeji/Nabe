@@ -9,6 +9,7 @@ import './sidebar.css';
 const LIENS = [
   { href: '/admin', label: 'Tableau de bord', icone: '📊' },
   { href: '/admin/produits', label: 'Bijoux', icone: '💍' },
+  { href: '/admin/promotions', label: 'Promotions', icone: '💸' },
   { href: '/admin/categories', label: 'Catégories', icone: '🏷️' },
   { href: '/admin/collections', label: 'Collections', icone: '✨' },
   { href: '/admin/matieres', label: 'Matières', icone: '⚜️' },

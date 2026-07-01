@@ -233,6 +233,10 @@ model Produit {
   actif           Boolean        @default(true)
   enAvant         Boolean        @default(false) // mis en avant sur l'accueil (carrousel "sélection")
   composerAvecActif Boolean      @default(true) // affiche ou non le bloc "À composer avec" sur ce produit
+  prixPromo       Decimal?       @db.Decimal(10, 2) // prix réduit affiché à la place de prix si renseigné et actif
+  promoActive     Boolean        @default(false) // active/désactive la promo sans effacer le prixPromo saisi
+  promoDebut      DateTime?      // optionnel : la promo ne s'affiche qu'à partir de cette date
+  promoFin        DateTime?      // optionnel : la promo ne s'affiche plus après cette date
   nombreVentes    Int            @default(0) // incrémenté à chaque vente, utile pour les critères de recommandation
   favoris         Favori[]
   lignesCommande  LigneCommande[]
