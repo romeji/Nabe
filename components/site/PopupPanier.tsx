@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -10,13 +10,9 @@ import './popup-panier.css';
 interface PopupPanierProps {
   ouverte: boolean;
   onFermer: () => void;
-  // Props optionnelles transmises depuis la fiche produit (ignorées si la popup vient du header)
-  boiteCadeauActif?: boolean;
-  boiteCadeauNom?: string;
-  boiteCadeauPrix?: number;
-  boiteCadeauImage?: string;
-  boiteCadeauProduitId?: string;
 }
+
+type ProduitSimple = { id: string; nom: string; slug: string; prix: string; image: string | null };
 
 type ConfigPopup = {
   seuilLivraison: number;
@@ -25,125 +21,166 @@ type ConfigPopup = {
   surpriseActif: boolean;
   articleBonusActif: boolean;
   articleBonusId: string;
-  // Champs du vrai produit article bonus (chargé depuis la DB)
   articleBonusNom: string;
   articleBonusPrix: number;
   articleBonusImage: string;
+  panierVideSuggestionsActif: boolean;
 };
 
-const CONFIG_DEFAUT: ConfigPopup = {
-  seuilLivraison: 60,
-  seuilLivraisonActif: true,
-  seuilSurprise: 100,
-  surpriseActif: false,
-  articleBonusActif: false,
-  articleBonusId: '',
-  articleBonusNom: '',
-  articleBonusPrix: 0,
-  articleBonusImage: '',
+const CFG_DEFAUT: ConfigPopup = {
+  seuilLivraison: 60, seuilLivraisonActif: true,
+  seuilSurprise: 100, surpriseActif: false,
+  articleBonusActif: false, articleBonusId: '',
+  articleBonusNom: '', articleBonusPrix: 0, articleBonusImage: '',
+  panierVideSuggestionsActif: false,
 };
 
-export default function PopupPanier({
-  ouverte, onFermer,
-}: PopupPanierProps) {
+export default function PopupPanier({ ouverte, onFermer }: PopupPanierProps) {
   const articles = usePanierStore(s => s.articles);
   const retirerArticle = usePanierStore(s => s.retirerArticle);
   const modifierQuantite = usePanierStore(s => s.modifierQuantite);
   const ajouterArticle = usePanierStore(s => s.ajouterArticle);
-  const [codePromo, setCodePromo] = useState('');
+
   const [mounted, setMounted] = useState(false);
-  const [cfg, setCfg] = useState<ConfigPopup>(CONFIG_DEFAUT);
+  const [cfg, setCfg] = useState<ConfigPopup>(CFG_DEFAUT);
+  const [cfgChargee, setCfgChargee] = useState(false);
+
+  // Checkout Stripe
+  const [codePromo, setCodePromo] = useState('');
+  const [codeApplique, setCodeApplique] = useState<{ code: string; reduction: number } | null>(null);
+  const [erreurCode, setErreurCode] = useState('');
+  const [validationCode, setValidationCode] = useState(false);
+  const [checkoutEnCours, setCheckoutEnCours] = useState(false);
+  const [erreurCheckout, setErreurCheckout] = useState('');
+
+  // Suggestions panier vide
+  const [bestsellers, setBestsellers] = useState<ProduitSimple[]>([]);
 
   useEffect(() => { setMounted(true); }, []);
 
-  // Charge la config une seule fois à l'ouverture
-  useEffect(() => {
-    if (!ouverte) return;
-    fetch('/api/config-public')
-      .then(r => r.json())
-      .then(async (data) => {
-        const bonusId = data.popup_panier_article_bonus_id || '';
-        let bonusNom = '', bonusPrix = 0, bonusImage = '';
-
-        // Charge les infos du vrai produit si un ID est défini
-        if (bonusId && data.popup_panier_article_bonus_actif === 'true') {
-          try {
-            const res = await fetch(`/api/produits/${bonusId}`);
-            if (res.ok) {
-              const p = await res.json();
-              bonusNom = p.nom || '';
-              bonusPrix = parseFloat(p.prix) || 0;
-              bonusImage = p.images?.[0]?.url || '';
-            }
-          } catch {}
-        }
-
-        setCfg({
-          seuilLivraison: parseFloat(data.popup_panier_seuil_livraison) || 60,
-          seuilLivraisonActif: data.popup_panier_seuil_livraison_actif !== 'false',
-          seuilSurprise: parseFloat(data.popup_panier_seuil_surprise) || 100,
-          surpriseActif: data.popup_panier_surprise_actif === 'true',
-          articleBonusActif: data.popup_panier_article_bonus_actif === 'true',
-          articleBonusId: bonusId,
-          articleBonusNom: bonusNom,
-          articleBonusPrix: bonusPrix,
-          articleBonusImage: bonusImage,
-        });
-      })
-      .catch(() => {});
-  }, [ouverte]);
-
+  // Scroll du body
   useEffect(() => {
     if (ouverte) document.body.style.overflow = 'hidden';
     else document.body.style.overflow = '';
     return () => { document.body.style.overflow = ''; };
   }, [ouverte]);
 
+  // Charge la config à la première ouverture
+  const chargerConfig = useCallback(async () => {
+    if (cfgChargee) return;
+    try {
+      const data = await fetch('/api/config-public').then(r => r.json());
+      const bonusId = data.popup_panier_article_bonus_id || '';
+      let bonusNom = '', bonusPrix = 0, bonusImage = '';
+      if (bonusId && data.popup_panier_article_bonus_actif === 'true') {
+        try {
+          const p = await fetch(`/api/produits/${bonusId}`).then(r => r.json());
+          bonusNom = p.nom || ''; bonusPrix = parseFloat(p.prix) || 0; bonusImage = p.images?.[0]?.url || '';
+        } catch {}
+      }
+      setCfg({
+        seuilLivraison: parseFloat(data.popup_panier_seuil_livraison) || 60,
+        seuilLivraisonActif: data.popup_panier_seuil_livraison_actif !== 'false',
+        seuilSurprise: parseFloat(data.popup_panier_seuil_surprise) || 100,
+        surpriseActif: data.popup_panier_surprise_actif === 'true',
+        articleBonusActif: data.popup_panier_article_bonus_actif === 'true',
+        articleBonusId: bonusId, articleBonusNom: bonusNom,
+        articleBonusPrix: bonusPrix, articleBonusImage: bonusImage,
+        panierVideSuggestionsActif: data.popup_panier_vide_actif === 'true',
+      });
+      setCfgChargee(true);
+    } catch {}
+  }, [cfgChargee]);
+
+  useEffect(() => { if (ouverte) chargerConfig(); }, [ouverte, chargerConfig]);
+
+  // Charge les bestsellers quand le panier est vide et l'option activée
+  useEffect(() => {
+    if (ouverte && cfg.panierVideSuggestionsActif && articles.length === 0 && bestsellers.length === 0) {
+      fetch('/api/produits/bestsellers?limite=4')
+        .then(r => r.json())
+        .then(data => setBestsellers(data.produits || []))
+        .catch(() => {});
+    }
+  }, [ouverte, cfg.panierVideSuggestionsActif, articles.length, bestsellers.length]);
+
   if (!mounted) return null;
 
-  const articleBonus = cfg.articleBonusActif && cfg.articleBonusId;
-  const bonusDansPanier = !!(articleBonus && articles.find(a => a.produitId === cfg.articleBonusId));
+  // — Helpers article bonus —
+  const articleBonus = cfg.articleBonusActif && cfg.articleBonusId && cfg.articleBonusNom;
+  const bonusDansPanier = !!(cfg.articleBonusId && articles.find(a => a.produitId === cfg.articleBonusId));
 
   function basculerBonus(coche: boolean) {
     if (!cfg.articleBonusId) return;
     if (coche) {
-      ajouterArticle({
-        produitId: cfg.articleBonusId,
-        nom: cfg.articleBonusNom,
-        prix: cfg.articleBonusPrix,
-        image: cfg.articleBonusImage,
-        quantite: 1,
-      });
+      ajouterArticle({ produitId: cfg.articleBonusId, nom: cfg.articleBonusNom, prix: cfg.articleBonusPrix, image: cfg.articleBonusImage, quantite: 1 });
     } else {
       retirerArticle(cfg.articleBonusId, undefined);
     }
   }
 
-  const articlesFiltres = articles.filter(a => a.produitId !== cfg.articleBonusId);
-  const total = articles.reduce((sum, a) => sum + a.prix * a.quantite, 0);
+  // — Code promo —
+  async function appliquerCode() {
+    if (!codePromo.trim()) return;
+    setValidationCode(true); setErreurCode('');
+    try {
+      const sousTotal = articles.reduce((s, a) => s + a.prix * a.quantite, 0);
+      const res = await fetch('/api/codes-promo/valider', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: codePromo, sousTotal }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Code invalide');
+      setCodeApplique({ code: data.code, reduction: data.reduction });
+      setErreurCode('');
+    } catch (e: any) {
+      setErreurCode(e.message || 'Code invalide');
+      setCodeApplique(null);
+    } finally { setValidationCode(false); }
+  }
 
-  // Barre de progression : seuil livraison obligatoire, surprise optionnel
-  const seuilMax = cfg.surpriseActif ? cfg.seuilSurprise : cfg.seuilLivraison;
-  const progressPct = cfg.seuilLivraisonActif ? Math.min((total / seuilMax) * 100, 100) : 0;
+  function retirerCode() { setCodeApplique(null); setCodePromo(''); setErreurCode(''); }
 
-  let messageProgress = '';
-  if (cfg.seuilLivraisonActif) {
-    if (total >= (cfg.surpriseActif ? cfg.seuilSurprise : cfg.seuilLivraison)) {
-      messageProgress = cfg.surpriseActif ? '🎁 Bijou surprise offert !' : '🚚 Livraison offerte !';
-    } else if (cfg.surpriseActif && total >= cfg.seuilLivraison) {
-      messageProgress = `Livraison offerte ! Plus que ${formaterPrix(cfg.seuilSurprise - total)} pour ton bijou surprise`;
-    } else {
-      messageProgress = `Plus que ${formaterPrix(cfg.seuilLivraison - total)} et profite de ta livraison à domicile offerte !`;
+  // — Checkout Stripe direct —
+  async function gererCheckout() {
+    setCheckoutEnCours(true); setErreurCheckout('');
+    try {
+      const res = await fetch('/api/checkout', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ articles, codeReduction: codeApplique?.code }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        onFermer();
+        window.location.href = data.url;
+      } else {
+        throw new Error(data.error || 'Erreur de paiement');
+      }
+    } catch (e: any) {
+      setErreurCheckout(e.message || 'Une erreur est survenue. Merci de réessayer.');
+      setCheckoutEnCours(false);
     }
   }
 
+  // — Calculs —
+  const articlesFiltres = articles.filter(a => a.produitId !== cfg.articleBonusId);
+  const panierVide = articlesFiltres.length === 0 && !articleBonus;
+  const sousTotal = articles.reduce((s, a) => s + a.prix * a.quantite, 0);
+  const reduction = codeApplique?.reduction || 0;
+  const total = Math.max(0, sousTotal - reduction);
+
+  const seuilMax = cfg.surpriseActif ? cfg.seuilSurprise : cfg.seuilLivraison;
+  const progressPct = cfg.seuilLivraisonActif ? Math.min((sousTotal / seuilMax) * 100, 100) : 0;
+  const messageProgress = !cfg.seuilLivraisonActif ? '' :
+    sousTotal >= (cfg.surpriseActif ? cfg.seuilSurprise : cfg.seuilLivraison)
+      ? (cfg.surpriseActif ? '🎁 Bijou surprise offert !' : '🚚 Livraison offerte !')
+      : cfg.surpriseActif && sousTotal >= cfg.seuilLivraison
+        ? `Livraison offerte ! Plus que ${formaterPrix(cfg.seuilSurprise - sousTotal)} pour ton bijou surprise`
+        : `Plus que ${formaterPrix(cfg.seuilLivraison - sousTotal)} et profite de ta livraison à domicile offerte !`;
+
   return createPortal(
     <>
-      <div
-        className={`popup-panier__overlay${ouverte ? ' popup-panier__overlay--visible' : ''}`}
-        onClick={onFermer}
-        aria-hidden="true"
-      />
+      <div className={`popup-panier__overlay${ouverte ? ' popup-panier__overlay--visible' : ''}`} onClick={onFermer} aria-hidden="true" />
       <div className={`popup-panier${ouverte ? ' popup-panier--ouverte' : ''}`} role="dialog" aria-modal="true">
 
         {/* En-tête */}
@@ -156,9 +193,10 @@ export default function PopupPanier({
           </button>
         </div>
 
-        {articlesFiltres.length === 0 && !articleBonus ? (
+        {panierVide ? (
+          /* ── Panier vide ── */
           <div className="popup-panier__vide">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
               <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
               <line x1="3" y1="6" x2="21" y2="6"/>
               <path d="M16 10a4 4 0 01-8 0"/>
@@ -167,6 +205,27 @@ export default function PopupPanier({
             <button className="popup-panier__btn-continuer" onClick={onFermer}>
               Découvrir nos créations
             </button>
+
+            {/* Suggestions bestsellers (option admin) */}
+            {cfg.panierVideSuggestionsActif && bestsellers.length > 0 && (
+              <div className="popup-panier__suggestions">
+                <p className="popup-panier__suggestions-titre">Nos meilleures ventes</p>
+                <div className="popup-panier__suggestions-grille">
+                  {bestsellers.map(p => (
+                    <Link key={p.id} href={`/collections/${p.slug}`} className="popup-panier__suggestion-carte" onClick={onFermer}>
+                      <div className="popup-panier__suggestion-image">
+                        {p.image
+                          ? <Image src={p.image} alt={p.nom} width={110} height={110} style={{ objectFit: 'cover' }} />
+                          : <div className="popup-panier__suggestion-placeholder" />
+                        }
+                      </div>
+                      <p className="popup-panier__suggestion-nom">{p.nom}</p>
+                      <p className="popup-panier__suggestion-prix">{formaterPrix(p.prix)}</p>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         ) : (
           <>
@@ -176,7 +235,7 @@ export default function PopupPanier({
               <span>TOTAL</span>
             </div>
 
-            {/* Articles scrollables */}
+            {/* Articles (zone scrollable) */}
             <div className="popup-panier__articles">
               {articlesFiltres.map(article => (
                 <div key={`${article.produitId}-${article.taille ?? ''}`} className="popup-panier__article">
@@ -187,7 +246,9 @@ export default function PopupPanier({
                   </div>
                   <div className="popup-panier__article-info">
                     <p className="popup-panier__article-nom">{article.nom}</p>
-                    {article.taille && <p className="popup-panier__article-taille">Taille: {article.taille}</p>}
+                    {article.taille && (
+                      <p className="popup-panier__article-taille">Taille : {article.taille}</p>
+                    )}
                     <div className="popup-panier__article-qte">
                       <button onClick={() => modifierQuantite(article.produitId, Math.max(article.quantite - 1, 1), article.taille)}>−</button>
                       <span>{article.quantite}</span>
@@ -209,24 +270,18 @@ export default function PopupPanier({
                 </div>
               ))}
 
-              {/* Article bonus optionnel (boîte cadeau, etc.) */}
-              {articleBonus && cfg.articleBonusNom && (
+              {/* Article bonus optionnel */}
+              {articleBonus && (
                 <div className="popup-panier__boite">
                   <div className="popup-panier__boite-img">
-                    {cfg.articleBonusImage ? (
-                      <Image src={cfg.articleBonusImage} alt={cfg.articleBonusNom} width={52} height={52} style={{ objectFit: 'cover' }} />
-                    ) : (
-                      <div style={{ width: 52, height: 52, background: '#f1e0cb', borderRadius: 4 }} />
-                    )}
+                    {cfg.articleBonusImage
+                      ? <Image src={cfg.articleBonusImage} alt={cfg.articleBonusNom} width={52} height={52} style={{ objectFit: 'cover' }} />
+                      : <div style={{ width: 52, height: 52, background: '#f1e0cb', borderRadius: 4 }} />
+                    }
                   </div>
                   <span className="popup-panier__boite-nom">{cfg.articleBonusNom.toUpperCase()}</span>
                   <span className="popup-panier__boite-prix">{formaterPrix(cfg.articleBonusPrix)}</span>
-                  <input
-                    type="checkbox"
-                    checked={bonusDansPanier}
-                    onChange={e => basculerBonus(e.target.checked)}
-                    className="popup-panier__boite-check"
-                  />
+                  <input type="checkbox" checked={bonusDansPanier} onChange={e => basculerBonus(e.target.checked)} className="popup-panier__boite-check" />
                 </div>
               )}
             </div>
@@ -247,26 +302,45 @@ export default function PopupPanier({
               </div>
             )}
 
-            {/* Pied fixe */}
+            {/* Pied fixe : total + code + checkout */}
             <div className="popup-panier__pied">
               <div className="popup-panier__total">
                 <span>Total</span>
                 <span>{formaterPrix(total)} EUR</span>
               </div>
 
-              <div className="popup-panier__code-promo">
-                <input
-                  placeholder="Code de réduction"
-                  value={codePromo}
-                  onChange={e => setCodePromo(e.target.value)}
-                  className="popup-panier__code-input"
-                />
-                <button className="popup-panier__code-btn">APPLIQUER</button>
-              </div>
+              {/* Code promo fonctionnel */}
+              {codeApplique ? (
+                <div className="popup-panier__code-applique">
+                  <span>✓ Code « {codeApplique.code} » — −{formaterPrix(codeApplique.reduction)}</span>
+                  <button onClick={retirerCode} className="popup-panier__code-retirer">✕</button>
+                </div>
+              ) : (
+                <div className="popup-panier__code-promo">
+                  <input
+                    placeholder="Code de réduction"
+                    value={codePromo}
+                    onChange={e => setCodePromo(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && appliquerCode()}
+                    className="popup-panier__code-input"
+                  />
+                  <button onClick={appliquerCode} disabled={validationCode} className="popup-panier__code-btn">
+                    {validationCode ? '...' : 'APPLIQUER'}
+                  </button>
+                </div>
+              )}
+              {erreurCode && <p className="popup-panier__erreur-code">{erreurCode}</p>}
 
-              <Link href="/panier" className="popup-panier__valider" onClick={onFermer}>
-                VALIDER TON PANIER
-              </Link>
+              {/* Bouton paiement Stripe direct */}
+              <button
+                className="popup-panier__valider"
+                onClick={gererCheckout}
+                disabled={checkoutEnCours}
+              >
+                {checkoutEnCours ? 'Redirection...' : 'VALIDER TON PANIER'}
+              </button>
+
+              {erreurCheckout && <p className="popup-panier__erreur-checkout">{erreurCheckout}</p>}
             </div>
           </>
         )}

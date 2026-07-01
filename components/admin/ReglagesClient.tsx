@@ -263,6 +263,18 @@ export default function ReglagesClient({
             <p>Quand activé, la popup panier s'ouvre automatiquement dès qu'un client clique sur "Ajouter au panier".</p>
           </div>
         </label>
+
+        <label className="reglages-client__toggle">
+          <input
+            type="checkbox"
+            checked={config.popup_panier_vide_actif === 'true'}
+            onChange={(e) => maj('popup_panier_vide_actif', e.target.checked ? 'true' : 'false')}
+          />
+          <div>
+            <strong>Afficher des suggestions quand le panier est vide</strong>
+            <p>Affiche les meilleures ventes (bestsellers) dans la popup panier quand elle est ouverte et que le panier est vide.</p>
+          </div>
+        </label>
       </div>
 
       <div className="admin-carte reglages-client__section">
