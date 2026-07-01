@@ -291,7 +291,10 @@ export default function PopupPanier({ ouverte, onFermer }: PopupPanierProps) {
               <div className="popup-panier__progress">
                 <p className="popup-panier__progress-msg">{messageProgress}</p>
                 <div className="popup-panier__progress-barre">
-                  <div className="popup-panier__progress-fill" style={{ width: `${progressPct}%` }} />
+                  <div className="popup-panier__progress-fill" style={{ width: `${progressPct}%` }}>
+                    <span className="popup-panier__progress-curseur" />
+                  </div>
+                  <span className="popup-panier__progress-cible" />
                 </div>
                 <div className="popup-panier__progress-labels">
                   <span>{formaterPrix(cfg.seuilLivraison)}<br /><small>Livraison offerte</small></span>
