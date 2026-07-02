@@ -1,0 +1,46 @@
+.commandes-client-vide {
+  color: var(--texte-secondaire);
+  font-style: italic;
+}
+
+.commandes-client-vide a {
+  color: var(--nabe-terracotta);
+  text-decoration: underline;
+}
+
+.commandes-client-liste {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espace-md);
+}
+
+.commandes-client-carte {
+  background-color: var(--nabe-blanc);
+  border: 1px solid var(--nabe-beige-fonce);
+  border-radius: var(--rayon-bordure);
+  padding: var(--espace-md);
+}
+
+.commandes-client-carte__entete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--espace-sm);
+}
+
+.commandes-client-carte__entete span {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--texte-secondaire);
+}
+
+.commandes-client-carte ul {
+  font-size: 0.9rem;
+  color: var(--texte-secondaire);
+  margin-bottom: var(--espace-sm);
+}
+
+.commandes-client-carte__total {
+  font-weight: 600;
+  text-align: right;
+}

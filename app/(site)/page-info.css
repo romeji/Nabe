@@ -1,0 +1,89 @@
+.page-info {
+  padding: calc(var(--espace-xl) + 5.5rem) var(--espace-md) var(--espace-2xl);
+  max-width: 820px;
+  margin: 0 auto;
+}
+
+.page-info__entete {
+  text-align: center;
+  margin-bottom: var(--espace-xl);
+}
+
+.page-info__entete h1 {
+  font-size: 2.5rem;
+  margin-bottom: var(--espace-xs);
+}
+
+.page-info__entete p {
+  color: var(--texte-secondaire);
+}
+
+.page-info__section {
+  margin-bottom: var(--espace-lg);
+}
+
+.page-info__section h2 {
+  font-size: 1.3rem;
+  margin-bottom: var(--espace-sm);
+  color: var(--nabe-terracotta);
+}
+
+.page-info__section h3 {
+  font-size: 1.05rem;
+  margin: var(--espace-md) 0 var(--espace-xs);
+}
+
+.page-info__section p {
+  color: var(--texte-secondaire);
+  margin-bottom: var(--espace-sm);
+}
+
+.page-info__section ul {
+  margin-bottom: var(--espace-sm);
+  padding-left: 1.2rem;
+}
+
+.page-info__section li {
+  color: var(--texte-secondaire);
+  margin-bottom: 0.4rem;
+  list-style: disc;
+}
+
+.page-info__section a {
+  color: var(--nabe-terracotta);
+  text-decoration: underline;
+}
+
+/* FAQ spécifique : accordéon */
+.page-info__faq-item {
+  border-bottom: 1px solid var(--nabe-beige-fonce);
+}
+
+.page-info__faq-question {
+  width: 100%;
+  text-align: left;
+  padding: var(--espace-md) 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.page-info__faq-icone {
+  color: var(--nabe-terracotta);
+  font-size: 1.2rem;
+  flex-shrink: 0;
+  margin-left: var(--espace-sm);
+}
+
+.page-info__faq-reponse {
+  padding: 0 0 var(--espace-md);
+  color: var(--texte-secondaire);
+}
+
+@media (max-width: 600px) {
+  .page-info__entete h1 {
+    font-size: 1.8rem;
+  }
+}

@@ -1,0 +1,228 @@
+.filtres-collections {
+  width: 240px;
+  flex-shrink: 0;
+}
+
+.filtres-collections__entete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--espace-md);
+}
+
+.filtres-collections__entete h2 {
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-family: var(--font-texte);
+  font-weight: 600;
+}
+
+.filtres-collections__reset {
+  font-size: 0.8rem;
+  color: var(--nabe-terracotta);
+  text-decoration: underline;
+}
+
+.filtres-collections__groupe {
+  margin-bottom: var(--espace-lg);
+  border-bottom: 1px solid var(--nabe-beige-fonce);
+  padding-bottom: var(--espace-md);
+}
+
+.filtres-collections__groupe h3 {
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-family: var(--font-texte);
+  font-weight: 600;
+  margin-bottom: var(--espace-sm);
+}
+
+.filtres-collections__vide {
+  font-size: 0.8rem;
+  color: var(--texte-secondaire);
+  font-style: italic;
+}
+
+.filtres-collections__case {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+  color: var(--texte-secondaire);
+}
+
+.filtres-collections__case input {
+  accent-color: var(--nabe-or);
+  cursor: pointer;
+}
+
+.filtres-collections__select {
+  width: 100%;
+  padding: 0.7rem 1rem;
+  border: 1px solid var(--nabe-argile);
+  border-radius: 999px;
+  background-color: var(--nabe-blanc);
+}
+
+.filtres-collections__prix {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.filtres-collections__prix-valeurs {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: var(--texte-secondaire);
+  margin-bottom: 0.2rem;
+}
+
+.filtres-collections__prix input[type='range'] {
+  width: 100%;
+  accent-color: var(--nabe-or);
+}
+
+.filtres-collections__tailles {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.filtres-collections__taille {
+  min-width: 40px;
+  height: 40px;
+  padding: 0 0.6rem;
+  border: 1px solid var(--nabe-argile);
+  border-radius: 999px;
+  font-size: 0.85rem;
+}
+
+.filtres-collections__taille.actif {
+  background-color: var(--nabe-terracotta);
+  color: var(--texte-clair);
+  border-color: var(--nabe-terracotta);
+}
+
+.filtres-collections__couleurs-liste {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.filtres-collections__case-couleur {
+  display: flex !important;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.filtres-collections__rond {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: inline-block;
+  border: 1px solid var(--nabe-argile);
+  flex-shrink: 0;
+}
+
+.filtres-collections__compteur {
+  color: var(--texte-secondaire);
+  font-size: 0.85rem;
+}
+
+.tri-collections {
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--nabe-argile);
+  border-radius: 999px;
+  background-color: var(--nabe-blanc);
+  font-size: 0.85rem;
+}
+
+.filtres-collections__bouton-mobile {
+  display: none;
+}
+
+.filtres-collections__overlay-mobile {
+  display: none;
+}
+
+.filtres-collections__entete-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--espace-sm);
+}
+
+.filtres-collections__fermer-mobile {
+  display: none;
+}
+
+.filtres-collections__appliquer-mobile {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .filtres-collections__bouton-mobile {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    width: 100%;
+    justify-content: center;
+    padding: 0.8rem;
+    margin-bottom: var(--espace-md);
+    border: 1px solid var(--nabe-argile);
+    border-radius: 999px;
+    background-color: var(--nabe-blanc);
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .filtres-collections__overlay-mobile {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 300;
+  }
+
+  .filtres-collections {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    width: 85%;
+    max-width: 340px;
+    background-color: var(--nabe-creme);
+    z-index: 310;
+    padding: var(--espace-md);
+    overflow-y: auto;
+    transform: translateX(100%);
+    transition: transform 0.25s ease;
+  }
+
+  .filtres-collections--ouvert-mobile {
+    transform: translateX(0);
+  }
+
+  .filtres-collections__fermer-mobile {
+    display: inline-flex;
+    font-size: 1.1rem;
+    padding: 0.2rem;
+  }
+
+  .filtres-collections__appliquer-mobile {
+    display: block;
+    width: 100%;
+    padding: 0.9rem;
+    background-color: var(--nabe-terracotta);
+    color: var(--texte-clair);
+    border-radius: 999px;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-top: var(--espace-md);
+  }
+}

@@ -1,0 +1,97 @@
+.contact-corps {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: var(--espace-xl);
+  padding: var(--espace-2xl) var(--espace-md);
+}
+
+.contact-corps__infos h2 {
+  font-size: 1.8rem;
+  margin-bottom: var(--espace-sm);
+}
+
+.contact-corps__infos p {
+  color: var(--texte-secondaire);
+  margin-bottom: var(--espace-lg);
+}
+
+.contact-corps__bloc {
+  margin-bottom: var(--espace-md);
+}
+
+.contact-corps__bloc h3 {
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--nabe-or);
+  margin-bottom: 0.2rem;
+}
+
+.contact-formulaire {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.contact-formulaire label {
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--texte-secondaire);
+}
+
+.contact-formulaire input,
+.contact-formulaire textarea {
+  padding: 0.9rem 1.1rem;
+  border: 1px solid var(--nabe-argile);
+  border-radius: var(--rayon-bordure);
+  background-color: var(--nabe-blanc);
+}
+
+.contact-formulaire button {
+  align-self: flex-start;
+  margin-top: var(--espace-sm);
+}
+
+.contact-formulaire__erreur {
+  color: var(--nabe-terracotta-fonce);
+  font-size: 0.85rem;
+}
+
+.contact-formulaire__succes {
+  background-color: var(--nabe-sable);
+  padding: var(--espace-lg);
+  border-radius: 24px;
+  color: var(--nabe-terracotta-fonce);
+  font-weight: 500;
+}
+
+.contact-rdv {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 0 var(--espace-md) var(--espace-2xl);
+  gap: var(--espace-xl);
+  align-items: center;
+}
+
+.contact-rdv__image {
+  height: 360px;
+  background-image: url('/images/main-bague.jpg');
+  background-size: cover;
+  background-position: center;
+  border-radius: 50% 50% 10px 10px / 26% 26% 4px 4px;
+  background-color: var(--nabe-sable);
+  box-shadow: var(--ombre-moyenne);
+}
+
+.contact-rdv__texte h2 {
+  font-size: 1.7rem;
+  margin: var(--espace-sm) 0 var(--espace-md);
+}
+
+@media (max-width: 900px) {
+  .contact-corps,
+  .contact-rdv {
+    grid-template-columns: 1fr;
+  }
+}

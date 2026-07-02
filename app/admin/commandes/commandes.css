@@ -1,0 +1,19 @@
+.admin-commandes__email {
+  font-size: 0.8rem;
+  color: var(--texte-secondaire);
+}
+
+.admin-commandes__select {
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--nabe-beige-fonce);
+  border-radius: var(--rayon-bordure);
+  font-size: 0.85rem;
+  background-color: var(--nabe-blanc);
+}
+
+.admin-commandes__vide {
+  text-align: center;
+  color: var(--texte-secondaire);
+  font-style: italic;
+  padding: var(--espace-xl) 0;
+}

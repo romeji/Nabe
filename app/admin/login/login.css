@@ -1,0 +1,57 @@
+.admin-login {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--nabe-creme);
+  padding: var(--espace-md);
+}
+
+.admin-login__carte {
+  background-color: var(--nabe-blanc);
+  padding: var(--espace-xl);
+  border-radius: var(--rayon-bordure);
+  box-shadow: var(--ombre-moyenne);
+  width: 100%;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.admin-login__logo {
+  font-family: var(--font-logo);
+  font-size: 3rem;
+  color: var(--nabe-or);
+  text-align: center;
+}
+
+.admin-login__sous-titre {
+  text-align: center;
+  color: var(--texte-secondaire);
+  font-size: 0.9rem;
+  margin-bottom: var(--espace-md);
+}
+
+.admin-login__carte label {
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--texte-secondaire);
+}
+
+.admin-login__carte input {
+  padding: 0.8rem;
+  border: 1px solid var(--nabe-beige-fonce);
+  border-radius: var(--rayon-bordure);
+}
+
+.admin-login__carte button {
+  margin-top: var(--espace-md);
+}
+
+.admin-login__erreur {
+  color: var(--nabe-terracotta-fonce);
+  font-size: 0.85rem;
+  text-align: center;
+}

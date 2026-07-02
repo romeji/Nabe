@@ -1,0 +1,113 @@
+/* Header flottant, arrondi, par-dessus la page (ne consomme aucun espace dans le flux) */
+.nabe-header {
+  position: fixed;
+  top: var(--espace-sm);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  max-width: calc(var(--largeur-max) - 2 * var(--espace-md));
+  width: calc(100% - 2 * var(--espace-md));
+  background-color: var(--nabe-creme);
+  border: 1px solid rgba(184, 146, 63, 0.18);
+  border-radius: 999px;
+  box-shadow: 0 8px 28px rgba(69, 41, 30, 0.16), 0 2px 8px rgba(69, 41, 30, 0.09);
+  transition: background-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.nabe-header:hover,
+.nabe-header--defile {
+  background-color: rgba(247, 241, 232, 0.82);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.nabe-header__conteneur {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espace-md);
+  padding: 1.1rem 2.2rem;
+}
+
+.nabe-header__logo {
+  font-family: var(--font-logo);
+  font-size: 2.6rem;
+  color: var(--nabe-or);
+  line-height: 1;
+  flex-shrink: 0;
+  margin: 0 auto;
+}
+
+.nabe-header__burger {
+  color: var(--texte-principal);
+  flex-shrink: 0;
+  order: 1;
+  display: flex;
+  align-items: center;
+}
+
+.nabe-header__logo {
+  order: 2;
+}
+
+.nabe-header__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--espace-sm);
+  flex-shrink: 0;
+  order: 3;
+}
+
+.nabe-header__svg {
+  width: 26px;
+  height: 26px;
+}
+
+.nabe-header__icone {
+  color: var(--texte-principal);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  transition: var(--transition-douce);
+}
+
+.nabe-header__icone:hover {
+  color: var(--nabe-terracotta);
+}
+
+.nabe-header__panier {
+  position: relative;
+}
+
+.nabe-header__badge {
+  position: absolute;
+  top: -7px;
+  right: -9px;
+  background-color: var(--nabe-terracotta);
+  color: var(--texte-clair);
+  font-size: 0.62rem;
+  font-weight: 600;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 600px) {
+  .nabe-header {
+    width: calc(100% - var(--espace-md));
+    top: 0.5rem;
+  }
+  .nabe-header__conteneur {
+    padding: 0.6rem var(--espace-md);
+  }
+  .nabe-header__logo {
+    font-size: 2.1rem;
+  }
+  .nabe-header__svg {
+    width: 20px;
+    height: 20px;
+  }
+}
