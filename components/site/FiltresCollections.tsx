@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { LABELS_TYPE_BIJOU, LABELS_DISPONIBILITE } from '@/lib/utils';
 import './filtres-collections.css';
 
-type Matiere = { id: string; nom: string };
+type Matiere = { id: string; nom: string; nombreProduits?: number };
 type Couleur = { id: string; nom: string; codeHex: string; nombreProduits?: number };
-type PierreOption = { id: string; nom: string };
+type PierreOption = { id: string; nom: string; nombreProduits?: number };
 
 const TAILLES_BAGUE = ['48', '50', '52', '54', '56', '58', '60'];
 const TAILLES_BRACELET = ['S', 'M', 'L'];
@@ -18,12 +18,16 @@ export default function FiltresCollections({
   couleurs = [],
   prixMinGlobal = 0,
   prixMaxGlobal = 1000,
+  comptesType = {},
+  comptesDisponibilite = {},
 }: {
   matieres?: Matiere[];
   pierres?: PierreOption[];
   couleurs?: Couleur[];
   prixMinGlobal?: number;
   prixMaxGlobal?: number;
+  comptesType?: Record<string, number>;
+  comptesDisponibilite?: Record<string, number>;
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -38,6 +42,8 @@ export default function FiltresCollections({
 
   const [prixMin, setPrixMin] = useState(parseInt(searchParams.get('prixMin') || String(prixMinGlobal)));
   const [prixMax, setPrixMax] = useState(parseInt(searchParams.get('prixMax') || String(prixMaxGlobal)));
+  const pisteRef = useRef<HTMLDivElement>(null);
+  const [glissementActif, setGlissementActif] = useState<'min' | 'max' | null>(null);
 
   useEffect(() => {
     setPrixMin(parseInt(searchParams.get('prixMin') || String(prixMinGlobal)));
@@ -64,11 +70,11 @@ export default function FiltresCollections({
     appliquerFiltre('disponibilite', actuelles.size > 0 ? Array.from(actuelles).join(',') : null);
   }
 
-  function appliquerPrix() {
+  function appliquerPrix(min: number, max: number) {
     const params = new URLSearchParams(searchParams.toString());
-    if (prixMin > prixMinGlobal) params.set('prixMin', String(prixMin));
+    if (min > prixMinGlobal) params.set('prixMin', String(min));
     else params.delete('prixMin');
-    if (prixMax < prixMaxGlobal) params.set('prixMax', String(prixMax));
+    if (max < prixMaxGlobal) params.set('prixMax', String(max));
     else params.delete('prixMax');
     router.push(`/collections?${params.toString()}`);
   }
@@ -76,6 +82,62 @@ export default function FiltresCollections({
   function reinitialiser() {
     router.push('/collections');
   }
+
+  // ── Double curseur de prix : une seule piste, deux poignées rondes ──
+  const etendue = Math.max(prixMaxGlobal - prixMinGlobal, 1);
+  const pourcentMin = ((prixMin - prixMinGlobal) / etendue) * 100;
+  const pourcentMax = ((prixMax - prixMinGlobal) / etendue) * 100;
+
+  const valeurDepuisPosition = useCallback(
+    (clientX: number) => {
+      if (!pisteRef.current) return prixMinGlobal;
+      const rect = pisteRef.current.getBoundingClientRect();
+      const ratio = Math.min(Math.max((clientX - rect.left) / rect.width, 0), 1);
+      return Math.round(prixMinGlobal + ratio * etendue);
+    },
+    [prixMinGlobal, etendue]
+  );
+
+  useEffect(() => {
+    if (!glissementActif) return;
+
+    function gererDeplacement(e: MouseEvent | TouchEvent) {
+      const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+      const valeur = valeurDepuisPosition(clientX);
+      if (glissementActif === 'min') {
+        setPrixMin((prev) => Math.min(valeur, prixMax));
+      } else {
+        setPrixMax((prev) => Math.max(valeur, prixMin));
+      }
+    }
+    function gererRelachement() {
+      setGlissementActif(null);
+    }
+
+    window.addEventListener('mousemove', gererDeplacement);
+    window.addEventListener('touchmove', gererDeplacement);
+    window.addEventListener('mouseup', gererRelachement);
+    window.addEventListener('touchend', gererRelachement);
+    return () => {
+      window.removeEventListener('mousemove', gererDeplacement);
+      window.removeEventListener('touchmove', gererDeplacement);
+      window.removeEventListener('mouseup', gererRelachement);
+      window.removeEventListener('touchend', gererRelachement);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [glissementActif, valeurDepuisPosition]);
+
+  // Applique le filtre une fois le glissement terminé (pas à chaque pixel)
+  useEffect(() => {
+    if (glissementActif === null) {
+      const minUrl = parseInt(searchParams.get('prixMin') || String(prixMinGlobal));
+      const maxUrl = parseInt(searchParams.get('prixMax') || String(prixMaxGlobal));
+      if (minUrl !== prixMin || maxUrl !== prixMax) {
+        appliquerPrix(prixMin, prixMax);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [glissementActif]);
 
   const afficheTailles = typeActif === 'BAGUE' || typeActif === 'BRACELET' || !typeActif;
   const optionsTailles = typeActif === 'BRACELET' ? TAILLES_BRACELET : TAILLES_BAGUE;
@@ -125,6 +187,9 @@ export default function FiltresCollections({
                 onChange={() => appliquerFiltre('type', typeActif === valeur ? null : valeur)}
               />
               {label}
+              {typeof comptesType[valeur] === 'number' && (
+                <span className="filtres-collections__compteur">({comptesType[valeur]})</span>
+              )}
             </label>
           ))}
         </div>
@@ -136,24 +201,46 @@ export default function FiltresCollections({
               <span>{prixMin} €</span>
               <span>{prixMax} €</span>
             </div>
-            <input
-              type="range"
-              min={prixMinGlobal}
-              max={prixMaxGlobal}
-              value={prixMin}
-              onChange={(e) => setPrixMin(Math.min(parseInt(e.target.value), prixMax))}
-              onMouseUp={appliquerPrix}
-              onTouchEnd={appliquerPrix}
-            />
-            <input
-              type="range"
-              min={prixMinGlobal}
-              max={prixMaxGlobal}
-              value={prixMax}
-              onChange={(e) => setPrixMax(Math.max(parseInt(e.target.value), prixMin))}
-              onMouseUp={appliquerPrix}
-              onTouchEnd={appliquerPrix}
-            />
+
+            <div className="filtres-collections__slider-prix" ref={pisteRef}>
+              <div className="filtres-collections__slider-piste" />
+              <div
+                className="filtres-collections__slider-remplissage"
+                style={{ left: `${pourcentMin}%`, right: `${100 - pourcentMax}%` }}
+              />
+              <div
+                role="slider"
+                aria-label="Prix minimum"
+                aria-valuemin={prixMinGlobal}
+                aria-valuemax={prixMaxGlobal}
+                aria-valuenow={prixMin}
+                tabIndex={0}
+                className="filtres-collections__slider-poignee"
+                style={{ left: `${pourcentMin}%` }}
+                onMouseDown={() => setGlissementActif('min')}
+                onTouchStart={() => setGlissementActif('min')}
+                onKeyDown={(e) => {
+                  if (e.key === 'ArrowLeft') setPrixMin((p) => Math.max(p - 1, prixMinGlobal));
+                  if (e.key === 'ArrowRight') setPrixMin((p) => Math.min(p + 1, prixMax));
+                }}
+              />
+              <div
+                role="slider"
+                aria-label="Prix maximum"
+                aria-valuemin={prixMinGlobal}
+                aria-valuemax={prixMaxGlobal}
+                aria-valuenow={prixMax}
+                tabIndex={0}
+                className="filtres-collections__slider-poignee"
+                style={{ left: `${pourcentMax}%` }}
+                onMouseDown={() => setGlissementActif('max')}
+                onTouchStart={() => setGlissementActif('max')}
+                onKeyDown={(e) => {
+                  if (e.key === 'ArrowLeft') setPrixMax((p) => Math.max(p - 1, prixMin));
+                  if (e.key === 'ArrowRight') setPrixMax((p) => Math.min(p + 1, prixMaxGlobal));
+                }}
+              />
+            </div>
           </div>
         </div>
 
@@ -185,6 +272,9 @@ export default function FiltresCollections({
                 onChange={() => appliquerFiltre('matiere', matiereActive === m.id ? null : m.id)}
               />
               {m.nom}
+              {typeof m.nombreProduits === 'number' && (
+                <span className="filtres-collections__compteur">({m.nombreProduits})</span>
+              )}
             </label>
           ))}
         </div>
@@ -200,6 +290,9 @@ export default function FiltresCollections({
                   onChange={() => appliquerFiltre('pierre', pierreActive === p.id ? null : p.id)}
                 />
                 {p.nom}
+                {typeof p.nombreProduits === 'number' && (
+                  <span className="filtres-collections__compteur">({p.nombreProduits})</span>
+                )}
               </label>
             ))}
           </div>
@@ -240,6 +333,9 @@ export default function FiltresCollections({
                   onChange={() => basculerDisponibilite(valeur)}
                 />
                 {label}
+                {typeof comptesDisponibilite[valeur] === 'number' && (
+                  <span className="filtres-collections__compteur">({comptesDisponibilite[valeur]})</span>
+                )}
               </label>
             ))}
         </div>

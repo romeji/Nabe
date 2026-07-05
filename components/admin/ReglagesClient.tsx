@@ -164,6 +164,22 @@ export default function ReglagesClient({
       </div>
 
       <div className="admin-carte reglages-client__section">
+        <h2>Navigation</h2>
+
+        <label className="reglages-client__toggle">
+          <input
+            type="checkbox"
+            checked={config.journal_actif === 'true'}
+            onChange={(e) => maj('journal_actif', e.target.checked ? 'true' : 'false')}
+          />
+          <div>
+            <strong>Afficher l'onglet "Journal" dans le menu</strong>
+            <p>Visible dans le menu de navigation et le pied de page. Masqué par défaut.</p>
+          </div>
+        </label>
+      </div>
+
+      <div className="admin-carte reglages-client__section">
         <h2>Page produit — Présentation</h2>
         <label>Position des vignettes de la galerie</label>
         <select

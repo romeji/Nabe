@@ -85,7 +85,7 @@ export const REGISTRE_CONTENU: PageContenu[] = [
   },
   {
     slug: 'la-maison',
-    titre: 'La Maison',
+    titre: "L'Atelier",
     champs: [
       { cle: 'hero_titre', label: 'Titre du bandeau principal', type: 'texte', defaut: 'L\'atelier Nabe' },
       { cle: 'hero_soustitre', label: 'Sous-titre du bandeau principal', type: 'texte', defaut: 'Un lieu où naissent des bijoux façonnés avec passion.' },
@@ -190,6 +190,15 @@ export const REGISTRE_CONTENU: PageContenu[] = [
       },
       { cle: 'rdv_bouton', label: 'Texte du bouton "Rendez-vous"', type: 'texte', defaut: 'Prendre rendez-vous' },
     ],
+  },
+  {
+    // Cas particulier : cette "page" ne stocke pas ses champs via ContenuPage comme les autres,
+    // elle sert uniquement de point d'entrée dans le sélecteur d'onglets. Son contenu réel
+    // (popups Contact / Entretien / Livraison de la fiche produit) est géré par
+    // EditeurPolitiquesClient, affiché à la place de EditeurContenuClient pour ce slug.
+    slug: 'popups-produit',
+    titre: 'Popups fiche produit',
+    champs: [],
   },
 ];
 

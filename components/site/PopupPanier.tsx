@@ -107,12 +107,12 @@ export default function PopupPanier({ ouverte, onFermer }: PopupPanierProps) {
 
   // — Helpers article bonus —
   const articleBonus = cfg.articleBonusActif && cfg.articleBonusId && cfg.articleBonusNom;
-  const bonusDansPanier = !!(cfg.articleBonusId && articles.find(a => a.produitId === cfg.articleBonusId));
+  const bonusDansPanier = articles.some(a => a.estBonus);
 
   function basculerBonus(coche: boolean) {
     if (!cfg.articleBonusId) return;
     if (coche) {
-      ajouterArticle({ produitId: cfg.articleBonusId, nom: cfg.articleBonusNom, prix: cfg.articleBonusPrix, image: cfg.articleBonusImage, quantite: 1 });
+      ajouterArticle({ produitId: cfg.articleBonusId, nom: cfg.articleBonusNom, prix: cfg.articleBonusPrix, image: cfg.articleBonusImage, quantite: 1, estBonus: true });
     } else {
       retirerArticle(cfg.articleBonusId, undefined);
     }
@@ -145,7 +145,7 @@ export default function PopupPanier({ ouverte, onFermer }: PopupPanierProps) {
   }
 
   // — Calculs —
-  const articlesFiltres = articles.filter(a => a.produitId !== cfg.articleBonusId);
+  const articlesFiltres = articles.filter(a => !a.estBonus);
   const panierVide = articlesFiltres.length === 0 && !articleBonus;
   const sousTotal = articles.reduce((s, a) => s + a.prix * a.quantite, 0);
   const reduction = codePromoApplique?.reduction || 0;
@@ -265,8 +265,8 @@ export default function PopupPanier({ ouverte, onFermer }: PopupPanierProps) {
                 <div className="popup-panier__boite">
                   <div className="popup-panier__boite-img">
                     {cfg.articleBonusImage
-                      ? <Image src={cfg.articleBonusImage} alt={cfg.articleBonusNom} width={52} height={52} style={{ objectFit: 'cover' }} />
-                      : <div style={{ width: 52, height: 52, background: '#f1e0cb', borderRadius: 4 }} />
+                      ? <Image src={cfg.articleBonusImage} alt={cfg.articleBonusNom} width={36} height={36} style={{ objectFit: 'cover' }} />
+                      : <div style={{ width: 36, height: 36, background: '#f1e0cb', borderRadius: 4 }} />
                     }
                   </div>
                   <span className="popup-panier__boite-nom">{cfg.articleBonusNom.toUpperCase()}</span>

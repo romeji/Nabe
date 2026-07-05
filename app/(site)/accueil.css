@@ -4,7 +4,7 @@
 
 .accueil-hero {
   position: relative;
-  min-height: 92vh;
+  min-height: 100vh;
   display: flex;
   align-items: center;
   background-image: url('/images/hero-mains.jpg');

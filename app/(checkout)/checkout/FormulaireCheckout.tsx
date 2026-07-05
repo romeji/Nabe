@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { loadStripe } from '@stripe/stripe-js';
@@ -25,6 +25,26 @@ type Adresse = {
   pays: string;
   telephone: string;
 };
+
+type AdresseEnregistree = {
+  id: string;
+  libelle: string | null;
+  destinataire: string;
+  ligne1: string;
+  ligne2: string | null;
+  ville: string;
+  codePostal: string;
+  pays: string;
+  telephone: string | null;
+  parDefaut: boolean;
+};
+
+type ModeLivraison = { id: string; label: string; prix: number; delai: string };
+
+const MODES_LIVRAISON: ModeLivraison[] = [
+  { id: 'standard', label: 'Livraison à domicile avec suivi', prix: 0, delai: '3 à 5 jours ouvrés' },
+  { id: 'express', label: 'Livraison rapide (moins de 48h ouvrées)', prix: 9.9, delai: '24 à 48h' },
+];
 
 const ADRESSE_VIDE: Adresse = {
   email: '', prenom: '', nom: '', adresse: '', complement: '',
@@ -75,7 +95,7 @@ function FormulairePaiement({ onRetour }: { onRetour: () => void }) {
 }
 
 export default function FormulaireCheckout() {
-  const router = useRouter();
+  const { data: session, status: statutSession } = useSession();
   const articles = usePanierStore((s) => s.articles);
   const codeApplique = usePanierStore((s) => s.codePromoApplique);
   const definirCodePromo = usePanierStore((s) => s.definirCodePromo);
@@ -85,6 +105,12 @@ export default function FormulaireCheckout() {
   const [codePromo, setCodePromo] = useState('');
   const [erreurCode, setErreurCode] = useState('');
   const [validationCode, setValidationCode] = useState(false);
+  const [modeLivraisonId, setModeLivraisonId] = useState('standard');
+
+  // Adresses enregistrées (client connecté)
+  const [adressesEnregistrees, setAdressesEnregistrees] = useState<AdresseEnregistree[]>([]);
+  const [adresseSelectionneeId, setAdresseSelectionneeId] = useState<string>('nouvelle');
+  const [chargementAdresses, setChargementAdresses] = useState(false);
 
   const [etape, setEtape] = useState<'adresse' | 'paiement'>('adresse');
   const [clientSecret, setClientSecret] = useState<string | null>(null);
@@ -93,9 +119,62 @@ export default function FormulaireCheckout() {
 
   useEffect(() => { setMonte(true); }, []);
 
+  // Pré-remplit l'email si le client est connecté
+  useEffect(() => {
+    if (session?.user?.email && !adresse.email) {
+      setAdresse((prev) => ({ ...prev, email: session.user!.email! }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session]);
+
+  // Charge les adresses enregistrées une fois connecté
+  useEffect(() => {
+    if (statutSession !== 'authenticated') return;
+    setChargementAdresses(true);
+    fetch('/api/mon-compte/adresses')
+      .then((r) => (r.ok ? r.json() : []))
+      .then((data: AdresseEnregistree[]) => {
+        setAdressesEnregistrees(data);
+        const parDefaut = data.find((a) => a.parDefaut) || data[0];
+        if (parDefaut) {
+          appliquerAdresseEnregistree(parDefaut);
+          setAdresseSelectionneeId(parDefaut.id);
+        }
+      })
+      .catch(() => {})
+      .finally(() => setChargementAdresses(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [statutSession]);
+
+  function appliquerAdresseEnregistree(a: AdresseEnregistree) {
+    const [prenom, ...resteNom] = a.destinataire.split(' ');
+    setAdresse((prev) => ({
+      ...prev,
+      prenom: prenom || '',
+      nom: resteNom.join(' ') || '',
+      adresse: a.ligne1,
+      complement: a.ligne2 || '',
+      ville: a.ville,
+      codePostal: a.codePostal,
+      pays: a.pays,
+      telephone: a.telephone || '',
+    }));
+  }
+
+  function choisirAdresse(id: string) {
+    setAdresseSelectionneeId(id);
+    if (id === 'nouvelle') {
+      setAdresse((prev) => ({ ...ADRESSE_VIDE, email: prev.email }));
+      return;
+    }
+    const trouvee = adressesEnregistrees.find((a) => a.id === id);
+    if (trouvee) appliquerAdresseEnregistree(trouvee);
+  }
+
+  const modeLivraison = MODES_LIVRAISON.find((m) => m.id === modeLivraisonId) || MODES_LIVRAISON[0];
   const sousTotal = articles.reduce((s, a) => s + a.prix * a.quantite, 0);
   const reduction = codeApplique?.reduction || 0;
-  const fraisLivraison = 0;
+  const fraisLivraison = modeLivraison.prix;
   const total = Math.max(0, sousTotal - reduction + fraisLivraison);
 
   function majAdresse(champ: keyof Adresse, valeur: string) {
@@ -147,6 +226,7 @@ export default function FormulaireCheckout() {
           articles,
           codeReduction: codeApplique?.code,
           adresse,
+          modeLivraison: { id: modeLivraison.id, label: modeLivraison.label, prix: modeLivraison.prix },
         }),
       });
       const data = await res.json();
@@ -180,7 +260,14 @@ export default function FormulaireCheckout() {
           {etape === 'adresse' && (
             <form onSubmit={continuerVersPaiement}>
               <div className="checkout__etape">
-                <h2>Étape 1/2 : Vos coordonnées</h2>
+                <div className="checkout__etape-entete">
+                  <h2>Étape 1/3 : Vos coordonnées</h2>
+                  {statutSession !== 'authenticated' && (
+                    <Link href="/connexion?redirect=/checkout" className="checkout__lien-connexion">
+                      Se connecter
+                    </Link>
+                  )}
+                </div>
                 <label>Adresse e-mail</label>
                 <input
                   type="email"
@@ -188,45 +275,102 @@ export default function FormulaireCheckout() {
                   value={adresse.email}
                   onChange={(e) => majAdresse('email', e.target.value)}
                   placeholder="vous@exemple.fr"
+                  disabled={statutSession === 'authenticated'}
                 />
               </div>
 
               <div className="checkout__etape">
-                <h2>Étape 2/2 : Adresse de livraison</h2>
-                <div className="checkout__ligne-double">
-                  <div>
-                    <label>Prénom</label>
-                    <input required value={adresse.prenom} onChange={(e) => majAdresse('prenom', e.target.value)} />
+                <h2>Étape 2/3 : Adresse de livraison</h2>
+
+                {statutSession === 'authenticated' && adressesEnregistrees.length > 0 && (
+                  <div className="checkout__adresses-enregistrees">
+                    {adressesEnregistrees.map((a) => (
+                      <label
+                        key={a.id}
+                        className={`checkout__adresse-carte${adresseSelectionneeId === a.id ? ' checkout__adresse-carte--active' : ''}`}
+                      >
+                        <input
+                          type="radio"
+                          name="adresse-enregistree"
+                          checked={adresseSelectionneeId === a.id}
+                          onChange={() => choisirAdresse(a.id)}
+                        />
+                        <div>
+                          <strong>{a.libelle || a.destinataire}</strong>
+                          <p>{a.ligne1}, {a.codePostal} {a.ville}</p>
+                        </div>
+                      </label>
+                    ))}
+                    <label
+                      className={`checkout__adresse-carte${adresseSelectionneeId === 'nouvelle' ? ' checkout__adresse-carte--active' : ''}`}
+                    >
+                      <input
+                        type="radio"
+                        name="adresse-enregistree"
+                        checked={adresseSelectionneeId === 'nouvelle'}
+                        onChange={() => choisirAdresse('nouvelle')}
+                      />
+                      <div>
+                        <strong>Utiliser une nouvelle adresse</strong>
+                      </div>
+                    </label>
                   </div>
-                  <div>
-                    <label>Nom</label>
-                    <input required value={adresse.nom} onChange={(e) => majAdresse('nom', e.target.value)} />
-                  </div>
-                </div>
-                <label>Adresse</label>
-                <input required value={adresse.adresse} onChange={(e) => majAdresse('adresse', e.target.value)} placeholder="7 rue Joseph Cugnot" />
-                <label>Complément (appartement, bâtiment...)</label>
-                <input value={adresse.complement} onChange={(e) => majAdresse('complement', e.target.value)} />
-                <div className="checkout__ligne-double">
-                  <div>
-                    <label>Code postal</label>
-                    <input required value={adresse.codePostal} onChange={(e) => majAdresse('codePostal', e.target.value)} />
-                  </div>
-                  <div>
-                    <label>Ville</label>
-                    <input required value={adresse.ville} onChange={(e) => majAdresse('ville', e.target.value)} />
-                  </div>
-                </div>
-                <label>Téléphone (optionnel)</label>
-                <input type="tel" value={adresse.telephone} onChange={(e) => majAdresse('telephone', e.target.value)} />
+                )}
+
+                {(statutSession !== 'authenticated' || adresseSelectionneeId === 'nouvelle') && (
+                  <>
+                    <div className="checkout__ligne-double">
+                      <div>
+                        <label>Prénom</label>
+                        <input required value={adresse.prenom} onChange={(e) => majAdresse('prenom', e.target.value)} />
+                      </div>
+                      <div>
+                        <label>Nom</label>
+                        <input required value={adresse.nom} onChange={(e) => majAdresse('nom', e.target.value)} />
+                      </div>
+                    </div>
+                    <label>Adresse</label>
+                    <input required value={adresse.adresse} onChange={(e) => majAdresse('adresse', e.target.value)} placeholder="7 rue Joseph Cugnot" />
+                    <label>Complément (appartement, bâtiment...)</label>
+                    <input value={adresse.complement} onChange={(e) => majAdresse('complement', e.target.value)} />
+                    <div className="checkout__ligne-double">
+                      <div>
+                        <label>Code postal</label>
+                        <input required value={adresse.codePostal} onChange={(e) => majAdresse('codePostal', e.target.value)} />
+                      </div>
+                      <div>
+                        <label>Ville</label>
+                        <input required value={adresse.ville} onChange={(e) => majAdresse('ville', e.target.value)} />
+                      </div>
+                    </div>
+                    <label>Téléphone (optionnel)</label>
+                    <input type="tel" value={adresse.telephone} onChange={(e) => majAdresse('telephone', e.target.value)} />
+                  </>
+                )}
               </div>
 
               <div className="checkout__etape checkout__mode-expedition">
-                <h2>Mode d'expédition</h2>
-                <div className="checkout__option-expedition checkout__option-expedition--actif">
-                  <span>Livraison à domicile standard</span>
-                  <strong>Offerte</strong>
-                </div>
+                <h2>Étape 3/3 : Mode d'expédition</h2>
+                {MODES_LIVRAISON.map((mode) => (
+                  <label
+                    key={mode.id}
+                    className={`checkout__option-expedition${modeLivraisonId === mode.id ? ' checkout__option-expedition--actif' : ''}`}
+                  >
+                    <span className="checkout__option-expedition-choix">
+                      <input
+                        type="radio"
+                        name="mode-livraison"
+                        checked={modeLivraisonId === mode.id}
+                        onChange={() => setModeLivraisonId(mode.id)}
+                      />
+                      <span>
+                        {mode.label}
+                        <small>{mode.delai}</small>
+                      </span>
+                    </span>
+                    <strong>{mode.prix === 0 ? 'Offerte' : formaterPrix(mode.prix)}</strong>
+                  </label>
+                ))}
               </div>
 
               {erreurIntent && <p className="checkout__erreur">{erreurIntent}</p>}
@@ -249,6 +393,16 @@ export default function FormulaireCheckout() {
               </Elements>
             </div>
           )}
+
+          <div className="checkout__liens-legaux">
+            <Link href="/paiement-securise">Politique de remboursement</Link>
+            <Link href="/livraison-retours">Politique de confidentialité</Link>
+            <Link href="/livraison-retours">Expédition</Link>
+            <Link href="/cgv">Conditions d'utilisation</Link>
+            <Link href="/cgv">Conditions générales de vente</Link>
+            <Link href="/mentions-legales">Mentions légales</Link>
+            <Link href="/contact">Contact</Link>
+          </div>
         </div>
 
         {/* Colonne droite : résumé (sticky) */}
@@ -309,7 +463,7 @@ export default function FormulaireCheckout() {
             )}
             <div className="checkout__ligne-total">
               <span>Livraison</span>
-              <span>Offerte</span>
+              <span>{fraisLivraison === 0 ? 'Offerte' : formaterPrix(fraisLivraison)}</span>
             </div>
             <div className="checkout__ligne-total checkout__ligne-total--final">
               <span>Total</span>

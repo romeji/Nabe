@@ -4,7 +4,7 @@ import TexteRiche from '@/components/site/TexteRiche';
 import '../hero-commun.css';
 import './la-maison.css';
 
-export const metadata = { title: 'La Maison' };
+export const metadata = { title: "L'Atelier" };
 export const revalidate = 60;
 
 export default async function PageLaMaison() {

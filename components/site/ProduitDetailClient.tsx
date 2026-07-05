@@ -303,6 +303,11 @@ export default function ProduitDetailClient({
               {erreurStock && (
                 <p className="produit-infos__erreur-taille">Cette taille n'est plus en stock.</p>
               )}
+              {!erreurStock && tailleChoisie && produit.stockTailles.length > 0 && stockDisponiblePour(tailleChoisie) === 1 && (
+                <p className="produit-infos__stock-faible">
+                  Il ne reste plus qu'un seul exemplaire en taille {tailleChoisie} !
+                </p>
+              )}
               <p className="produit-infos__precommande">
                 Vous ne trouvez pas votre taille,{' '}
                 <Link href="/sur-mesure">contactez-moi pour une pré-commande</Link>.

@@ -1,7 +1,11 @@
 import Link from 'next/link';
+import { getConfigSite, configEstActive } from '@/lib/config-site';
 import './footer.css';
 
-export default function Footer() {
+export default async function Footer() {
+  const config = await getConfigSite();
+  const journalActif = configEstActive(config, 'journal_actif');
+
   return (
     <footer className="nabe-footer">
       <div className="nabe-footer__conteneur">
@@ -14,10 +18,10 @@ export default function Footer() {
           <h4>Menu</h4>
           <ul>
             <li><Link href="/">Accueil</Link></li>
-            <li><Link href="/la-maison">La Maison</Link></li>
+            <li><Link href="/la-maison">L'Atelier</Link></li>
             <li><Link href="/collections">Collections</Link></li>
             <li><Link href="/sur-mesure">Sur mesure</Link></li>
-            <li><Link href="/journal">Journal</Link></li>
+            {journalActif && <li><Link href="/journal">Journal</Link></li>}
             <li><Link href="/contact">Contact</Link></li>
           </ul>
         </div>

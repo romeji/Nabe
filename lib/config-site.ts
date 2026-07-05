@@ -27,6 +27,7 @@ export const DEFAUTS_CONFIG: Record<string, string> = {
   popup_panier_surprise_actif: 'false',
   popup_panier_article_bonus_actif: 'false',
   popup_panier_article_bonus_id: '',
+  journal_actif: 'false', // affiche ou non l'onglet "Journal" dans le menu de navigation
 };
 
 /** Récupère toutes les valeurs de config, fusionnées avec les défauts. */

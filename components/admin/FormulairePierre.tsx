@@ -59,7 +59,7 @@ export default function FormulairePierre({ couleurs }: { couleurs: CouleurOption
           <label>Couleurs associées (sélection multiple)</label>
           {couleurs.length === 0 ? (
             <p className="formulaire-produit__aide">
-              Aucune couleur créée. Ajoutez-en depuis <a href="/admin/couleurs-pierre">Admin &gt; Couleurs de pierre</a>.
+              Aucune couleur créée. Ajoutez-en depuis l'onglet "Couleurs" ci-dessus.
             </p>
           ) : (
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.5rem' }}>

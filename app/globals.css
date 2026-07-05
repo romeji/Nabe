@@ -197,14 +197,21 @@ input, textarea, select {
 
 /* Bouton favori (coeur), réutilisé sur plusieurs pages */
 .bouton-favori {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.1rem;
+  height: 2.1rem;
   font-size: 1.1rem;
   color: var(--texte-secondaire);
+  border-radius: 50%;
   transition: var(--transition-douce);
   line-height: 1;
 }
 
 .bouton-favori:hover {
-  color: var(--nabe-terracotta);
+  color: var(--nabe-terracotta-fonce, #7c4027);
+  background: var(--nabe-argile);
 }
 
 .bouton-favori.actif {

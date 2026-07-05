@@ -25,9 +25,12 @@ type AdresseCheckout = {
   telephone?: string;
 };
 
-// Livraison offerte pour l'instant (cohérent avec le reste du site) — laisse la
-// possibilité d'ajouter des frais différenciés plus tard sans tout retoucher.
-const FRAIS_LIVRAISON = 0;
+// Source de vérité des tarifs de livraison — jamais confiance au prix envoyé par le client,
+// seul l'identifiant choisi est utilisé pour retrouver le tarif réel ici.
+const MODES_LIVRAISON: Record<string, { label: string; prix: number }> = {
+  standard: { label: 'Livraison à domicile avec suivi', prix: 0 },
+  express: { label: 'Livraison rapide (moins de 48h ouvrées)', prix: 9.9 },
+};
 
 export async function POST(req: NextRequest) {
   try {
@@ -35,7 +38,13 @@ export async function POST(req: NextRequest) {
       articles,
       codeReduction,
       adresse,
-    }: { articles: ArticlePanier[]; codeReduction?: string; adresse: AdresseCheckout } = await req.json();
+      modeLivraison,
+    }: {
+      articles: ArticlePanier[];
+      codeReduction?: string;
+      adresse: AdresseCheckout;
+      modeLivraison?: { id: string };
+    } = await req.json();
 
     if (!articles || articles.length === 0) {
       return NextResponse.json({ error: 'Le panier est vide' }, { status: 400 });
@@ -43,6 +52,10 @@ export async function POST(req: NextRequest) {
     if (!adresse?.email || !adresse?.prenom || !adresse?.nom || !adresse?.adresse || !adresse?.ville || !adresse?.codePostal) {
       return NextResponse.json({ error: 'Merci de compléter toutes les informations de livraison.' }, { status: 400 });
     }
+
+    // Le prix du mode de livraison vient toujours de notre table serveur, jamais du client
+    const modeChoisi = MODES_LIVRAISON[modeLivraison?.id || 'standard'] || MODES_LIVRAISON.standard;
+    const fraisLivraison = modeChoisi.prix;
 
     const session = await getServerSession(authClientOptions);
     const clientId = (session?.user as any)?.id as string | undefined;
@@ -139,7 +152,7 @@ export async function POST(req: NextRequest) {
           : Math.min(parseFloat(code.valeur.toString()), sousTotal);
     }
 
-    const total = Math.max(0, sousTotal - montantReduction + FRAIS_LIVRAISON);
+    const total = Math.max(0, sousTotal - montantReduction + fraisLivraison);
 
     if (total <= 0) {
       return NextResponse.json({ error: 'Le montant total doit être positif.' }, { status: 400 });
@@ -175,7 +188,8 @@ export async function POST(req: NextRequest) {
         telephone: adresse.telephone || '',
         sousTotal: sousTotal.toFixed(2),
         montantReduction: montantReduction.toFixed(2),
-        fraisLivraison: FRAIS_LIVRAISON.toFixed(2),
+        fraisLivraison: fraisLivraison.toFixed(2),
+        modeLivraisonLabel: modeChoisi.label,
       },
     });
 
@@ -184,7 +198,7 @@ export async function POST(req: NextRequest) {
       resume: {
         sousTotal: sousTotal.toFixed(2),
         montantReduction: montantReduction.toFixed(2),
-        fraisLivraison: FRAIS_LIVRAISON.toFixed(2),
+        fraisLivraison: fraisLivraison.toFixed(2),
         total: total.toFixed(2),
       },
     });

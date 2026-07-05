@@ -1,5 +1,5 @@
 .filtres-collections {
-  width: 240px;
+  width: 280px;
   flex-shrink: 0;
 }
 
@@ -11,7 +11,7 @@
 }
 
 .filtres-collections__entete h2 {
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   font-family: var(--font-texte);
@@ -19,7 +19,7 @@
 }
 
 .filtres-collections__reset {
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   color: var(--nabe-terracotta);
   text-decoration: underline;
 }
@@ -31,7 +31,7 @@
 }
 
 .filtres-collections__groupe h3 {
-  font-size: 0.8rem;
+  font-size: 0.88rem;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   font-family: var(--font-texte);
@@ -40,7 +40,7 @@
 }
 
 .filtres-collections__vide {
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   color: var(--texte-secondaire);
   font-style: italic;
 }
@@ -48,9 +48,9 @@
 .filtres-collections__case {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  font-size: 0.9rem;
-  margin-bottom: 0.5rem;
+  gap: 0.6rem;
+  font-size: 1rem;
+  margin-bottom: 0.65rem;
   cursor: pointer;
   color: var(--texte-secondaire);
 }
@@ -58,6 +58,15 @@
 .filtres-collections__case input {
   accent-color: var(--nabe-or);
   cursor: pointer;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.filtres-collections__compteur {
+  color: var(--texte-secondaire);
+  font-size: 0.85rem;
+  margin-left: -0.15rem;
 }
 
 .filtres-collections__select {
@@ -71,35 +80,87 @@
 .filtres-collections__prix {
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
+  gap: 0.6rem;
 }
 
 .filtres-collections__prix-valeurs {
   display: flex;
   justify-content: space-between;
-  font-size: 0.85rem;
-  color: var(--texte-secondaire);
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--nabe-encre, var(--texte-secondaire));
   margin-bottom: 0.2rem;
 }
 
-.filtres-collections__prix input[type='range'] {
-  width: 100%;
-  accent-color: var(--nabe-or);
+/* ── Double curseur de prix : une seule piste rose, deux poignées ── */
+.filtres-collections__slider-prix {
+  position: relative;
+  height: 20px;
+  margin: 0.5rem 0.2rem 0.2rem;
+}
+
+.filtres-collections__slider-piste {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 4px;
+  transform: translateY(-50%);
+  background: var(--nabe-beige-fonce, #e3d9c8);
+  border-radius: 999px;
+}
+
+.filtres-collections__slider-remplissage {
+  position: absolute;
+  top: 50%;
+  height: 4px;
+  transform: translateY(-50%);
+  background: var(--nabe-argile);
+  border-radius: 999px;
+}
+
+.filtres-collections__slider-poignee {
+  position: absolute;
+  top: 50%;
+  width: 18px;
+  height: 18px;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  border: 2px solid var(--nabe-argile);
+  border-radius: 50%;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  cursor: grab;
+  touch-action: none;
+}
+
+.filtres-collections__slider-poignee:active {
+  cursor: grabbing;
+  background: var(--nabe-argile);
+}
+
+.filtres-collections__slider-poignee:focus-visible {
+  outline: 2px solid var(--nabe-terracotta);
+  outline-offset: 2px;
 }
 
 .filtres-collections__tailles {
   display: flex;
-  gap: 0.4rem;
+  gap: 0.5rem;
   flex-wrap: wrap;
 }
 
 .filtres-collections__taille {
-  min-width: 40px;
-  height: 40px;
-  padding: 0 0.6rem;
+  min-width: 44px;
+  height: 44px;
+  padding: 0 0.7rem;
   border: 1px solid var(--nabe-argile);
   border-radius: 999px;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
+  transition: var(--transition-douce, all 0.2s ease);
+}
+
+.filtres-collections__taille:hover {
+  background-color: var(--nabe-argile);
 }
 
 .filtres-collections__taille.actif {
@@ -111,7 +172,7 @@
 .filtres-collections__couleurs-liste {
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  gap: 0.7rem;
 }
 
 .filtres-collections__case-couleur {
@@ -121,17 +182,12 @@
 }
 
 .filtres-collections__rond {
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   display: inline-block;
   border: 1px solid var(--nabe-argile);
   flex-shrink: 0;
-}
-
-.filtres-collections__compteur {
-  color: var(--texte-secondaire);
-  font-size: 0.85rem;
 }
 
 .tri-collections {

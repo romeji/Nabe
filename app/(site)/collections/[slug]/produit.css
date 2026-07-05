@@ -168,7 +168,7 @@
   border-bottom: 1px solid var(--nabe-argile);
 }
 
-.produit-infos__prix span {
+.produit-infos__prix span:not(.produit-infos__badge-promo):not(.produit-infos__prix-barre):not(.produit-infos__prix-promo) {
   font-size: 0.78rem;
   font-weight: 400;
   color: var(--texte-secondaire);
@@ -188,10 +188,10 @@
   color: var(--nabe-terracotta);
 }
 
-.produit-infos__badge-promo {
+.produit-infos__prix .produit-infos__badge-promo {
   display: inline-block;
   background: var(--nabe-terracotta);
-  color: #fff;
+  color: #fff !important;
   font-size: 0.72rem;
   font-weight: 700;
   padding: 0.15rem 0.5rem;
@@ -236,6 +236,13 @@
   margin-top: 0.4rem;
 }
 
+.produit-infos__stock-faible {
+  font-size: 0.8rem;
+  color: var(--nabe-terracotta-fonce);
+  font-weight: 600;
+  margin-top: 0.4rem;
+}
+
 /* Sélecteur de taille en boutons, façon VCA, couleur "rose"(argile) du site */
 .produit-infos__tailles-boutons {
   display: flex;
@@ -259,8 +266,8 @@
 }
 
 .produit-infos__taille-bouton:hover {
-  border-color: var(--nabe-argile-clair, var(--nabe-argile));
-  background: var(--nabe-sable);
+  border-color: var(--nabe-argile);
+  background: var(--nabe-argile);
 }
 
 .produit-infos__taille-bouton--actif {

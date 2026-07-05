@@ -10,6 +10,7 @@ export type ArticlePanier = {
   taille?: string;
   quantite: number;
   stockMax?: number; // quantité maximum disponible pour ce produit/taille au moment de l'ajout
+  estBonus?: boolean; // vrai si l'article est la boîte cadeau / article bonus de la popup panier
 };
 
 type CodePromoApplique = { code: string; reduction: number } | null;

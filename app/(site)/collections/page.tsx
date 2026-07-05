@@ -65,7 +65,7 @@ export default async function PageCollections({ searchParams }: Props) {
   const session = await getServerSession(authClientOptions);
   const clientId = (session?.user as any)?.id as string | undefined;
 
-  const [contenu, produits, totalActifs, matieresDisponibles, pierresDisponibles, couleursBrutes, bornesPrix, favorisIds] =
+  const [contenu, produits, totalActifs, matieresBrutes, pierresBrutes, couleursBrutes, bornesPrix, favorisIds, comptesParType, comptesParDispo] =
     await Promise.all([
       getContenuPage('collections'),
       prisma.produit.findMany({
@@ -74,8 +74,14 @@ export default async function PageCollections({ searchParams }: Props) {
         orderBy,
       }),
       prisma.produit.count({ where: { actif: true } }),
-      prisma.matiere.findMany({ orderBy: { ordre: 'asc' } }),
-      prisma.pierre.findMany({ orderBy: { ordre: 'asc' } }),
+      prisma.matiere.findMany({
+        orderBy: { ordre: 'asc' },
+        include: { _count: { select: { produits: { where: { actif: true } } } } },
+      }),
+      prisma.pierre.findMany({
+        orderBy: { ordre: 'asc' },
+        include: { produits: { include: { produit: { select: { actif: true } } } } },
+      }),
       prisma.couleurPierre.findMany({
         orderBy: { ordre: 'asc' },
         include: { pierres: { include: { pierre: { include: { produits: { include: { produit: true } } } } } } },
@@ -88,11 +94,28 @@ export default async function PageCollections({ searchParams }: Props) {
       clientId
         ? prisma.favori.findMany({ where: { clientId }, select: { produitId: true } })
         : Promise.resolve([]),
+      prisma.produit.groupBy({ by: ['type'], where: { actif: true }, _count: { _all: true } }),
+      prisma.produit.groupBy({ by: ['disponibilite'], where: { actif: true }, _count: { _all: true } }),
     ]);
 
   const idsFavoris = new Set(favorisIds.map((f) => f.produitId));
   const prixMinGlobal = Math.floor(parseFloat(bornesPrix._min.prix?.toString() || '0'));
   const prixMaxGlobal = Math.ceil(parseFloat(bornesPrix._max.prix?.toString() || '1000'));
+
+  const comptesTypeMap = Object.fromEntries(comptesParType.map((c) => [c.type, c._count._all]));
+  const comptesDispoMap = Object.fromEntries(comptesParDispo.map((c) => [c.disponibilite, c._count._all]));
+
+  const matieresDisponibles = matieresBrutes.map((m) => ({
+    id: m.id,
+    nom: m.nom,
+    nombreProduits: m._count.produits,
+  }));
+
+  const pierresDisponibles = pierresBrutes.map((p) => ({
+    id: p.id,
+    nom: p.nom,
+    nombreProduits: p.produits.filter((pp) => pp.produit.actif).length,
+  }));
 
   // Calcule, pour chaque couleur, le nombre de bijoux actifs distincts qui ont une pierre de cette couleur
   const couleursDisponibles = couleursBrutes.map((couleur) => {
@@ -122,6 +145,8 @@ export default async function PageCollections({ searchParams }: Props) {
           couleurs={couleursDisponibles}
           prixMinGlobal={prixMinGlobal}
           prixMaxGlobal={prixMaxGlobal}
+          comptesType={comptesTypeMap}
+          comptesDisponibilite={comptesDispoMap}
         />
 
         <div className="collections-resultats">

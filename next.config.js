@@ -15,6 +15,16 @@ const nextConfig = {
         destination: '/checkout',
         permanent: true,
       },
+      {
+        source: '/admin/couleurs-pierre',
+        destination: '/admin/pierres',
+        permanent: true,
+      },
+      {
+        source: '/admin/politiques',
+        destination: '/admin/contenu?page=popups-produit',
+        permanent: true,
+      },
     ];
   },
 };

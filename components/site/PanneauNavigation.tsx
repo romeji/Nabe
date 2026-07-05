@@ -16,6 +16,7 @@ export default function PanneauNavigation({
 }) {
   const [categories, setCategories] = useState<ItemSimple[]>([]);
   const [collections, setCollections] = useState<ItemSimple[]>([]);
+  const [journalActif, setJournalActif] = useState(false);
   const [monte, setMonte] = useState(false);
 
   useEffect(() => setMonte(true), []);
@@ -27,6 +28,7 @@ export default function PanneauNavigation({
         .then((data) => {
           setCategories(data.categories || []);
           setCollections(data.collections || []);
+          setJournalActif(!!data.journalActif);
         })
         .catch(() => {});
     }
@@ -69,9 +71,9 @@ export default function PanneauNavigation({
 
           <h3>Pages</h3>
           <hr />
-          <Link href="/la-maison" onClick={onFermer}>LA MAISON</Link>
+          <Link href="/la-maison" onClick={onFermer}>L'ATELIER</Link>
           <Link href="/sur-mesure" onClick={onFermer}>SUR MESURE</Link>
-          <Link href="/journal" onClick={onFermer}>JOURNAL</Link>
+          {journalActif && <Link href="/journal" onClick={onFermer}>JOURNAL</Link>}
           <Link href="/contact" onClick={onFermer}>CONTACT</Link>
         </div>
       </div>
