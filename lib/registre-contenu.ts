@@ -38,20 +38,20 @@ export const REGISTRE_CONTENU: PageContenu[] = [
         cle: 'hero_soustitre',
         label: 'Sous-titre du bandeau principal',
         type: 'texte_long',
-        defaut: "Des bijoux façonnés à la main, inspirés par l'émotion, la matière et le temps.",
+        defaut: "Des bijoux façonnés à la main, inspirés par l'instant, la matière et le détail qui fait la différence.",
       },
       { cle: 'hero_bouton_1', label: 'Texte du 1er bouton (bandeau)', type: 'texte', defaut: 'Découvrir la collection' },
-      { cle: 'hero_bouton_2', label: 'Texte du 2e bouton (bandeau)', type: 'texte', defaut: 'Mon histoire' },
+      { cle: 'hero_bouton_2', label: 'Texte du 2e bouton (bandeau)', type: 'texte', defaut: 'En savoir plus' },
 
-      { cle: 'histoire_label', label: 'Étiquette section "Notre histoire"', type: 'texte', defaut: 'Notre histoire' },
+      { cle: 'histoire_label', label: 'Étiquette section "Notre histoire"', type: 'texte', defaut: 'Artisanat au cœur' },
       {
         cle: 'histoire_texte',
         label: 'Texte section "Notre histoire"',
         type: 'texte_long',
         defaut:
-          "Nabe est une maison de joaillerie artisanale née d'une passion pour la beauté des matières et le savoir-faire traditionnel. Chaque pièce est imaginée et façonnée à la main dans notre atelier, avec exigence, sensibilité et authenticité.",
+          "Nabe est une maison de joaillerie artisanale née d'une passion pour la beauté et le travail bien fait. Chaque pièce est imaginée et façonnée avec soin dans notre atelier.",
       },
-      { cle: 'histoire_lien', label: 'Texte du lien "Découvrir la maison"', type: 'texte', defaut: 'Découvrir la maison →' },
+      { cle: 'histoire_lien', label: 'Texte du lien "Découvrir la maison"', type: 'texte', defaut: 'En savoir plus →' },
 
       { cle: 'collections_label', label: 'Étiquette section "Nos collections"', type: 'texte', defaut: 'Nos collections' },
       {
@@ -61,26 +61,15 @@ export const REGISTRE_CONTENU: PageContenu[] = [
         defaut: 'Ajoutez des bijoux « en avant » depuis le backoffice pour les afficher ici.',
       },
 
-      { cle: 'savoirfaire_label', label: 'Étiquette section "Savoir-faire"', type: 'texte', defaut: 'Le savoir-faire' },
-      { cle: 'savoirfaire_etape1_titre', label: 'Étape 1 — titre', type: 'texte', defaut: 'Inspiration' },
-      { cle: 'savoirfaire_etape1_texte', label: 'Étape 1 — texte', type: 'texte_long', defaut: "Chaque création naît d'une émotion, d'un voyage, d'un instant." },
-      { cle: 'savoirfaire_etape2_titre', label: 'Étape 2 — titre', type: 'texte', defaut: 'Création' },
-      { cle: 'savoirfaire_etape2_texte', label: 'Étape 2 — texte', type: 'texte_long', defaut: 'Croquis, recherches et sélection des plus belles matières.' },
-      { cle: 'savoirfaire_etape3_titre', label: 'Étape 3 — titre', type: 'texte', defaut: 'Fabrication' },
-      { cle: 'savoirfaire_etape3_texte', label: 'Étape 3 — texte', type: 'texte_long', defaut: 'Façonnage à la main dans notre atelier, avec exigence et précision.' },
-
-      { cle: 'signature_label', label: 'Étiquette section "Pièce signature"', type: 'texte', defaut: 'Pièce signature' },
-      { cle: 'signature_bouton', label: 'Texte du bouton "Pièce signature"', type: 'texte', defaut: 'Découvrir' },
-
       { cle: 'temoignages_label', label: 'Étiquette section "Témoignages"', type: 'texte', defaut: 'Ils nous font confiance' },
       { cle: 'temoignages_titre', label: 'Titre section "Témoignages"', type: 'texte', defaut: 'Vos mots précieux' },
 
       { cle: 'newsletter_texte',
         label: 'Texte section "Newsletter"',
         type: 'texte_long',
-        defaut: 'Inscrivez-vous à notre newsletter et découvrez nos nouveautés en avant-première.',
+        defaut: 'Recevez nos nouveautés, nos coulisses et des offres exclusives.',
       },
-      { cle: 'newsletter_bouton', label: 'Texte du bouton "Newsletter"', type: 'texte', defaut: "S'inscrire" },
+      { cle: 'newsletter_bouton', label: 'Texte du bouton "Newsletter"', type: 'texte', defaut: "Je m'inscris" },
     ],
   },
   {

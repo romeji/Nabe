@@ -12,7 +12,10 @@ import './accueil.css';
 
 export const revalidate = 60;
 
+const DUREE_NOUVEAU_JOURS = 21;
+
 function serialiser(produits: any[]) {
+  const seuilNouveau = Date.now() - DUREE_NOUVEAU_JOURS * 24 * 60 * 60 * 1000;
   return produits.map((p) => ({
     id: p.id,
     nom: p.nom,
@@ -23,6 +26,7 @@ function serialiser(produits: any[]) {
     promoActive: p.promoActive,
     promoDebut: p.promoDebut ? p.promoDebut.toISOString() : null,
     promoFin: p.promoFin ? p.promoFin.toISOString() : null,
+    nouveau: new Date(p.createdAt).getTime() > seuilNouveau,
   }));
 }
 
@@ -84,7 +88,9 @@ export default async function PageAccueil() {
       <section className="accueil-hero">
         <div className="accueil-hero__overlay" />
         <div className="accueil-hero__contenu">
-          <h1 className="accueil-hero__logo">{contenu.hero_logo}</h1>
+          <h1 className="accueil-hero__titre">
+            L&apos;éclat de chaque <span className="accent-clair">histoire.</span>
+          </h1>
           <TexteRiche className="accueil-hero__soustitre" html={contenu.hero_soustitre} />
           <div className="accueil-hero__actions">
             <Link href="/collections" className="btn btn-primaire">
@@ -97,54 +103,161 @@ export default async function PageAccueil() {
         </div>
       </section>
 
-      {/* CATEGORIES EN AVANT (togglable, juste sous le hero) */}
-      {categoriesAccueilActif && (
-        <CategoriesAccueil
-          categories={categoriesAccueilOrdonnees.map((c) => ({
-            id: c.id,
-            nom: c.nom,
-            slug: c.slug,
-            image: c.image,
-          }))}
-        />
+      {/* REASSURANCE */}
+      <section className="accueil-reassurance">
+        <div className="accueil-reassurance__item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
+            <path d="M12 2 4 5.5v6C4 16.7 7.4 20.9 12 22c4.6-1.1 8-5.3 8-10.5v-6z" />
+          </svg>
+          <span>Fabrication artisanale</span>
+        </div>
+        <div className="accueil-reassurance__item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
+            <path d="M12 3 3 8l9 5 9-5z" />
+            <path d="M3 8v8l9 5 9-5V8" />
+            <path d="M12 13v8" />
+          </svg>
+          <span>Matériaux de qualité</span>
+        </div>
+        <div className="accueil-reassurance__item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
+            <rect x="2" y="6" width="20" height="14" rx="2" />
+            <path d="M2 10.5h20" />
+          </svg>
+          <span>Paiement sécurisé</span>
+        </div>
+        <div className="accueil-reassurance__item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
+            <path d="M21 12a9 9 0 1 1-3.5-7.1" />
+            <path d="M21 3v5h-5" />
+          </svg>
+          <span>Retours sous 14 jours</span>
+        </div>
+      </section>
+
+      {/* NOS COLLECTIONS (catégories) */}
+      {categoriesAccueilActif && categoriesAccueilOrdonnees.length > 0 && (
+        <section className="accueil-categories-section conteneur">
+          <span className="etiquette etiquette--centre">{contenu.collections_label}</span>
+          <CategoriesAccueil
+            categories={categoriesAccueilOrdonnees.map((c) => ({
+              id: c.id,
+              nom: c.nom,
+              slug: c.slug,
+              image: c.image,
+            }))}
+          />
+          <div className="accueil-categories-section__cta">
+            <Link href="/collections" className="btn btn-contour">
+              Voir toutes les collections
+            </Link>
+          </div>
+        </section>
       )}
 
-      {/* NOUVELLE COLLECTION (togglable, au-dessus de "Notre histoire") */}
+      {/* NOUVEAUTES */}
       {carrousselNouvelleCollectionActif && produitsNouvelleCollection.length > 0 && (
-        <section className="accueil-carrousel conteneur">
-          <span className="etiquette">Nouvelle collection</span>
-          <h2>Nos toutes dernières créations</h2>
-          <CarrouselProduits produits={serialiser(produitsNouvelleCollection)} favorisIds={idsFavoris} />
+        <section className="accueil-nouveautes conteneur">
+          <div className="accueil-nouveautes__grille">
+            <div className="accueil-nouveautes__texte">
+              <span className="etiquette">Nouveautés</span>
+              <h2>
+                Nos dernières <span className="accent">créations</span>
+              </h2>
+              <p>
+                Découvrez nos pièces les plus récentes, imaginées et fabriquées dans notre atelier.
+              </p>
+              <Link href="/collections" className="accueil-nouveautes__lien">
+                Découvrir →
+              </Link>
+            </div>
+            <div className="accueil-nouveautes__produits">
+              <CarrouselProduits produits={serialiser(produitsNouvelleCollection)} favorisIds={idsFavoris} />
+            </div>
+          </div>
         </section>
       )}
 
       {/* NOTRE HISTOIRE */}
       <section className="accueil-histoire conteneur">
-        <div className="accueil-histoire__image">
-          <Image
-            src="/images/atelier-mains.jpg"
-            alt="Artisan façonnant un bijou"
-            width={600}
-            height={500}
-          />
-        </div>
-        <div className="accueil-histoire__texte">
-          <span className="etiquette">{contenu.histoire_label}</span>
-          <h2>
-            Chaque bijou <span className="accent">raconte une histoire.</span>
-          </h2>
-          <TexteRiche html={contenu.histoire_texte} />
-          <Link href="/la-maison" className="accueil-histoire__lien">
-            {contenu.histoire_lien}
-          </Link>
+        <div className="accueil-histoire__carte">
+          <div className="accueil-histoire__image">
+            <Image
+              src="/images/atelier-mains.jpg"
+              alt="Artisan façonnant un bijou"
+              width={560}
+              height={460}
+            />
+          </div>
+          <div className="accueil-histoire__texte">
+            <span className="etiquette etiquette--claire">{contenu.histoire_label}</span>
+            <h2>
+              Chaque bijou <span className="accent-clair">raconte une histoire.</span>
+            </h2>
+            <TexteRiche html={contenu.histoire_texte} />
+            <Link href="/la-maison" className="accueil-histoire__lien">
+              {contenu.histoire_lien}
+            </Link>
+          </div>
+          <svg className="accueil-histoire__feuille" viewBox="0 0 200 300" aria-hidden="true">
+            <path
+              d="M100 10c40 40 60 100 40 170-15 55-45 90-40 110-45-20-75-70-80-130C15 90 55 40 100 10z"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1"
+            />
+            <path d="M100 20v260" fill="none" stroke="currentColor" strokeWidth="1" />
+          </svg>
         </div>
       </section>
 
-      {/* SELECTION (carrousel des bijoux mis en avant) */}
+      {/* POURQUOI NOUS CHOISIR */}
+      <section className="accueil-pourquoi conteneur">
+        <span className="etiquette etiquette--centre">Pourquoi nous choisir ?</span>
+        <div className="accueil-pourquoi__grille">
+          <div className="accueil-pourquoi__item">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2">
+              <path d="M6 3h12l3.5 5L12 21 2.5 8z" />
+              <path d="M2.5 8h19M9 3l-2 5 5 13 5-13-2-5" />
+            </svg>
+            <h3>Bijoux faits main</h3>
+            <p>Chaque pièce est unique et réalisée avec passion.</p>
+          </div>
+          <div className="accueil-pourquoi__item">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2">
+              <path d="M12 2c4 3 7 7 7 11a7 7 0 1 1-14 0c0-4 3-8 7-11z" />
+            </svg>
+            <h3>Matériaux responsables</h3>
+            <p>Nous sélectionnons des matériaux durables et de qualité.</p>
+          </div>
+          <div className="accueil-pourquoi__item">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2">
+              <path d="M12 2 4 5.5v6C4 16.7 7.4 20.9 12 22c4.6-1.1 8-5.3 8-10.5v-6z" />
+              <path d="M9 12l2 2 4-4" />
+            </svg>
+            <h3>Paiement sécurisé</h3>
+            <p>Vos transactions sont protégées à chaque étape.</p>
+          </div>
+          <div className="accueil-pourquoi__item">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2">
+              <path d="M3 7h11v9H3z" />
+              <path d="M14 10h3.5l3.5 3v3h-7z" />
+              <circle cx="7" cy="18.5" r="1.6" />
+              <circle cx="17.5" cy="18.5" r="1.6" />
+            </svg>
+            <h3>Livraison offerte</h3>
+            <p>À partir de 100 € d&apos;achat en France métropolitaine.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* NOTRE SELECTION (carrousel des bijoux marqués "en avant") */}
       {carrousselSelectionActif && (
         <section className="accueil-carrousel conteneur">
-          <span className="etiquette">{contenu.collections_label}</span>
-          <h2>Notre sélection</h2>
+          <span className="etiquette etiquette--centre">{contenu.collections_label}</span>
+          <h2>
+            Notre <span className="accent">sélection</span>
+          </h2>
           {produitsEnAvant.length > 0 ? (
             <CarrouselProduits produits={serialiser(produitsEnAvant)} favorisIds={idsFavoris} />
           ) : (
@@ -153,92 +266,60 @@ export default async function PageAccueil() {
         </section>
       )}
 
-      {/* SAVOIR-FAIRE */}
-      <section className="accueil-savoirfaire conteneur">
-        <span className="etiquette">{contenu.savoirfaire_label}</span>
-        <h2>
-          L'art de créer avec <span className="accent">passion</span>
-        </h2>
-        <div className="accueil-savoirfaire__grille">
-          <div className="accueil-savoirfaire__etape">
-            <div className="accueil-savoirfaire__image">
-              <Image src="/images/savoirfaire-inspiration.jpg" alt="Inspiration" width={300} height={220} />
-            </div>
-            <span className="accueil-savoirfaire__numero">01</span>
-            <h3>{contenu.savoirfaire_etape1_titre}</h3>
-            <TexteRiche html={contenu.savoirfaire_etape1_texte} />
-          </div>
-          <div className="accueil-savoirfaire__etape">
-            <div className="accueil-savoirfaire__image">
-              <Image src="/images/savoirfaire-creation.jpg" alt="Création" width={300} height={220} />
-            </div>
-            <span className="accueil-savoirfaire__numero">02</span>
-            <h3>{contenu.savoirfaire_etape2_titre}</h3>
-            <TexteRiche html={contenu.savoirfaire_etape2_texte} />
-          </div>
-          <div className="accueil-savoirfaire__etape">
-            <div className="accueil-savoirfaire__image">
-              <Image src="/images/savoirfaire-fabrication.jpg" alt="Fabrication" width={300} height={220} />
-            </div>
-            <span className="accueil-savoirfaire__numero">03</span>
-            <h3>{contenu.savoirfaire_etape3_titre}</h3>
-            <TexteRiche html={contenu.savoirfaire_etape3_texte} />
-          </div>
-        </div>
-      </section>
-
-      {/* BESTSELLERS (togglable, au-dessus de "Pièce signature") */}
+      {/* MEILLEURES VENTES */}
       {carrousselBestsellerActif && bestsellers.length > 0 && (
         <section className="accueil-carrousel conteneur">
-          <span className="etiquette">Meilleures ventes</span>
+          <span className="etiquette etiquette--centre">Meilleures ventes</span>
           <h2>Vos bijoux préférés</h2>
           <CarrouselProduits produits={serialiser(bestsellers)} favorisIds={idsFavoris} />
         </section>
       )}
 
-      {/* PIECE SIGNATURE */}
-      <section className="accueil-signature">
-        <div className="accueil-signature__overlay" />
-        <div className="accueil-signature__contenu">
-          <span className="etiquette" style={{ color: 'var(--nabe-sable)' }}>{contenu.signature_label}</span>
-          <h2>
-            Une création pensée pour traverser <span className="accent">les générations.</span>
-          </h2>
-          <Link href="/collections" className="btn btn-primaire">
-            {contenu.signature_bouton}
-          </Link>
-        </div>
-      </section>
-
       {/* TEMOIGNAGES */}
       {temoignages.length > 0 && (
         <section className="accueil-temoignages conteneur">
-          <span className="etiquette">{contenu.temoignages_label}</span>
+          <span className="etiquette etiquette--centre">{contenu.temoignages_label}</span>
           <h2>{contenu.temoignages_titre}</h2>
-          <div className="accueil-temoignages__grille">
-            {temoignages.map((t) => (
-              <div key={t.id} className="accueil-temoignages__carte">
-                <div className="accueil-temoignages__etoiles">{'★'.repeat(t.note)}</div>
-                <p>« {t.texte} »</p>
-                <span>— {t.auteur}</span>
-              </div>
-            ))}
+          <div className="accueil-temoignages__rangee">
+            <button className="accueil-temoignages__fleche" aria-hidden="true" tabIndex={-1}>
+              ‹
+            </button>
+            <div className="accueil-temoignages__grille">
+              {temoignages.map((t) => (
+                <div key={t.id} className="accueil-temoignages__carte">
+                  <div className="accueil-temoignages__etoiles">{'★'.repeat(t.note)}</div>
+                  <p>« {t.texte} »</p>
+                  <span>— {t.auteur}</span>
+                </div>
+              ))}
+            </div>
+            <button className="accueil-temoignages__fleche" aria-hidden="true" tabIndex={-1}>
+              ›
+            </button>
           </div>
         </section>
       )}
 
       {/* NEWSLETTER */}
       <section className="accueil-newsletter conteneur">
-        <h2>
-          Entrez dans <span className="accent">l'univers Nabe</span>
-        </h2>
-        <TexteRiche html={contenu.newsletter_texte} />
-        <form className="accueil-newsletter__form" action="/api/newsletter" method="POST">
-          <input type="email" name="email" placeholder="Votre e-mail" required />
-          <button type="submit" className="btn btn-or">
-            {contenu.newsletter_bouton}
-          </button>
-        </form>
+        <div className="accueil-newsletter__carte">
+          <h2>Restez inspirée</h2>
+          <TexteRiche html={contenu.newsletter_texte} />
+          <form className="accueil-newsletter__form" action="/api/newsletter" method="POST">
+            <input type="email" name="email" placeholder="Votre e-mail" required />
+            <button type="submit" className="btn btn-or">
+              {contenu.newsletter_bouton}
+            </button>
+          </form>
+          <svg className="accueil-newsletter__feuille" viewBox="0 0 200 300" aria-hidden="true">
+            <path
+              d="M100 10c40 40 60 100 40 170-15 55-45 90-40 110-45-20-75-70-80-130C15 90 55 40 100 10z"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1"
+            />
+          </svg>
+        </div>
       </section>
     </div>
   );

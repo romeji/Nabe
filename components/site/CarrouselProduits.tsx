@@ -17,6 +17,7 @@ type ProduitCarrousel = {
   promoActive?: boolean;
   promoDebut?: string | null;
   promoFin?: string | null;
+  nouveau?: boolean;
 };
 
 export default function CarrouselProduits({
@@ -59,10 +60,12 @@ export default function CarrouselProduits({
                   ) : (
                     <div className="carrousel-produits__placeholder" />
                   )}
-                  {enPromo && (
+                  {enPromo ? (
                     <span className="carrousel-produits__badge-promo">
                       -{pourcentageReduction(p.prix, p.prixPromo!)}%
                     </span>
+                  ) : (
+                    p.nouveau && <span className="carrousel-produits__badge-nouveau">Nouveau</span>
                   )}
                 </div>
                 <h3>{p.nom}</h3>

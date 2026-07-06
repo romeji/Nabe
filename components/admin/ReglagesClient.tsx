@@ -84,7 +84,7 @@ export default function ReglagesClient({
           />
           <div>
             <strong>Carrousel "Meilleures ventes"</strong>
-            <p>S'affiche au-dessus de la section "Pièce signature". Basé sur le nombre de ventes réelles.</p>
+            <p>S'affiche au-dessus des témoignages, sur la page d'accueil. Basé sur le nombre de ventes réelles.</p>
           </div>
         </label>
 

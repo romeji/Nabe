@@ -46,6 +46,21 @@
   z-index: 2;
 }
 
+.carrousel-produits__badge-nouveau {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: var(--nabe-brun-fonce, #45291e);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.22rem 0.6rem;
+  border-radius: 999px;
+  z-index: 2;
+}
+
 .carrousel-produits__prix--promo {
   display: inline-flex;
   align-items: baseline;
