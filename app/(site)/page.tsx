@@ -257,11 +257,23 @@ export default async function PageAccueil() {
           <h2>
             Notre <span className="accent">sélection</span>
           </h2>
-          {produitsEnAvant.length > 0 ? (
-            <CarrouselProduits produits={serialiser(produitsEnAvant)} favorisIds={idsFavoris} />
-          ) : (
-            <p className="accueil-collections__vide">{contenu.collections_vide}</p>
-          )}
+          <div className="accueil-selection__grille">
+            <Link href="/collections" className="accueil-selection__carte">
+              <Image src="/images/signature-bague.jpg" alt="Collection Eclat" width={460} height={260} />
+              <span>Collection Eclat</span>
+              <strong>Decouvrir</strong>
+            </Link>
+            <Link href="/collections" className="accueil-selection__carte">
+              <Image src="/images/croquis.jpg" alt="Collection Essentielle" width={460} height={260} />
+              <span>Collection Essentielle</span>
+              <strong>Decouvrir</strong>
+            </Link>
+            <Link href="/collections" className="accueil-selection__carte">
+              <Image src="/images/main-bague.jpg" alt="Collection Signature" width={460} height={260} />
+              <span>Collection Signature</span>
+              <strong>Decouvrir</strong>
+            </Link>
+          </div>
         </section>
       )}
 

@@ -11,43 +11,53 @@ export default async function Footer() {
       <div className="nabe-footer__conteneur">
         <div className="nabe-footer__colonne nabe-footer__logo-col">
           <span className="nabe-footer__logo">Nabe</span>
-          <p>Tous droits réservés</p>
+          <p>L&apos;&eacute;clat de chaque histoire.</p>
+          <div className="nabe-footer__sociaux" aria-label="Reseaux sociaux">
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+              Ig
+            </a>
+            <a href="https://pinterest.com" target="_blank" rel="noopener noreferrer" aria-label="Pinterest">
+              P
+            </a>
+          </div>
         </div>
 
         <div className="nabe-footer__colonne">
-          <h4>Menu</h4>
+          <h4>Boutique</h4>
           <ul>
-            <li><Link href="/">Accueil</Link></li>
-            <li><Link href="/la-maison">L'Atelier</Link></li>
             <li><Link href="/collections">Collections</Link></li>
+            <li><Link href="/collections">Nouveaut&eacute;s</Link></li>
+            <li><Link href="/collections">Best-sellers</Link></li>
             <li><Link href="/sur-mesure">Sur mesure</Link></li>
             {journalActif && <li><Link href="/journal">Journal</Link></li>}
-            <li><Link href="/contact">Contact</Link></li>
           </ul>
         </div>
 
         <div className="nabe-footer__colonne">
-          <h4>Informations</h4>
+          <h4>&Agrave; propos</h4>
           <ul>
-            <li><Link href="/livraison-retours">Livraison &amp; Retours</Link></li>
-            <li><Link href="/paiement-securise">Paiement sécurisé</Link></li>
-            <li><Link href="/cgv">CGV</Link></li>
-            <li><Link href="/mentions-legales">Mentions légales</Link></li>
+            <li><Link href="/la-maison">Notre histoire</Link></li>
+            <li><Link href="/la-maison">Artisanat</Link></li>
+            <li><Link href="/sur-mesure">Engagements</Link></li>
+            <li><Link href="/contact">Atelier</Link></li>
+          </ul>
+        </div>
+
+        <div className="nabe-footer__colonne">
+          <h4>Aide</h4>
+          <ul>
             <li><Link href="/faq">FAQ</Link></li>
-          </ul>
-        </div>
-
-        <div className="nabe-footer__colonne">
-          <h4>Suivez-nous</h4>
-          <ul>
-            <li><a href="https://instagram.com" target="_blank" rel="noopener noreferrer">Instagram</a></li>
-            <li><a href="https://pinterest.com" target="_blank" rel="noopener noreferrer">Pinterest</a></li>
+            <li><Link href="/livraison-retours">Livraison &amp; retours</Link></li>
+            <li><Link href="/paiement-securise">Paiement</Link></li>
+            <li><Link href="/contact">Contact</Link></li>
           </ul>
         </div>
       </div>
 
       <div className="nabe-footer__bas">
-        © {new Date().getFullYear()} Nabe — Tous droits réservés
+        <span>&copy; {new Date().getFullYear()} Nabe - Tous droits r&eacute;serv&eacute;s</span>
+        <Link href="/mentions-legales">Mentions l&eacute;gales</Link>
+        <Link href="/cgv">CGV</Link>
       </div>
     </footer>
   );

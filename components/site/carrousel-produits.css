@@ -2,15 +2,18 @@
   position: relative;
   display: flex;
   align-items: center;
+  min-width: 0;
 }
 
 .carrousel-produits__piste {
+  flex: 1;
+  min-width: 0;
   display: flex;
-  gap: var(--espace-md);
+  gap: 1.5rem;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
-  padding: 0.3rem;
+  padding: 0.5rem 0.35rem 1rem;
 }
 
 .carrousel-produits__piste::-webkit-scrollbar {
@@ -21,23 +24,28 @@
   position: relative;
   flex: 0 0 240px;
   scroll-snap-align: start;
+  transition: transform 0.4s ease;
+}
+
+.carrousel-produits__carte:hover {
+  transform: translateY(-6px);
 }
 
 .carrousel-produits__image {
   position: relative;
   background-color: var(--nabe-sable);
-  border-radius: 28px 28px 8px 8px;
+  border-radius: 14px;
   overflow: hidden;
   aspect-ratio: 1;
-  margin-bottom: var(--espace-xs);
-  box-shadow: var(--ombre-douce);
+  margin-bottom: 0.85rem;
+  box-shadow: 0 20px 48px rgba(69, 41, 30, 0.08);
 }
 
 .carrousel-produits__badge-promo {
   position: absolute;
   top: 10px;
   left: 10px;
-  background: var(--nabe-terracotta-fonce, #7c4027);
+  background: var(--nabe-terracotta);
   color: #fff;
   font-size: 0.7rem;
   font-weight: 700;
@@ -50,8 +58,8 @@
   position: absolute;
   top: 10px;
   left: 10px;
-  background: var(--nabe-brun-fonce, #45291e);
-  color: #fff;
+  background: rgba(255, 255, 255, 0.88);
+  color: var(--nabe-terracotta);
   font-size: 0.68rem;
   font-weight: 600;
   letter-spacing: 0.06em;
@@ -87,7 +95,7 @@
 }
 
 .carrousel-produits__carte:hover .carrousel-produits__image img {
-  transform: scale(1.05);
+  transform: scale(1.04);
 }
 
 .carrousel-produits__placeholder {
@@ -97,40 +105,54 @@
 }
 
 .carrousel-produits__carte h3 {
-  font-size: 0.95rem;
+  font-family: var(--font-texte);
+  font-size: 0.92rem;
+  font-weight: 500;
   margin-bottom: 0.2rem;
+  color: var(--nabe-brun-fonce);
 }
 
 .carrousel-produits__carte span {
   font-weight: 600;
   font-size: 0.9rem;
+  color: var(--nabe-brun);
 }
 
 .carrousel-produits__coeur {
   position: absolute;
   top: 10px;
   right: 10px;
-  background-color: rgba(255, 255, 255, 0.85);
-  width: 32px;
-  height: 32px;
+  background-color: rgba(255, 255, 255, 0.9);
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 10px 24px rgba(69, 41, 30, 0.12);
 }
 
 .carrousel-produits__fleche {
   flex-shrink: 0;
-  width: 36px;
-  height: 36px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
   background-color: var(--nabe-blanc);
-  box-shadow: var(--ombre-douce);
+  border: 1px solid rgba(207, 169, 153, 0.35);
+  box-shadow: 0 16px 38px rgba(69, 41, 30, 0.1);
   font-size: 1.2rem;
   z-index: 2;
   display: flex;
   align-items: center;
   justify-content: center;
+  color: var(--nabe-terracotta);
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.carrousel-produits__fleche:hover {
+  background-color: var(--nabe-terracotta);
+  color: var(--texte-clair);
+  transform: translateY(-2px);
 }
 
 .carrousel-produits__fleche--gauche {
