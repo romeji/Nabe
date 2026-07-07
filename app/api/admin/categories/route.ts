@@ -24,10 +24,18 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { nom, description, image, ordre } = await req.json();
+    const { nom, description, image, imageAccueilFond, logoAccueil, ordre } = await req.json();
 
     const categorie = await prisma.categorie.create({
-      data: { nom, slug: slugify(nom), description, image, ordre: ordre ?? 0 },
+      data: {
+        nom,
+        slug: slugify(nom),
+        description,
+        image,
+        imageAccueilFond,
+        logoAccueil,
+        ordre: ordre ?? 0,
+      } as any,
     });
 
     return NextResponse.json(categorie, { status: 201 });

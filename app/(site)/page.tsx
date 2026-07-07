@@ -143,7 +143,8 @@ export default async function PageAccueil() {
               id: c.id,
               nom: c.nom,
               slug: c.slug,
-              image: c.image,
+              image: c.imageAccueilFond || c.image,
+              logoAccueil: c.logoAccueil,
             }))}
           />
           <div className="accueil-categories-section__cta">

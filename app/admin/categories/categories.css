@@ -36,6 +36,27 @@
   margin-top: 0.2rem;
 }
 
+.admin-categories__label-upload {
+  color: var(--texte-secondaire);
+  font-size: 0.76rem;
+  font-weight: 600;
+  margin-top: 0.25rem;
+}
+
+.admin-categories__apercus {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.admin-categories__apercu {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  color: var(--texte-secondaire);
+  font-size: 0.76rem;
+}
+
 .admin-categories__confirmation {
   font-size: 0.8rem;
   color: var(--texte-secondaire);

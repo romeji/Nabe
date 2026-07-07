@@ -10,7 +10,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   }
 
   try {
-    const { nom, description, image, ordre } = await req.json();
+    const { nom, description, image, imageAccueilFond, logoAccueil, ordre } = await req.json();
 
     const donnees: any = {};
     if (nom !== undefined) {
@@ -19,6 +19,8 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     }
     if (description !== undefined) donnees.description = description;
     if (image !== undefined) donnees.image = image;
+    if (imageAccueilFond !== undefined) donnees.imageAccueilFond = imageAccueilFond;
+    if (logoAccueil !== undefined) donnees.logoAccueil = logoAccueil;
     if (ordre !== undefined) donnees.ordre = ordre;
 
     const categorie = await prisma.categorie.update({

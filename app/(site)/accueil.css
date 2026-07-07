@@ -179,7 +179,7 @@
 
 /* NOS COLLECTIONS — catégories en cercle */
 .accueil-categories-section {
-  padding-top: clamp(1.8rem, 3vw, 2.5rem);
+  padding-top: clamp(1.2rem, 2.2vw, 1.8rem);
   padding-bottom: clamp(1.4rem, 2.6vw, 2rem);
   text-align: center;
 }
@@ -241,7 +241,7 @@
 .accueil-categories__panneau {
   position: relative;
   z-index: 2;
-  margin: -1.45rem auto 0;
+  margin: 0 auto;
   width: 100%;
   min-height: 126px;
   background-color: rgba(255, 255, 255, 0.78);
@@ -278,6 +278,13 @@
   left: 50%;
   color: var(--nabe-or);
   transform: translateX(-50%);
+}
+
+.accueil-categories__logo {
+  width: 34px;
+  height: 34px;
+  display: block;
+  object-fit: contain;
 }
 
 .accueil-categories__nom {
@@ -422,7 +429,7 @@
 .accueil-histoire__image {
   border-radius: 28px;
   overflow: hidden;
-  margin: clamp(1.4rem, 3vw, 2.6rem);
+  margin: clamp(2.1rem, 4vw, 3.4rem) clamp(1.4rem, 3vw, 2.6rem) clamp(1.4rem, 3vw, 2.6rem);
   box-shadow: 0 24px 54px rgba(69, 41, 30, 0.16);
 }
 
@@ -436,15 +443,15 @@
   position: relative;
   z-index: 1;
   padding: clamp(2rem, 5vw, 4.25rem) clamp(2rem, 6vw, 5rem) clamp(2rem, 5vw, 4.25rem) 0;
-  color: var(--texte-clair);
+  color: var(--texte-principal);
 }
 
 .etiquette--claire {
-  color: var(--nabe-sable);
+  color: var(--texte-principal);
 }
 
 .etiquette--claire::before {
-  background-color: var(--nabe-sable);
+  background-color: var(--texte-principal);
 }
 
 .accueil-histoire__texte h2 {
@@ -452,19 +459,23 @@
   font-size: clamp(2.5rem, 5vw, 4.4rem);
   line-height: 0.98;
   margin: 0.85rem 0 1.4rem;
-  color: var(--texte-clair);
+  color: var(--texte-principal);
   letter-spacing: 0;
 }
 
+.accueil-histoire__texte .accent-clair {
+  color: var(--texte-principal);
+}
+
 .accueil-histoire__texte p {
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--texte-principal);
   margin-bottom: 1.8rem;
   font-size: 1rem;
   max-width: 480px;
 }
 
 .accueil-histoire__lien {
-  color: var(--texte-clair);
+  color: var(--texte-principal);
   display: inline-flex;
   align-items: center;
   gap: 0.55rem;
@@ -597,6 +608,7 @@
   }
   .accueil-carrousel .carrousel-produits__piste {
     gap: clamp(0.85rem, 1.3vw, 1.1rem);
+    justify-content: center;
     overflow-x: hidden;
     padding-right: 0;
   }

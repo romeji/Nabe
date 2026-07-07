@@ -1,7 +1,13 @@
 import Link from 'next/link';
 import Image from 'next/image';
 
-type CategorieAffichee = { id: string; nom: string; slug: string; image: string | null };
+type CategorieAffichee = {
+  id: string;
+  nom: string;
+  slug: string;
+  image: string | null;
+  logoAccueil?: string | null;
+};
 
 // Icône affichée dans le badge de chaque carte catégorie, choisie selon le nom.
 function IconeCategorie({ nom }: { nom: string }) {
@@ -67,7 +73,11 @@ export default function CategoriesAccueil({ categories }: { categories: Categori
           </div>
           <div className="accueil-categories__panneau">
             <span className="accueil-categories__icone">
-              <IconeCategorie nom={c.nom} />
+              {c.logoAccueil ? (
+                <Image src={c.logoAccueil} alt="" width={34} height={34} className="accueil-categories__logo" />
+              ) : (
+                <IconeCategorie nom={c.nom} />
+              )}
             </span>
             <span className="accueil-categories__nom">{c.nom}</span>
             <span className="accueil-categories__fleche" aria-hidden="true">

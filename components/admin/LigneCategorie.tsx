@@ -8,6 +8,8 @@ type Categorie = {
   nom: string;
   slug: string;
   image?: string | null;
+  imageAccueilFond?: string | null;
+  logoAccueil?: string | null;
   _count: { produits: number };
 };
 
@@ -16,12 +18,14 @@ export default function LigneCategorie({ categorie }: { categorie: Categorie }) 
   const [edition, setEdition] = useState(false);
   const [nom, setNom] = useState(categorie.nom);
   const [image, setImage] = useState(categorie.image || '');
+  const [imageAccueilFond, setImageAccueilFond] = useState(categorie.imageAccueilFond || '');
+  const [logoAccueil, setLogoAccueil] = useState(categorie.logoAccueil || '');
   const [uploadEnCours, setUploadEnCours] = useState(false);
   const [confirmationSuppression, setConfirmationSuppression] = useState(false);
   const [enCours, setEnCours] = useState(false);
   const [erreur, setErreur] = useState('');
 
-  async function gererUploadImage(e: React.ChangeEvent<HTMLInputElement>) {
+  async function gererUploadImage(e: React.ChangeEvent<HTMLInputElement>, definirImage: (url: string) => void) {
     const fichier = e.target.files?.[0];
     if (!fichier) return;
 
@@ -42,7 +46,7 @@ export default function LigneCategorie({ categorie }: { categorie: Categorie }) 
       });
       if (!res.ok) throw new Error("Échec de l'upload");
       const resultat = await res.json();
-      setImage(resultat.url);
+      definirImage(resultat.url);
     } catch {
       setErreur("Erreur lors de l'upload de l'image.");
     } finally {
@@ -61,7 +65,7 @@ export default function LigneCategorie({ categorie }: { categorie: Categorie }) 
       const res = await fetch(`/api/admin/categories/${categorie.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nom, image }),
+        body: JSON.stringify({ nom, image, imageAccueilFond, logoAccueil }),
       });
       if (!res.ok) throw new Error();
       setEdition(false);
@@ -85,23 +89,22 @@ export default function LigneCategorie({ categorie }: { categorie: Categorie }) 
     }
   }
 
+  function annulerEdition() {
+    setEdition(false);
+    setNom(categorie.nom);
+    setImage(categorie.image || '');
+    setImageAccueilFond(categorie.imageAccueilFond || '');
+    setLogoAccueil(categorie.logoAccueil || '');
+    setErreur('');
+  }
+
   if (edition) {
     return (
       <tr>
         <td colSpan={4}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', padding: '0.5rem 0' }}>
             <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
-              <div>
-                {image ? (
-                  <img
-                    src={image}
-                    alt=""
-                    style={{ width: 64, height: 64, objectFit: 'cover', borderRadius: 6, background: '#f1e0cb' }}
-                  />
-                ) : (
-                  <div style={{ width: 64, height: 64, borderRadius: 6, background: '#f1e0cb' }} />
-                )}
-              </div>
+              <ApercuCarre url={image} mode="cover" />
               <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 <input
                   type="text"
@@ -111,24 +114,22 @@ export default function LigneCategorie({ categorie }: { categorie: Categorie }) 
                   autoFocus
                   placeholder="Nom de la catégorie"
                 />
-                <input type="file" accept="image/*" onChange={gererUploadImage} disabled={uploadEnCours} />
+                <ChampUpload label="Image principale" onChange={(e) => gererUploadImage(e, setImage)} disabled={uploadEnCours} />
+                <ChampUpload label="Fond accueil" onChange={(e) => gererUploadImage(e, setImageAccueilFond)} disabled={uploadEnCours} />
+                <ChampUpload label="Logo accueil" onChange={(e) => gererUploadImage(e, setLogoAccueil)} disabled={uploadEnCours} />
                 {uploadEnCours && <span style={{ fontSize: '0.78rem', color: 'var(--texte-secondaire)' }}>Envoi en cours...</span>}
               </div>
+            </div>
+            <div className="admin-categories__apercus">
+              <ApercuImage url={imageAccueilFond} libelle="Fond accueil" mode="cover" />
+              <ApercuImage url={logoAccueil} libelle="Logo accueil" mode="contain" />
             </div>
             {erreur && <p className="admin-categories__erreur">{erreur}</p>}
             <div style={{ display: 'flex', gap: '0.5rem' }}>
               <button className="admin-btn-icone" onClick={sauvegarder} disabled={enCours || uploadEnCours}>
                 {enCours ? '...' : 'Enregistrer'}
               </button>
-              <button
-                className="admin-btn-icone"
-                onClick={() => {
-                  setEdition(false);
-                  setNom(categorie.nom);
-                  setImage(categorie.image || '');
-                  setErreur('');
-                }}
-              >
+              <button className="admin-btn-icone" onClick={annulerEdition}>
                 Annuler
               </button>
             </div>
@@ -142,11 +143,7 @@ export default function LigneCategorie({ categorie }: { categorie: Categorie }) 
     <tr>
       <td>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-          {categorie.image ? (
-            <img src={categorie.image} alt="" style={{ width: 36, height: 36, objectFit: 'cover', borderRadius: 6 }} />
-          ) : (
-            <div style={{ width: 36, height: 36, borderRadius: 6, background: '#f1e0cb' }} />
-          )}
+          <ApercuCarre url={categorie.image || ''} mode="cover" petit />
           {categorie.nom}
         </div>
       </td>
@@ -175,5 +172,45 @@ export default function LigneCategorie({ categorie }: { categorie: Categorie }) 
         )}
       </td>
     </tr>
+  );
+}
+
+function ChampUpload({
+  label,
+  disabled,
+  onChange,
+}: {
+  label: string;
+  disabled: boolean;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}) {
+  return (
+    <>
+      <label className="admin-categories__label-upload">{label}</label>
+      <input type="file" accept="image/*" onChange={onChange} disabled={disabled} />
+    </>
+  );
+}
+
+function ApercuCarre({ url, mode, petit = false }: { url: string; mode: 'cover' | 'contain'; petit?: boolean }) {
+  const taille = petit ? 36 : 64;
+  if (!url) {
+    return <div style={{ width: taille, height: taille, borderRadius: 6, background: '#f1e0cb', flexShrink: 0 }} />;
+  }
+  return (
+    <img
+      src={url}
+      alt=""
+      style={{ width: taille, height: taille, objectFit: mode, borderRadius: 6, background: '#f1e0cb', flexShrink: 0 }}
+    />
+  );
+}
+
+function ApercuImage({ url, libelle, mode }: { url: string; libelle: string; mode: 'cover' | 'contain' }) {
+  return (
+    <div className="admin-categories__apercu">
+      <span>{libelle}</span>
+      <ApercuCarre url={url} mode={mode} />
+    </div>
   );
 }
