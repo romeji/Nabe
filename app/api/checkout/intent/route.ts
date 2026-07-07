@@ -25,12 +25,16 @@ type AdresseCheckout = {
   telephone?: string;
 };
 
-// Source de vérité des tarifs de livraison — jamais confiance au prix envoyé par le client,
-// seul l'identifiant choisi est utilisé pour retrouver le tarif réel ici.
 const MODES_LIVRAISON: Record<string, { label: string; prix: number }> = {
   standard: { label: 'Livraison à domicile avec suivi', prix: 0 },
-  express: { label: 'Livraison rapide (moins de 48h ouvrées)', prix: 9.9 },
+  express: { label: 'Livraison rapide', prix: 9.9 },
 };
+
+function normaliserPaysStripe(pays?: string) {
+  const valeur = (pays || 'FR').trim().toUpperCase();
+  if (valeur === 'FRANCE') return 'FR';
+  return valeur.length === 2 ? valeur : 'FR';
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -46,24 +50,27 @@ export async function POST(req: NextRequest) {
       modeLivraison?: { id: string };
     } = await req.json();
 
-    if (!articles || articles.length === 0) {
-      return NextResponse.json({ error: 'Le panier est vide' }, { status: 400 });
+    if (!process.env.STRIPE_SECRET_KEY) {
+      return NextResponse.json({ error: 'Stripe n’est pas configuré côté serveur.' }, { status: 500 });
     }
+
+    if (!articles || articles.length === 0) {
+      return NextResponse.json({ error: 'Le panier est vide.' }, { status: 400 });
+    }
+
     if (!adresse?.email || !adresse?.prenom || !adresse?.nom || !adresse?.adresse || !adresse?.ville || !adresse?.codePostal) {
       return NextResponse.json({ error: 'Merci de compléter toutes les informations de livraison.' }, { status: 400 });
     }
 
-    // Le prix du mode de livraison vient toujours de notre table serveur, jamais du client
     const modeChoisi = MODES_LIVRAISON[modeLivraison?.id || 'standard'] || MODES_LIVRAISON.standard;
     const fraisLivraison = modeChoisi.prix;
 
     const session = await getServerSession(authClientOptions);
     const clientId = (session?.user as any)?.id as string | undefined;
 
-    // On revalide systématiquement prix/stock côté serveur — jamais confiance au panier client
     const idsProduits = articles.map((a) => a.produitId);
     const produitsDb = await prisma.produit.findMany({
-      where: { id: { in: idsProduits } },
+      where: { id: { in: idsProduits }, actif: true },
       include: { stockTailles: true },
     });
 
@@ -71,42 +78,44 @@ export async function POST(req: NextRequest) {
     const lignesValidees: { produitId: string; nom: string; taille?: string; prixUnitaire: number; quantite: number; image: string }[] = [];
 
     for (const article of articles) {
+      if (!Number.isInteger(article.quantite) || article.quantite <= 0) {
+        return NextResponse.json({ error: 'Quantité invalide dans le panier.' }, { status: 400 });
+      }
+
       const produitDb = produitsDb.find((p) => p.id === article.produitId);
       if (!produitDb) {
         return NextResponse.json({ error: `Produit introuvable : ${article.nom}` }, { status: 400 });
       }
+
       if (produitDb.disponibilite === 'EPUISE') {
-        return NextResponse.json({ error: `${produitDb.nom} n'est plus disponible.` }, { status: 400 });
+        return NextResponse.json({ error: `${produitDb.nom} n’est plus disponible.` }, { status: 400 });
       }
 
-      let stockDisponible: number;
-      if (produitDb.stockTailles.length > 0) {
-        const ligne = produitDb.stockTailles.find((s) => s.taille === article.taille);
-        stockDisponible = ligne?.quantite ?? 0;
-      } else {
-        stockDisponible = produitDb.stock;
-      }
+      const stockDisponible =
+        produitDb.stockTailles.length > 0
+          ? produitDb.stockTailles.find((s) => s.taille === article.taille)?.quantite ?? 0
+          : produitDb.stock;
+
       if (article.quantite > stockDisponible) {
         return NextResponse.json(
           {
             error:
               stockDisponible <= 0
-                ? `${produitDb.nom}${article.taille ? ` (taille ${article.taille})` : ''} n'est plus en stock.`
+                ? `${produitDb.nom}${article.taille ? ` (taille ${article.taille})` : ''} n’est plus en stock.`
                 : `Il ne reste que ${stockDisponible} exemplaire(s) de ${produitDb.nom}${article.taille ? ` (taille ${article.taille})` : ''}.`,
           },
           { status: 400 }
         );
       }
 
-      // Le prix retenu est TOUJOURS celui recalculé côté serveur (avec promo active si applicable),
-      // jamais celui envoyé par le client — évite toute manipulation du prix.
+      const maintenant = new Date();
       const promoActive =
         produitDb.promoActive &&
         produitDb.prixPromo != null &&
-        (!produitDb.promoDebut || produitDb.promoDebut <= new Date()) &&
-        (!produitDb.promoFin || produitDb.promoFin >= new Date());
-      const prixUnitaire = promoActive ? parseFloat(produitDb.prixPromo!.toString()) : parseFloat(produitDb.prix.toString());
+        (!produitDb.promoDebut || produitDb.promoDebut <= maintenant) &&
+        (!produitDb.promoFin || produitDb.promoFin >= maintenant);
 
+      const prixUnitaire = promoActive ? Number(produitDb.prixPromo) : Number(produitDb.prix);
       sousTotal += prixUnitaire * article.quantite;
 
       lignesValidees.push({
@@ -119,11 +128,10 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // Code de réduction (facultatif)
     let codeReductionId: string | undefined;
     let montantReduction = 0;
 
-    if (codeReduction && codeReduction.trim()) {
+    if (codeReduction?.trim()) {
       const code = await prisma.codeReduction.findUnique({ where: { code: codeReduction.trim().toUpperCase() } });
 
       if (!code || !code.actif) {
@@ -132,9 +140,9 @@ export async function POST(req: NextRequest) {
       if (code.dateExpiration && code.dateExpiration < new Date()) {
         return NextResponse.json({ error: 'Ce code de réduction a expiré.' }, { status: 400 });
       }
-      if (code.montantMinimum && sousTotal < parseFloat(code.montantMinimum.toString())) {
+      if (code.montantMinimum && sousTotal < Number(code.montantMinimum)) {
         return NextResponse.json(
-          { error: `Ce code nécessite un panier minimum de ${code.montantMinimum}€.` },
+          { error: `Ce code nécessite un panier minimum de ${code.montantMinimum} €.` },
           { status: 400 }
         );
       }
@@ -148,16 +156,16 @@ export async function POST(req: NextRequest) {
       codeReductionId = code.id;
       montantReduction =
         code.type === 'POURCENTAGE'
-          ? sousTotal * (parseFloat(code.valeur.toString()) / 100)
-          : Math.min(parseFloat(code.valeur.toString()), sousTotal);
+          ? sousTotal * (Number(code.valeur) / 100)
+          : Math.min(Number(code.valeur), sousTotal);
     }
 
     const total = Math.max(0, sousTotal - montantReduction + fraisLivraison);
-
     if (total <= 0) {
       return NextResponse.json({ error: 'Le montant total doit être positif.' }, { status: 400 });
     }
 
+    const paysStripe = normaliserPaysStripe(adresse.pays);
     const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.round(total * 100),
       currency: 'eur',
@@ -171,11 +179,18 @@ export async function POST(req: NextRequest) {
           line2: adresse.complement || undefined,
           city: adresse.ville,
           postal_code: adresse.codePostal,
-          country: adresse.pays || 'FR',
+          country: paysStripe,
         },
       },
       metadata: {
-        articles: JSON.stringify(lignesValidees.map((l) => ({ id: l.produitId, q: l.quantite, taille: l.taille || '' }))),
+        articles: JSON.stringify(
+          lignesValidees.map((l) => ({
+            id: l.produitId,
+            q: l.quantite,
+            taille: l.taille || '',
+            pu: l.prixUnitaire,
+          }))
+        ),
         clientId: clientId || '',
         codeReductionId: codeReductionId || '',
         email: adresse.email,
@@ -184,7 +199,7 @@ export async function POST(req: NextRequest) {
         adresse: adresse.adresse,
         ville: adresse.ville,
         codePostal: adresse.codePostal,
-        pays: adresse.pays || 'France',
+        pays: paysStripe,
         telephone: adresse.telephone || '',
         sousTotal: sousTotal.toFixed(2),
         montantReduction: montantReduction.toFixed(2),
@@ -204,6 +219,6 @@ export async function POST(req: NextRequest) {
     });
   } catch (error: any) {
     console.error('Erreur création PaymentIntent:', error);
-    return NextResponse.json({ error: error.message || 'Erreur lors de la préparation du paiement' }, { status: 500 });
+    return NextResponse.json({ error: error.message || 'Erreur lors de la préparation du paiement.' }, { status: 500 });
   }
 }

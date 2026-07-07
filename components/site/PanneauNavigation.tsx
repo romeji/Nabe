@@ -110,7 +110,7 @@ export default function PanneauNavigation({
           {menu.pagesActif && (
             <section className="panneau-nav__section">
               <h3>&Agrave; propos</h3>
-              <Link href="/mon-histoire" className="panneau-nav__lien" onClick={onFermer}>Notre histoire</Link>
+              <Link href="/mon-histoire" className="panneau-nav__lien" onClick={onFermer}>Mon Histoire</Link>
               <Link href="/artisanat" className="panneau-nav__lien" onClick={onFermer}>Artisanat</Link>
               <Link href="/engagements" className="panneau-nav__lien" onClick={onFermer}>Engagements</Link>
               {journalActif && <Link href="/journal" className="panneau-nav__lien" onClick={onFermer}>Journal</Link>}
@@ -129,7 +129,7 @@ export default function PanneauNavigation({
 
           <Link href="/mon-histoire" className="panneau-nav__histoire" onClick={onFermer}>
             <span>Chaque bijou<br />raconte une <em>histoire.</em></span>
-            <strong>D&eacute;couvrir notre histoire</strong>
+            <strong>D&eacute;couvrir mon histoire</strong>
           </Link>
 
           <div className="panneau-nav__pied">

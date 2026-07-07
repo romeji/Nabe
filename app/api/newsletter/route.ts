@@ -14,7 +14,9 @@ export async function POST(req: NextRequest) {
       email = formData.get('email') as string;
     }
 
-    if (!email || !email.includes('@')) {
+    email = email?.trim().toLowerCase();
+
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return NextResponse.json({ error: 'Email invalide' }, { status: 400 });
     }
 

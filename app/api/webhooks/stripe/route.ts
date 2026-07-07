@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma';
 import { genererNumeroCommande } from '@/lib/utils';
 import Stripe from 'stripe';
 
-type ArticleMeta = { id: string; q: number; taille: string };
+type ArticleMeta = { id: string; q: number; taille: string; pu?: number };
 
 /**
  * Décrémente le stock (global + par taille si applicable), incrémente le
@@ -121,7 +121,7 @@ export async function POST(req: NextRequest) {
                 produitId: produit?.id,
                 nomProduit: produit?.nom || 'Produit',
                 taille: a.taille || undefined,
-                prixUnitaire: produit?.prix || 0,
+                prixUnitaire: a.pu ?? produit?.prix ?? 0,
                 quantite: a.q,
               };
             }),

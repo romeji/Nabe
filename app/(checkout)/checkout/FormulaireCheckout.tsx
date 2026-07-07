@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { loadStripe } from '@stripe/stripe-js';
-import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import { Elements, PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js';
 import { usePanierStore } from '@/lib/store-panier';
 import { formaterPrix } from '@/lib/utils';
 import './checkout.css';
@@ -43,12 +43,19 @@ type ModeLivraison = { id: string; label: string; prix: number; delai: string };
 
 const MODES_LIVRAISON: ModeLivraison[] = [
   { id: 'standard', label: 'Livraison à domicile avec suivi', prix: 0, delai: '3 à 5 jours ouvrés' },
-  { id: 'express', label: 'Livraison rapide (moins de 48h ouvrées)', prix: 9.9, delai: '24 à 48h' },
+  { id: 'express', label: 'Livraison rapide', prix: 9.9, delai: '24 à 48h ouvrées' },
 ];
 
 const ADRESSE_VIDE: Adresse = {
-  email: '', prenom: '', nom: '', adresse: '', complement: '',
-  ville: '', codePostal: '', pays: 'France', telephone: '',
+  email: '',
+  prenom: '',
+  nom: '',
+  adresse: '',
+  complement: '',
+  ville: '',
+  codePostal: '',
+  pays: 'FR',
+  telephone: '',
 };
 
 function FormulairePaiement({ onRetour }: { onRetour: () => void }) {
@@ -64,14 +71,12 @@ function FormulairePaiement({ onRetour }: { onRetour: () => void }) {
     setEnCours(true);
     setErreur('');
 
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
     const { error } = await stripe.confirmPayment({
       elements,
-      confirmParams: {
-        return_url: `${window.location.origin}/checkout/succes`,
-      },
+      confirmParams: { return_url: `${siteUrl}/checkout/succes` },
     });
 
-    // Si on arrive ici, c'est qu'il y a eu une erreur (sinon Stripe redirige automatiquement)
     if (error) {
       setErreur(error.message || 'Le paiement a été refusé. Merci de vérifier vos informations.');
       setEnCours(false);
@@ -106,31 +111,24 @@ export default function FormulaireCheckout() {
   const [erreurCode, setErreurCode] = useState('');
   const [validationCode, setValidationCode] = useState(false);
   const [modeLivraisonId, setModeLivraisonId] = useState('standard');
-
-  // Adresses enregistrées (client connecté)
   const [adressesEnregistrees, setAdressesEnregistrees] = useState<AdresseEnregistree[]>([]);
   const [adresseSelectionneeId, setAdresseSelectionneeId] = useState<string>('nouvelle');
-  const [chargementAdresses, setChargementAdresses] = useState(false);
-
   const [etape, setEtape] = useState<'adresse' | 'paiement'>('adresse');
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [chargementIntent, setChargementIntent] = useState(false);
   const [erreurIntent, setErreurIntent] = useState('');
 
-  useEffect(() => { setMonte(true); }, []);
+  useEffect(() => setMonte(true), []);
 
-  // Pré-remplit l'email si le client est connecté
   useEffect(() => {
     if (session?.user?.email && !adresse.email) {
       setAdresse((prev) => ({ ...prev, email: session.user!.email! }));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session]);
+  }, [session, adresse.email]);
 
-  // Charge les adresses enregistrées une fois connecté
   useEffect(() => {
     if (statutSession !== 'authenticated') return;
-    setChargementAdresses(true);
+
     fetch('/api/mon-compte/adresses')
       .then((r) => (r.ok ? r.json() : []))
       .then((data: AdresseEnregistree[]) => {
@@ -141,9 +139,7 @@ export default function FormulaireCheckout() {
           setAdresseSelectionneeId(parDefaut.id);
         }
       })
-      .catch(() => {})
-      .finally(() => setChargementAdresses(false));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+      .catch(() => {});
   }, [statutSession]);
 
   function appliquerAdresseEnregistree(a: AdresseEnregistree) {
@@ -156,7 +152,7 @@ export default function FormulaireCheckout() {
       complement: a.ligne2 || '',
       ville: a.ville,
       codePostal: a.codePostal,
-      pays: a.pays,
+      pays: a.pays || 'FR',
       telephone: a.telephone || '',
     }));
   }
@@ -167,6 +163,7 @@ export default function FormulaireCheckout() {
       setAdresse((prev) => ({ ...ADRESSE_VIDE, email: prev.email }));
       return;
     }
+
     const trouvee = adressesEnregistrees.find((a) => a.id === id);
     if (trouvee) appliquerAdresseEnregistree(trouvee);
   }
@@ -185,6 +182,7 @@ export default function FormulaireCheckout() {
     if (!codePromo.trim()) return;
     setValidationCode(true);
     setErreurCode('');
+
     try {
       const res = await fetch('/api/codes-promo/valider', {
         method: 'POST',
@@ -209,7 +207,7 @@ export default function FormulaireCheckout() {
   }
 
   function champsAdresseValides() {
-    return !!(adresse.email && adresse.prenom && adresse.nom && adresse.adresse && adresse.ville && adresse.codePostal);
+    return Boolean(adresse.email && adresse.prenom && adresse.nom && adresse.adresse && adresse.ville && adresse.codePostal);
   }
 
   async function continuerVersPaiement(e: React.FormEvent) {
@@ -218,6 +216,7 @@ export default function FormulaireCheckout() {
 
     setChargementIntent(true);
     setErreurIntent('');
+
     try {
       const res = await fetch('/api/checkout/intent', {
         method: 'POST',
@@ -226,7 +225,7 @@ export default function FormulaireCheckout() {
           articles,
           codeReduction: codeApplique?.code,
           adresse,
-          modeLivraison: { id: modeLivraison.id, label: modeLivraison.label, prix: modeLivraison.prix },
+          modeLivraison: { id: modeLivraison.id },
         }),
       });
       const data = await res.json();
@@ -254,14 +253,12 @@ export default function FormulaireCheckout() {
   return (
     <div className="checkout">
       <div className="checkout__grille">
-        {/* Colonne gauche : formulaire */}
         <div className="checkout__formulaire">
-
           {etape === 'adresse' && (
             <form onSubmit={continuerVersPaiement}>
               <div className="checkout__etape">
                 <div className="checkout__etape-entete">
-                  <h2>Étape 1/3 : Vos coordonnées</h2>
+                  <h2>Étape 1/3 : vos coordonnées</h2>
                   {statutSession !== 'authenticated' && (
                     <Link href="/connexion?redirect=/checkout" className="checkout__lien-connexion">
                       Se connecter
@@ -276,11 +273,12 @@ export default function FormulaireCheckout() {
                   onChange={(e) => majAdresse('email', e.target.value)}
                   placeholder="vous@exemple.fr"
                   disabled={statutSession === 'authenticated'}
+                  autoComplete="email"
                 />
               </div>
 
               <div className="checkout__etape">
-                <h2>Étape 2/3 : Adresse de livraison</h2>
+                <h2>Étape 2/3 : adresse de livraison</h2>
 
                 {statutSession === 'authenticated' && adressesEnregistrees.length > 0 && (
                   <div className="checkout__adresses-enregistrees">
@@ -301,18 +299,14 @@ export default function FormulaireCheckout() {
                         </div>
                       </label>
                     ))}
-                    <label
-                      className={`checkout__adresse-carte${adresseSelectionneeId === 'nouvelle' ? ' checkout__adresse-carte--active' : ''}`}
-                    >
+                    <label className={`checkout__adresse-carte${adresseSelectionneeId === 'nouvelle' ? ' checkout__adresse-carte--active' : ''}`}>
                       <input
                         type="radio"
                         name="adresse-enregistree"
                         checked={adresseSelectionneeId === 'nouvelle'}
                         onChange={() => choisirAdresse('nouvelle')}
                       />
-                      <div>
-                        <strong>Utiliser une nouvelle adresse</strong>
-                      </div>
+                      <div><strong>Utiliser une nouvelle adresse</strong></div>
                     </label>
                   </div>
                 )}
@@ -322,40 +316,37 @@ export default function FormulaireCheckout() {
                     <div className="checkout__ligne-double">
                       <div>
                         <label>Prénom</label>
-                        <input required value={adresse.prenom} onChange={(e) => majAdresse('prenom', e.target.value)} />
+                        <input required value={adresse.prenom} onChange={(e) => majAdresse('prenom', e.target.value)} autoComplete="given-name" />
                       </div>
                       <div>
                         <label>Nom</label>
-                        <input required value={adresse.nom} onChange={(e) => majAdresse('nom', e.target.value)} />
+                        <input required value={adresse.nom} onChange={(e) => majAdresse('nom', e.target.value)} autoComplete="family-name" />
                       </div>
                     </div>
                     <label>Adresse</label>
-                    <input required value={adresse.adresse} onChange={(e) => majAdresse('adresse', e.target.value)} placeholder="7 rue Joseph Cugnot" />
+                    <input required value={adresse.adresse} onChange={(e) => majAdresse('adresse', e.target.value)} placeholder="7 rue Joseph Cugnot" autoComplete="address-line1" />
                     <label>Complément (appartement, bâtiment...)</label>
-                    <input value={adresse.complement} onChange={(e) => majAdresse('complement', e.target.value)} />
+                    <input value={adresse.complement} onChange={(e) => majAdresse('complement', e.target.value)} autoComplete="address-line2" />
                     <div className="checkout__ligne-double">
                       <div>
                         <label>Code postal</label>
-                        <input required value={adresse.codePostal} onChange={(e) => majAdresse('codePostal', e.target.value)} />
+                        <input required value={adresse.codePostal} onChange={(e) => majAdresse('codePostal', e.target.value)} autoComplete="postal-code" />
                       </div>
                       <div>
                         <label>Ville</label>
-                        <input required value={adresse.ville} onChange={(e) => majAdresse('ville', e.target.value)} />
+                        <input required value={adresse.ville} onChange={(e) => majAdresse('ville', e.target.value)} autoComplete="address-level2" />
                       </div>
                     </div>
                     <label>Téléphone (optionnel)</label>
-                    <input type="tel" value={adresse.telephone} onChange={(e) => majAdresse('telephone', e.target.value)} />
+                    <input type="tel" value={adresse.telephone} onChange={(e) => majAdresse('telephone', e.target.value)} autoComplete="tel" />
                   </>
                 )}
               </div>
 
               <div className="checkout__etape checkout__mode-expedition">
-                <h2>Étape 3/3 : Mode d'expédition</h2>
+                <h2>Étape 3/3 : mode d’expédition</h2>
                 {MODES_LIVRAISON.map((mode) => (
-                  <label
-                    key={mode.id}
-                    className={`checkout__option-expedition${modeLivraisonId === mode.id ? ' checkout__option-expedition--actif' : ''}`}
-                  >
+                  <label key={mode.id} className={`checkout__option-expedition${modeLivraisonId === mode.id ? ' checkout__option-expedition--actif' : ''}`}>
                     <span className="checkout__option-expedition-choix">
                       <input
                         type="radio"
@@ -381,11 +372,24 @@ export default function FormulaireCheckout() {
             </form>
           )}
 
+          {etape === 'paiement' && clientSecret && !stripePromise && (
+            <div className="checkout__etape">
+              <h2>Paiement indisponible</h2>
+              <p className="checkout__erreur">
+                La clé publique Stripe n’est pas configurée. Ajoutez NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+                dans l’environnement de production avant d’ouvrir la boutique.
+              </p>
+              <button type="button" className="checkout__lien-retour" onClick={() => setEtape('adresse')}>
+                ← Revenir aux informations de livraison
+              </button>
+            </div>
+          )}
+
           {etape === 'paiement' && clientSecret && stripePromise && (
             <div className="checkout__etape">
               <h2>Paiement</h2>
               <p className="checkout__paiement-securise">
-                🔒 Paiement 100% sécurisé, géré directement par Stripe. Vos informations bancaires ne
+                Paiement 100% sécurisé, géré directement par Stripe. Vos informations bancaires ne
                 transitent jamais par nos serveurs.
               </p>
               <Elements stripe={stripePromise} options={{ clientSecret }}>
@@ -395,18 +399,16 @@ export default function FormulaireCheckout() {
           )}
 
           <div className="checkout__liens-legaux">
-            <Link href="/paiement-securise">Politique de remboursement</Link>
-            <Link href="/livraison-retours">Politique de confidentialité</Link>
-            <Link href="/livraison-retours">Expédition</Link>
-            <Link href="/cgv">Conditions d'utilisation</Link>
+            <Link href="/livraison-retours">Livraison et retours</Link>
+            <Link href="/paiement-securise">Paiement sécurisé</Link>
+            <Link href="/confidentialite">Confidentialité</Link>
             <Link href="/cgv">Conditions générales de vente</Link>
             <Link href="/mentions-legales">Mentions légales</Link>
             <Link href="/contact">Contact</Link>
           </div>
         </div>
 
-        {/* Colonne droite : résumé (sticky) */}
-        <div className="checkout__resume">
+        <aside className="checkout__resume" aria-label="Résumé de commande">
           <div className="checkout__resume-articles">
             {articles.map((article) => (
               <div key={`${article.produitId}-${article.taille ?? ''}`} className="checkout__resume-article">
@@ -426,13 +428,13 @@ export default function FormulaireCheckout() {
           <div className="checkout__code-promo">
             {codeApplique ? (
               <div className="checkout__code-applique">
-                <span>✓ Code « {codeApplique.code} »</span>
-                <button type="button" onClick={retirerCode}>✕</button>
+                <span>Code « {codeApplique.code} » appliqué</span>
+                <button type="button" onClick={retirerCode} aria-label="Retirer le code promotionnel">×</button>
               </div>
             ) : (
               <div className="checkout__code-champ">
                 <input
-                  placeholder="Code de réduction ou carte-cadeau"
+                  placeholder="Code de réduction"
                   value={codePromo}
                   onChange={(e) => setCodePromo(e.target.value)}
                   onKeyDown={(e) => {
@@ -470,7 +472,7 @@ export default function FormulaireCheckout() {
               <span>{formaterPrix(total)}</span>
             </div>
           </div>
-        </div>
+        </aside>
       </div>
     </div>
   );

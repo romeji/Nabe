@@ -1,5 +1,5 @@
 .page-info {
-  padding: calc(var(--espace-xl) + 5.5rem) var(--espace-md) var(--espace-2xl);
+  padding: calc(var(--espace-xl) + 5.5rem) clamp(1rem, 4vw, var(--espace-md)) var(--espace-2xl);
   max-width: 820px;
   margin: 0 auto;
 }
@@ -20,6 +20,8 @@
 
 .page-info__section {
   margin-bottom: var(--espace-lg);
+  padding-bottom: var(--espace-sm);
+  border-bottom: 1px solid rgba(207, 169, 153, 0.18);
 }
 
 .page-info__section h2 {
@@ -83,7 +85,21 @@
 }
 
 @media (max-width: 600px) {
+  .page-info {
+    padding-top: calc(var(--espace-lg) + 4.5rem);
+  }
+
   .page-info__entete h1 {
     font-size: 1.8rem;
+  }
+
+  .page-info__section h2 {
+    font-size: 1.12rem;
+  }
+
+  .page-info__section p,
+  .page-info__section li {
+    font-size: 0.93rem;
+    line-height: 1.65;
   }
 }
