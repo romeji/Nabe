@@ -179,8 +179,8 @@
 
 /* NOS COLLECTIONS — catégories en cercle */
 .accueil-categories-section {
-  padding-top: clamp(3.2rem, 6vw, 5rem);
-  padding-bottom: clamp(3.5rem, 6vw, 5.2rem);
+  padding-top: clamp(2.6rem, 4.5vw, 3.8rem);
+  padding-bottom: clamp(2.4rem, 4.5vw, 3.8rem);
   text-align: center;
 }
 
@@ -307,7 +307,7 @@
 }
 
 .accueil-categories-section__cta {
-  margin-top: clamp(2rem, 4vw, 3.25rem);
+  margin-top: clamp(1.4rem, 3vw, 2.2rem);
 }
 
 @media (max-width: 700px) {
@@ -319,14 +319,14 @@
 
 /* NOUVEAUTES — texte + carrousel côte à côte (4 produits visibles) */
 .accueil-nouveautes {
-  padding-top: clamp(3.2rem, 6vw, 5rem);
-  padding-bottom: clamp(3.5rem, 6vw, 5.2rem);
+  padding-top: clamp(2.2rem, 4vw, 3.4rem);
+  padding-bottom: clamp(2.7rem, 4.5vw, 3.8rem);
 }
 
 .accueil-nouveautes__grille {
   display: grid;
-  grid-template-columns: minmax(190px, 245px) minmax(0, 1fr);
-  gap: clamp(2rem, 3vw, 2.5rem);
+  grid-template-columns: minmax(170px, 220px) minmax(0, 1fr);
+  gap: clamp(1.5rem, 2.4vw, 2rem);
   align-items: center;
   margin: 0 auto;
 }
@@ -369,14 +369,26 @@
   .accueil-nouveautes__produits {
     min-width: 0;
   }
+  .accueil-nouveautes__produits .carrousel-produits {
+    padding-right: 2.1rem;
+  }
   .accueil-nouveautes__produits .carrousel-produits__piste {
-    gap: 1.1rem;
+    gap: clamp(0.75rem, 1.2vw, 1rem);
+    overflow-x: hidden;
+    padding-right: 0;
   }
   .accueil-nouveautes__produits .carrousel-produits__carte {
-    flex: 0 0 clamp(160px, 13.5vw, 184px);
+    flex: 0 0 clamp(145px, 12vw, 166px);
   }
   .accueil-nouveautes__produits .carrousel-produits__fleche--gauche {
     display: none;
+  }
+  .accueil-nouveautes__produits .carrousel-produits__fleche--droite {
+    position: absolute;
+    right: 0;
+    top: 42%;
+    transform: translateY(-50%);
+    margin-left: 0;
   }
 }
 
@@ -388,8 +400,8 @@
 
 /* HISTOIRE — bandeau unique image + panneau coloré */
 .accueil-histoire {
-  padding-top: clamp(4rem, 7vw, 6.5rem);
-  padding-bottom: clamp(4rem, 7vw, 6.5rem);
+  padding-top: clamp(2.8rem, 5vw, 4.2rem);
+  padding-bottom: clamp(2.8rem, 5vw, 4.2rem);
 }
 
 .accueil-histoire__carte {
@@ -496,8 +508,8 @@
 
 /* POURQUOI NOUS CHOISIR */
 .accueil-pourquoi {
-  padding-top: clamp(3.5rem, 6vw, 5.5rem);
-  padding-bottom: clamp(3.5rem, 6vw, 5.5rem);
+  padding-top: clamp(2.5rem, 4.5vw, 3.8rem);
+  padding-bottom: clamp(2.5rem, 4.5vw, 3.8rem);
   text-align: center;
 }
 
@@ -556,8 +568,8 @@
 
 /* CARROUSELS GENERIQUES (sélection "en avant", meilleures ventes) */
 .accueil-carrousel {
-  padding-top: clamp(4rem, 7vw, 6.5rem);
-  padding-bottom: clamp(4rem, 7vw, 6.5rem);
+  padding-top: clamp(2.8rem, 5vw, 4.2rem);
+  padding-bottom: clamp(2.8rem, 5vw, 4.2rem);
   text-align: center;
 }
 
@@ -641,8 +653,8 @@
 /* TEMOIGNAGES */
 .accueil-temoignages {
   text-align: center;
-  padding-top: clamp(4rem, 7vw, 6.5rem);
-  padding-bottom: clamp(3rem, 5vw, 4.5rem);
+  padding-top: clamp(2.8rem, 5vw, 4.2rem);
+  padding-bottom: clamp(2.2rem, 4vw, 3.4rem);
 }
 
 .accueil-temoignages h2 {
@@ -720,8 +732,8 @@
 
 /* NEWSLETTER */
 .accueil-newsletter {
-  padding-top: clamp(2rem, 4vw, 3.5rem);
-  padding-bottom: clamp(4rem, 7vw, 6rem);
+  padding-top: clamp(1.6rem, 3vw, 2.6rem);
+  padding-bottom: clamp(3rem, 5vw, 4.5rem);
 }
 
 .accueil-newsletter__carte {
