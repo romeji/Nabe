@@ -216,6 +216,54 @@ export default function ReglagesClient({
             <p>Visible dans le menu de navigation et le pied de page. Masqué par défaut.</p>
           </div>
         </label>
+
+        <label className="reglages-client__toggle">
+          <input
+            type="checkbox"
+            checked={config.menu_categories_actif === 'true'}
+            onChange={(e) => maj('menu_categories_actif', e.target.checked ? 'true' : 'false')}
+          />
+          <div>
+            <strong>Afficher la section "Cat&eacute;gories" dans le menu burger</strong>
+            <p>Inclut le lien vers tous les bijoux et les cat&eacute;gories du catalogue.</p>
+          </div>
+        </label>
+
+        <label className="reglages-client__toggle">
+          <input
+            type="checkbox"
+            checked={config.menu_collections_actif === 'true'}
+            onChange={(e) => maj('menu_collections_actif', e.target.checked ? 'true' : 'false')}
+          />
+          <div>
+            <strong>Afficher la section "Collections" dans le menu burger</strong>
+            <p>Utilise les collections actives configur&eacute;es dans l'admin.</p>
+          </div>
+        </label>
+
+        <label className="reglages-client__toggle">
+          <input
+            type="checkbox"
+            checked={config.menu_pages_actif === 'true'}
+            onChange={(e) => maj('menu_pages_actif', e.target.checked ? 'true' : 'false')}
+          />
+          <div>
+            <strong>Afficher la section "&Agrave; propos" dans le menu burger</strong>
+            <p>Regroupe l'atelier, l'histoire, l'artisanat, les engagements et le sur mesure.</p>
+          </div>
+        </label>
+
+        <label className="reglages-client__toggle">
+          <input
+            type="checkbox"
+            checked={config.menu_aide_actif === 'true'}
+            onChange={(e) => maj('menu_aide_actif', e.target.checked ? 'true' : 'false')}
+          />
+          <div>
+            <strong>Afficher la section "Aide &amp; infos" dans le menu burger</strong>
+            <p>Regroupe livraison, paiement, FAQ et contact.</p>
+          </div>
+        </label>
       </div>
 
       <div className="admin-carte reglages-client__section">

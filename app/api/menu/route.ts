@@ -22,5 +22,11 @@ export async function GET() {
     categories,
     collections,
     journalActif: configEstActive(config, 'journal_actif'),
+    menu: {
+      categoriesActif: configEstActive(config, 'menu_categories_actif'),
+      collectionsActif: configEstActive(config, 'menu_collections_actif'),
+      pagesActif: configEstActive(config, 'menu_pages_actif'),
+      aideActif: configEstActive(config, 'menu_aide_actif'),
+    },
   });
 }

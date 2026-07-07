@@ -3,18 +3,20 @@
   inset: 0;
   background-color: rgba(0, 0, 0, 0.3);
   z-index: 600;
+  padding: var(--espace-sm);
 }
 
 .panneau-nav {
   position: fixed;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  width: 100%;
+  top: var(--espace-sm);
+  left: var(--espace-sm);
+  height: calc(100vh - 2 * var(--espace-sm));
+  width: calc(100% - 2 * var(--espace-sm));
   max-width: 420px;
   background-color: var(--nabe-blanc);
   overflow-y: auto;
   box-shadow: var(--ombre-moyenne);
+  border-radius: 24px;
   animation: panneau-nav-entree 0.2s ease;
 }
 
@@ -34,9 +36,17 @@
 }
 
 .panneau-nav__corps {
-  padding: 0 var(--espace-lg) var(--espace-xl);
+  padding: 0 var(--espace-md) var(--espace-xl);
   display: flex;
   flex-direction: column;
+  gap: var(--espace-sm);
+}
+
+.panneau-nav__section {
+  padding: var(--espace-sm);
+  border: 1px solid rgba(207, 169, 153, 0.28);
+  border-radius: 18px;
+  background: rgba(245, 242, 238, 0.45);
 }
 
 .panneau-nav__corps h3 {
@@ -44,18 +54,7 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
   font-weight: 700;
-  margin-top: var(--espace-lg);
-  margin-bottom: var(--espace-sm);
-}
-
-.panneau-nav__corps h3:first-child {
-  margin-top: 0;
-}
-
-.panneau-nav__corps hr {
-  border: none;
-  border-top: 1px solid var(--nabe-beige-fonce);
-  margin-bottom: var(--espace-sm);
+  margin-bottom: 0.45rem;
 }
 
 .panneau-nav__corps a {

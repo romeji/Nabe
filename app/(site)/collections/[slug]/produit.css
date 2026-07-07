@@ -469,19 +469,41 @@
 .bandeau-reassurance {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: var(--espace-lg);
+  gap: 0;
   max-width: var(--largeur-max);
-  margin: 0 auto;
-  padding: var(--espace-xl) var(--espace-md) var(--espace-2xl);
-  border-top: 1px solid var(--nabe-argile);
+  margin: var(--espace-xl) auto var(--espace-2xl);
+  padding: 0 var(--espace-md);
+  border-top: none;
 }
 
 .bandeau-reassurance__item {
   text-align: center;
+  padding: 1.35rem 1.15rem;
+  color: var(--texte-clair);
+  background: var(--nabe-argile);
+  position: relative;
+}
+
+.bandeau-reassurance__item:first-child {
+  border-radius: 18px 0 0 18px;
+}
+
+.bandeau-reassurance__item:last-child {
+  border-radius: 0 18px 18px 0;
+}
+
+.bandeau-reassurance__item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 18%;
+  right: 0;
+  width: 1px;
+  height: 64%;
+  background: rgba(255, 255, 255, 0.42);
 }
 
 .bandeau-reassurance__item svg {
-  color: var(--nabe-terracotta);
+  color: var(--texte-clair);
   margin: 0 auto var(--espace-sm);
 }
 
@@ -492,28 +514,73 @@
   font-family: var(--font-texte);
   font-weight: 600;
   margin-bottom: 0.4rem;
+  color: var(--texte-clair);
 }
 
 .bandeau-reassurance__item p {
   font-size: 0.85rem;
-  color: var(--texte-secondaire);
+  color: rgba(255, 255, 255, 0.86);
 }
 
 .bandeau-reassurance__item a {
   text-decoration: underline;
-  color: var(--texte-secondaire);
+  color: var(--texte-clair);
 }
 
 @media (max-width: 900px) {
   .bandeau-reassurance {
     grid-template-columns: repeat(2, 1fr);
-    gap: var(--espace-xl) var(--espace-md);
+  }
+
+  .bandeau-reassurance__item:first-child {
+    border-radius: 18px 0 0 0;
+  }
+
+  .bandeau-reassurance__item:nth-child(2) {
+    border-radius: 0 18px 0 0;
+  }
+
+  .bandeau-reassurance__item:nth-child(3) {
+    border-radius: 0 0 0 18px;
+  }
+
+  .bandeau-reassurance__item:last-child {
+    border-radius: 0 0 18px 0;
+  }
+
+  .bandeau-reassurance__item:nth-child(2)::after {
+    display: none;
   }
 }
 
 @media (max-width: 480px) {
   .bandeau-reassurance {
     grid-template-columns: 1fr;
+  }
+
+  .bandeau-reassurance__item,
+  .bandeau-reassurance__item:first-child,
+  .bandeau-reassurance__item:nth-child(2),
+  .bandeau-reassurance__item:nth-child(3),
+  .bandeau-reassurance__item:last-child {
+    border-radius: 0;
+  }
+
+  .bandeau-reassurance__item:first-child {
+    border-radius: 18px 18px 0 0;
+  }
+
+  .bandeau-reassurance__item:last-child {
+    border-radius: 0 0 18px 18px;
+  }
+
+  .bandeau-reassurance__item:not(:last-child)::after {
+    display: block;
+    top: auto;
+    bottom: 0;
+    left: 12%;
+    width: 76%;
+    height: 1px;
   }
 }
 

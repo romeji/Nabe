@@ -880,25 +880,28 @@
   }
   .accueil-hero__titre {
     font-size: 3.25rem;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
   }
   .accueil-categories__grille {
     grid-template-columns: 1fr 1fr;
   }
   .accueil-categories__panneau {
-    min-height: 158px;
-    padding: 6.1rem 0.5rem 0.8rem;
+    min-height: 118px;
+    padding: 3.9rem 0.5rem 0.8rem;
   }
   .accueil-categories__panneau::before {
-    top: -4.5rem;
-    width: 9rem;
-    height: 9rem;
+    top: -3.5rem;
+    width: 7rem;
+    height: 7rem;
   }
   .accueil-categories__icone {
-    top: -4.25rem;
+    top: -3.95rem;
   }
   .accueil-categories__logo {
-    width: 138px;
-    height: 138px;
+    width: 100px;
+    height: 100px;
   }
   .accueil-reassurance {
     align-items: stretch;
