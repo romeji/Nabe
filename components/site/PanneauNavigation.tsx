@@ -37,6 +37,28 @@ export default function PanneauNavigation({
   useEffect(() => setMonte(true), []);
 
   useEffect(() => {
+    if (!ouvert) return;
+
+    const overflowInitial = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = overflowInitial;
+    };
+  }, [ouvert]);
+
+  useEffect(() => {
+    if (!ouvert) return;
+
+    function fermerAvecEchap(e: KeyboardEvent) {
+      if (e.key === 'Escape') onFermer();
+    }
+
+    window.addEventListener('keydown', fermerAvecEchap);
+    return () => window.removeEventListener('keydown', fermerAvecEchap);
+  }, [ouvert, onFermer]);
+
+  useEffect(() => {
     if (ouvert && categories.length === 0 && collections.length === 0) {
       fetch('/api/menu')
         .then((res) => res.json())
@@ -53,7 +75,7 @@ export default function PanneauNavigation({
   if (!ouvert || !monte) return null;
 
   return createPortal(
-    <div className="panneau-nav__overlay" onClick={onFermer}>
+    <div className="panneau-nav__overlay" role="presentation" onClick={(e) => e.stopPropagation()}>
       <div className="panneau-nav" onClick={(e) => e.stopPropagation()}>
         <div className="panneau-nav__entete">
           <button className="panneau-nav__fermer" onClick={onFermer} aria-label="Fermer le menu">

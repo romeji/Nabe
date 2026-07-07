@@ -13,9 +13,17 @@
   width: min(100%, 420px);
   background: linear-gradient(180deg, #fbf8f4 0%, #f6f0e9 100%);
   overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
   box-shadow: 0 18px 70px rgba(69, 41, 30, 0.18);
   border-radius: 0 24px 24px 0;
   animation: panneau-nav-entree 0.2s ease;
+}
+
+.panneau-nav::-webkit-scrollbar {
+  display: none;
 }
 
 @keyframes panneau-nav-entree {
