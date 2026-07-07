@@ -126,6 +126,8 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: var(--espace-lg);
+  max-width: var(--largeur-max);
+  margin: 0 auto;
 }
 
 .accueil-categories__carte {
@@ -232,6 +234,8 @@
   grid-template-columns: 260px 1fr;
   gap: var(--espace-lg);
   align-items: center;
+  max-width: var(--largeur-max);
+  margin: 0 auto;
 }
 
 .accueil-nouveautes__texte h2 {
@@ -281,14 +285,16 @@
   grid-template-columns: 0.85fr 1fr;
   align-items: center;
   gap: 0;
-  background: linear-gradient(135deg, var(--nabe-argile-clair) 0%, #c98f70 100%);
-  border-radius: var(--rayon-bordure);
+  background-color: var(--nabe-argile-clair);
+  border-radius: 28px;
   overflow: hidden;
   box-shadow: var(--ombre-moyenne);
+  max-width: var(--largeur-max);
+  margin: 0 auto;
 }
 
 .accueil-histoire__image {
-  border-radius: 50% 8px 8px 50% / 30% 4px 4px 30%;
+  border-radius: 20px;
   overflow: hidden;
   margin: var(--espace-lg);
   box-shadow: var(--ombre-moyenne);
@@ -373,6 +379,8 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: var(--espace-lg);
+  max-width: var(--largeur-max);
+  margin: 0 auto;
 }
 
 .accueil-pourquoi__item {
@@ -436,6 +444,8 @@
   display: flex;
   align-items: center;
   gap: var(--espace-md);
+  max-width: var(--largeur-max);
+  margin: 0 auto;
 }
 
 .accueil-temoignages__grille {
