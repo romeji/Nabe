@@ -274,7 +274,7 @@
 
 .accueil-categories__icone {
   position: absolute;
-  top: -6.95rem;
+  top: -3.95rem;
   left: 50%;
   color: var(--nabe-or);
   transform: translateX(-50%);
