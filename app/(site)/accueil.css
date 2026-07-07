@@ -889,7 +889,6 @@
   }
   .accueil-categories__panneau {
     min-height: 126px;
-    padding: 6.1rem 0.5rem 0.8rem;
   }
   .accueil-categories__panneau::before {
     top: -3.5rem;
