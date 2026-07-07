@@ -179,14 +179,14 @@
 
 /* NOS COLLECTIONS — catégories en cercle */
 .accueil-categories-section {
-  padding-top: clamp(2.6rem, 4.5vw, 3.8rem);
-  padding-bottom: clamp(2.4rem, 4.5vw, 3.8rem);
+  padding-top: clamp(1.8rem, 3vw, 2.5rem);
+  padding-bottom: clamp(1.4rem, 2.6vw, 2rem);
   text-align: center;
 }
 
 .etiquette--centre {
   display: inline-flex;
-  margin-bottom: 1.35rem;
+  margin-bottom: 1rem;
   justify-content: center;
 }
 
@@ -307,7 +307,7 @@
 }
 
 .accueil-categories-section__cta {
-  margin-top: clamp(1.4rem, 3vw, 2.2rem);
+  margin-top: clamp(1rem, 2vw, 1.45rem);
 }
 
 @media (max-width: 700px) {
@@ -319,8 +319,8 @@
 
 /* NOUVEAUTES — texte + carrousel côte à côte (4 produits visibles) */
 .accueil-nouveautes {
-  padding-top: clamp(2.2rem, 4vw, 3.4rem);
-  padding-bottom: clamp(2.7rem, 4.5vw, 3.8rem);
+  padding-top: clamp(1.2rem, 2.4vw, 1.9rem);
+  padding-bottom: clamp(1.6rem, 3vw, 2.2rem);
 }
 
 .accueil-nouveautes__grille {
@@ -335,13 +335,13 @@
   max-width: 8ch;
   font-size: clamp(2.6rem, 5vw, 4.7rem);
   line-height: 0.95;
-  margin: 0.65rem 0 1.25rem;
+  margin: 0.45rem 0 0.8rem;
   letter-spacing: 0;
 }
 
 .accueil-nouveautes__texte p {
   color: var(--texte-secondaire);
-  margin-bottom: 1.6rem;
+  margin-bottom: 1rem;
   max-width: 260px;
 }
 
@@ -400,8 +400,8 @@
 
 /* HISTOIRE — bandeau unique image + panneau coloré */
 .accueil-histoire {
-  padding-top: clamp(2.8rem, 5vw, 4.2rem);
-  padding-bottom: clamp(2.8rem, 5vw, 4.2rem);
+  padding-top: clamp(1.5rem, 3vw, 2.2rem);
+  padding-bottom: clamp(1.5rem, 3vw, 2.2rem);
 }
 
 .accueil-histoire__carte {
@@ -508,8 +508,8 @@
 
 /* POURQUOI NOUS CHOISIR */
 .accueil-pourquoi {
-  padding-top: clamp(2.5rem, 4.5vw, 3.8rem);
-  padding-bottom: clamp(2.5rem, 4.5vw, 3.8rem);
+  padding-top: clamp(1.4rem, 2.8vw, 2rem);
+  padding-bottom: clamp(1.4rem, 2.8vw, 2rem);
   text-align: center;
 }
 
@@ -518,7 +518,7 @@
   grid-template-columns: repeat(4, 1fr);
   gap: 0;
   margin: 0 auto;
-  padding-top: 1.5rem;
+  padding-top: 0.9rem;
 }
 
 .accueil-pourquoi__item {
@@ -568,15 +568,15 @@
 
 /* CARROUSELS GENERIQUES (sélection "en avant", meilleures ventes) */
 .accueil-carrousel {
-  padding-top: clamp(2.8rem, 5vw, 4.2rem);
-  padding-bottom: clamp(2.8rem, 5vw, 4.2rem);
+  padding-top: clamp(1.4rem, 2.8vw, 2.1rem);
+  padding-bottom: clamp(1.4rem, 2.8vw, 2.1rem);
   text-align: center;
 }
 
 .accueil-carrousel h2 {
   font-size: clamp(2.4rem, 4vw, 4rem);
   line-height: 1;
-  margin: 0.4rem 0 clamp(2rem, 4vw, 3.25rem);
+  margin: 0.3rem 0 clamp(1.1rem, 2.4vw, 1.8rem);
   letter-spacing: 0;
 }
 
@@ -589,6 +589,30 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: clamp(1.25rem, 2.5vw, 2rem);
+}
+
+@media (min-width: 901px) {
+  .accueil-carrousel .carrousel-produits {
+    padding-right: 2.1rem;
+  }
+  .accueil-carrousel .carrousel-produits__piste {
+    gap: clamp(0.85rem, 1.3vw, 1.1rem);
+    overflow-x: hidden;
+    padding-right: 0;
+  }
+  .accueil-carrousel .carrousel-produits__carte {
+    flex: 0 0 clamp(168px, 15vw, 198px);
+  }
+  .accueil-carrousel .carrousel-produits__fleche--gauche {
+    display: none;
+  }
+  .accueil-carrousel .carrousel-produits__fleche--droite {
+    position: absolute;
+    right: 0;
+    top: 42%;
+    transform: translateY(-50%);
+    margin-left: 0;
+  }
 }
 
 .accueil-selection__carte {
@@ -653,14 +677,14 @@
 /* TEMOIGNAGES */
 .accueil-temoignages {
   text-align: center;
-  padding-top: clamp(2.8rem, 5vw, 4.2rem);
-  padding-bottom: clamp(2.2rem, 4vw, 3.4rem);
+  padding-top: clamp(1.4rem, 2.8vw, 2.1rem);
+  padding-bottom: clamp(1.2rem, 2.4vw, 1.8rem);
 }
 
 .accueil-temoignages h2 {
   font-size: clamp(2.3rem, 4vw, 3.8rem);
   line-height: 1;
-  margin: 0.5rem 0 clamp(2rem, 4vw, 3rem);
+  margin: 0.35rem 0 clamp(1rem, 2.2vw, 1.6rem);
   letter-spacing: 0;
 }
 
@@ -732,8 +756,8 @@
 
 /* NEWSLETTER */
 .accueil-newsletter {
-  padding-top: clamp(1.6rem, 3vw, 2.6rem);
-  padding-bottom: clamp(3rem, 5vw, 4.5rem);
+  padding-top: clamp(1rem, 2vw, 1.5rem);
+  padding-bottom: clamp(2rem, 3.5vw, 3rem);
 }
 
 .accueil-newsletter__carte {
