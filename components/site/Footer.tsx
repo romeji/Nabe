@@ -36,10 +36,10 @@ export default async function Footer() {
         <div className="nabe-footer__colonne">
           <h4>&Agrave; propos</h4>
           <ul>
-            <li><Link href="/la-maison">Notre histoire</Link></li>
-            <li><Link href="/la-maison">Artisanat</Link></li>
-            <li><Link href="/sur-mesure">Engagements</Link></li>
-            <li><Link href="/contact">Atelier</Link></li>
+            <li><Link href="/la-maison">L&apos;Atelier</Link></li>
+            <li><Link href="/mon-histoire">Mon histoire</Link></li>
+            <li><Link href="/artisanat">Artisanat</Link></li>
+            <li><Link href="/engagements">Engagements</Link></li>
           </ul>
         </div>
 

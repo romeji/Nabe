@@ -72,6 +72,9 @@ export default function PanneauNavigation({
           <h3>Pages</h3>
           <hr />
           <Link href="/la-maison" onClick={onFermer}>L'ATELIER</Link>
+          <Link href="/mon-histoire" onClick={onFermer}>MON HISTOIRE</Link>
+          <Link href="/artisanat" onClick={onFermer}>ARTISANAT</Link>
+          <Link href="/engagements" onClick={onFermer}>ENGAGEMENTS</Link>
           <Link href="/sur-mesure" onClick={onFermer}>SUR MESURE</Link>
           {journalActif && <Link href="/journal" onClick={onFermer}>JOURNAL</Link>}
           <Link href="/contact" onClick={onFermer}>CONTACT</Link>

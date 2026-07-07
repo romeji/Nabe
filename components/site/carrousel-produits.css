@@ -164,8 +164,13 @@
 }
 
 @media (max-width: 600px) {
+  .carrousel-produits__piste {
+    gap: 0.8rem;
+    padding-inline: 0;
+  }
   .carrousel-produits__carte {
-    flex: 0 0 180px;
+    flex: 0 0 calc((100vw - 3.2rem) / 2);
+    max-width: 158px;
   }
   .carrousel-produits__fleche {
     display: none;

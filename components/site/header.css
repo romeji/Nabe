@@ -46,6 +46,28 @@
   align-items: center;
 }
 
+.nabe-header__nav {
+  order: 1;
+  display: flex;
+  align-items: center;
+  gap: clamp(0.75rem, 1.4vw, 1.35rem);
+  min-width: 0;
+}
+
+.nabe-header__nav a {
+  color: var(--texte-principal);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: color 0.25s ease;
+}
+
+.nabe-header__nav a:hover {
+  color: var(--nabe-terracotta);
+}
+
 .nabe-header__logo {
   order: 2;
 }
@@ -106,8 +128,17 @@
   .nabe-header__logo {
     font-size: 2.1rem;
   }
+  .nabe-header__nav {
+    display: none;
+  }
   .nabe-header__svg {
     width: 20px;
     height: 20px;
+  }
+}
+
+@media (max-width: 1080px) {
+  .nabe-header__nav {
+    display: none;
   }
 }
