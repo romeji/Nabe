@@ -1,6 +1,13 @@
 /* ============================================================
    ACCUEIL — collections en cercle, bandeaux artisanat, style
    catalogue chaleureux inspiré du mood "Nabe"
+
+   IMPORTANT : le gouttière latérale (max-width + padding gauche/
+   droite) est TOUJOURS gérée par la classe globale `.conteneur`
+   (voir app/globals.css). Les règles ci-dessous ne définissent
+   donc jamais de padding-left/right ni de max-width en double,
+   uniquement du padding-top/bottom, pour éviter tout conflit de
+   cascade avec `.conteneur`.
    ============================================================ */
 
 .accueil-hero {
@@ -55,13 +62,13 @@
   flex-wrap: wrap;
 }
 
-/* REASSURANCE — bandeau fin sous le hero */
+/* REASSURANCE — bandeau fin sous le hero (volontairement plein écran) */
 .accueil-reassurance {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  gap: var(--espace-xl);
+  gap: var(--espace-xl) var(--espace-xl);
   padding: var(--espace-md) var(--espace-md);
   background-color: var(--nabe-sable);
   border-bottom: 1px solid var(--nabe-sable-fonce);
@@ -82,17 +89,12 @@
   flex-shrink: 0;
 }
 
-.accueil-reassurance__item:not(:last-child)::after {
-  content: '';
-  display: none;
-}
-
 @media (min-width: 701px) {
   .accueil-reassurance__item:not(:last-child) {
     position: relative;
     padding-right: var(--espace-xl);
   }
-  .accueil-reassurance__item:not(:last-child)::before {
+  .accueil-reassurance__item:not(:last-child)::after {
     content: '';
     position: absolute;
     right: calc(var(--espace-xl) / -2);
@@ -106,7 +108,8 @@
 
 /* NOS COLLECTIONS — catégories en cercle */
 .accueil-categories-section {
-  padding: var(--espace-2xl) var(--espace-md) var(--espace-xl);
+  padding-top: var(--espace-2xl);
+  padding-bottom: var(--espace-xl);
   text-align: center;
 }
 
@@ -123,8 +126,6 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: var(--espace-lg);
-  max-width: var(--largeur-max);
-  margin: 0 auto;
 }
 
 .accueil-categories__carte {
@@ -220,24 +221,16 @@
   }
 }
 
-@media (max-width: 480px) {
-  .accueil-categories__grille {
-    grid-template-columns: 1fr 1fr;
-  }
-  .accueil-categories__panneau {
-    padding: 1.4rem 0.5rem 0.7rem;
-  }
-}
-
-/* NOUVEAUTES — texte + carrousel côte à côte */
+/* NOUVEAUTES — texte + carrousel côte à côte (4 produits visibles) */
 .accueil-nouveautes {
-  padding: var(--espace-2xl) var(--espace-md);
+  padding-top: var(--espace-2xl);
+  padding-bottom: var(--espace-2xl);
 }
 
 .accueil-nouveautes__grille {
   display: grid;
-  grid-template-columns: 0.62fr 1.38fr;
-  gap: var(--espace-xl);
+  grid-template-columns: 260px 1fr;
+  gap: var(--espace-lg);
   align-items: center;
 }
 
@@ -258,6 +251,18 @@
   padding-bottom: 2px;
 }
 
+/* Sur cette section précise, les cartes sont un peu plus étroites
+   pour que les 4 premiers produits tiennent dans la largeur visible,
+   comme sur la maquette (le 5e+ reste accessible via la flèche). */
+@media (min-width: 901px) {
+  .accueil-nouveautes__produits .carrousel-produits__carte {
+    flex: 0 0 200px;
+  }
+  .accueil-nouveautes__produits .carrousel-produits__fleche--gauche {
+    display: none;
+  }
+}
+
 @media (max-width: 900px) {
   .accueil-nouveautes__grille {
     grid-template-columns: 1fr;
@@ -266,7 +271,8 @@
 
 /* HISTOIRE — bandeau unique image + panneau coloré */
 .accueil-histoire {
-  padding: var(--espace-2xl) var(--espace-md);
+  padding-top: var(--espace-2xl);
+  padding-bottom: var(--espace-2xl);
 }
 
 .accueil-histoire__carte {
@@ -358,7 +364,8 @@
 
 /* POURQUOI NOUS CHOISIR */
 .accueil-pourquoi {
-  padding: var(--espace-2xl) var(--espace-md);
+  padding-top: var(--espace-2xl);
+  padding-bottom: var(--espace-2xl);
   text-align: center;
 }
 
@@ -366,8 +373,6 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: var(--espace-lg);
-  max-width: var(--largeur-max);
-  margin: 0 auto;
 }
 
 .accueil-pourquoi__item {
@@ -398,12 +403,11 @@
   }
 }
 
-/* CARROUSELS GENERIQUES (sélection, bestsellers) */
+/* CARROUSELS GENERIQUES (sélection "en avant", meilleures ventes) */
 .accueil-carrousel {
-  padding: var(--espace-2xl) var(--espace-md);
+  padding-top: var(--espace-2xl);
+  padding-bottom: var(--espace-2xl);
   text-align: center;
-  max-width: var(--largeur-max);
-  margin: 0 auto;
 }
 
 .accueil-carrousel h2 {
@@ -419,7 +423,8 @@
 /* TEMOIGNAGES */
 .accueil-temoignages {
   text-align: center;
-  padding: var(--espace-2xl) var(--espace-md);
+  padding-top: var(--espace-2xl);
+  padding-bottom: var(--espace-2xl);
 }
 
 .accueil-temoignages h2 {
@@ -431,8 +436,6 @@
   display: flex;
   align-items: center;
   gap: var(--espace-md);
-  max-width: var(--largeur-max);
-  margin: 0 auto;
 }
 
 .accueil-temoignages__grille {
@@ -486,7 +489,8 @@
 
 /* NEWSLETTER */
 .accueil-newsletter {
-  padding: var(--espace-2xl) var(--espace-md);
+  padding-top: var(--espace-2xl);
+  padding-bottom: var(--espace-2xl);
 }
 
 .accueil-newsletter__carte {
@@ -496,8 +500,6 @@
   background-color: var(--nabe-argile-clair);
   border-radius: var(--rayon-bordure);
   overflow: hidden;
-  max-width: var(--largeur-max);
-  margin: 0 auto;
 }
 
 .accueil-newsletter__carte h2 {
@@ -562,6 +564,12 @@
   }
   .accueil-hero__titre {
     font-size: 2.6rem;
+  }
+  .accueil-categories__grille {
+    grid-template-columns: 1fr 1fr;
+  }
+  .accueil-categories__panneau {
+    padding: 1.4rem 0.5rem 0.7rem;
   }
   .accueil-reassurance {
     gap: var(--espace-md);

@@ -107,22 +107,21 @@ export default async function PageAccueil() {
       <section className="accueil-reassurance">
         <div className="accueil-reassurance__item">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
-            <path d="M12 2 4 5.5v6C4 16.7 7.4 20.9 12 22c4.6-1.1 8-5.3 8-10.5v-6z" />
+            <path d="M14 3l2.5 2.5L7 15l-4 1 1-4z" />
+            <path d="M17.5 2.5 21 6l-2 2-3.5-3.5z" />
           </svg>
           <span>Fabrication artisanale</span>
         </div>
         <div className="accueil-reassurance__item">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
-            <path d="M12 3 3 8l9 5 9-5z" />
-            <path d="M3 8v8l9 5 9-5V8" />
-            <path d="M12 13v8" />
+            <path d="M6 3h12l3.5 5L12 21 2.5 8z" />
+            <path d="M2.5 8h19M9 3l-2 5 5 13 5-13-2-5" />
           </svg>
           <span>Matériaux de qualité</span>
         </div>
         <div className="accueil-reassurance__item">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
-            <rect x="2" y="6" width="20" height="14" rx="2" />
-            <path d="M2 10.5h20" />
+            <path d="M12 2 4 5.5v6C4 16.7 7.4 20.9 12 22c4.6-1.1 8-5.3 8-10.5v-6z" />
           </svg>
           <span>Paiement sécurisé</span>
         </div>
