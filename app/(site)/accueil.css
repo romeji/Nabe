@@ -128,7 +128,7 @@
   flex-wrap: wrap;
   gap: 0;
   margin: 0;
-  padding: 1.05rem max(var(--espace-md), calc((100vw - var(--largeur-max)) / 2 + var(--espace-md)));
+  padding: 1.05rem max(var(--marge-page), calc((100vw - var(--largeur-max)) / 2 + var(--marge-page)));
   width: 100%;
   position: relative;
   z-index: 2;
@@ -325,8 +325,8 @@
 
 .accueil-nouveautes__grille {
   display: grid;
-  grid-template-columns: minmax(210px, 270px) minmax(0, 1fr);
-  gap: clamp(2rem, 4vw, 3.5rem);
+  grid-template-columns: minmax(190px, 245px) minmax(0, 1fr);
+  gap: clamp(2rem, 3vw, 2.5rem);
   align-items: center;
   margin: 0 auto;
 }
@@ -370,10 +370,10 @@
     min-width: 0;
   }
   .accueil-nouveautes__produits .carrousel-produits__piste {
-    gap: 1.25rem;
+    gap: 1.1rem;
   }
   .accueil-nouveautes__produits .carrousel-produits__carte {
-    flex: 0 0 clamp(176px, 15vw, 198px);
+    flex: 0 0 clamp(160px, 13.5vw, 184px);
   }
   .accueil-nouveautes__produits .carrousel-produits__fleche--gauche {
     display: none;

@@ -5,8 +5,8 @@
   left: 50%;
   transform: translateX(-50%);
   z-index: 100;
-  max-width: calc(var(--largeur-max) - 2 * var(--espace-md));
-  width: calc(100% - 2 * var(--espace-md));
+  max-width: var(--largeur-max);
+  width: calc(100% - 2 * var(--marge-page));
   background-color: var(--nabe-creme);
   border: 1px solid rgba(184, 146, 63, 0.18);
   border-radius: 999px;
