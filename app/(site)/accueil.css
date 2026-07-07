@@ -244,7 +244,7 @@
   margin: 0 auto;
   width: 100%;
   min-height: 80px;
-  background-color: rgba(255, 255, 255, 0.78);
+  background-color: rgba(255, 255, 255, 100);
   border-radius: 0 0 4px 4px;
   /*padding: 6.1rem 0.9rem 1.35rem;*/
   display: flex;
