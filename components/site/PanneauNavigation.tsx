@@ -14,6 +14,8 @@ type MenuConfig = {
   aideActif: boolean;
 };
 
+const iconesCategories = ['bagues', 'colliers', 'boucles', 'bracelets', 'diamant', 'cadeau'];
+
 export default function PanneauNavigation({
   ouvert,
   onFermer,
@@ -62,13 +64,11 @@ export default function PanneauNavigation({
         <div className="panneau-nav__corps">
           {menu.categoriesActif && (
             <section className="panneau-nav__section">
-              <h3>Cat&eacute;gories</h3>
-              <Link href="/collections" onClick={onFermer}>
-                TOUS LES BIJOUX
-              </Link>
-              {categories.map((c) => (
-                <Link key={c.id} href={`/collections?categorie=${c.slug}`} onClick={onFermer}>
-                  {c.nom.toUpperCase()}
+              <h3>Collections</h3>
+              {categories.map((c, index) => (
+                <Link key={c.id} href={`/collections?categorie=${c.slug}`} className="panneau-nav__lien panneau-nav__lien--icone" onClick={onFermer}>
+                  <span className={`panneau-nav__icone panneau-nav__icone--${iconesCategories[index] || 'bijou'}`} aria-hidden="true" />
+                  <span>{c.nom}</span>
                 </Link>
               ))}
             </section>
@@ -78,8 +78,8 @@ export default function PanneauNavigation({
             <section className="panneau-nav__section">
               <h3>Collections</h3>
               {collections.map((c) => (
-                <Link key={c.id} href={`/collections?collection=${c.slug}`} onClick={onFermer}>
-                  {c.nom.toUpperCase()}
+                <Link key={c.id} href={`/collections?collection=${c.slug}`} className="panneau-nav__lien" onClick={onFermer}>
+                  <span>{c.nom}</span>
                 </Link>
               ))}
             </section>
@@ -88,24 +88,38 @@ export default function PanneauNavigation({
           {menu.pagesActif && (
             <section className="panneau-nav__section">
               <h3>&Agrave; propos</h3>
-              <Link href="/la-maison" onClick={onFermer}>L'ATELIER</Link>
-              <Link href="/mon-histoire" onClick={onFermer}>MON HISTOIRE</Link>
-              <Link href="/artisanat" onClick={onFermer}>ARTISANAT</Link>
-              <Link href="/engagements" onClick={onFermer}>ENGAGEMENTS</Link>
-              <Link href="/sur-mesure" onClick={onFermer}>SUR MESURE</Link>
-              {journalActif && <Link href="/journal" onClick={onFermer}>JOURNAL</Link>}
+              <Link href="/mon-histoire" className="panneau-nav__lien" onClick={onFermer}>Notre histoire</Link>
+              <Link href="/artisanat" className="panneau-nav__lien" onClick={onFermer}>Artisanat</Link>
+              <Link href="/engagements" className="panneau-nav__lien" onClick={onFermer}>Engagements</Link>
+              {journalActif && <Link href="/journal" className="panneau-nav__lien" onClick={onFermer}>Journal</Link>}
             </section>
           )}
 
           {menu.aideActif && (
             <section className="panneau-nav__section">
               <h3>Aide &amp; infos</h3>
-              <Link href="/livraison-retours" onClick={onFermer}>LIVRAISON &amp; RETOURS</Link>
-              <Link href="/paiement-securise" onClick={onFermer}>PAIEMENT S&Eacute;CURIS&Eacute;</Link>
-              <Link href="/faq" onClick={onFermer}>FAQ</Link>
-              <Link href="/contact" onClick={onFermer}>CONTACT</Link>
+              <Link href="/livraison-retours" className="panneau-nav__lien" onClick={onFermer}>Livraison &amp; Retours</Link>
+              <Link href="/paiement-securise" className="panneau-nav__lien" onClick={onFermer}>Paiement s&eacute;curis&eacute;</Link>
+              <Link href="/faq" className="panneau-nav__lien" onClick={onFermer}>FAQ</Link>
+              <Link href="/contact" className="panneau-nav__lien" onClick={onFermer}>Contact</Link>
             </section>
           )}
+
+          <Link href="/mon-histoire" className="panneau-nav__histoire" onClick={onFermer}>
+            <span>Chaque bijou<br />raconte une <em>histoire.</em></span>
+            <strong>D&eacute;couvrir notre histoire</strong>
+          </Link>
+
+          <div className="panneau-nav__pied">
+            <div className="panneau-nav__sociaux" aria-label="R&eacute;seaux sociaux">
+              <a href="https://www.instagram.com/" target="_blank" rel="noreferrer" aria-label="Instagram">IG</a>
+              <a href="https://www.pinterest.com/" target="_blank" rel="noreferrer" aria-label="Pinterest">P</a>
+            </div>
+            <Link href="/mon-compte" className="panneau-nav__compte" onClick={onFermer}>
+              <span>Mon compte</span>
+              <span className="panneau-nav__compte-icone" aria-hidden="true" />
+            </Link>
+          </div>
         </div>
       </div>
     </div>,

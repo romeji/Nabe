@@ -3,20 +3,18 @@
   inset: 0;
   background-color: rgba(0, 0, 0, 0.3);
   z-index: 600;
-  padding: var(--espace-sm);
 }
 
 .panneau-nav {
   position: fixed;
-  top: var(--espace-sm);
-  left: var(--espace-sm);
-  height: calc(100vh - 2 * var(--espace-sm));
-  width: calc(100% - 2 * var(--espace-sm));
-  max-width: 420px;
-  background-color: var(--nabe-blanc);
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: min(100%, 420px);
+  background: linear-gradient(180deg, #fbf8f4 0%, #f6f0e9 100%);
   overflow-y: auto;
-  box-shadow: var(--ombre-moyenne);
-  border-radius: 24px;
+  box-shadow: 0 18px 70px rgba(69, 41, 30, 0.18);
+  border-radius: 0 24px 24px 0;
   animation: panneau-nav-entree 0.2s ease;
 }
 
@@ -28,43 +26,258 @@
 .panneau-nav__entete {
   display: flex;
   justify-content: flex-end;
-  padding: var(--espace-md);
+  padding: 0.9rem 1.6rem 0.25rem;
 }
 
 .panneau-nav__fermer {
-  font-size: 1.3rem;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 999px;
+  color: var(--nabe-brun);
+  font-size: 1.35rem;
+  line-height: 1;
 }
 
 .panneau-nav__corps {
-  padding: 0 var(--espace-md) var(--espace-xl);
+  padding: 0.35rem 1.55rem 1.35rem;
   display: flex;
   flex-direction: column;
-  gap: var(--espace-sm);
+  gap: 1.2rem;
 }
 
 .panneau-nav__section {
-  padding: var(--espace-sm);
-  border: 1px solid rgba(207, 169, 153, 0.28);
-  border-radius: 18px;
-  background: rgba(245, 242, 238, 0.45);
+  padding-bottom: 1.05rem;
+  border-bottom: 1px solid rgba(159, 84, 52, 0.16);
 }
 
 .panneau-nav__corps h3 {
-  font-size: 0.85rem;
-  letter-spacing: 0.1em;
+  color: var(--nabe-brun);
+  font-family: var(--font-texte);
+  font-size: 0.72rem;
+  letter-spacing: 0.11em;
   text-transform: uppercase;
   font-weight: 700;
-  margin-bottom: 0.45rem;
+  margin-bottom: 0.65rem;
 }
 
-.panneau-nav__corps a {
-  display: block;
-  padding: 0.6rem 0;
+.panneau-nav__lien {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.95rem;
+  min-height: 2.05rem;
+  padding: 0.22rem 1.15rem 0.22rem 0;
+  color: var(--nabe-brun);
   font-size: 0.9rem;
-  letter-spacing: 0.05em;
-  color: var(--texte-secondaire);
+  font-weight: 500;
+  letter-spacing: 0;
 }
 
-.panneau-nav__corps a:hover {
+.panneau-nav__lien::after {
+  content: '›';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(159, 84, 52, 0.72);
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.panneau-nav__lien:hover {
   color: var(--nabe-terracotta);
+}
+
+.panneau-nav__icone {
+  position: relative;
+  width: 1.3rem;
+  height: 1.3rem;
+  flex: 0 0 1.3rem;
+  color: var(--nabe-terracotta);
+}
+
+.panneau-nav__icone::before,
+.panneau-nav__icone::after {
+  content: '';
+  position: absolute;
+  border-color: currentColor;
+}
+
+.panneau-nav__icone--bagues::before {
+  left: 0.24rem;
+  top: 0.38rem;
+  width: 0.75rem;
+  height: 0.75rem;
+  border: 1.4px solid currentColor;
+  border-radius: 50%;
+}
+
+.panneau-nav__icone--bagues::after {
+  left: 0.48rem;
+  top: 0.04rem;
+  width: 0.28rem;
+  height: 0.28rem;
+  border: 1.2px solid currentColor;
+  border-radius: 50%;
+}
+
+.panneau-nav__icone--colliers::before {
+  left: 0.2rem;
+  top: 0.15rem;
+  width: 0.86rem;
+  height: 0.86rem;
+  border: 1.4px solid currentColor;
+  border-top: 0;
+  border-radius: 0 0 999px 999px;
+}
+
+.panneau-nav__icone--boucles::before,
+.panneau-nav__icone--boucles::after {
+  top: 0.17rem;
+  width: 0.32rem;
+  height: 0.86rem;
+  border: 1.3px solid currentColor;
+  border-radius: 999px;
+}
+
+.panneau-nav__icone--boucles::before { left: 0.18rem; }
+.panneau-nav__icone--boucles::after { right: 0.18rem; }
+
+.panneau-nav__icone--bracelets::before {
+  left: 0.18rem;
+  top: 0.18rem;
+  width: 0.9rem;
+  height: 0.9rem;
+  border: 1.3px dashed currentColor;
+  border-radius: 50%;
+}
+
+.panneau-nav__icone--diamant::before {
+  left: 0.18rem;
+  top: 0.3rem;
+  width: 0.86rem;
+  height: 0.86rem;
+  border: 1.3px solid currentColor;
+  transform: rotate(45deg);
+}
+
+.panneau-nav__icone--cadeau::before {
+  left: 0.18rem;
+  top: 0.42rem;
+  width: 0.92rem;
+  height: 0.7rem;
+  border: 1.3px solid currentColor;
+}
+
+.panneau-nav__icone--cadeau::after {
+  left: 0.56rem;
+  top: 0.24rem;
+  width: 0.12rem;
+  height: 0.88rem;
+  border-left: 1.3px solid currentColor;
+}
+
+.panneau-nav__histoire {
+  min-height: 140px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1.35rem 1.45rem;
+  border-radius: 8px;
+  overflow: hidden;
+  color: var(--texte-clair);
+  background:
+    linear-gradient(90deg, rgba(159, 84, 52, 0.48), rgba(159, 84, 52, 0.08)),
+    url('/images/signature-bague.jpg') center / cover;
+}
+
+.panneau-nav__histoire span {
+  max-width: 12rem;
+  font-family: var(--font-titres);
+  font-size: 1.35rem;
+  line-height: 1.05;
+}
+
+.panneau-nav__histoire strong {
+  font-size: 0.58rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.panneau-nav__histoire strong::after {
+  content: ' →';
+}
+
+.panneau-nav__pied {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 0.95rem;
+  border-top: 1px solid rgba(159, 84, 52, 0.16);
+}
+
+.panneau-nav__sociaux {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.panneau-nav__sociaux a {
+  color: var(--nabe-argile);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.panneau-nav__compte {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: var(--nabe-brun);
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.panneau-nav__compte-icone {
+  position: relative;
+  width: 1rem;
+  height: 1rem;
+}
+
+.panneau-nav__compte-icone::before,
+.panneau-nav__compte-icone::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 1.3px solid currentColor;
+}
+
+.panneau-nav__compte-icone::before {
+  top: 0;
+  width: 0.42rem;
+  height: 0.42rem;
+  border-radius: 50%;
+}
+
+.panneau-nav__compte-icone::after {
+  bottom: 0;
+  width: 0.9rem;
+  height: 0.46rem;
+  border-radius: 999px 999px 0 0;
+  border-bottom: 0;
+}
+
+@media (max-width: 480px) {
+  .panneau-nav {
+    top: 0.5rem;
+    left: 0;
+    height: calc(100vh - 1rem);
+    width: calc(100% - 1.2rem);
+    border-radius: 0 24px 24px 0;
+  }
+
+  .panneau-nav__corps {
+    padding-inline: 1.35rem;
+  }
 }
