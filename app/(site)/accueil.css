@@ -10,6 +10,10 @@
    cascade avec `.conteneur`.
    ============================================================ */
 
+.page-accueil {
+  overflow-x: hidden;
+}
+
 .accueil-hero {
   position: relative;
   min-height: 90vh;
@@ -136,9 +140,9 @@
 }
 
 .accueil-categories__image {
-  border-radius: 50%;
+  border-radius: 50% 50% 6px 6px / 26% 26% 4px 4px;
   overflow: hidden;
-  aspect-ratio: 1;
+  aspect-ratio: 3 / 3.7;
   background-color: var(--nabe-sable);
   box-shadow: var(--ombre-douce);
   position: relative;
@@ -165,11 +169,11 @@
 .accueil-categories__panneau {
   position: relative;
   z-index: 2;
-  margin: -1.6rem auto 0;
-  width: 84%;
+  margin: -2.6rem auto 0;
+  width: 88%;
   background-color: var(--nabe-blanc);
-  border-radius: 0 0 var(--rayon-bordure) var(--rayon-bordure);
-  padding: 1.8rem 0.8rem 0.9rem;
+  border-radius: 50% 50% 8px 8px / 22% 22% 4px 4px;
+  padding: 2.4rem 0.8rem 1.1rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -579,7 +583,7 @@
     grid-template-columns: 1fr 1fr;
   }
   .accueil-categories__panneau {
-    padding: 1.4rem 0.5rem 0.7rem;
+    padding: 2rem 0.5rem 0.8rem;
   }
   .accueil-reassurance {
     gap: var(--espace-md);
