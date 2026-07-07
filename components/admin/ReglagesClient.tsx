@@ -21,6 +21,7 @@ export default function ReglagesClient({
   const [succes, setSucces] = useState(false);
 
   const categoriesSelectionnees = (config.categories_accueil_ids || '').split(',').filter(Boolean);
+  const collectionsSelectionnees = (config.collections_selection_ids || '').split(',').filter(Boolean);
 
   function maj(cle: string, valeur: string) {
     setConfig((c) => ({ ...c, [cle]: valeur }));
@@ -38,6 +39,20 @@ export default function ReglagesClient({
       actuelles.add(id);
     }
     maj('categories_accueil_ids', Array.from(actuelles).join(','));
+  }
+
+  function basculerCollectionSelection(id: string) {
+    const actuelles = new Set(collectionsSelectionnees);
+    if (actuelles.has(id)) {
+      actuelles.delete(id);
+    } else {
+      if (actuelles.size >= 3) {
+        alert('Vous pouvez sélectionner 3 collections maximum.');
+        return;
+      }
+      actuelles.add(id);
+    }
+    maj('collections_selection_ids', Array.from(actuelles).join(','));
   }
 
   async function sauvegarder() {
@@ -67,14 +82,38 @@ export default function ReglagesClient({
         <label className="reglages-client__toggle">
           <input
             type="checkbox"
-            checked={config.carrousel_selection_actif === 'true'}
-            onChange={(e) => maj('carrousel_selection_actif', e.target.checked ? 'true' : 'false')}
+            checked={config.collections_selection_actif === 'true'}
+            onChange={(e) => maj('collections_selection_actif', e.target.checked ? 'true' : 'false')}
           />
           <div>
-            <strong>Carrousel "Articles sélectionnés"</strong>
-            <p>Affiche en carrousel les bijoux marqués "en avant" depuis Admin &gt; Bijoux.</p>
+            <strong>Module "Notre sélection"</strong>
+            <p>Affiche jusqu'à 3 collections choisies ci-dessous sur la page d'accueil.</p>
           </div>
         </label>
+
+        {config.collections_selection_actif === 'true' && (
+          <div className="reglages-client__sous-champ">
+            <label>Collections à mettre en avant (3 maximum)</label>
+            <div className="reglages-client__categories">
+              {collections.map((c) => (
+                <button
+                  key={c.id}
+                  type="button"
+                  className={`reglages-client__categorie-bouton ${collectionsSelectionnees.includes(c.id) ? 'actif' : ''}`}
+                  onClick={() => basculerCollectionSelection(c.id)}
+                >
+                  {c.nom}
+                </button>
+              ))}
+            </div>
+            {collections.length === 0 && (
+              <p className="formulaire-produit__aide">
+                Aucune collection active. Créez-en une depuis <a href="/admin/collections">Admin &gt; Collections</a>.
+              </p>
+            )}
+            <p className="formulaire-produit__aide">{collectionsSelectionnees.length} / 3 sélectionnée(s)</p>
+          </div>
+        )}
 
         <label className="reglages-client__toggle">
           <input

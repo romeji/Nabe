@@ -35,21 +35,19 @@ export default async function PageAccueil() {
   const session = await getServerSession(authClientOptions);
   const clientId = (session?.user as any)?.id as string | undefined;
 
-  const carrousselSelectionActif = configEstActive(config, 'carrousel_selection_actif');
+  const collectionsSelectionActif = configEstActive(config, 'collections_selection_actif');
   const carrousselBestsellerActif = configEstActive(config, 'carrousel_bestseller_actif');
   const carrousselNouvelleCollectionActif = configEstActive(config, 'carrousel_nouvelle_collection_actif');
   const categoriesAccueilActif = configEstActive(config, 'categories_accueil_actif');
   const idsCategoriesAccueil = (config.categories_accueil_ids || '').split(',').filter(Boolean);
+  const idsCollectionsSelection = (config.collections_selection_ids || '').split(',').filter(Boolean);
 
-  const [contenu, produitsEnAvant, bestsellers, produitsNouvelleCollection, temoignages, favorisIds, categoriesAccueil] =
+  const [contenu, collectionsSelection, bestsellers, produitsNouvelleCollection, temoignages, favorisIds, categoriesAccueil] =
     await Promise.all([
       getContenuPage('accueil'),
-      carrousselSelectionActif
-        ? prisma.produit.findMany({
-            where: { enAvant: true, actif: true },
-            include: { images: { orderBy: { ordre: 'asc' }, take: 1 } },
-            take: 8,
-            orderBy: { createdAt: 'desc' },
+      collectionsSelectionActif && idsCollectionsSelection.length > 0
+        ? prisma.collection.findMany({
+            where: { id: { in: idsCollectionsSelection }, actif: true },
           })
         : Promise.resolve([]),
       carrousselBestsellerActif
@@ -81,6 +79,9 @@ export default async function PageAccueil() {
   const categoriesAccueilOrdonnees = idsCategoriesAccueil
     .map((id) => categoriesAccueil.find((c) => c.id === id))
     .filter(Boolean) as typeof categoriesAccueil;
+  const collectionsSelectionOrdonnees = idsCollectionsSelection
+    .map((id) => collectionsSelection.find((c) => c.id === id))
+    .filter(Boolean) as typeof collectionsSelection;
 
   return (
     <div className="page-accueil">
@@ -251,29 +252,29 @@ export default async function PageAccueil() {
         </div>
       </section>
 
-      {/* NOTRE SELECTION (carrousel des bijoux marqués "en avant") */}
-      {carrousselSelectionActif && (
+      {/* NOTRE SELECTION (collections choisies en admin) */}
+      {collectionsSelectionActif && collectionsSelectionOrdonnees.length > 0 && (
         <section className="accueil-carrousel conteneur">
           <span className="etiquette etiquette--centre">{contenu.collections_label}</span>
           <h2>
             Notre <span className="accent">sélection</span>
           </h2>
           <div className="accueil-selection__grille">
-            <Link href="/collections" className="accueil-selection__carte">
-              <Image src="/images/signature-bague.jpg" alt="Collection Eclat" width={460} height={260} />
-              <span>Collection Eclat</span>
-              <strong>Decouvrir</strong>
-            </Link>
-            <Link href="/collections" className="accueil-selection__carte">
-              <Image src="/images/croquis.jpg" alt="Collection Essentielle" width={460} height={260} />
-              <span>Collection Essentielle</span>
-              <strong>Decouvrir</strong>
-            </Link>
-            <Link href="/collections" className="accueil-selection__carte">
-              <Image src="/images/main-bague.jpg" alt="Collection Signature" width={460} height={260} />
-              <span>Collection Signature</span>
-              <strong>Decouvrir</strong>
-            </Link>
+            {collectionsSelectionOrdonnees.map((collection) => (
+              <Link
+                key={collection.id}
+                href={`/collections?collection=${collection.slug}`}
+                className="accueil-selection__carte"
+              >
+                {collection.image ? (
+                  <Image src={collection.image} alt={collection.nom} width={460} height={260} />
+                ) : (
+                  <div className="accueil-selection__placeholder" />
+                )}
+                <span>{collection.nom}</span>
+                <strong>Découvrir</strong>
+              </Link>
+            ))}
           </div>
         </section>
       )}

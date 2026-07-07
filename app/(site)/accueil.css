@@ -281,8 +281,8 @@
 }
 
 .accueil-categories__logo {
-  width: 34px;
-  height: 34px;
+  width: 46px;
+  height: 46px;
   display: block;
   object-fit: contain;
 }
@@ -657,6 +657,13 @@
   height: 100%;
   object-fit: cover;
   transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.accueil-selection__placeholder {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background-color: var(--nabe-sable);
 }
 
 .accueil-selection__carte:hover img {

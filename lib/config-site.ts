@@ -3,7 +3,9 @@ import { prisma } from '@/lib/prisma';
 // Registre des clés de configuration avec leur valeur par défaut.
 // Toute nouvelle option togglable depuis l'admin doit être ajoutée ici.
 export const DEFAUTS_CONFIG: Record<string, string> = {
-  carrousel_selection_actif: 'true', // carrousel "articles sélectionnés" sur l'accueil (remplace la grille statique)
+  collections_selection_actif: 'true',
+  collections_selection_ids: '', // jusqu'à 3 ids de Collection séparés par des virgules
+  carrousel_selection_actif: 'false', // ancien réglage conservé pour compatibilité
   carrousel_bestseller_actif: 'false',
   carrousel_nouvelle_collection_actif: 'false',
   carrousel_nouvelle_collection_id: '', // id de la Collection à afficher dans ce carrousel
@@ -20,7 +22,7 @@ export const DEFAUTS_CONFIG: Record<string, string> = {
   boite_cadeau_actif: 'false',
   boite_cadeau_produit_id: '', // id du Produit (catégorie "Coffret cadeau" typiquement) utilisé comme boîte cadeau
   popup_panier_ouverture_actif: 'true', // ouvre la popup panier automatiquement après un ajout au panier
-  // ── Popup panier ──
+  // Popup panier
   popup_panier_seuil_livraison: '60',
   popup_panier_seuil_livraison_actif: 'true',
   popup_panier_seuil_surprise: '100',
