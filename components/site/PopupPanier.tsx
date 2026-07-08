@@ -287,9 +287,20 @@ export default function PopupPanier({ ouverte, onFermer }: PopupPanierProps) {
                   <span className="popup-panier__progress-cible" />
                 </div>
                 <div className="popup-panier__progress-labels">
-                  <span>{formaterPrix(cfg.seuilLivraison)}<br /><small>Livraison offerte</small></span>
+                  <span
+                    className="popup-panier__progress-label popup-panier__progress-label--livraison"
+                    style={
+                      cfg.surpriseActif
+                        ? { left: `${Math.min(Math.max((cfg.seuilLivraison / seuilMax) * 100, 8), 92)}%` }
+                        : { left: '0%', transform: 'none' }
+                    }
+                  >
+                    {formaterPrix(cfg.seuilLivraison)}<br /><small>Livraison offerte</small>
+                  </span>
                   {cfg.surpriseActif && (
-                    <span style={{ textAlign: 'right' }}>{formaterPrix(cfg.seuilSurprise)}<br /><small>Bijou surprise offert</small></span>
+                    <span className="popup-panier__progress-label popup-panier__progress-label--surprise" style={{ left: '100%' }}>
+                      {formaterPrix(cfg.seuilSurprise)}<br /><small>Bijou surprise offert</small>
+                    </span>
                   )}
                 </div>
               </div>

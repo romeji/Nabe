@@ -9,7 +9,7 @@ export const revalidate = 0;
 
 export async function GET() {
   const [categories, collections, config] = await Promise.all([
-    prisma.categorie.findMany({ orderBy: { ordre: 'asc' }, select: { id: true, nom: true, slug: true } }),
+    prisma.categorie.findMany({ orderBy: { ordre: 'asc' }, select: { id: true, nom: true, slug: true, logoAccueil: true, image: true } }),
     prisma.collection.findMany({
       where: { actif: true },
       orderBy: { ordre: 'asc' },

@@ -104,6 +104,11 @@
   color: var(--nabe-terracotta);
 }
 
+.panneau-nav__icone--logo {
+  object-fit: contain;
+  border-radius: 4px;
+}
+
 .panneau-nav__icone::before,
 .panneau-nav__icone::after {
   content: '';
@@ -232,9 +237,16 @@
 }
 
 .panneau-nav__sociaux a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   color: var(--nabe-argile);
-  font-size: 0.82rem;
-  font-weight: 700;
+  transition: color 0.25s ease, transform 0.25s ease;
+}
+
+.panneau-nav__sociaux a:hover {
+  color: var(--nabe-terracotta);
+  transform: translateY(-1px);
 }
 
 .panneau-nav__compte {

@@ -244,16 +244,29 @@
   display: block;
 }
 .popup-panier__progress-labels {
-  display: flex;
-  justify-content: space-between;
+  position: relative;
+  height: 2.1rem;
   font-size: 0.68rem;
   color: #aaa;
   margin-top: 0.25rem;
 }
-.popup-panier__progress-labels span {
+.popup-panier__progress-label {
+  position: absolute;
+  top: 0;
   display: flex;
   flex-direction: column;
   gap: 0.1rem;
+  white-space: nowrap;
+}
+/* Positionnée proportionnellement à sa valeur / à l'objectif final (via `left` en %),
+   centrée sur ce point grâce au transform. */
+.popup-panier__progress-label--livraison {
+  transform: translateX(-50%);
+  text-align: center;
+}
+.popup-panier__progress-label--surprise {
+  transform: translateX(-100%);
+  text-align: right;
 }
 .popup-panier__progress-labels small {
   font-size: 0.65rem;

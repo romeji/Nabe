@@ -680,9 +680,19 @@
 
 @media (max-width: 480px) {
   .produit-galerie {
-    flex-direction: column-reverse;
+    flex-direction: column;
+  }
+  /* Image principale toujours en haut, vignettes toujours en dessous,
+     quelle que soit la position choisie dans l'admin (gauche/bas) : sur
+     mobile il n'y a qu'une seule colonne possible, donc on force un ordre
+     explicite au lieu de dépendre de column-reverse (qui, combiné à
+     l'"order" défini par .produit-galerie--bas, inversait le résultat et
+     affichait les vignettes AU-DESSUS de la photo au lieu d'en dessous). */
+  .produit-galerie__principale {
+    order: 1;
   }
   .produit-galerie__vignettes {
+    order: 2;
     flex-direction: row;
   }
 }

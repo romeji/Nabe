@@ -6,6 +6,7 @@ import Link from 'next/link';
 import './panneau-navigation.css';
 
 type ItemSimple = { id: string; nom: string; slug: string };
+type CategorieItem = ItemSimple & { logoAccueil?: string | null; image?: string | null };
 
 type MenuConfig = {
   categoriesActif: boolean;
@@ -23,7 +24,7 @@ export default function PanneauNavigation({
   ouvert: boolean;
   onFermer: () => void;
 }) {
-  const [categories, setCategories] = useState<ItemSimple[]>([]);
+  const [categories, setCategories] = useState<CategorieItem[]>([]);
   const [collections, setCollections] = useState<ItemSimple[]>([]);
   const [journalActif, setJournalActif] = useState(false);
   const [menu, setMenu] = useState<MenuConfig>({
@@ -87,12 +88,19 @@ export default function PanneauNavigation({
           {menu.categoriesActif && (
             <section className="panneau-nav__section">
               <h3>Collections</h3>
-              {categories.map((c, index) => (
-                <Link key={c.id} href={`/collections?categorie=${c.slug}`} className="panneau-nav__lien panneau-nav__lien--icone" onClick={onFermer}>
-                  <span className={`panneau-nav__icone panneau-nav__icone--${iconesCategories[index] || 'bijou'}`} aria-hidden="true" />
-                  <span>{c.nom}</span>
-                </Link>
-              ))}
+              {categories.map((c, index) => {
+                const logo = c.logoAccueil || c.image;
+                return (
+                  <Link key={c.id} href={`/collections?categorie=${c.slug}`} className="panneau-nav__lien panneau-nav__lien--icone" onClick={onFermer}>
+                    {logo ? (
+                      <img src={logo} alt="" className="panneau-nav__icone panneau-nav__icone--logo" aria-hidden="true" />
+                    ) : (
+                      <span className={`panneau-nav__icone panneau-nav__icone--${iconesCategories[index] || 'bijou'}`} aria-hidden="true" />
+                    )}
+                    <span>{c.nom}</span>
+                  </Link>
+                );
+              })}
             </section>
           )}
 
@@ -134,8 +142,18 @@ export default function PanneauNavigation({
 
           <div className="panneau-nav__pied">
             <div className="panneau-nav__sociaux" aria-label="R&eacute;seaux sociaux">
-              <a href="https://www.instagram.com/" target="_blank" rel="noreferrer" aria-label="Instagram">IG</a>
-              <a href="https://www.pinterest.com/" target="_blank" rel="noreferrer" aria-label="Pinterest">P</a>
+              <a href="https://www.instagram.com/nabe.bijoux/" target="_blank" rel="noreferrer noopener" aria-label="Instagram">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
+                  <rect x="3" y="3" width="18" height="18" rx="5" />
+                  <circle cx="12" cy="12" r="4.2" />
+                  <circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none" />
+                </svg>
+              </a>
+              <a href="https://www.tiktok.com/@nabe.bijoux" target="_blank" rel="noreferrer noopener" aria-label="TikTok">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+                  <path d="M16.6 3c.3 2 1.6 3.6 3.6 3.9v2.7c-1.3.1-2.6-.3-3.6-1v6.4a5.4 5.4 0 1 1-5.4-5.4c.3 0 .5 0 .8.1v2.8a2.6 2.6 0 1 0 2 2.5V3h2.6z" />
+                </svg>
+              </a>
             </div>
             <Link href="/mon-compte" className="panneau-nav__compte" onClick={onFermer}>
               <span>Mon compte</span>
