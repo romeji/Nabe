@@ -8,7 +8,21 @@
   flex: 1;
   padding: var(--espace-lg) var(--espace-xl);
   max-width: 100%;
+  min-width: 0;
+}
+
+/* Enveloppe dédiée aux tableaux larges : seul le tableau défile
+   horizontalement sur mobile, le titre de page et les boutons au-dessus
+   restent visibles sans avoir à scroller sur le côté pour les retrouver. */
+.admin-table-scroll {
+  width: 100%;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--rayon-bordure);
+}
+
+.admin-table-scroll .admin-table {
+  min-width: 640px;
 }
 
 .admin-entete {
@@ -202,8 +216,33 @@
   }
   .admin-layout__contenu {
     padding: var(--espace-md);
+    flex: 1 1 auto;
   }
   .admin-form__ligne {
     grid-template-columns: 1fr;
+  }
+  .admin-entete h1 {
+    font-size: 1.4rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-stat-grille {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem;
+  }
+  .admin-stat {
+    padding: var(--espace-sm);
+  }
+  .admin-stat__valeur {
+    font-size: 1.4rem;
+  }
+  .admin-entete {
+    align-items: stretch;
+  }
+  .admin-entete > a.btn,
+  .admin-entete > button.btn {
+    width: 100%;
+    text-align: center;
   }
 }

@@ -51,7 +51,7 @@ export default function PierresEtCouleursClient({
       {onglet === 'pierres' ? (
         <>
           <div className="admin-categories__grille">
-            <table className="admin-table">
+            <div className="admin-table-scroll"><table className="admin-table">
               <thead>
                 <tr>
                   <th>Nom</th>
@@ -66,7 +66,7 @@ export default function PierresEtCouleursClient({
                   <LignePierre key={p.id} pierre={p} couleurs={couleurs} />
                 ))}
               </tbody>
-            </table>
+            </table></div>
 
             <FormulairePierre couleurs={couleurs} />
           </div>
@@ -80,7 +80,7 @@ export default function PierresEtCouleursClient({
       ) : (
         <>
           <div className="admin-categories__grille">
-            <table className="admin-table">
+            <div className="admin-table-scroll"><table className="admin-table">
               <thead>
                 <tr>
                   <th></th>
@@ -94,7 +94,7 @@ export default function PierresEtCouleursClient({
                   <LigneCouleurPierre key={c.id} couleur={c as any} />
                 ))}
               </tbody>
-            </table>
+            </table></div>
 
             <FormulaireCouleurPierre />
           </div>

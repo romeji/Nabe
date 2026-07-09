@@ -263,7 +263,6 @@
   position: relative;
   width: 1rem;
   height: 1rem;
-  transform: scale(1.25);
 }
 
 .panneau-nav__compte-icone::before,

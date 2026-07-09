@@ -22,7 +22,7 @@ export default async function PageAdminMatieres() {
       </div>
 
       <div className="admin-categories__grille">
-        <table className="admin-table">
+        <div className="admin-table-scroll"><table className="admin-table">
           <thead>
             <tr>
               <th>Nom</th>
@@ -36,7 +36,7 @@ export default async function PageAdminMatieres() {
               <LigneMatiere key={m.id} matiere={m} />
             ))}
           </tbody>
-        </table>
+        </table></div>
 
         <FormulaireMatiereClient />
       </div>

@@ -21,7 +21,7 @@ export default async function PageAdminCommandes() {
         <h1>Ventes ({commandes.length})</h1>
       </div>
 
-      <table className="admin-table">
+      <div className="admin-table-scroll"><table className="admin-table">
         <thead>
           <tr>
             <th>Numéro</th>
@@ -50,7 +50,7 @@ export default async function PageAdminCommandes() {
             </tr>
           ))}
         </tbody>
-      </table>
+      </table></div>
 
       {commandes.length === 0 && (
         <p className="admin-commandes__vide">Aucune vente pour le moment.</p>

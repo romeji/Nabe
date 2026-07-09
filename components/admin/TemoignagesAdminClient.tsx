@@ -93,7 +93,7 @@ export default function TemoignagesAdminClient({ temoignages }: { temoignages: T
 
   return (
     <div className="admin-categories__grille">
-      <table className="admin-table">
+      <div className="admin-table-scroll"><table className="admin-table">
         <thead>
           <tr>
             <th>Auteur</th>
@@ -169,7 +169,7 @@ export default function TemoignagesAdminClient({ temoignages }: { temoignages: T
             </tr>
           ))}
         </tbody>
-      </table>
+      </table></div>
 
       <div className="admin-carte">
         <h2>Ajouter un témoignage</h2>

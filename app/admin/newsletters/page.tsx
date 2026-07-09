@@ -37,7 +37,7 @@ export default async function PageAdminNewsletters() {
           première campagne.
         </p>
       ) : (
-        <table className="admin-table">
+        <div className="admin-table-scroll"><table className="admin-table">
           <thead>
             <tr>
               <th>Sujet</th>
@@ -70,7 +70,7 @@ export default async function PageAdminNewsletters() {
               </tr>
             ))}
           </tbody>
-        </table>
+        </table></div>
       )}
     </div>
   );

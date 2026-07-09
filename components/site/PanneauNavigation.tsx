@@ -143,14 +143,14 @@ export default function PanneauNavigation({
           <div className="panneau-nav__pied">
             <div className="panneau-nav__sociaux" aria-label="R&eacute;seaux sociaux">
               <a href="https://www.instagram.com/nabe.bijoux/" target="_blank" rel="noreferrer noopener" aria-label="Instagram">
-                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
                   <rect x="3" y="3" width="18" height="18" rx="5" />
                   <circle cx="12" cy="12" r="4.2" />
                   <circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none" />
                 </svg>
               </a>
               <a href="https://www.tiktok.com/@nabe.bijoux" target="_blank" rel="noreferrer noopener" aria-label="TikTok">
-                <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
                   <path d="M16.6 3c.3 2 1.6 3.6 3.6 3.9v2.7c-1.3.1-2.6-.3-3.6-1v6.4a5.4 5.4 0 1 1-5.4-5.4c.3 0 .5 0 .8.1v2.8a2.6 2.6 0 1 0 2 2.5V3h2.6z" />
                 </svg>
               </a>

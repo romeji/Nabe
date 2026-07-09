@@ -67,7 +67,7 @@ export default async function PageDashboardAdmin() {
           {commandesRecentes.length === 0 ? (
             <p className="admin-dashboard__vide">Aucune commande pour le moment.</p>
           ) : (
-            <table className="admin-table">
+            <div className="admin-table-scroll"><table className="admin-table">
               <thead>
                 <tr>
                   <th>Numéro</th>
@@ -86,7 +86,7 @@ export default async function PageDashboardAdmin() {
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </table></div>
           )}
           <Link href="/admin/commandes" className="admin-dashboard__lien">
             Voir toutes les ventes →

@@ -118,7 +118,7 @@ export default function GestionStockClient({
 
       <div className="admin-carte">
         <h2>Historique des mouvements</h2>
-        <table className="admin-table">
+        <div className="admin-table-scroll"><table className="admin-table">
           <thead>
             <tr>
               <th>Date</th>
@@ -141,7 +141,7 @@ export default function GestionStockClient({
               </tr>
             ))}
           </tbody>
-        </table>
+        </table></div>
         {mouvements.length === 0 && (
           <p style={{ color: 'var(--texte-secondaire)', fontStyle: 'italic', padding: '1rem 0' }}>
             Aucun mouvement enregistré.

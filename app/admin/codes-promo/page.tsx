@@ -38,7 +38,7 @@ export default async function PageAdminCodesPromo() {
 
       <div className="admin-codes-promo__grille">
         <div>
-          <table className="admin-table">
+          <div className="admin-table-scroll"><table className="admin-table">
             <thead>
               <tr>
                 <th>Code</th>
@@ -55,7 +55,7 @@ export default async function PageAdminCodesPromo() {
                 <LigneCodePromo key={c.id} code={c} />
               ))}
             </tbody>
-          </table>
+          </table></div>
 
           {codesAvecStats.length === 0 && (
             <p style={{ color: 'var(--texte-secondaire)', fontStyle: 'italic', marginTop: '1rem' }}>

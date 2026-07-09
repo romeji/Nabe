@@ -22,7 +22,7 @@ export default async function PageAdminCouleursPierre() {
       </div>
 
       <div className="admin-categories__grille">
-        <table className="admin-table">
+        <div className="admin-table-scroll"><table className="admin-table">
           <thead>
             <tr>
               <th></th>
@@ -36,7 +36,7 @@ export default async function PageAdminCouleursPierre() {
               <LigneCouleurPierre key={c.id} couleur={c} />
             ))}
           </tbody>
-        </table>
+        </table></div>
 
         <FormulaireCouleurPierre />
       </div>

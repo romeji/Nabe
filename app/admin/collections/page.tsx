@@ -22,7 +22,7 @@ export default async function PageAdminCollections() {
       </div>
 
       <div className="admin-categories__grille">
-        <table className="admin-table">
+        <div className="admin-table-scroll"><table className="admin-table">
           <thead>
             <tr>
               <th>Image</th>
@@ -38,7 +38,7 @@ export default async function PageAdminCollections() {
               <LigneCollection key={c.id} collection={c} />
             ))}
           </tbody>
-        </table>
+        </table></div>
 
         <FormulaireCollectionClient />
       </div>

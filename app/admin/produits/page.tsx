@@ -24,7 +24,7 @@ export default async function PageAdminProduits() {
         </Link>
       </div>
 
-      <table className="admin-table">
+      <div className="admin-table-scroll"><table className="admin-table">
         <thead>
           <tr>
             <th>Image</th>
@@ -77,7 +77,7 @@ export default async function PageAdminProduits() {
             </tr>
           ))}
         </tbody>
-      </table>
+      </table></div>
 
       {produits.length === 0 && (
         <p className="admin-produits__vide">Aucun bijou pour le moment. Ajoutez votre première création !</p>
