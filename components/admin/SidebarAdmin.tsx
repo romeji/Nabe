@@ -21,6 +21,7 @@ const LIENS = [
   { href: '/admin/contenu', label: 'Contenu du site', icone: '🖊️' },
   { href: '/admin/newsletters', label: 'Newsletters', icone: '📬' },
   { href: '/admin/codes-promo', label: 'Codes promo', icone: '🎁' },
+  { href: '/admin/temoignages', label: 'Témoignages', icone: '💬' },
   { href: '/admin/reglages', label: 'Réglages', icone: '⚙️' },
 ];
 

@@ -29,6 +29,7 @@ type ProduitFormData = {
   taillesDisponibles: string[];
   disponibilite: string;
   stock: number;
+  poidsGrammes: number;
   stockParTaille: Record<string, number>;
   actif: boolean;
   enAvant: boolean;
@@ -62,6 +63,7 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
     taillesDisponibles: produitInitial?.taillesDisponibles || [],
     disponibilite: produitInitial?.disponibilite || 'EN_STOCK',
     stock: produitInitial?.stock || 0,
+    poidsGrammes: produitInitial?.poidsGrammes || 50,
     stockParTaille: produitInitial?.stockParTaille || {},
     actif: produitInitial?.actif ?? true,
     enAvant: produitInitial?.enAvant ?? false,
@@ -458,6 +460,19 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
             </div>
           </div>
         )}
+
+        <div className="admin-form__ligne">
+          <div>
+            <label>Poids (grammes, emballé)</label>
+            <input
+              type="number"
+              min="1"
+              value={donnees.poidsGrammes}
+              onChange={(e) => majChamp('poidsGrammes', parseInt(e.target.value) || 1)}
+            />
+            <p className="formulaire-produit__aide">Utilisé pour calculer le tarif de livraison réel au checkout.</p>
+          </div>
+        </div>
 
         <div className="admin-form__ligne">
           <div>

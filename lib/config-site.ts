@@ -34,6 +34,25 @@ export const DEFAUTS_CONFIG: Record<string, string> = {
   menu_collections_actif: 'true',
   menu_pages_actif: 'true',
   menu_aide_actif: 'true',
+  temoignages_actif: 'true', // affiche ou non la section "Ils nous font confiance" sur l'accueil
+
+  // ── Livraison — tarifs calculés en temps réel à partir du poids réel du panier ──
+  // Colissimo n'expose pas d'API publique de tarification en temps réel aux marchands
+  // sans contrat Business/Pro : le calcul se fait donc ici à partir de votre grille
+  // tarifaire contractuelle (par tranche de poids), appliquée instantanément au poids
+  // réel du panier — c'est le fonctionnement standard utilisé par la quasi-totalité
+  // des sites e-commerce français pour "le tarif en temps réel".
+  livraison_colissimo_domicile_actif: 'true',
+  livraison_colissimo_domicile_grille: '500:4.95,1000:6.90,2000:8.50,5000:11.90,30000:16.90', // "poidsMaxGrammes:prixEuros" séparés par des virgules
+  livraison_mondial_relay_actif: 'true',
+  livraison_mondial_relay_grille: '500:3.65,1000:5.40,2000:6.90,5000:9.90,30000:13.90',
+  // Identifiants Mondial Relay (fournis par Mondial Relay à la signature du contrat pro),
+  // nécessaires pour la recherche réelle de points relais et le calcul officiel des frais.
+  mondial_relay_enseigne: '',
+  mondial_relay_cle_privee: '',
+  // Numéro de compte Colissimo Business (contrat Pro La Poste), pour une intégration
+  // API complète (étiquettes, tracking) ultérieure.
+  colissimo_numero_compte: '',
 };
 
 /** Récupère toutes les valeurs de config, fusionnées avec les défauts. */

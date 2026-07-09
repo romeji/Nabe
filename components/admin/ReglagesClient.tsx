@@ -203,6 +203,27 @@ export default function ReglagesClient({
       </div>
 
       <div className="admin-carte reglages-client__section">
+        <h2>Page d'accueil — Ils nous font confiance</h2>
+
+        <label className="reglages-client__toggle">
+          <input
+            type="checkbox"
+            checked={config.temoignages_actif === 'true'}
+            onChange={(e) => maj('temoignages_actif', e.target.checked ? 'true' : 'false')}
+          />
+          <div>
+            <strong>Afficher la section témoignages sur l'accueil</strong>
+            <p>Affiche jusqu'à 3 témoignages clients (les plus prioritaires selon leur ordre).</p>
+          </div>
+        </label>
+
+        <p className="formulaire-produit__aide">
+          Pour ajouter, modifier, réordonner ou masquer un témoignage précis, rendez-vous dans{' '}
+          <a href="/admin/temoignages">Admin &gt; Témoignages</a>.
+        </p>
+      </div>
+
+      <div className="admin-carte reglages-client__section">
         <h2>Navigation</h2>
 
         <label className="reglages-client__toggle">
@@ -518,10 +539,95 @@ export default function ReglagesClient({
         )}
       </div>
 
+      <div className="admin-carte reglages-client__section">
+        <h2>Livraison</h2>
+        <p className="formulaire-produit__aide">
+          Le tarif est calculé automatiquement au poids réel du panier (voir poids par bijou dans la fiche
+          produit) à partir des grilles ci-dessous. Format d'une grille : poids maximum en grammes suivi de
+          son prix, séparés par des virgules — ex. "500:4.95,1000:6.90" veut dire 4,95&nbsp;€ jusqu'à 500g,
+          puis 6,90&nbsp;€ jusqu'à 1kg.
+        </p>
+
+        <label className="reglages-client__toggle">
+          <input
+            type="checkbox"
+            checked={config.livraison_colissimo_domicile_actif === 'true'}
+            onChange={(e) => maj('livraison_colissimo_domicile_actif', e.target.checked ? 'true' : 'false')}
+          />
+          <div>
+            <strong>Livraison à domicile (Colissimo)</strong>
+            <p>Tarif calculé selon la grille ci-dessous.</p>
+          </div>
+        </label>
+        {config.livraison_colissimo_domicile_actif === 'true' && (
+          <div className="reglages-client__sous-champ">
+            <label>Grille tarifaire Colissimo domicile</label>
+            <input
+              type="text"
+              value={config.livraison_colissimo_domicile_grille}
+              onChange={(e) => maj('livraison_colissimo_domicile_grille', e.target.value)}
+              placeholder="500:4.95,1000:6.90,2000:8.50"
+            />
+          </div>
+        )}
+
+        <label className="reglages-client__toggle" style={{ marginTop: '1rem' }}>
+          <input
+            type="checkbox"
+            checked={config.livraison_mondial_relay_actif === 'true'}
+            onChange={(e) => maj('livraison_mondial_relay_actif', e.target.checked ? 'true' : 'false')}
+          />
+          <div>
+            <strong>Point relais (Mondial Relay)</strong>
+            <p>Tarif calculé selon la grille ci-dessous, et sélection d'un point relais réel au checkout.</p>
+          </div>
+        </label>
+        {config.livraison_mondial_relay_actif === 'true' && (
+          <div className="reglages-client__sous-champ">
+            <label>Grille tarifaire Mondial Relay</label>
+            <input
+              type="text"
+              value={config.livraison_mondial_relay_grille}
+              onChange={(e) => maj('livraison_mondial_relay_grille', e.target.value)}
+              placeholder="500:3.65,1000:5.40,2000:6.90"
+            />
+            <label>Enseigne Mondial Relay</label>
+            <input
+              type="text"
+              value={config.mondial_relay_enseigne}
+              onChange={(e) => maj('mondial_relay_enseigne', e.target.value)}
+              placeholder="Fourni par Mondial Relay (8 caractères)"
+            />
+            <label>Clé privée Mondial Relay</label>
+            <input
+              type="password"
+              value={config.mondial_relay_cle_privee}
+              onChange={(e) => maj('mondial_relay_cle_privee', e.target.value)}
+              placeholder="Fournie par Mondial Relay"
+            />
+            <p className="formulaire-produit__aide">
+              Ces identifiants sont fournis par Mondial Relay à la signature de votre contrat professionnel.
+              Sans eux, la recherche de points relais réels ne fonctionnera pas.
+            </p>
+          </div>
+        )}
+
+        <div className="reglages-client__sous-champ" style={{ marginTop: '1rem' }}>
+          <label>Numéro de compte Colissimo Business (optionnel, pour une intégration API complète)</label>
+          <input
+            type="text"
+            value={config.colissimo_numero_compte}
+            onChange={(e) => maj('colissimo_numero_compte', e.target.value)}
+            placeholder="Fourni par La Poste Entreprises"
+          />
+        </div>
+      </div>
+
       <div className="reglages-client__actions">
         <button className="btn btn-primaire" onClick={sauvegarder} disabled={enregistrement}>
           {enregistrement ? 'Enregistrement...' : succes ? '✓ Réglages enregistrés' : 'Enregistrer les réglages'}
         </button>
+
       </div>
     </div>
   );

@@ -225,6 +225,7 @@ model Produit {
   tailleSurMesure  Boolean       @default(false)
   taillesDisponibles String[]    @default([]) // ex: ["48","50","52"]
   disponibilite   Disponibilite  @default(EN_STOCK)
+  poidsGrammes    Int            @default(50) // poids réel du bijou emballé, utilisé pour calculer le tarif de livraison
   stock           Int            @default(0) // stock global (somme des stockTailles si tailles définies, sinon valeur libre)
   stockTailles    StockTaille[]  // stock détaillé par taille (utilisé seulement si taillesDisponibles est rempli)
   images          ProduitImage[]
@@ -370,6 +371,10 @@ model Commande {
   montantReduction      Decimal         @db.Decimal(10, 2) @default(0)
   sousTotal             Decimal         @db.Decimal(10, 2)
   fraisLivraison         Decimal        @db.Decimal(10, 2) @default(0)
+  modeLivraison         String?         // 'colissimo_domicile' | 'mondial_relay'
+  pointRelaisNumero     String?
+  pointRelaisNom        String?
+  pointRelaisAdresse    String?
   total                 Decimal         @db.Decimal(10, 2)
   stripeSessionId       String?         @unique
   stripePaymentIntentId String?         @unique

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import { prisma } from '@/lib/prisma';
 import { genererNumeroCommande } from '@/lib/utils';
+import { resend, EMAIL_EXPEDITEUR, genererHtmlConfirmationCommande } from '@/lib/resend';
 import Stripe from 'stripe';
 
 type ArticleMeta = { id: string; q: number; taille: string; pu?: number };
@@ -48,6 +49,46 @@ async function decrementerStockEtJournaliser(articlesMeta: ArticleMeta[], numero
   }
 
   return produitsDb;
+}
+
+/**
+ * Envoie l'e-mail de confirmation de commande au client. Ne bloque jamais la
+ * création de la commande : une erreur d'envoi est journalisée mais ignorée.
+ */
+async function envoyerEmailConfirmation(commandeId: string) {
+  try {
+    const commande = await prisma.commande.findUnique({
+      where: { id: commandeId },
+      include: { lignes: true },
+    });
+    if (!commande || !commande.clientEmail) return;
+
+    const prenom = commande.clientNom.split(' ')[0] || 'vous';
+    await resend.emails.send({
+      from: EMAIL_EXPEDITEUR,
+      to: commande.clientEmail,
+      subject: `Commande ${commande.numero} confirmée — Nabe`,
+      html: genererHtmlConfirmationCommande({
+        prenom,
+        numero: commande.numero,
+        lignes: commande.lignes.map((l) => ({
+          nomProduit: l.nomProduit,
+          taille: l.taille,
+          quantite: l.quantite,
+          prixUnitaire: Number(l.prixUnitaire),
+        })),
+        sousTotal: Number(commande.sousTotal),
+        montantReduction: Number(commande.montantReduction),
+        fraisLivraison: Number(commande.fraisLivraison),
+        total: Number(commande.total),
+        adresseLivraison: commande.adresseLivraison || undefined,
+        ville: commande.ville || undefined,
+        codePostal: commande.codePostal || undefined,
+      }),
+    });
+  } catch (err) {
+    console.error('Erreur envoi email de confirmation de commande (commande conservée) :', err);
+  }
 }
 
 export async function POST(req: NextRequest) {
@@ -112,6 +153,10 @@ export async function POST(req: NextRequest) {
           montantReduction,
           sousTotal,
           fraisLivraison,
+          modeLivraison: meta.modeLivraison || undefined,
+          pointRelaisNumero: meta.pointRelaisNumero || undefined,
+          pointRelaisNom: meta.pointRelaisNom || undefined,
+          pointRelaisAdresse: meta.pointRelaisAdresse || undefined,
           total,
           stripePaymentIntentId: intent.id,
           lignes: {
@@ -130,6 +175,7 @@ export async function POST(req: NextRequest) {
       });
 
       await decrementerStockEtJournaliser(articlesMeta, commande.numero);
+      await envoyerEmailConfirmation(commande.id);
     }
 
     // ── Ancien flow (Stripe Checkout Session hébergée) — conservé par sécurité
@@ -191,6 +237,7 @@ export async function POST(req: NextRequest) {
       });
 
       await decrementerStockEtJournaliser(articlesMeta, commande.numero);
+      await envoyerEmailConfirmation(commande.id);
     }
   } catch (error) {
     console.error('Erreur traitement webhook:', error);

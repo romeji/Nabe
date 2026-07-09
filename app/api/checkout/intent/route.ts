@@ -3,6 +3,8 @@ import { getServerSession } from 'next-auth';
 import { authClientOptions } from '@/lib/auth-client';
 import { stripe } from '@/lib/stripe';
 import { prisma } from '@/lib/prisma';
+import { getConfigSite } from '@/lib/config-site';
+import { calculerModesLivraison, calculerPoidsPanier } from '@/lib/livraison';
 
 type ArticlePanier = {
   produitId: string;
@@ -12,6 +14,8 @@ type ArticlePanier = {
   taille?: string;
   quantite: number;
 };
+
+type PointRelaisChoisi = { numero: string; nom: string; adresse: string; codePostal: string; ville: string };
 
 type AdresseCheckout = {
   email: string;
@@ -23,11 +27,6 @@ type AdresseCheckout = {
   codePostal: string;
   pays: string;
   telephone?: string;
-};
-
-const MODES_LIVRAISON: Record<string, { label: string; prix: number }> = {
-  standard: { label: 'Livraison à domicile avec suivi', prix: 0 },
-  express: { label: 'Livraison rapide', prix: 9.9 },
 };
 
 function normaliserPaysStripe(pays?: string) {
@@ -43,11 +42,13 @@ export async function POST(req: NextRequest) {
       codeReduction,
       adresse,
       modeLivraison,
+      pointRelais,
     }: {
       articles: ArticlePanier[];
       codeReduction?: string;
       adresse: AdresseCheckout;
       modeLivraison?: { id: string };
+      pointRelais?: PointRelaisChoisi;
     } = await req.json();
 
     if (!process.env.STRIPE_SECRET_KEY) {
@@ -61,9 +62,6 @@ export async function POST(req: NextRequest) {
     if (!adresse?.email || !adresse?.prenom || !adresse?.nom || !adresse?.adresse || !adresse?.ville || !adresse?.codePostal) {
       return NextResponse.json({ error: 'Merci de compléter toutes les informations de livraison.' }, { status: 400 });
     }
-
-    const modeChoisi = MODES_LIVRAISON[modeLivraison?.id || 'standard'] || MODES_LIVRAISON.standard;
-    const fraisLivraison = modeChoisi.prix;
 
     const session = await getServerSession(authClientOptions);
     const clientId = (session?.user as any)?.id as string | undefined;
@@ -127,6 +125,26 @@ export async function POST(req: NextRequest) {
         image: article.image,
       });
     }
+
+    // Calcul du tarif de livraison réel, à partir du poids effectif des produits du panier
+    // et de la grille tarifaire configurée dans l'admin (jamais du prix envoyé par le client).
+    const poidsTotal = calculerPoidsPanier(
+      lignesValidees.map((l) => {
+        const produitDb = produitsDb.find((p) => p.id === l.produitId)!;
+        return { poidsGrammes: produitDb.poidsGrammes, quantite: l.quantite };
+      })
+    );
+    const configSite = await getConfigSite();
+    const modesDisponibles = calculerModesLivraison(poidsTotal, configSite);
+    const modeChoisi = modesDisponibles.find((m) => m.id === modeLivraison?.id) || modesDisponibles[0];
+
+    if (!modeChoisi) {
+      return NextResponse.json({ error: 'Aucun mode de livraison disponible.' }, { status: 400 });
+    }
+    if (modeChoisi.necessitePointRelais && !pointRelais?.numero) {
+      return NextResponse.json({ error: 'Merci de sélectionner un point relais.' }, { status: 400 });
+    }
+    const fraisLivraison = modeChoisi.prix;
 
     let codeReductionId: string | undefined;
     let montantReduction = 0;
@@ -205,6 +223,10 @@ export async function POST(req: NextRequest) {
         montantReduction: montantReduction.toFixed(2),
         fraisLivraison: fraisLivraison.toFixed(2),
         modeLivraisonLabel: modeChoisi.label,
+        modeLivraison: modeChoisi.id,
+        pointRelaisNumero: pointRelais?.numero || '',
+        pointRelaisNom: pointRelais?.nom || '',
+        pointRelaisAdresse: pointRelais ? `${pointRelais.adresse}, ${pointRelais.codePostal} ${pointRelais.ville}` : '',
       },
     });
 

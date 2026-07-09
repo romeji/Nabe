@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
+import { resend, EMAIL_EXPEDITEUR, genererHtmlBienvenueCompte } from '@/lib/resend';
 
 const schema = z.object({
   nom: z.string().min(1),
@@ -31,6 +32,17 @@ export async function POST(req: NextRequest) {
         password: motDePasseHash,
       },
     });
+
+    try {
+      await resend.emails.send({
+        from: EMAIL_EXPEDITEUR,
+        to: client.email,
+        subject: 'Bienvenue chez Nabe',
+        html: genererHtmlBienvenueCompte(client.nom?.split(' ')[0] || 'vous'),
+      });
+    } catch (err) {
+      console.error('Erreur envoi email de bienvenue (compte créé quand même) :', err);
+    }
 
     return NextResponse.json({ id: client.id, email: client.email }, { status: 201 });
   } catch (error: any) {

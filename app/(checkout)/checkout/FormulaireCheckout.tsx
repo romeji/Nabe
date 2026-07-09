@@ -39,12 +39,16 @@ type AdresseEnregistree = {
   parDefaut: boolean;
 };
 
-type ModeLivraison = { id: string; label: string; prix: number; delai: string };
+type ModeLivraison = { id: string; label: string; prix: number; delai: string; necessitePointRelais?: boolean };
 
-const MODES_LIVRAISON: ModeLivraison[] = [
-  { id: 'standard', label: 'Livraison à domicile avec suivi', prix: 0, delai: '3 à 5 jours ouvrés' },
-  { id: 'express', label: 'Livraison rapide', prix: 9.9, delai: '24 à 48h ouvrées' },
-];
+type PointRelais = {
+  numero: string;
+  nom: string;
+  adresse: string;
+  codePostal: string;
+  ville: string;
+  distanceMetres: number | null;
+};
 
 const ADRESSE_VIDE: Adresse = {
   email: '',
@@ -110,7 +114,13 @@ export default function FormulaireCheckout() {
   const [codePromo, setCodePromo] = useState('');
   const [erreurCode, setErreurCode] = useState('');
   const [validationCode, setValidationCode] = useState(false);
-  const [modeLivraisonId, setModeLivraisonId] = useState('standard');
+  const [modeLivraisonId, setModeLivraisonId] = useState('');
+  const [modesLivraison, setModesLivraison] = useState<ModeLivraison[]>([]);
+  const [chargementModes, setChargementModes] = useState(false);
+  const [pointsRelais, setPointsRelais] = useState<PointRelais[]>([]);
+  const [pointRelaisChoisi, setPointRelaisChoisi] = useState<PointRelais | null>(null);
+  const [rechercheRelaisEnCours, setRechercheRelaisEnCours] = useState(false);
+  const [erreurRelais, setErreurRelais] = useState('');
   const [adressesEnregistrees, setAdressesEnregistrees] = useState<AdresseEnregistree[]>([]);
   const [adresseSelectionneeId, setAdresseSelectionneeId] = useState<string>('nouvelle');
   const [etape, setEtape] = useState<'adresse' | 'paiement'>('adresse');
@@ -119,6 +129,51 @@ export default function FormulaireCheckout() {
   const [erreurIntent, setErreurIntent] = useState('');
 
   useEffect(() => setMonte(true), []);
+
+  useEffect(() => {
+    if (articles.length === 0) return;
+    setChargementModes(true);
+    fetch('/api/livraison/tarifs', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ articles: articles.map((a) => ({ id: a.produitId, quantite: a.quantite })) }),
+    })
+      .then((r) => (r.ok ? r.json() : { modes: [] }))
+      .then((data: { modes: ModeLivraison[] }) => {
+        setModesLivraison(data.modes || []);
+        if (data.modes?.length > 0) setModeLivraisonId((actuel) => actuel || data.modes[0].id);
+      })
+      .catch(() => setModesLivraison([]))
+      .finally(() => setChargementModes(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [articles.map((a) => `${a.produitId}:${a.quantite}`).join(',')]);
+
+  async function rechercherPointsRelais() {
+    if (!adresse.codePostal) {
+      setErreurRelais('Merci de renseigner votre code postal.');
+      return;
+    }
+    setRechercheRelaisEnCours(true);
+    setErreurRelais('');
+    setPointsRelais([]);
+    try {
+      const res = await fetch('/api/livraison/points-relais', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ codePostal: adresse.codePostal, ville: adresse.ville, pays: adresse.pays }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Erreur de recherche');
+      setPointsRelais(data.points || []);
+      if ((data.points || []).length === 0) {
+        setErreurRelais('Aucun point relais trouvé autour de ce code postal.');
+      }
+    } catch (e: any) {
+      setErreurRelais(e.message || 'Impossible de rechercher les points relais pour le moment.');
+    } finally {
+      setRechercheRelaisEnCours(false);
+    }
+  }
 
   useEffect(() => {
     if (session?.user?.email && !adresse.email) {
@@ -168,10 +223,10 @@ export default function FormulaireCheckout() {
     if (trouvee) appliquerAdresseEnregistree(trouvee);
   }
 
-  const modeLivraison = MODES_LIVRAISON.find((m) => m.id === modeLivraisonId) || MODES_LIVRAISON[0];
+  const modeLivraison = modesLivraison.find((m) => m.id === modeLivraisonId) || modesLivraison[0];
   const sousTotal = articles.reduce((s, a) => s + a.prix * a.quantite, 0);
   const reduction = codeApplique?.reduction || 0;
-  const fraisLivraison = modeLivraison.prix;
+  const fraisLivraison = modeLivraison?.prix || 0;
   const total = Math.max(0, sousTotal - reduction + fraisLivraison);
 
   function majAdresse(champ: keyof Adresse, valeur: string) {
@@ -207,7 +262,10 @@ export default function FormulaireCheckout() {
   }
 
   function champsAdresseValides() {
-    return Boolean(adresse.email && adresse.prenom && adresse.nom && adresse.adresse && adresse.ville && adresse.codePostal);
+    const adresseOk = Boolean(adresse.email && adresse.prenom && adresse.nom && adresse.adresse && adresse.ville && adresse.codePostal);
+    if (!adresseOk || !modeLivraison) return false;
+    if (modeLivraison.necessitePointRelais && !pointRelaisChoisi) return false;
+    return true;
   }
 
   async function continuerVersPaiement(e: React.FormEvent) {
@@ -225,7 +283,16 @@ export default function FormulaireCheckout() {
           articles,
           codeReduction: codeApplique?.code,
           adresse,
-          modeLivraison: { id: modeLivraison.id },
+          modeLivraison: { id: modeLivraison?.id },
+          pointRelais: pointRelaisChoisi
+            ? {
+                numero: pointRelaisChoisi.numero,
+                nom: pointRelaisChoisi.nom,
+                adresse: pointRelaisChoisi.adresse,
+                codePostal: pointRelaisChoisi.codePostal,
+                ville: pointRelaisChoisi.ville,
+              }
+            : undefined,
         }),
       });
       const data = await res.json();
@@ -345,14 +412,21 @@ export default function FormulaireCheckout() {
 
               <div className="checkout__etape checkout__mode-expedition">
                 <h2>Étape 3/3 : mode d’expédition</h2>
-                {MODES_LIVRAISON.map((mode) => (
+                {chargementModes && <p className="checkout__aide">Calcul des frais de livraison...</p>}
+                {!chargementModes && modesLivraison.length === 0 && (
+                  <p className="checkout__erreur">Aucun mode de livraison disponible pour le moment.</p>
+                )}
+                {modesLivraison.map((mode) => (
                   <label key={mode.id} className={`checkout__option-expedition${modeLivraisonId === mode.id ? ' checkout__option-expedition--actif' : ''}`}>
                     <span className="checkout__option-expedition-choix">
                       <input
                         type="radio"
                         name="mode-livraison"
                         checked={modeLivraisonId === mode.id}
-                        onChange={() => setModeLivraisonId(mode.id)}
+                        onChange={() => {
+                          setModeLivraisonId(mode.id);
+                          setPointRelaisChoisi(null);
+                        }}
                       />
                       <span>
                         {mode.label}
@@ -362,6 +436,42 @@ export default function FormulaireCheckout() {
                     <strong>{mode.prix === 0 ? 'Offerte' : formaterPrix(mode.prix)}</strong>
                   </label>
                 ))}
+
+                {modeLivraison?.necessitePointRelais && (
+                  <div className="checkout__points-relais">
+                    {pointRelaisChoisi ? (
+                      <div className="checkout__relais-choisi">
+                        <div>
+                          <strong>{pointRelaisChoisi.nom}</strong>
+                          <p>{pointRelaisChoisi.adresse}, {pointRelaisChoisi.codePostal} {pointRelaisChoisi.ville}</p>
+                        </div>
+                        <button type="button" className="checkout__lien-retour" onClick={() => setPointRelaisChoisi(null)}>
+                          Changer
+                        </button>
+                      </div>
+                    ) : (
+                      <>
+                        <button type="button" className="btn" onClick={rechercherPointsRelais} disabled={rechercheRelaisEnCours}>
+                          {rechercheRelaisEnCours ? 'Recherche...' : 'Choisir un point relais près de chez moi'}
+                        </button>
+                        {erreurRelais && <p className="checkout__erreur">{erreurRelais}</p>}
+                        {pointsRelais.length > 0 && (
+                          <ul className="checkout__liste-relais">
+                            {pointsRelais.map((p) => (
+                              <li key={p.numero}>
+                                <button type="button" onClick={() => setPointRelaisChoisi(p)}>
+                                  <strong>{p.nom}</strong>
+                                  <span>{p.adresse}, {p.codePostal} {p.ville}</span>
+                                  {p.distanceMetres != null && <small>{Math.round(p.distanceMetres / 100) / 10} km</small>}
+                                </button>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </>
+                    )}
+                  </div>
+                )}
               </div>
 
               {erreurIntent && <p className="checkout__erreur">{erreurIntent}</p>}

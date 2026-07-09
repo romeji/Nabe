@@ -45,3 +45,113 @@ export function genererHtmlNewsletter(sujet: string, contenuHtml: string): strin
     </body>
   </html>`;
 }
+
+/** Email envoyé après la création d'un compte client (distinct de l'email code promo du popup d'accueil). */
+export function genererHtmlBienvenueCompte(prenom: string): string {
+  return enveloppeEmail(
+    `Bienvenue chez Nabe, ${prenom} !`,
+    `
+    <p>Votre compte a bien été créé. Vous pouvez désormais suivre vos commandes, gérer vos favoris et vos informations depuis votre espace client.</p>
+    <p>À très vite,<br/>L'équipe Nabe</p>`
+  );
+}
+
+type LigneEmail = { nomProduit: string; taille?: string | null; quantite: number; prixUnitaire: number };
+
+function enveloppeEmail(titre: string, corpsHtml: string): string {
+  return `
+  <!DOCTYPE html>
+  <html lang="fr">
+    <body style="margin:0; padding:0; background-color:#f7f1e8; font-family: Georgia, serif;">
+      <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f7f1e8; padding: 32px 0;">
+        <tr><td align="center">
+          <table width="560" cellpadding="0" cellspacing="0" style="background-color:#ffffff; border-radius:6px; overflow:hidden;">
+            <tr><td style="background-color:#8b4a32; padding: 28px; text-align:center;">
+              <span style="font-family: Georgia, serif; font-size: 32px; color:#f7f1e8;">Nabe</span>
+            </td></tr>
+            <tr><td style="padding: 32px; color:#5c4632; line-height:1.6;">
+              <h1 style="font-size: 20px; color:#3d2e1f; margin: 0 0 20px;">${titre}</h1>
+              ${corpsHtml}
+            </td></tr>
+            <tr><td style="padding: 20px 32px; background-color:#ede3d3; text-align:center; font-size: 12px; color:#7a6a55;">
+              L'équipe Nabe — L'éclat de chaque histoire.
+            </td></tr>
+          </table>
+        </td></tr>
+      </table>
+    </body>
+  </html>`;
+}
+
+function tableauLignes(lignes: LigneEmail[]): string {
+  return `
+    <table width="100%" cellpadding="0" cellspacing="0" style="margin: 16px 0; border-collapse: collapse;">
+      ${lignes
+        .map(
+          (l) => `
+        <tr style="border-bottom: 1px solid #ede3d3;">
+          <td style="padding: 10px 0; font-size: 14px;">${l.nomProduit}${l.taille ? ` — taille ${l.taille}` : ''} × ${l.quantite}</td>
+          <td style="padding: 10px 0; font-size: 14px; text-align:right; white-space:nowrap;">${(l.prixUnitaire * l.quantite).toFixed(2)} €</td>
+        </tr>`
+        )
+        .join('')}
+    </table>`;
+}
+
+/** Email envoyé au client juste après un paiement réussi (webhook Stripe). */
+export function genererHtmlConfirmationCommande(params: {
+  prenom: string;
+  numero: string;
+  lignes: LigneEmail[];
+  sousTotal: number;
+  montantReduction: number;
+  fraisLivraison: number;
+  total: number;
+  adresseLivraison?: string;
+  ville?: string;
+  codePostal?: string;
+}): string {
+  const { prenom, numero, lignes, sousTotal, montantReduction, fraisLivraison, total, adresseLivraison, ville, codePostal } = params;
+  return enveloppeEmail(
+    `Merci pour votre commande, ${prenom} !`,
+    `
+    <p>Votre commande <strong>${numero}</strong> est confirmée et va être préparée avec soin.</p>
+    ${tableauLignes(lignes)}
+    <table width="100%" cellpadding="0" cellspacing="0" style="font-size: 14px; margin-top: 8px;">
+      <tr><td>Sous-total</td><td style="text-align:right;">${sousTotal.toFixed(2)} €</td></tr>
+      ${montantReduction > 0 ? `<tr><td>Réduction</td><td style="text-align:right;">−${montantReduction.toFixed(2)} €</td></tr>` : ''}
+      <tr><td>Livraison</td><td style="text-align:right;">${fraisLivraison > 0 ? `${fraisLivraison.toFixed(2)} €` : 'Offerte'}</td></tr>
+      <tr style="font-weight:bold; font-size:16px;"><td style="padding-top:8px;">Total</td><td style="text-align:right; padding-top:8px;">${total.toFixed(2)} €</td></tr>
+    </table>
+    ${
+      adresseLivraison
+        ? `<p style="margin-top:20px; font-size:13px; color:#7a6a55;">Livraison à : ${adresseLivraison}, ${codePostal || ''} ${ville || ''}</p>`
+        : ''
+    }
+    <p style="margin-top:20px;">Vous recevrez un e-mail dès que votre colis sera expédié.</p>`
+  );
+}
+
+/** Email envoyé au client lorsqu'une commande est annulée ou remboursée depuis l'admin. */
+export function genererHtmlAnnulationCommande(params: {
+  prenom: string;
+  numero: string;
+  total: number;
+  rembourse: boolean;
+}): string {
+  const { prenom, numero, total, rembourse } = params;
+  return enveloppeEmail(
+    `Votre commande ${numero} a été ${rembourse ? 'remboursée' : 'annulée'}`,
+    `
+    <p>Bonjour ${prenom},</p>
+    <p>Nous vous informons que votre commande <strong>${numero}</strong> d'un montant de ${total.toFixed(2)} € a été ${
+      rembourse ? 'annulée et remboursée' : 'annulée'
+    }.</p>
+    ${
+      rembourse
+        ? `<p>Le remboursement sera visible sur votre moyen de paiement d'origine sous quelques jours ouvrés.</p>`
+        : ''
+    }
+    <p>Pour toute question, n'hésitez pas à nous contacter en répondant à cet e-mail.</p>`
+  );
+}

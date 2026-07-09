@@ -39,6 +39,7 @@ export default async function PageAccueil() {
   const carrousselBestsellerActif = configEstActive(config, 'carrousel_bestseller_actif');
   const carrousselNouvelleCollectionActif = configEstActive(config, 'carrousel_nouvelle_collection_actif');
   const categoriesAccueilActif = configEstActive(config, 'categories_accueil_actif');
+  const temoignagesActif = configEstActive(config, 'temoignages_actif');
   const idsCategoriesAccueil = (config.categories_accueil_ids || '').split(',').filter(Boolean);
   const idsCollectionsSelection = (config.collections_selection_ids || '').split(',').filter(Boolean);
 
@@ -65,7 +66,9 @@ export default async function PageAccueil() {
             take: 8,
           })
         : Promise.resolve([]),
-      prisma.temoignage.findMany({ where: { actif: true }, orderBy: { ordre: 'asc' }, take: 3 }),
+      temoignagesActif
+        ? prisma.temoignage.findMany({ where: { actif: true }, orderBy: { ordre: 'asc' }, take: 3 })
+        : Promise.resolve([]),
       clientId
         ? prisma.favori.findMany({ where: { clientId }, select: { produitId: true } })
         : Promise.resolve([]),

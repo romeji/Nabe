@@ -605,23 +605,24 @@
 
 .produit-suggestions__image-conteneur {
   position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 24px 24px 8px 8px;
+  margin-bottom: var(--espace-xs);
+  box-shadow: var(--ombre-douce);
+  background-color: var(--nabe-sable);
 }
 
 .produit-suggestions__carte img {
   width: 100%;
-  aspect-ratio: 1;
+  height: 100%;
   object-fit: cover;
-  border-radius: 24px 24px 8px 8px;
-  margin-bottom: var(--espace-xs);
-  box-shadow: var(--ombre-douce);
 }
 
 .produit-suggestions__placeholder {
   width: 100%;
-  aspect-ratio: 1;
+  height: 100%;
   background-color: var(--nabe-sable);
-  border-radius: 24px 24px 8px 8px;
-  margin-bottom: var(--espace-xs);
 }
 
 .produit-suggestions__badge-promo {

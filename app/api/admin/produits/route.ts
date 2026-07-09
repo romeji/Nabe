@@ -21,6 +21,7 @@ const schemaProduit = z.object({
     .enum(['EN_STOCK', 'FABRICATION_SUR_COMMANDE', 'CREATION_SUR_MESURE', 'PIECE_UNIQUE_DISPO', 'EPUISE'])
     .optional(),
   stock: z.number().int().min(0).optional(),
+  poidsGrammes: z.number().int().min(1).optional(),
   categorieId: z.string().optional().nullable(),
   collectionId: z.string().optional().nullable(),
   actif: z.boolean().optional(),
@@ -92,6 +93,7 @@ export async function POST(req: NextRequest) {
         taillesDisponibles: donnees.taillesDisponibles || [],
         disponibilite: donnees.disponibilite || 'EN_STOCK',
         stock: stockTotalCalcule,
+        poidsGrammes: donnees.poidsGrammes ?? 50,
         categorieId: donnees.categorieId || undefined,
         collectionId: donnees.collectionId || undefined,
         actif: donnees.actif ?? true,

@@ -199,6 +199,68 @@
   white-space: nowrap;
 }
 
+.checkout__aide {
+  font-size: 0.82rem;
+  color: #888;
+}
+
+.checkout__points-relais {
+  margin-top: 0.8rem;
+}
+
+.checkout__relais-choisi {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.8rem 1rem;
+  border: 1.5px solid var(--nabe-terracotta, #9f5434);
+  border-radius: 10px;
+  background: #fdf7f3;
+  font-size: 0.85rem;
+}
+
+.checkout__relais-choisi p {
+  margin: 0.2rem 0 0;
+  color: #7a6a55;
+  font-size: 0.8rem;
+}
+
+.checkout__liste-relais {
+  list-style: none;
+  margin: 0.7rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.checkout__liste-relais button {
+  width: 100%;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid #d8d3cc;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.checkout__liste-relais button:hover {
+  border-color: var(--nabe-argile, #cfa999);
+}
+
+.checkout__liste-relais small {
+  color: #888;
+  font-size: 0.72rem;
+}
+
 /* ── Liens légaux en pied de formulaire ── */
 .checkout__liens-legaux {
   display: flex;

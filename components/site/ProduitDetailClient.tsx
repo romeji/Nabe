@@ -98,12 +98,24 @@ export default function ProduitDetailClient({
 
   useEffect(() => {
     function syncHauteur() {
-      if (galerieRef.current && infosRef.current) {
-        const h = galerieRef.current.getBoundingClientRect().height;
-        if (h > 0) infosRef.current.style.maxHeight = `${h}px`;
+      if (!galerieRef.current || !infosRef.current) return;
+
+      // Sur mobile/tablette (mise en page empilée sur une seule colonne, cf.
+      // le breakpoint 900px de produit.css), on ne fixe aucune hauteur max et
+      // on laisse tout défiler dans le flux normal de la page. Sans ce
+      // garde-fou, la colonne infos gardait un ascenseur interne caché en
+      // plus de celui de la page — un "double ascenseur" gênant au toucher.
+      const estEmpileMobile = window.innerWidth <= 900;
+      if (estEmpileMobile) {
+        infosRef.current.style.maxHeight = '';
+        return;
       }
+
+      const h = galerieRef.current.getBoundingClientRect().height;
+      if (h > 0) infosRef.current.style.maxHeight = `${h}px`;
     }
     // Delay pour laisser l'image se rendre
+    syncHauteur();
     const timer = setTimeout(syncHauteur, 100);
     window.addEventListener('resize', syncHauteur);
     return () => { clearTimeout(timer); window.removeEventListener('resize', syncHauteur); };
@@ -112,8 +124,12 @@ export default function ProduitDetailClient({
   // Fait défiler prioritairement la colonne infos (à droite) quand l'utilisateur
   // scrolle n'importe où sur la page, tant que la section produit est visible
   // et que la colonne n'a pas atteint sa propre fin de scroll.
+  // Désactivé sur mobile/tablette : mise en page empilée, pas de colonne à
+  // détourner (voir syncHauteur ci-dessus pour le même garde-fou).
   useEffect(() => {
     function gererMolette(e: WheelEvent) {
+      if (window.innerWidth <= 900) return;
+
       const infos = infosRef.current;
       const galerie = galerieRef.current;
       if (!infos || !galerie) return;
