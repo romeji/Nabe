@@ -12,12 +12,13 @@ export default function BoutonSupprimerNewsletter({ newsletterId }: { newsletter
     setSuppression(true);
     try {
       const res = await fetch(`/api/admin/newsletters/${newsletterId}`, { method: 'DELETE' });
-      if (!res.ok) throw new Error();
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'Erreur lors de la suppression.');
       router.push('/admin/newsletters');
       router.refresh();
-    } catch {
+    } catch (e: any) {
       setSuppression(false);
-      alert('Erreur lors de la suppression.');
+      alert(e.message || 'Erreur lors de la suppression.');
     }
   }
 

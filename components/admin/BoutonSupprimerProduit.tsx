@@ -12,12 +12,13 @@ export default function BoutonSupprimerProduit({ produitId }: { produitId: strin
     setSuppression(true);
     try {
       const res = await fetch(`/api/admin/produits/${produitId}`, { method: 'DELETE' });
-      if (!res.ok) throw new Error();
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'Erreur lors de la suppression.');
       router.push('/admin/produits');
       router.refresh();
-    } catch {
+    } catch (e: any) {
       setSuppression(false);
-      alert('Erreur lors de la suppression.');
+      alert(e.message || 'Erreur lors de la suppression.');
     }
   }
 

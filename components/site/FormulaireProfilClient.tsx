@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import { signOut } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 export default function FormulaireProfilClient({
   nom: nomInitial,
@@ -13,6 +15,7 @@ export default function FormulaireProfilClient({
   telephone: string;
   aUnMotDePasse: boolean;
 }) {
+  const router = useRouter();
   const [nom, setNom] = useState(nomInitial);
   const [telephone, setTelephone] = useState(telephoneInitial);
   const [enregistrement, setEnregistrement] = useState(false);
@@ -25,6 +28,27 @@ export default function FormulaireProfilClient({
   const [enregistrementMdp, setEnregistrementMdp] = useState(false);
   const [succesMdp, setSuccesMdp] = useState(false);
   const [erreurMdp, setErreurMdp] = useState('');
+
+  const [confirmationSuppression, setConfirmationSuppression] = useState(false);
+  const [texteConfirmation, setTexteConfirmation] = useState('');
+  const [suppressionEnCours, setSuppressionEnCours] = useState(false);
+  const [erreurSuppression, setErreurSuppression] = useState('');
+
+  async function supprimerCompte() {
+    setSuppressionEnCours(true);
+    setErreurSuppression('');
+    try {
+      const res = await fetch('/api/auth-client/compte', { method: 'DELETE' });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || 'Erreur lors de la suppression du compte.');
+      }
+      await signOut({ callbackUrl: '/' });
+    } catch (err: any) {
+      setErreurSuppression(err.message || 'Erreur lors de la suppression du compte.');
+      setSuppressionEnCours(false);
+    }
+  }
 
   async function sauvegarderInfos(e: React.FormEvent) {
     e.preventDefault();
@@ -151,6 +175,55 @@ export default function FormulaireProfilClient({
           {enregistrementMdp ? 'Enregistrement...' : succesMdp ? '✓ Mot de passe modifié' : 'Modifier le mot de passe'}
         </button>
       </form>
+
+      <div className="formulaire-profil__section formulaire-profil__section--danger admin-carte">
+        <h2>Supprimer mon compte</h2>
+        <p className="formulaire-profil__aide">
+          Cette action est définitive. Un e-mail de confirmation vous sera envoyé.
+          {' '}
+          Si vous avez déjà passé au moins une commande, vos informations personnelles seront effacées mais
+          l'historique de commande sera conservé de façon anonymisée (obligation légale de conservation des
+          documents comptables pendant 10 ans) ; sinon votre compte sera entièrement supprimé.
+        </p>
+
+        {!confirmationSuppression ? (
+          <button type="button" className="btn formulaire-profil__btn-danger" onClick={() => setConfirmationSuppression(true)}>
+            Supprimer mon compte
+          </button>
+        ) : (
+          <div className="formulaire-profil__confirmation-suppression">
+            <label>
+              Tapez <strong>SUPPRIMER</strong> pour confirmer
+            </label>
+            <input type="text" value={texteConfirmation} onChange={(e) => setTexteConfirmation(e.target.value)} />
+
+            {erreurSuppression && <p className="formulaire-profil__erreur">{erreurSuppression}</p>}
+
+            <div className="formulaire-profil__confirmation-actions">
+              <button
+                type="button"
+                className="btn formulaire-profil__btn-danger"
+                disabled={texteConfirmation !== 'SUPPRIMER' || suppressionEnCours}
+                onClick={supprimerCompte}
+              >
+                {suppressionEnCours ? 'Suppression...' : 'Confirmer la suppression définitive'}
+              </button>
+              <button
+                type="button"
+                className="btn"
+                onClick={() => {
+                  setConfirmationSuppression(false);
+                  setTexteConfirmation('');
+                  setErreurSuppression('');
+                }}
+                disabled={suppressionEnCours}
+              >
+                Annuler
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

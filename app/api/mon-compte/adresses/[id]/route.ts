@@ -8,7 +8,8 @@ async function verifierAppartenance(adresseId: string, clientId: string) {
   return adresse && adresse.clientId === clientId ? adresse : null;
 }
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, { params: paramsPromise }: { params: Promise<{ id: string }> }) {
+  const params = await paramsPromise;
   const session = await getServerSession(authClientOptions);
   if (!session?.user) {
     return NextResponse.json({ error: 'Connexion requise' }, { status: 401 });
@@ -23,13 +24,21 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   try {
     const body = await req.json();
 
-    if (body.parDefaut) {
+    // Sécurité : on ne prend en compte que les champs explicitement autorisés
+    // (jamais le corps brut de la requête) pour empêcher un client de
+    // modifier clientId, id, ou tout autre champ non prévu (assignation de masse).
+    const donnees: Record<string, any> = {};
+    for (const champ of ['libelle', 'destinataire', 'ligne1', 'ligne2', 'ville', 'codePostal', 'pays', 'telephone', 'parDefaut'] as const) {
+      if (body[champ] !== undefined) donnees[champ] = body[champ];
+    }
+
+    if (donnees.parDefaut) {
       await prisma.adressePostale.updateMany({ where: { clientId }, data: { parDefaut: false } });
     }
 
     const adresse = await prisma.adressePostale.update({
       where: { id: params.id },
-      data: body,
+      data: donnees,
     });
 
     return NextResponse.json(adresse);
@@ -39,7 +48,8 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   }
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, { params: paramsPromise }: { params: Promise<{ id: string }> }) {
+  const params = await paramsPromise;
   const session = await getServerSession(authClientOptions);
   if (!session?.user) {
     return NextResponse.json({ error: 'Connexion requise' }, { status: 401 });

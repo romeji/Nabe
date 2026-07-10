@@ -5,7 +5,8 @@ import { prisma } from '@/lib/prisma';
 import FormulaireProduit from '@/components/admin/FormulaireProduit';
 import BoutonSupprimerProduit from '@/components/admin/BoutonSupprimerProduit';
 
-export default async function PageEditionProduit({ params }: { params: { id: string } }) {
+export default async function PageEditionProduit({ params: paramsPromise }: { params: Promise<{ id: string }> }) {
+  const params = await paramsPromise;
   const session = await getServerSession(authOptions);
   if (!session) redirect('/admin/login');
 

@@ -37,11 +37,31 @@ export default function PageConfidentialite() {
       </section>
 
       <section className="page-info__section">
+        <h2>Prestataires techniques (sous-traitants)</h2>
+        <p>
+          Pour faire fonctionner la boutique, nous faisons appel aux prestataires suivants, qui
+          traitent tout ou partie de vos données dans ce cadre :
+        </p>
+        <ul>
+          <li><strong>Stripe</strong> (paiement) — données de paiement</li>
+          <li><strong>Resend</strong> (envoi d'e-mails transactionnels et newsletter) — adresse e-mail, nom</li>
+          <li><strong>Cloudinary</strong> (hébergement des images du site) — n'a pas accès à vos données personnelles</li>
+          <li><strong>Mondial Relay / Colissimo</strong> (transporteurs) — nom, adresse, e-mail, téléphone, uniquement pour les commandes livrées par leurs services</li>
+          <li><strong>IGN Géoplateforme</strong> (autocomplétion d'adresse au moment de la saisie) — adresse saisie, à titre indicatif, aucune donnée personnelle identifiée n'est conservée par ce service dans ce cadre</li>
+          <li><strong>Vercel</strong> et <strong>Neon</strong> (hébergement du site et de la base de données)</li>
+          <li><strong>Google</strong> (uniquement si vous choisissez de vous connecter via "Se connecter avec Google")</li>
+        </ul>
+      </section>
+
+      <section className="page-info__section">
         <h2>Conservation</h2>
         <p>
           Les données liées aux commandes sont conservées le temps nécessaire au suivi commercial,
-          comptable et légal. Vous pouvez demander la suppression ou la modification de vos données
-          personnelles à tout moment.
+          comptable et légal (les factures doivent notamment être conservées 10 ans conformément au
+          Code de commerce). Vous pouvez demander la suppression ou la modification de vos données
+          personnelles à tout moment, y compris la suppression complète de votre compte depuis votre
+          espace client ; si vous avez déjà passé commande, vos données personnelles sont alors
+          anonymisées plutôt que supprimées, l'historique de commande devant légalement être conservé.
         </p>
       </section>
 

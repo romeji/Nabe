@@ -3,7 +3,8 @@ import { prisma } from '@/lib/prisma';
 import { verifierSessionAdmin } from '@/lib/auth-helpers';
 import { deleteImageCloudinary } from '@/lib/cloudinary';
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, { params: paramsPromise }: { params: Promise<{ id: string }> }) {
+  const params = await paramsPromise;
   const session = await verifierSessionAdmin();
   if (!session) {
     return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
@@ -29,7 +30,8 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
   return NextResponse.json(produit);
 }
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, { params: paramsPromise }: { params: Promise<{ id: string }> }) {
+  const params = await paramsPromise;
   const session = await verifierSessionAdmin();
   if (!session) {
     return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
@@ -116,7 +118,8 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   }
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, { params: paramsPromise }: { params: Promise<{ id: string }> }) {
+  const params = await paramsPromise;
   const session = await verifierSessionAdmin();
   if (!session) {
     return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
@@ -148,6 +151,20 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
     return NextResponse.json({ success: true });
   } catch (error: any) {
     console.error('Erreur suppression produit:', error);
+
+    // Contrainte de clé étrangère : ce produit apparaît dans au moins une
+    // commande passée (LigneCommande.produitId), et n'est donc volontairement
+    // pas supprimable — pour ne jamais perdre l'historique de vente/facturation.
+    if (error.code === 'P2003') {
+      return NextResponse.json(
+        {
+          error:
+            'Impossible de supprimer ce produit : il apparaît dans au moins une commande déjà passée (on ne supprime jamais l’historique des ventes). Désactivez-le plutôt (bouton "Actif") pour le masquer du site tout en gardant l’historique intact.',
+        },
+        { status: 409 }
+      );
+    }
+
     return NextResponse.json({ error: error.message || 'Erreur' }, { status: 400 });
   }
 }

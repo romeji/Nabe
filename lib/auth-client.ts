@@ -4,6 +4,7 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { prisma } from '@/lib/prisma';
+import { estVerrouille, calculerApresEchec, ETAT_APRES_SUCCES } from '@/lib/anti-bruteforce';
 
 export const authClientOptions: NextAuthOptions = {
   // L'adapter Prisma gère automatiquement les modèles Client/CompteOAuth/SessionClient
@@ -16,6 +17,20 @@ export const authClientOptions: NextAuthOptions = {
   },
   pages: {
     signIn: '/connexion',
+  },
+  // IMPORTANT (sécurité) : voir le commentaire équivalent dans lib/auth.ts —
+  // nom de cookie distinct de celui de l'admin pour éviter toute confusion
+  // entre une session client et une session admin sur le même domaine.
+  cookies: {
+    sessionToken: {
+      name: process.env.NODE_ENV === 'production' ? '__Secure-client-session-token' : 'client-session-token',
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        secure: process.env.NODE_ENV === 'production',
+      },
+    },
   },
   providers: [
     GoogleProvider({
@@ -42,9 +57,19 @@ export const authClientOptions: NextAuthOptions = {
           return null;
         }
 
+        if (estVerrouille(client.verrouJusqua)) {
+          return null;
+        }
+
         const motDePasseValide = await bcrypt.compare(credentials.password, client.password);
         if (!motDePasseValide) {
+          const { tentativesEchouees, verrouJusqua } = calculerApresEchec(client.tentativesEchouees);
+          await prisma.client.update({ where: { id: client.id }, data: { tentativesEchouees, verrouJusqua } });
           return null;
+        }
+
+        if (client.tentativesEchouees > 0 || client.verrouJusqua) {
+          await prisma.client.update({ where: { id: client.id }, data: ETAT_APRES_SUCCES });
         }
 
         return {

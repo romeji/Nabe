@@ -17,19 +17,30 @@ export default function StatutCommandeSelect({
 
   async function gererChangement(e: React.ChangeEvent<HTMLSelectElement>) {
     const nouveauStatut = e.target.value;
+
+    let numeroSuivi: string | undefined;
+    if (nouveauStatut === 'EXPEDIEE') {
+      const saisie = window.prompt(
+        'Numéro de suivi Colissimo/Mondial Relay (optionnel, laissez vide si vous ne l’avez pas encore) :'
+      );
+      if (saisie === null) return; // annulé : on ne change pas le statut
+      numeroSuivi = saisie.trim() || undefined;
+    }
+
     setStatut(nouveauStatut);
     setEnCours(true);
     try {
       const res = await fetch(`/api/admin/commandes/${commandeId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ statut: nouveauStatut }),
+        body: JSON.stringify({ statut: nouveauStatut, ...(numeroSuivi !== undefined ? { numeroSuivi } : {}) }),
       });
-      if (!res.ok) throw new Error();
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'Erreur lors de la mise à jour du statut.');
       router.refresh();
-    } catch {
+    } catch (e: any) {
       setStatut(statutInitial);
-      alert('Erreur lors de la mise à jour du statut.');
+      alert(e.message || 'Erreur lors de la mise à jour du statut.');
     } finally {
       setEnCours(false);
     }

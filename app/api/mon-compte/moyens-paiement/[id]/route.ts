@@ -14,7 +14,8 @@ async function recupererClientEtVerifier(clientId: string, paymentMethodId: stri
   return client;
 }
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, { params: paramsPromise }: { params: Promise<{ id: string }> }) {
+  const params = await paramsPromise;
   const session = await getServerSession(authClientOptions);
   if (!session?.user) {
     return NextResponse.json({ error: 'Connexion requise' }, { status: 401 });
@@ -37,7 +38,8 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   }
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, { params: paramsPromise }: { params: Promise<{ id: string }> }) {
+  const params = await paramsPromise;
   const session = await getServerSession(authClientOptions);
   if (!session?.user) {
     return NextResponse.json({ error: 'Connexion requise' }, { status: 401 });

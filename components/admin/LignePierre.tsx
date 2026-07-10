@@ -55,11 +55,12 @@ export default function LignePierre({ pierre, couleurs }: { pierre: PierreLigne;
     setEnCours(true);
     try {
       const res = await fetch(`/api/admin/pierres/${pierre.id}`, { method: 'DELETE' });
-      if (!res.ok) throw new Error();
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'Erreur lors de la suppression.');
       router.refresh();
-    } catch {
-      alert('Erreur lors de la suppression.');
+    } catch (e: any) {
       setEnCours(false);
+      alert(e.message || 'Erreur lors de la suppression.');
     }
   }
 
@@ -122,7 +123,11 @@ export default function LignePierre({ pierre, couleurs }: { pierre: PierreLigne;
       <td className="admin-categories__actions">
         {confirmationSuppression ? (
           <>
-            <span className="admin-categories__confirmation">Confirmer ?</span>
+            <span className="admin-categories__confirmation">
+              {pierre._count.produits > 0
+                ? `Supprimer ? ${pierre._count.produits} produit${pierre._count.produits > 1 ? 's' : ''} perdront cette pierre (les produits ne sont pas supprimés).`
+                : 'Confirmer la suppression ?'}
+            </span>
             <button className="admin-btn-icone admin-btn-supprimer" onClick={supprimer} disabled={enCours}>Oui</button>
             <button className="admin-btn-icone" onClick={() => setConfirmationSuppression(false)}>Annuler</button>
           </>

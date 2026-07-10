@@ -15,7 +15,7 @@ export const metadata = { title: 'Collections' };
 export const revalidate = 60;
 
 type Props = {
-  searchParams: {
+  searchParams: Promise<{
     type?: string;
     matiere?: string;
     pierre?: string; // id de la Pierre sélectionnée
@@ -27,10 +27,11 @@ type Props = {
     prixMax?: string;
     categorie?: string;
     collection?: string;
-  };
+  }>;
 };
 
-export default async function PageCollections({ searchParams }: Props) {
+export default async function PageCollections({ searchParams: searchParamsPromise }: Props) {
+  const searchParams = await searchParamsPromise;
   const where: any = { actif: true };
 
   if (searchParams.type) where.type = searchParams.type;
@@ -98,7 +99,7 @@ export default async function PageCollections({ searchParams }: Props) {
       prisma.produit.groupBy({ by: ['disponibilite'], where: { actif: true }, _count: { _all: true } }),
     ]);
 
-  const idsFavoris = new Set(favorisIds.map((f) => f.produitId));
+  const idsFavoris = new Set(favorisIds.map((f: any) => f.produitId));
   const prixMinGlobal = Math.floor(parseFloat(bornesPrix._min.prix?.toString() || '0'));
   const prixMaxGlobal = Math.ceil(parseFloat(bornesPrix._max.prix?.toString() || '1000'));
 

@@ -48,11 +48,12 @@ export default function LigneMatiere({ matiere }: { matiere: Matiere }) {
     setEnCours(true);
     try {
       const res = await fetch(`/api/admin/matieres/${matiere.id}`, { method: 'DELETE' });
-      if (!res.ok) throw new Error();
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'Erreur lors de la suppression.');
       router.refresh();
-    } catch {
-      alert('Erreur lors de la suppression.');
+    } catch (e: any) {
       setEnCours(false);
+      alert(e.message || 'Erreur lors de la suppression.');
     }
   }
 
@@ -77,7 +78,11 @@ export default function LigneMatiere({ matiere }: { matiere: Matiere }) {
       <td className="admin-categories__actions">
         {confirmationSuppression ? (
           <>
-            <span className="admin-categories__confirmation">Confirmer ?</span>
+            <span className="admin-categories__confirmation">
+              {matiere._count.produits > 0
+                ? `Supprimer ? ${matiere._count.produits} produit${matiere._count.produits > 1 ? 's' : ''} seront détaché${matiere._count.produits > 1 ? 's' : ''} (pas supprimés).`
+                : 'Confirmer la suppression ?'}
+            </span>
             <button className="admin-btn-icone admin-btn-supprimer" onClick={supprimer} disabled={enCours}>
               Oui
             </button>

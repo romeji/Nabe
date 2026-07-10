@@ -16,6 +16,17 @@
   color: var(--texte-secondaire);
 }
 
+.mon-compte__retour {
+  display: inline-block;
+  font-size: 0.85rem;
+  color: var(--texte-secondaire);
+  margin-bottom: 0.6rem;
+}
+
+.mon-compte__retour:hover {
+  color: var(--nabe-terracotta);
+}
+
 .mon-compte__grille {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -112,6 +123,37 @@
 
 .formulaire-profil__section button {
   margin-top: var(--espace-md);
+}
+
+.formulaire-profil__section--danger {
+  border-color: #e8c7bd;
+}
+
+.formulaire-profil__section--danger h2 {
+  color: #a8412a;
+}
+
+.formulaire-profil__btn-danger {
+  color: #a8412a;
+  border-color: #e8c7bd;
+}
+
+.formulaire-profil__btn-danger:hover {
+  background-color: #fbeeeb;
+}
+
+.formulaire-profil__confirmation-suppression {
+  margin-top: var(--espace-md);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-width: 320px;
+}
+
+.formulaire-profil__confirmation-actions {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 0.4rem;
 }
 
 @media (max-width: 480px) {

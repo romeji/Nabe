@@ -35,7 +35,7 @@ export default async function PageCommandesClient() {
       ) : (
         <div className="commandes-client-liste">
           {commandes.map((c) => (
-            <div key={c.id} className="commandes-client-carte">
+            <Link key={c.id} href={`/mon-compte/commandes/${c.id}`} className="commandes-client-carte">
               <div className="commandes-client-carte__entete">
                 <div>
                   <strong>{c.numero}</strong>
@@ -54,7 +54,7 @@ export default async function PageCommandesClient() {
               <div className="commandes-client-carte__total">
                 Total : {formaterPrix(c.total.toString())}
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       )}

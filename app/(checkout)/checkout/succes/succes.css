@@ -21,6 +21,21 @@
   justify-content: center;
 }
 
+.page-succes__icone--echec {
+  background-color: #a8412a;
+}
+
+.page-succes__numero {
+  font-size: 0.95rem;
+}
+
+.page-succes__actions {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
 .page-succes h1 {
   font-size: 2rem;
 }

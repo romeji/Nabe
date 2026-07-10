@@ -13,9 +13,10 @@ export default function PageLivraisonRetours() {
       <section className="page-info__section">
         <h2>Livraison</h2>
         <p>
-          Chaque commande est emballée avec soin dans notre atelier à Lyon avant expédition.
-          La livraison est <strong>offerte</strong> pour toute commande, en France métropolitaine
-          comme à l'international.
+          Chaque commande est emballée avec soin dans notre atelier avant expédition. Les frais de
+          livraison sont calculés automatiquement selon le poids de votre commande et le mode choisi
+          au moment du paiement (livraison à domicile Colissimo ou point relais Mondial Relay) ;
+          le montant exact vous est indiqué avant validation du paiement.
         </p>
         <h3>Délais d'expédition</h3>
         <ul>
@@ -25,13 +26,15 @@ export default function PageLivraisonRetours() {
         </ul>
         <h3>Zones de livraison</h3>
         <p>
-          Nous livrons en France métropolitaine, en Belgique, en Suisse, au Luxembourg et à Monaco.
-          Pour toute autre destination, contactez-nous avant de passer commande.
+          Nous livrons actuellement en France métropolitaine. Pour toute autre destination,
+          contactez-nous avant de passer commande afin que nous étudiions la faisabilité.
         </p>
         <h3>Suivi de commande</h3>
         <p>
           Un e-mail de confirmation avec le détail de votre commande vous est envoyé dès la
-          validation du paiement. Le numéro de suivi colis vous est transmis dès l'expédition.
+          validation du paiement, puis un second e-mail avec le numéro de suivi dès l'expédition.
+          Vous pouvez également suivre l'état de votre commande à tout moment depuis notre page{' '}
+          <a href="/suivi-commande">Suivre ma commande</a>.
         </p>
       </section>
 
@@ -39,7 +42,10 @@ export default function PageLivraisonRetours() {
         <h2>Retours &amp; échanges</h2>
         <p>
           Vous disposez d'un délai de <strong>14 jours</strong> à compter de la réception de votre
-          commande pour demander un retour ou un échange.
+          commande pour demander un retour ou un échange. Si votre commande n'a pas encore été
+          expédiée, vous pouvez également l'annuler vous-même et être intégralement remboursé(e)
+          (produits et frais de port) directement depuis notre page{' '}
+          <a href="/suivi-commande">Suivre ma commande</a>.
         </p>
         <h3>Conditions de retour</h3>
         <ul>

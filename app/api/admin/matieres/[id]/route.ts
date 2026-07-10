@@ -3,7 +3,8 @@ import { prisma } from '@/lib/prisma';
 import { verifierSessionAdmin } from '@/lib/auth-helpers';
 import { slugify } from '@/lib/utils';
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, { params: paramsPromise }: { params: Promise<{ id: string }> }) {
+  const params = await paramsPromise;
   const session = await verifierSessionAdmin();
   if (!session) {
     return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
@@ -34,7 +35,8 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   }
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, { params: paramsPromise }: { params: Promise<{ id: string }> }) {
+  const params = await paramsPromise;
   const session = await verifierSessionAdmin();
   if (!session) {
     return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });

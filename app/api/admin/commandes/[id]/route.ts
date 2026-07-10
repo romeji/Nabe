@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { verifierSessionAdmin } from '@/lib/auth-helpers';
-import { resend, EMAIL_EXPEDITEUR, genererHtmlAnnulationCommande } from '@/lib/resend';
+import { resend, EMAIL_EXPEDITEUR, genererHtmlAnnulationCommande, genererHtmlExpeditionCommande } from '@/lib/resend';
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, { params: paramsPromise }: { params: Promise<{ id: string }> }) {
+  const params = await paramsPromise;
   const session = await verifierSessionAdmin();
   if (!session) {
     return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
@@ -21,18 +22,24 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
   return NextResponse.json(commande);
 }
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, { params: paramsPromise }: { params: Promise<{ id: string }> }) {
+  const params = await paramsPromise;
   const session = await verifierSessionAdmin();
   if (!session) {
     return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
   }
 
   try {
-    const { statut } = await req.json();
+    const { statut, numeroSuivi, urlSuivi } = await req.json();
+
+    const donnees: Record<string, any> = {};
+    if (statut !== undefined) donnees.statut = statut;
+    if (numeroSuivi !== undefined) donnees.numeroSuivi = numeroSuivi;
+    if (urlSuivi !== undefined) donnees.urlSuivi = urlSuivi;
 
     const commande = await prisma.commande.update({
       where: { id: params.id },
-      data: { statut },
+      data: donnees,
     });
 
     if ((statut === 'ANNULEE' || statut === 'REMBOURSEE') && commande.clientEmail) {
@@ -50,6 +57,24 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
         });
       } catch (err) {
         console.error("Erreur envoi email d'annulation (statut mis à jour quand même) :", err);
+      }
+    }
+
+    if (statut === 'EXPEDIEE' && commande.clientEmail) {
+      try {
+        await resend.emails.send({
+          from: EMAIL_EXPEDITEUR,
+          to: commande.clientEmail,
+          subject: `Commande ${commande.numero} expédiée — Nabe`,
+          html: genererHtmlExpeditionCommande({
+            prenom: commande.clientNom.split(' ')[0] || 'vous',
+            numero: commande.numero,
+            numeroSuivi: commande.numeroSuivi,
+            urlSuivi: commande.urlSuivi,
+          }),
+        });
+      } catch (err) {
+        console.error("Erreur envoi email d'expédition (statut mis à jour quand même) :", err);
       }
     }
 

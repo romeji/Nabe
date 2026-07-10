@@ -8,16 +8,18 @@ import './produit.css';
 
 export const revalidate = 60;
 
-type Props = { params: { slug: string } };
+type Props = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: Props) {
-  const produit = await prisma.produit.findUnique({ where: { slug: params.slug } });
+  const { slug } = await params;
+  const produit = await prisma.produit.findUnique({ where: { slug } });
   return { title: produit?.nom || 'Bijou' };
 }
 
 export default async function PageProduit({ params }: Props) {
+  const { slug } = await params;
   const produit = await prisma.produit.findUnique({
-    where: { slug: params.slug },
+    where: { slug },
     include: {
       images: { orderBy: { ordre: 'asc' } },
       categorie: true,
@@ -86,12 +88,12 @@ export default async function PageProduit({ params }: Props) {
     prixPromo: produit.prixPromo ? produit.prixPromo.toString() : null,
     promoDebut: produit.promoDebut ? produit.promoDebut.toISOString() : null,
     promoFin: produit.promoFin ? produit.promoFin.toISOString() : null,
-    pierres: produit.pierres.map((pp) => ({
+    pierres: produit.pierres.map((pp: any) => ({
       ...pp.pierre,
-      couleurs: pp.pierre.couleurs.map((pc) => ({ nom: pc.couleurPierre.nom, codeHex: pc.couleurPierre.codeHex })),
+      couleurs: pp.pierre.couleurs.map((pc: any) => ({ nom: pc.couleurPierre.nom, codeHex: pc.couleurPierre.codeHex })),
     })),
   };
-  const suggestionsSerialisees = suggestions.map((s) => ({
+  const suggestionsSerialisees = suggestions.map((s: any) => ({
     ...s,
     prix: s.prix.toString(),
     prixPromo: s.prixPromo ? s.prixPromo.toString() : null,
@@ -100,7 +102,7 @@ export default async function PageProduit({ params }: Props) {
     promoFin: s.promoFin ? s.promoFin.toISOString() : null,
   }));
   const composables = produit.composerAvecActif
-    ? produit.composeAvec.map((c) => ({
+    ? produit.composeAvec.map((c: any) => ({
         id: c.produitSuggere.id,
         nom: c.produitSuggere.nom,
         slug: c.produitSuggere.slug,

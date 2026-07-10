@@ -49,11 +49,12 @@ export default function LigneCouleurPierre({ couleur }: { couleur: CouleurPierre
     setEnCours(true);
     try {
       const res = await fetch(`/api/admin/couleurs-pierre/${couleur.id}`, { method: 'DELETE' });
-      if (!res.ok) throw new Error();
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'Erreur lors de la suppression.');
       router.refresh();
-    } catch {
-      alert('Erreur lors de la suppression.');
+    } catch (e: any) {
       setEnCours(false);
+      alert(e.message || 'Erreur lors de la suppression.');
     }
   }
 
@@ -92,7 +93,11 @@ export default function LigneCouleurPierre({ couleur }: { couleur: CouleurPierre
       <td className="admin-categories__actions">
         {confirmationSuppression ? (
           <>
-            <span className="admin-categories__confirmation">Confirmer ?</span>
+            <span className="admin-categories__confirmation">
+              {couleur._count.pierres > 0
+                ? `Supprimer ? Cette couleur sera retirée de ${couleur._count.pierres} pierre${couleur._count.pierres > 1 ? 's' : ''}.`
+                : 'Confirmer la suppression ?'}
+            </span>
             <button className="admin-btn-icone admin-btn-supprimer" onClick={supprimer} disabled={enCours}>
               Oui
             </button>

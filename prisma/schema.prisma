@@ -15,12 +15,14 @@ datasource db {
 // ============================================================
 
 model Admin {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  password  String // hashé avec bcrypt
-  name      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                String    @id @default(cuid())
+  email             String    @unique
+  password          String // hashé avec bcrypt
+  name              String?
+  tentativesEchouees Int      @default(0)
+  verrouJusqua      DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 }
 
 // ============================================================
@@ -35,6 +37,8 @@ model Client {
   email           String    @unique
   emailVerifie    DateTime?
   password        String? // null si connecté uniquement via Google
+  tentativesEchouees Int   @default(0)
+  verrouJusqua    DateTime?
   image           String?
   telephone       String?
   stripeCustomerId String?  @unique // référence Stripe Customer (jamais de numéro de carte stocké ici)
@@ -375,6 +379,8 @@ model Commande {
   pointRelaisNumero     String?
   pointRelaisNom        String?
   pointRelaisAdresse    String?
+  numeroSuivi           String? // renseigné manuellement par l'admin au moment de l'expédition
+  urlSuivi              String? // lien de suivi transporteur (Colissimo/Mondial Relay), optionnel
   total                 Decimal         @db.Decimal(10, 2)
   stripeSessionId       String?         @unique
   stripePaymentIntentId String?         @unique
@@ -469,6 +475,7 @@ model ContenuPage {
 model AbonneNewsletter {
   id        String   @id @default(cuid())
   email     String   @unique
+  actif     Boolean  @default(true) // false = désabonné (on garde la ligne pour ne pas le réinscrire par erreur)
   createdAt DateTime @default(now())
 }
 

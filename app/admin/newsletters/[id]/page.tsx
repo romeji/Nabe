@@ -5,7 +5,8 @@ import { prisma } from '@/lib/prisma';
 import FormulaireNewsletter from '@/components/admin/FormulaireNewsletter';
 import BoutonSupprimerNewsletter from '@/components/admin/BoutonSupprimerNewsletter';
 
-export default async function PageEditionNewsletter({ params }: { params: { id: string } }) {
+export default async function PageEditionNewsletter({ params: paramsPromise }: { params: Promise<{ id: string }> }) {
+  const params = await paramsPromise;
   const session = await getServerSession(authOptions);
   if (!session) redirect('/admin/login');
 

@@ -204,6 +204,43 @@
   color: #888;
 }
 
+.checkout__adresse-autocomplete {
+  position: relative;
+}
+
+.checkout__adresse-suggestions {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 20;
+  list-style: none;
+  margin: 0;
+  padding: 0.3rem;
+  background: #fff;
+  border: 1px solid #d8d3cc;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(69, 41, 30, 0.14);
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.checkout__adresse-suggestions button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 0.55rem 0.7rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.checkout__adresse-suggestions button:hover {
+  background-color: var(--nabe-creme, #f5f2ee);
+}
+
 .checkout__points-relais {
   margin-top: 0.8rem;
 }

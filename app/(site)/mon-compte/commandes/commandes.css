@@ -15,10 +15,18 @@
 }
 
 .commandes-client-carte {
+  display: block;
   background-color: var(--nabe-blanc);
   border: 1px solid var(--nabe-beige-fonce);
   border-radius: var(--rayon-bordure);
   padding: var(--espace-md);
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 0.2s;
+}
+
+.commandes-client-carte:hover {
+  border-color: var(--nabe-terracotta);
 }
 
 .commandes-client-carte__entete {

@@ -13,7 +13,9 @@ export const EMAIL_EXPEDITEUR = process.env.RESEND_FROM_EMAIL || 'Nabe <onboardi
  * Génère un email HTML élégant à partir d'un sujet et d'un contenu déjà au
  * format HTML (produit par l'éditeur de texte riche du backoffice).
  */
-export function genererHtmlNewsletter(sujet: string, contenuHtml: string): string {
+export function genererHtmlNewsletter(sujet: string, contenuHtml: string, email: string, tokenDesabonnement: string): string {
+  const urlBase = process.env.NEXT_PUBLIC_SITE_URL || 'https://nabe-bijoux.fr';
+  const urlDesabonnement = `${urlBase}/newsletter/desabonnement?email=${encodeURIComponent(email)}&token=${tokenDesabonnement}`;
   return `
   <!DOCTYPE html>
   <html lang="fr">
@@ -36,6 +38,8 @@ export function genererHtmlNewsletter(sujet: string, contenuHtml: string): strin
               <tr>
                 <td style="padding: 20px 32px; background-color:#ede3d3; text-align:center; font-size: 12px; color:#7a6a55;">
                   Vous recevez cet e-mail car vous êtes inscrit(e) à la newsletter Nabe.
+                  <br />
+                  <a href="${urlDesabonnement}" style="color:#7a6a55;">Se désabonner</a>
                 </td>
               </tr>
             </table>
@@ -53,6 +57,18 @@ export function genererHtmlBienvenueCompte(prenom: string): string {
     `
     <p>Votre compte a bien été créé. Vous pouvez désormais suivre vos commandes, gérer vos favoris et vos informations depuis votre espace client.</p>
     <p>À très vite,<br/>L'équipe Nabe</p>`
+  );
+}
+
+/** Email envoyé lorsqu'un client supprime son compte. */
+export function genererHtmlSuppressionCompte(prenom: string): string {
+  return enveloppeEmail(
+    `Votre compte Nabe a été supprimé`,
+    `
+    <p>Bonjour ${prenom},</p>
+    <p>Nous confirmons la suppression de votre compte Nabe, comme vous l'avez demandé.</p>
+    <p>Vos informations personnelles (nom, adresses, favoris) ont été supprimées de nos systèmes. Si vous aviez déjà passé commande, nous conservons uniquement les informations de facturation nécessaires à nos obligations légales et comptables, sans qu'elles restent associées à un compte actif.</p>
+    <p>Vous pouvez recréer un compte à tout moment si vous changez d'avis.</p>`
   );
 }
 
@@ -129,6 +145,30 @@ export function genererHtmlConfirmationCommande(params: {
         : ''
     }
     <p style="margin-top:20px;">Vous recevrez un e-mail dès que votre colis sera expédié.</p>`
+  );
+}
+
+/** Email envoyé au client quand sa commande passe au statut "Expédiée". */
+export function genererHtmlExpeditionCommande(params: {
+  prenom: string;
+  numero: string;
+  numeroSuivi?: string | null;
+  urlSuivi?: string | null;
+}): string {
+  const { prenom, numero, numeroSuivi, urlSuivi } = params;
+  return enveloppeEmail(
+    `Votre commande ${numero} est en route !`,
+    `
+    <p>Bonjour ${prenom},</p>
+    <p>Votre commande vient d'être expédiée et est en chemin vers vous.</p>
+    ${
+      numeroSuivi
+        ? `<p>Numéro de suivi : <strong>${numeroSuivi}</strong>${
+            urlSuivi ? ` — <a href="${urlSuivi}">suivre mon colis</a>` : ''
+          }</p>`
+        : ''
+    }
+    <p>Vous pouvez à tout moment consulter le statut de votre commande sur notre page de suivi.</p>`
   );
 }
 

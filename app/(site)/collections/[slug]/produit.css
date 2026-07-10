@@ -585,7 +585,8 @@
 }
 
 .produit-suggestions {
-  padding: var(--espace-xl) var(--espace-md) var(--espace-2xl);
+  padding-top: var(--espace-xl);
+  padding-bottom: var(--espace-2xl);
   border-top: 1px solid var(--nabe-argile);
   text-align: center;
 }
@@ -599,7 +600,8 @@
 
 .produit-suggestions__grille {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 190px));
+  justify-content: center;
   gap: var(--espace-md);
 }
 
@@ -675,7 +677,7 @@
     grid-template-columns: 1fr;
   }
   .produit-suggestions__grille {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 160px));
   }
 }
 

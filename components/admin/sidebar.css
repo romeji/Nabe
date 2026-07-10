@@ -114,6 +114,8 @@
     transform: translateX(-100%);
     transition: transform 0.25s ease;
     box-shadow: var(--ombre-moyenne);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .admin-sidebar--ouvert {

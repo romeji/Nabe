@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import './panneau-navigation.css';
 
@@ -34,6 +35,7 @@ export default function PanneauNavigation({
     aideActif: true,
   });
   const [monte, setMonte] = useState(false);
+  const { data: session } = useSession();
 
   useEffect(() => setMonte(true), []);
 
@@ -155,8 +157,12 @@ export default function PanneauNavigation({
                 </svg>
               </a>
             </div>
-            <Link href="/mon-compte" className="panneau-nav__compte" onClick={onFermer}>
-              <span>Mon compte</span>
+            <Link
+              href={monte && session?.user ? '/mon-compte' : '/connexion'}
+              className="panneau-nav__compte"
+              onClick={onFermer}
+            >
+              <span>{monte && session?.user ? 'Mon compte' : 'Connexion / Créer un compte'}</span>
               <span className="panneau-nav__compte-icone" aria-hidden="true" />
             </Link>
           </div>

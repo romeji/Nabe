@@ -53,6 +53,7 @@ export default async function Footer() {
           <summary>Aide</summary>
           <ul>
             <li><Link href="/faq">FAQ</Link></li>
+            <li><Link href="/suivi-commande">Suivre ma commande</Link></li>
             <li><Link href="/livraison-retours">Livraison &amp; retours</Link></li>
             <li><Link href="/paiement-securise">Paiement</Link></li>
             <li><Link href="/confidentialite">Confidentialit&eacute;</Link></li>

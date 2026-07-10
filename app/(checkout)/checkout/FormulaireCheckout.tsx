@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -121,6 +121,11 @@ export default function FormulaireCheckout() {
   const [pointRelaisChoisi, setPointRelaisChoisi] = useState<PointRelais | null>(null);
   const [rechercheRelaisEnCours, setRechercheRelaisEnCours] = useState(false);
   const [erreurRelais, setErreurRelais] = useState('');
+  const [suggestionsAdresse, setSuggestionsAdresse] = useState<
+    { label: string; adresse: string; codePostal: string; ville: string }[]
+  >([]);
+  const [suggestionsVisibles, setSuggestionsVisibles] = useState(false);
+  const suggestionsTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [adressesEnregistrees, setAdressesEnregistrees] = useState<AdresseEnregistree[]>([]);
   const [adresseSelectionneeId, setAdresseSelectionneeId] = useState<string>('nouvelle');
   const [etape, setEtape] = useState<'adresse' | 'paiement'>('adresse');
@@ -147,6 +152,34 @@ export default function FormulaireCheckout() {
       .finally(() => setChargementModes(false));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [articles.map((a) => `${a.produitId}:${a.quantite}`).join(',')]);
+
+  function gererSaisieAdresse(valeur: string) {
+    majAdresse('adresse', valeur);
+    if (suggestionsTimer.current) clearTimeout(suggestionsTimer.current);
+
+    if (valeur.trim().length < 3) {
+      setSuggestionsAdresse([]);
+      setSuggestionsVisibles(false);
+      return;
+    }
+
+    suggestionsTimer.current = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/adresse/autocomplete?q=${encodeURIComponent(valeur)}`);
+        const data = await res.json();
+        setSuggestionsAdresse(data.suggestions || []);
+        setSuggestionsVisibles(true);
+      } catch {
+        setSuggestionsAdresse([]);
+      }
+    }, 300);
+  }
+
+  function choisirSuggestionAdresse(s: { adresse: string; codePostal: string; ville: string }) {
+    setAdresse((a) => ({ ...a, adresse: s.adresse, codePostal: s.codePostal, ville: s.ville }));
+    setSuggestionsVisibles(false);
+    setSuggestionsAdresse([]);
+  }
 
   async function rechercherPointsRelais() {
     if (!adresse.codePostal) {
@@ -391,7 +424,28 @@ export default function FormulaireCheckout() {
                       </div>
                     </div>
                     <label>Adresse</label>
-                    <input required value={adresse.adresse} onChange={(e) => majAdresse('adresse', e.target.value)} placeholder="7 rue Joseph Cugnot" autoComplete="address-line1" />
+                    <div className="checkout__adresse-autocomplete">
+                      <input
+                        required
+                        value={adresse.adresse}
+                        onChange={(e) => gererSaisieAdresse(e.target.value)}
+                        onFocus={() => suggestionsAdresse.length > 0 && setSuggestionsVisibles(true)}
+                        onBlur={() => setTimeout(() => setSuggestionsVisibles(false), 150)}
+                        placeholder="7 rue Joseph Cugnot"
+                        autoComplete="off"
+                      />
+                      {suggestionsVisibles && suggestionsAdresse.length > 0 && (
+                        <ul className="checkout__adresse-suggestions">
+                          {suggestionsAdresse.map((s) => (
+                            <li key={s.label}>
+                              <button type="button" onMouseDown={() => choisirSuggestionAdresse(s)}>
+                                {s.label}
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
                     <label>Complément (appartement, bâtiment...)</label>
                     <input value={adresse.complement} onChange={(e) => majAdresse('complement', e.target.value)} autoComplete="address-line2" />
                     <div className="checkout__ligne-double">
