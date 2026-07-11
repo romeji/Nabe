@@ -30,20 +30,42 @@ export default function ConnexionContenu() {
     setChargement(true);
     setErreur('');
 
-    const resultat = await signIn('credentials', {
-      email,
-      password: motDePasse,
-      redirect: false,
-    });
+    try {
+      // IMPORTANT : on n'utilise volontairement PAS le helper signIn() ici.
+      // next-auth/react partage un état global unique (__NEXTAUTH.basePath)
+      // entre TOUS les SessionProvider de l'appli — admin (/api/auth) et
+      // boutique (/api/auth-client) se marchaient dessus, ce qui pouvait
+      // faire atterrir une connexion client sur le système admin. On appelle
+      // donc directement et explicitement le bon endpoint, sans dépendre de
+      // cet état partagé fragile.
+      const csrfRes = await fetch('/api/auth-client/csrf');
+      const { csrfToken } = await csrfRes.json();
 
-    if (resultat?.error) {
-      setErreur('Email ou mot de passe incorrect.');
+      const reponse = await fetch('/api/auth-client/callback/credentials', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          csrfToken: csrfToken || '',
+          email,
+          password: motDePasse,
+          json: 'true',
+        }),
+      });
+
+      const data = await reponse.json().catch(() => ({}));
+
+      if (!reponse.ok || (data?.url && /[?&]error=/.test(data.url))) {
+        setErreur('Email ou mot de passe incorrect.');
+        setChargement(false);
+        return;
+      }
+
+      router.push(urlRetour);
+      router.refresh();
+    } catch {
+      setErreur('Une erreur est survenue. Réessayez.');
       setChargement(false);
-      return;
     }
-
-    router.push(urlRetour);
-    router.refresh();
   }
 
   async function gererConnexionGoogle() {
