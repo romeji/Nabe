@@ -35,8 +35,9 @@
   padding: 0.4rem;
 }
 
-.panneau-recherche__barre input:focus {
-  outline: none;
+.panneau-recherche__barre input:focus-visible {
+  outline: 2px solid var(--nabe-terracotta, #9f5434);
+  outline-offset: 2px;
 }
 
 .panneau-recherche__barre button {

@@ -45,7 +45,7 @@ export default function EditeurContenuClient({
     setSuccesTout(false);
     try {
       await Promise.all(
-        champs.map((champ) =>
+        champs.map((champ: any) =>
           fetch('/api/admin/contenu', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -75,7 +75,7 @@ export default function EditeurContenuClient({
         </button>
       </div>
 
-      {champs.map((champ) => {
+      {champs.map((champ: any) => {
         const valeurModifiee = valeurs[champ.cle] !== champ.defaut;
         return (
           <div key={champ.cle} className="editeur-contenu__champ">

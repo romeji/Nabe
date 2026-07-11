@@ -156,7 +156,7 @@ export default function GestionPaiementClient() {
       )}
 
       <div className="gestion-paiement__liste">
-        {moyens.map((m) => (
+        {moyens.map((m: any) => (
           <div key={m.id} className="gestion-paiement__carte">
             {m.parDefaut && <span className="gestion-paiement__badge">Par défaut</span>}
             <div className="gestion-paiement__infos">

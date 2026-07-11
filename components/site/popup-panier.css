@@ -308,6 +308,10 @@
   color: #1a1a1a;
   background: transparent;
 }
+.popup-panier__code-input:focus-visible {
+  outline: 2px solid var(--nabe-terracotta, #9f5434);
+  outline-offset: -2px;
+}
 .popup-panier__code-input::placeholder { color: #bbb; }
 .popup-panier__code-btn {
   background: none;

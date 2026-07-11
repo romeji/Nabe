@@ -29,7 +29,7 @@ export default async function PageAdminStock() {
       </div>
       <GestionStockClient
         produits={produits}
-        mouvements={mouvements.map((m) => ({
+        mouvements={mouvements.map((m: any) => ({
           id: m.id,
           produitNom: m.produit.nom,
           type: m.type,

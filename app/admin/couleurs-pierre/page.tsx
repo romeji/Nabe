@@ -32,7 +32,7 @@ export default async function PageAdminCouleursPierre() {
             </tr>
           </thead>
           <tbody>
-            {couleurs.map((c) => (
+            {couleurs.map((c: any) => (
               <LigneCouleurPierre key={c.id} couleur={c} />
             ))}
           </tbody>

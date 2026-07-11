@@ -77,7 +77,7 @@ export default function PanneauRecherche({ ouvert, onFermer }: { ouvert: boolean
 
         {resultats.length > 0 && (
           <div className="panneau-recherche__resultats">
-            {resultats.map((r) => (
+            {resultats.map((r: any) => (
               <Link key={r.id} href={`/collections/${r.slug}`} className="panneau-recherche__carte" onClick={onFermer}>
                 {r.image ? (
                   <Image src={r.image} alt={r.nom} width={70} height={70} />

@@ -1,8 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { verifierLimiteTaux, obtenirIp } from '@/lib/rate-limit';
 
 export async function POST(req: NextRequest) {
   try {
+    const { autorise } = await verifierLimiteTaux('newsletter', obtenirIp(req), 5, 60);
+    if (!autorise) {
+      return NextResponse.json({ error: 'Trop de tentatives. Réessayez plus tard.' }, { status: 429 });
+    }
+
     const contentType = req.headers.get('content-type') || '';
     let email: string;
 
@@ -20,9 +26,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Email invalide' }, { status: 400 });
     }
 
+    // update: { actif: true } est nécessaire pour réactiver quelqu'un qui
+    // s'était désabonné et qui se réinscrit (sinon il reste "inactif" en base).
     await prisma.abonneNewsletter.upsert({
       where: { email },
-      update: {},
+      update: { actif: true },
       create: { email },
     });
 

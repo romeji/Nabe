@@ -88,7 +88,7 @@ export default function GuideTailles({ trigger }: { trigger?: React.ReactNode })
                       </tr>
                     </thead>
                     <tbody>
-                      {TAILLES.map((t) => (
+                      {TAILLES.map((t: any) => (
                         <tr key={t.iso}>
                           <td>{t.iso}</td>
                           <td>{t.circ}</td>

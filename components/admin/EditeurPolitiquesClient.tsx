@@ -15,10 +15,10 @@ export default function EditeurPolitiquesClient({ politiques }: { politiques: Po
   const [items, setItems] = useState<Politique[]>(politiques);
   const [sauvegarde, setSauvegarde] = useState<Record<string, string>>({});
 
-  const itemsSection = items.filter(i => i.cle.startsWith(section));
+  const itemsSection = items.filter((i: any) => i.cle.startsWith(section));
 
   function modifierItem(cle: string, champ: 'titre' | 'contenu', valeur: string) {
-    setItems(prev => prev.map(i => i.cle === cle ? { ...i, [champ]: valeur } : i));
+    setItems(prev => prev.map((i: any) => i.cle === cle ? { ...i, [champ]: valeur } : i));
   }
 
   async function sauvegarderSection() {
@@ -47,7 +47,7 @@ export default function EditeurPolitiquesClient({ politiques }: { politiques: Po
 
       {/* Onglets de section */}
       <div className="politiques-onglets">
-        {SECTIONS.map(s => (
+        {SECTIONS.map((s: any) => (
           <button
             key={s.id}
             onClick={() => setSection(s.id)}
@@ -60,7 +60,7 @@ export default function EditeurPolitiquesClient({ politiques }: { politiques: Po
 
       {/* Éditeur des items de la section */}
       <div className="politiques-items">
-        {itemsSection.map(item => (
+        {itemsSection.map((item: any) => (
           <div key={item.cle} className="politiques-item">
             <div className="politiques-item__cle">Clé : <code>{item.cle}</code></div>
             <div className="admin-form__groupe">

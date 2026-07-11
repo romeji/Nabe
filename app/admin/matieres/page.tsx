@@ -32,7 +32,7 @@ export default async function PageAdminMatieres() {
             </tr>
           </thead>
           <tbody>
-            {matieres.map((m) => (
+            {matieres.map((m: any) => (
               <LigneMatiere key={m.id} matiere={m} />
             ))}
           </tbody>

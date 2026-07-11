@@ -36,7 +36,7 @@ export default async function PageDetailCommande({ params: paramsPromise }: { pa
           montantReduction: commande.montantReduction.toString(),
           fraisLivraison: commande.fraisLivraison.toString(),
           total: commande.total.toString(),
-          lignes: commande.lignes.map((l) => ({ ...l, prixUnitaire: l.prixUnitaire.toString() })),
+          lignes: commande.lignes.map((l: any) => ({ ...l, prixUnitaire: l.prixUnitaire.toString() })),
         }}
         modeAnnulation={{ type: 'connecte', commandeId: commande.id }}
       />

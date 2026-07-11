@@ -28,17 +28,17 @@ export type ModeLivraisonCalcule = {
 export function parserGrilleTarifs(grille: string): TrancheTarif[] {
   return grille
     .split(',')
-    .map((paire) => {
-      const [poidsMax, prix] = paire.split(':').map((v) => parseFloat(v.trim()));
+    .map((paire: any) => {
+      const [poidsMax, prix] = paire.split(':').map((v: any) => parseFloat(v.trim()));
       return { poidsMaxGrammes: poidsMax, prix };
     })
-    .filter((t) => !isNaN(t.poidsMaxGrammes) && !isNaN(t.prix))
+    .filter((t: any) => !isNaN(t.poidsMaxGrammes) && !isNaN(t.prix))
     .sort((a, b) => a.poidsMaxGrammes - b.poidsMaxGrammes);
 }
 
 /** Trouve le prix applicable pour un poids donné dans une grille (tranche la plus proche au-dessus). */
 export function calculerPrixPourPoids(poidsGrammes: number, grille: TrancheTarif[]): number | null {
-  const tranche = grille.find((t) => poidsGrammes <= t.poidsMaxGrammes);
+  const tranche = grille.find((t: any) => poidsGrammes <= t.poidsMaxGrammes);
   // Si le poids dépasse la plus grosse tranche définie, on applique quand même
   // la plus haute plutôt que de bloquer la vente (mieux vaut sous-facturer
   // légèrement un cas rare que casser le checkout).
@@ -54,14 +54,15 @@ export function calculerModesLivraison(
   config: Record<string, string>
 ): ModeLivraisonCalcule[] {
   const modes: ModeLivraisonCalcule[] = [];
+  const livraisonIncluse = config.livraison_incluse_dans_prix === 'true';
 
   if (config.livraison_colissimo_domicile_actif === 'true') {
     const grille = parserGrilleTarifs(config.livraison_colissimo_domicile_grille || '');
-    const prix = calculerPrixPourPoids(poidsTotalGrammes, grille);
+    const prix = livraisonIncluse ? 0 : calculerPrixPourPoids(poidsTotalGrammes, grille);
     if (prix !== null) {
       modes.push({
         id: 'colissimo_domicile',
-        label: 'Livraison à domicile (Colissimo)',
+        label: livraisonIncluse ? 'Livraison à domicile (Colissimo) — incluse' : 'Livraison à domicile (Colissimo)',
         prix,
         delai: '2 à 3 jours ouvrés',
         necessitePointRelais: false,
@@ -71,11 +72,11 @@ export function calculerModesLivraison(
 
   if (config.livraison_mondial_relay_actif === 'true') {
     const grille = parserGrilleTarifs(config.livraison_mondial_relay_grille || '');
-    const prix = calculerPrixPourPoids(poidsTotalGrammes, grille);
+    const prix = livraisonIncluse ? 0 : calculerPrixPourPoids(poidsTotalGrammes, grille);
     if (prix !== null) {
       modes.push({
         id: 'mondial_relay',
-        label: 'Point relais (Mondial Relay)',
+        label: livraisonIncluse ? 'Point relais (Mondial Relay) — inclus' : 'Point relais (Mondial Relay)',
         prix,
         delai: '3 à 5 jours ouvrés',
         necessitePointRelais: true,
@@ -89,5 +90,5 @@ export function calculerModesLivraison(
 /** Poids total du panier en grammes, à partir des lignes {poidsGrammes, quantite}. */
 export function calculerPoidsPanier(articles: { poidsGrammes: number; quantite: number }[]): number {
   const EMBALLAGE_GRAMMES = 60; // pochette + boîte + carton, ajouté forfaitairement
-  return EMBALLAGE_GRAMMES + articles.reduce((total, a) => total + a.poidsGrammes * a.quantite, 0);
+  return EMBALLAGE_GRAMMES + articles.reduce((total: any, a: any) => total + a.poidsGrammes * a.quantite, 0);
 }

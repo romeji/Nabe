@@ -1,16 +1,23 @@
 'use client';
 
-import { useState } from 'react';
-import { signIn } from 'next-auth/react';
+import { useEffect, useState } from 'react';
+import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import './login.css';
 
 export default function PageLoginAdmin() {
   const router = useRouter();
+  const { data: session, status } = useSession();
   const [email, setEmail] = useState('');
   const [motDePasse, setMotDePasse] = useState('');
   const [erreur, setErreur] = useState('');
   const [chargement, setChargement] = useState(false);
+
+  useEffect(() => {
+    if (status === 'authenticated' && session?.user) {
+      router.replace('/admin');
+    }
+  }, [status, session, router]);
 
   async function gererConnexion(e: React.FormEvent) {
     e.preventDefault();

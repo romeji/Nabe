@@ -78,8 +78,15 @@ export default function PageConfidentialite() {
         <h2>Cookies</h2>
         <p>
           Le site utilise des cookies techniques nécessaires au fonctionnement du panier, de la
-          session client et du paiement. Aucun cookie publicitaire tiers n’est nécessaire au
-          fonctionnement de la boutique.
+          session client et du paiement. Ces cookies techniques ne nécessitent pas de consentement
+          (ils sont indispensables au fonctionnement du site).
+        </p>
+        <p>
+          Nous utilisons également, uniquement si vous l'acceptez via le bandeau affiché lors de votre
+          première visite, Google Analytics pour mesurer la fréquentation du site (pages consultées,
+          provenance des visites) de façon à l'améliorer. Ce cookie n'est déposé qu'après votre accord
+          explicite, et vous pouvez le refuser sans que cela n'affecte votre navigation. Aucun cookie
+          publicitaire tiers n'est utilisé.
         </p>
       </section>
     </div>

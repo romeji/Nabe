@@ -16,13 +16,13 @@ export default function LignePierre({ pierre, couleurs }: { pierre: PierreLigne;
   const [edition, setEdition] = useState(false);
   const [nom, setNom] = useState(pierre.nom);
   const [description, setDescription] = useState(pierre.description || '');
-  const [couleursIdsSel, setCouleursIdsSel] = useState<string[]>(pierre.couleurs.map(c => couleurs.find(co => co.nom === c.couleurPierre.nom)?.id).filter(Boolean) as string[]);
+  const [couleursIdsSel, setCouleursIdsSel] = useState<string[]>(pierre.couleurs.map((c: any) => couleurs.find((co: any) => co.nom === c.couleurPierre.nom)?.id).filter(Boolean) as string[]);
   const [confirmationSuppression, setConfirmationSuppression] = useState(false);
   const [enCours, setEnCours] = useState(false);
   const [erreur, setErreur] = useState('');
 
   function basculerCouleur(id: string) {
-    setCouleursIdsSel(prev => prev.includes(id) ? prev.filter(c => c !== id) : [...prev, id]);
+    setCouleursIdsSel(prev => prev.includes(id) ? prev.filter((c: any) => c !== id) : [...prev, id]);
   }
 
   async function sauvegarder() {
@@ -72,7 +72,7 @@ export default function LignePierre({ pierre, couleurs }: { pierre: PierreLigne;
             <input type="text" value={nom} onChange={(e) => setNom(e.target.value)} placeholder="Nom" />
             <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={3} placeholder="Description" />
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
-              {couleurs.map((c) => (
+              {couleurs.map((c: any) => (
                 <button key={c.id} type="button" onClick={() => basculerCouleur(c.id)}
                   style={{
                     display: 'flex', alignItems: 'center', gap: '0.3rem', padding: '0.25rem 0.6rem',
@@ -107,7 +107,7 @@ export default function LignePierre({ pierre, couleurs }: { pierre: PierreLigne;
       <td>
         {pierre.couleurs.length > 0 ? (
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
-            {pierre.couleurs.map((c, i) => (
+            {pierre.couleurs.map((c: any, i: number) => (
               <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
                 <span style={{
                   display: 'inline-block', width: 14, height: 14, borderRadius: '50%',

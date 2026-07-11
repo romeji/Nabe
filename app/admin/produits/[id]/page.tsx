@@ -31,19 +31,19 @@ export default async function PageEditionProduit({ params: paramsPromise }: { pa
     categorieId: produit.categorieId || '',
     collectionId: produit.collectionId || '',
     matiereId: produit.matiereId || '',
-    pierresIds: produit.pierres.map((pp) => pp.pierreId),
+    pierresIds: produit.pierres.map((pp: any) => pp.pierreId),
     delaiFabrication: produit.delaiFabrication || '',
     fabriqueEnFrance: produit.fabriqueEnFrance,
     tailleSurMesure: produit.tailleSurMesure,
     taillesDisponibles: produit.taillesDisponibles,
     disponibilite: produit.disponibilite,
     stock: produit.stock,
-    stockParTaille: Object.fromEntries(produit.stockTailles.map((st) => [st.taille, st.quantite])),
+    stockParTaille: Object.fromEntries(produit.stockTailles.map((st: any) => [st.taille, st.quantite])),
     actif: produit.actif,
     enAvant: produit.enAvant,
     composerAvecActif: produit.composerAvecActif,
-    composeAvecIds: produit.composeAvec.map((c) => c.produitSuggereId),
-    images: produit.images.map((img) => ({ url: img.url, publicId: img.publicId || undefined, alt: img.alt || undefined })),
+    composeAvecIds: produit.composeAvec.map((c: any) => c.produitSuggereId),
+    images: produit.images.map((img: any) => ({ url: img.url, publicId: img.publicId || undefined, alt: img.alt || undefined })),
   };
 
   return (

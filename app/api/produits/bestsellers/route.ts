@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
     include: { images: { orderBy: { ordre: 'asc' }, take: 1 } },
   });
 
-  const resultat = produits.map((p) => ({
+  const resultat = produits.map((p: any) => ({
     id: p.id,
     nom: p.nom,
     slug: p.slug,

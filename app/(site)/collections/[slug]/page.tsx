@@ -12,8 +12,26 @@ type Props = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
-  const produit = await prisma.produit.findUnique({ where: { slug } });
-  return { title: produit?.nom || 'Bijou' };
+  const produit = await prisma.produit.findUnique({
+    where: { slug },
+    include: { images: { orderBy: { ordre: 'asc' }, take: 1 } },
+  });
+  if (!produit) return { title: 'Bijou introuvable' };
+
+  const description = (produit.description || '').replace(/<[^>]+>/g, '').slice(0, 155);
+  const image = produit.images[0]?.url;
+
+  return {
+    title: produit.nom,
+    description: description || `${produit.nom} — bijou artisanal Nabe.`,
+    alternates: { canonical: `/collections/${produit.slug}` },
+    openGraph: {
+      title: produit.nom,
+      description: description || `${produit.nom} — bijou artisanal Nabe.`,
+      images: image ? [{ url: image }] : undefined,
+      type: 'website',
+    },
+  };
 }
 
 export default async function PageProduit({ params }: Props) {
@@ -115,15 +133,44 @@ export default async function PageProduit({ params }: Props) {
       }))
     : [];
 
+  const prixFinal = produit.promoActive && produit.prixPromo ? produit.prixPromo : produit.prix;
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: produit.nom,
+    description: (produit.description || '').replace(/<[^>]+>/g, '').slice(0, 500),
+    image: produit.images.map((img: any) => img.url),
+    sku: produit.reference,
+    brand: { '@type': 'Brand', name: 'Nabe' },
+    offers: {
+      '@type': 'Offer',
+      priceCurrency: 'EUR',
+      price: prixFinal.toString(),
+      availability:
+        produit.disponibilite === 'EN_STOCK' || produit.disponibilite === 'PIECE_UNIQUE_DISPO'
+          ? 'https://schema.org/InStock'
+          : produit.disponibilite === 'EPUISE'
+          ? 'https://schema.org/OutOfStock'
+          : 'https://schema.org/PreOrder',
+      url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://nabe-bijoux.fr'}/collections/${produit.slug}`,
+    },
+  };
+
   return (
-    <ProduitDetailClient
-      produit={produitSerialise as any}
-      suggestions={suggestionsSerialisees as any}
-      suggestionsActives={suggestionsActives}
-      estFavori={estFavori}
-      composables={composables}
-      galeriePosition={galeriePosition}
-      popupOuvertureActive={configEstActive(config, 'popup_panier_ouverture_actif')}
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }}
+      />
+      <ProduitDetailClient
+        produit={produitSerialise as any}
+        suggestions={suggestionsSerialisees as any}
+        suggestionsActives={suggestionsActives}
+        estFavori={estFavori}
+        composables={composables}
+        galeriePosition={galeriePosition}
+        popupOuvertureActive={configEstActive(config, 'popup_panier_ouverture_actif')}
+      />
+    </>
   );
 }

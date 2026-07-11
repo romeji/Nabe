@@ -117,14 +117,14 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
     setDonnees((d) => ({
       ...d,
       pierresIds: d.pierresIds.includes(pierreId)
-        ? d.pierresIds.filter((id) => id !== pierreId)
+        ? d.pierresIds.filter((id: any) => id !== pierreId)
         : [...d.pierresIds, pierreId],
     }));
   }
   function basculerComposeAvec(produitId: string) {
     setDonnees((d) => {
       if (d.composeAvecIds.includes(produitId)) {
-        return { ...d, composeAvecIds: d.composeAvecIds.filter((id) => id !== produitId) };
+        return { ...d, composeAvecIds: d.composeAvecIds.filter((id: any) => id !== produitId) };
       }
       if (d.composeAvecIds.length >= 2) {
         return d; // déjà 2 sélectionnés, on ignore le clic
@@ -137,7 +137,7 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
     setDonnees((d) => ({
       ...d,
       taillesDisponibles: d.taillesDisponibles.includes(taille)
-        ? d.taillesDisponibles.filter((t) => t !== taille)
+        ? d.taillesDisponibles.filter((t: any) => t !== taille)
         : [...d.taillesDisponibles, taille],
     }));
   }
@@ -199,7 +199,7 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
   }
 
   function retirerImage(index: number) {
-    setDonnees((d) => ({ ...d, images: d.images.filter((_, i) => i !== index) }));
+    setDonnees((d) => ({ ...d, images: d.images.filter((_: any, i: number) => i !== index) }));
   }
 
   async function gererSoumission(e: React.FormEvent) {
@@ -290,7 +290,7 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
             <label>Catégorie</label>
             <select value={donnees.categorieId} onChange={(e) => majChamp('categorieId', e.target.value)} disabled={chargementOptions}>
               <option value="">Aucune catégorie</option>
-              {categories.map((c) => (
+              {categories.map((c: any) => (
                 <option key={c.id} value={c.id}>
                   {c.nom}
                 </option>
@@ -306,7 +306,7 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
             <label>Matière</label>
             <select value={donnees.matiereId} onChange={(e) => majChamp('matiereId', e.target.value)} disabled={chargementOptions}>
               <option value="">Sélectionner une matière</option>
-              {matieres.map((m) => (
+              {matieres.map((m: any) => (
                 <option key={m.id} value={m.id}>
                   {m.nom}
                 </option>
@@ -323,7 +323,7 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
         <div className="admin-form__champ-pleine-largeur">
           <label>Pierres (sélection multiple, facultatif)</label>
           <div className="formulaire-produit__pierres">
-            {pierres.map((p) => (
+            {pierres.map((p: any) => (
               <button
                 key={p.id}
                 type="button"
@@ -332,7 +332,7 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
               >
                 {p.couleurs.length > 0 && (
                   <span style={{ display: 'inline-flex', gap: 2, marginRight: 4 }}>
-                    {p.couleurs.slice(0, 3).map((c, i) => (
+                    {p.couleurs.slice(0, 3).map((c: any, i: number) => (
                       <span
                         key={i}
                         className="formulaire-produit__pierre-pastille"
@@ -357,7 +357,7 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
             <label>Collection (facultatif)</label>
             <select value={donnees.collectionId} onChange={(e) => majChamp('collectionId', e.target.value)} disabled={chargementOptions}>
               <option value="">Aucune collection</option>
-              {collections.map((c) => (
+              {collections.map((c: any) => (
                 <option key={c.id} value={c.id}>
                   {c.nom}
                 </option>
@@ -403,7 +403,7 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
 
         {!donnees.tailleSurMesure && (
           <div className="formulaire-produit__tailles">
-            {TAILLES_BAGUE.map((t) => (
+            {TAILLES_BAGUE.map((t: any) => (
               <button
                 key={t}
                 type="button"
@@ -426,7 +426,7 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
           <div>
             <label>Quantité en stock par taille</label>
             <div className="formulaire-produit__stock-tailles">
-              {donnees.taillesDisponibles.map((t) => (
+              {donnees.taillesDisponibles.map((t: any) => (
                 <div key={t} className="formulaire-produit__stock-taille-ligne">
                   <span className="formulaire-produit__stock-taille-label">Taille {t}</span>
                   <input
@@ -444,7 +444,7 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
               ))}
             </div>
             <p className="formulaire-produit__aide">
-              Stock total : {Object.values(donnees.stockParTaille).reduce((a, b) => a + (b || 0), 0)}
+              Stock total : {Object.values(donnees.stockParTaille).reduce((a: any, b: any) => a + (b || 0), 0)}
             </p>
           </div>
         ) : (
@@ -519,7 +519,7 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
               Si aucun n'est choisi, le bloc ne s'affichera pas.
             </p>
             <div className="formulaire-produit__produits-liste">
-              {tousLesProduits.map((p) => (
+              {tousLesProduits.map((p: any) => (
                 <button
                   key={p.id}
                   type="button"
@@ -546,7 +546,7 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
         {uploadEnCours && <p className="formulaire-produit__upload-statut">Envoi en cours...</p>}
 
         <div className="formulaire-produit__images">
-          {donnees.images.map((img, i) => (
+          {donnees.images.map((img: any, i: number) => (
             <div key={i} className="formulaire-produit__image">
               <img src={img.url} alt={img.alt || ''} />
               <button type="button" onClick={() => retirerImage(i)}>

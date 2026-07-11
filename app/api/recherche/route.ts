@@ -29,7 +29,7 @@ export async function GET(req: NextRequest) {
     take: 12,
   });
 
-  const resultat = produits.map((p) => ({
+  const resultat = produits.map((p: any) => ({
     id: p.id,
     nom: p.nom,
     slug: p.slug,

@@ -39,7 +39,7 @@ export default async function PageFavoris() {
         </p>
       ) : (
         <div className="favoris-grille">
-          {favoris.map((f) => (
+          {favoris.map((f: any) => (
             <div key={f.id} className="favoris-carte">
               <Link href={`/collections/${f.produit.slug}`} className="favoris-carte__image">
                 {f.produit.images[0] ? (

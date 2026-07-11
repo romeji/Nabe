@@ -59,5 +59,5 @@ export async function GET(req: NextRequest) {
   const clientId = (session.user as any).id as string;
 
   const favoris = await prisma.favori.findMany({ where: { clientId }, select: { produitId: true } });
-  return NextResponse.json({ favoris: favoris.map((f) => f.produitId) });
+  return NextResponse.json({ favoris: favoris.map((f: any) => f.produitId) });
 }

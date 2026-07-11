@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { getConfigSite } from '@/lib/config-site';
+import { verifierLimiteTaux, obtenirIp } from '@/lib/rate-limit';
 
 /**
  * Recherche de points relais Mondial Relay via le Web Service officiel
@@ -43,7 +44,7 @@ function construireEnveloppeSoap(params: Record<string, string>, security: strin
   ];
 
   const corpsChamps = champs
-    .map((cle) => `<${cle} xsi:type="xsd:string">${escaperXml(params[cle] || '')}</${cle}>`)
+    .map((cle: any) => `<${cle} xsi:type="xsd:string">${escaperXml(params[cle] || '')}</${cle}>`)
     .join('');
 
   return `<?xml version="1.0" encoding="utf-8"?>
@@ -69,6 +70,11 @@ function extraireTexte(bloc: string, tag: string): string {
 
 export async function POST(req: NextRequest) {
   try {
+    const { autorise } = await verifierLimiteTaux('points-relais', obtenirIp(req), 20, 5);
+    if (!autorise) {
+      return NextResponse.json({ error: 'Trop de recherches. Réessayez dans quelques instants.' }, { status: 429 });
+    }
+
     const { codePostal, ville, pays } = (await req.json()) as {
       codePostal?: string;
       ville?: string;
@@ -148,7 +154,7 @@ export async function POST(req: NextRequest) {
     }
 
     const blocsPointRelais = texte.match(/<PointRelais_Type>[\s\S]*?<\/PointRelais_Type>/gi) || [];
-    const points = blocsPointRelais.map((bloc) => ({
+    const points = blocsPointRelais.map((bloc: any) => ({
       numero: extraireTexte(bloc, 'Num'),
       nom: extraireTexte(bloc, 'LgAdr1'),
       adresse: [extraireTexte(bloc, 'LgAdr3'), extraireTexte(bloc, 'LgAdr4')].filter(Boolean).join(', '),

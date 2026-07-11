@@ -50,7 +50,7 @@ export default function FaqAccordeon() {
 
   return (
     <div>
-      {QUESTIONS.map((item, index) => (
+      {QUESTIONS.map((item: any, index: number) => (
         <div key={index} className="page-info__faq-item">
           <button
             className="page-info__faq-question"

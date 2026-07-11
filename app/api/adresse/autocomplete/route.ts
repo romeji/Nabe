@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { verifierLimiteTaux, obtenirIp } from '@/lib/rate-limit';
 
 /**
  * Proxy vers le service de géocodage de la Géoplateforme (IGN), qui a
@@ -13,6 +14,11 @@ import { NextRequest, NextResponse } from 'next/server';
  */
 
 export async function GET(req: NextRequest) {
+  const { autorise } = await verifierLimiteTaux('adresse-autocomplete', obtenirIp(req), 30, 5);
+  if (!autorise) {
+    return NextResponse.json({ suggestions: [] });
+  }
+
   const q = req.nextUrl.searchParams.get('q')?.trim();
 
   if (!q || q.length < 3) {

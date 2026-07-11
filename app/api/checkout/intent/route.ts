@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
     const session = await getServerSession(authClientOptions);
     const clientId = (session?.user as any)?.id as string | undefined;
 
-    const idsProduits = articles.map((a) => a.produitId);
+    const idsProduits = articles.map((a: any) => a.produitId);
     const produitsDb = await prisma.produit.findMany({
       where: { id: { in: idsProduits }, actif: true },
       include: { stockTailles: true },
@@ -80,7 +80,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'Quantité invalide dans le panier.' }, { status: 400 });
       }
 
-      const produitDb = produitsDb.find((p) => p.id === article.produitId);
+      const produitDb = produitsDb.find((p: any) => p.id === article.produitId);
       if (!produitDb) {
         return NextResponse.json({ error: `Produit introuvable : ${article.nom}` }, { status: 400 });
       }
@@ -91,7 +91,7 @@ export async function POST(req: NextRequest) {
 
       const stockDisponible =
         produitDb.stockTailles.length > 0
-          ? produitDb.stockTailles.find((s) => s.taille === article.taille)?.quantite ?? 0
+          ? produitDb.stockTailles.find((s: any) => s.taille === article.taille)?.quantite ?? 0
           : produitDb.stock;
 
       if (article.quantite > stockDisponible) {
@@ -129,14 +129,14 @@ export async function POST(req: NextRequest) {
     // Calcul du tarif de livraison réel, à partir du poids effectif des produits du panier
     // et de la grille tarifaire configurée dans l'admin (jamais du prix envoyé par le client).
     const poidsTotal = calculerPoidsPanier(
-      lignesValidees.map((l) => {
-        const produitDb = produitsDb.find((p) => p.id === l.produitId)!;
+      lignesValidees.map((l: any) => {
+        const produitDb = produitsDb.find((p: any) => p.id === l.produitId)!;
         return { poidsGrammes: produitDb.poidsGrammes, quantite: l.quantite };
       })
     );
     const configSite = await getConfigSite();
     const modesDisponibles = calculerModesLivraison(poidsTotal, configSite);
-    const modeChoisi = modesDisponibles.find((m) => m.id === modeLivraison?.id) || modesDisponibles[0];
+    const modeChoisi = modesDisponibles.find((m: any) => m.id === modeLivraison?.id) || modesDisponibles[0];
 
     if (!modeChoisi) {
       return NextResponse.json({ error: 'Aucun mode de livraison disponible.' }, { status: 400 });
@@ -202,7 +202,7 @@ export async function POST(req: NextRequest) {
       },
       metadata: {
         articles: JSON.stringify(
-          lignesValidees.map((l) => ({
+          lignesValidees.map((l: any) => ({
             id: l.produitId,
             q: l.quantite,
             taille: l.taille || '',

@@ -14,12 +14,12 @@ export async function POST(req: NextRequest) {
     }
 
     const produits = await prisma.produit.findMany({
-      where: { id: { in: articles.map((a) => a.id) } },
+      where: { id: { in: articles.map((a: any) => a.id) } },
       select: { id: true, poidsGrammes: true },
     });
 
-    const articlesAvecPoids = articles.map((a) => {
-      const produit = produits.find((p) => p.id === a.id);
+    const articlesAvecPoids = articles.map((a: any) => {
+      const produit = produits.find((p: any) => p.id === a.id);
       return { poidsGrammes: produit?.poidsGrammes ?? 50, quantite: a.quantite };
     });
 

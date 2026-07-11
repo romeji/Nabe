@@ -24,9 +24,9 @@ export default async function PageAdminReglages() {
       </div>
       <ReglagesClient
         configInitiale={config}
-        collections={collections.map((c) => ({ id: c.id, nom: c.nom }))}
-        categories={categories.map((c) => ({ id: c.id, nom: c.nom }))}
-        produits={produits.map((p) => ({ id: p.id, nom: p.nom, prix: p.prix.toString() }))}
+        collections={collections.map((c: any) => ({ id: c.id, nom: c.nom }))}
+        categories={categories.map((c: any) => ({ id: c.id, nom: c.nom }))}
+        produits={produits.map((p: any) => ({ id: p.id, nom: p.nom, prix: p.prix.toString() }))}
       />
     </div>
   );

@@ -77,7 +77,7 @@ export default async function PageDashboardAdmin() {
                 </tr>
               </thead>
               <tbody>
-                {commandesRecentes.map((c) => (
+                {commandesRecentes.map((c: any) => (
                   <tr key={c.id}>
                     <td>{c.numero}</td>
                     <td>{c.clientNom}</td>
@@ -99,7 +99,7 @@ export default async function PageDashboardAdmin() {
             <p className="admin-dashboard__vide">Tous les stocks sont au bon niveau.</p>
           ) : (
             <ul className="admin-dashboard__liste-stock">
-              {produitsStockBas.map((p) => (
+              {produitsStockBas.map((p: any) => (
                 <li key={p.id}>
                   <Link href={`/admin/produits/${p.id}`}>{p.nom}</Link>
                   <span className="admin-badge admin-badge--danger">{p.stock} restant(s)</span>

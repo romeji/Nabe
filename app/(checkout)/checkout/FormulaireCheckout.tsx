@@ -141,7 +141,7 @@ export default function FormulaireCheckout() {
     fetch('/api/livraison/tarifs', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ articles: articles.map((a) => ({ id: a.produitId, quantite: a.quantite })) }),
+      body: JSON.stringify({ articles: articles.map((a: any) => ({ id: a.produitId, quantite: a.quantite })) }),
     })
       .then((r) => (r.ok ? r.json() : { modes: [] }))
       .then((data: { modes: ModeLivraison[] }) => {
@@ -151,7 +151,7 @@ export default function FormulaireCheckout() {
       .catch(() => setModesLivraison([]))
       .finally(() => setChargementModes(false));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [articles.map((a) => `${a.produitId}:${a.quantite}`).join(',')]);
+  }, [articles.map((a: any) => `${a.produitId}:${a.quantite}`).join(',')]);
 
   function gererSaisieAdresse(valeur: string) {
     majAdresse('adresse', valeur);
@@ -221,7 +221,7 @@ export default function FormulaireCheckout() {
       .then((r) => (r.ok ? r.json() : []))
       .then((data: AdresseEnregistree[]) => {
         setAdressesEnregistrees(data);
-        const parDefaut = data.find((a) => a.parDefaut) || data[0];
+        const parDefaut = data.find((a: any) => a.parDefaut) || data[0];
         if (parDefaut) {
           appliquerAdresseEnregistree(parDefaut);
           setAdresseSelectionneeId(parDefaut.id);
@@ -252,12 +252,12 @@ export default function FormulaireCheckout() {
       return;
     }
 
-    const trouvee = adressesEnregistrees.find((a) => a.id === id);
+    const trouvee = adressesEnregistrees.find((a: any) => a.id === id);
     if (trouvee) appliquerAdresseEnregistree(trouvee);
   }
 
-  const modeLivraison = modesLivraison.find((m) => m.id === modeLivraisonId) || modesLivraison[0];
-  const sousTotal = articles.reduce((s, a) => s + a.prix * a.quantite, 0);
+  const modeLivraison = modesLivraison.find((m: any) => m.id === modeLivraisonId) || modesLivraison[0];
+  const sousTotal = articles.reduce((s: any, a: any) => s + a.prix * a.quantite, 0);
   const reduction = codeApplique?.reduction || 0;
   const fraisLivraison = modeLivraison?.prix || 0;
   const total = Math.max(0, sousTotal - reduction + fraisLivraison);
@@ -382,7 +382,7 @@ export default function FormulaireCheckout() {
 
                 {statutSession === 'authenticated' && adressesEnregistrees.length > 0 && (
                   <div className="checkout__adresses-enregistrees">
-                    {adressesEnregistrees.map((a) => (
+                    {adressesEnregistrees.map((a: any) => (
                       <label
                         key={a.id}
                         className={`checkout__adresse-carte${adresseSelectionneeId === a.id ? ' checkout__adresse-carte--active' : ''}`}
@@ -436,7 +436,7 @@ export default function FormulaireCheckout() {
                       />
                       {suggestionsVisibles && suggestionsAdresse.length > 0 && (
                         <ul className="checkout__adresse-suggestions">
-                          {suggestionsAdresse.map((s) => (
+                          {suggestionsAdresse.map((s: any) => (
                             <li key={s.label}>
                               <button type="button" onMouseDown={() => choisirSuggestionAdresse(s)}>
                                 {s.label}
@@ -470,7 +470,7 @@ export default function FormulaireCheckout() {
                 {!chargementModes && modesLivraison.length === 0 && (
                   <p className="checkout__erreur">Aucun mode de livraison disponible pour le moment.</p>
                 )}
-                {modesLivraison.map((mode) => (
+                {modesLivraison.map((mode: any) => (
                   <label key={mode.id} className={`checkout__option-expedition${modeLivraisonId === mode.id ? ' checkout__option-expedition--actif' : ''}`}>
                     <span className="checkout__option-expedition-choix">
                       <input
@@ -511,7 +511,7 @@ export default function FormulaireCheckout() {
                         {erreurRelais && <p className="checkout__erreur">{erreurRelais}</p>}
                         {pointsRelais.length > 0 && (
                           <ul className="checkout__liste-relais">
-                            {pointsRelais.map((p) => (
+                            {pointsRelais.map((p: any) => (
                               <li key={p.numero}>
                                 <button type="button" onClick={() => setPointRelaisChoisi(p)}>
                                   <strong>{p.nom}</strong>
@@ -574,7 +574,7 @@ export default function FormulaireCheckout() {
 
         <aside className="checkout__resume" aria-label="Résumé de commande">
           <div className="checkout__resume-articles">
-            {articles.map((article) => (
+            {articles.map((article: any) => (
               <div key={`${article.produitId}-${article.taille ?? ''}`} className="checkout__resume-article">
                 <div className="checkout__resume-image">
                   {article.image && <Image src={article.image} alt={article.nom} width={56} height={56} style={{ objectFit: 'cover' }} />}
@@ -618,7 +618,7 @@ export default function FormulaireCheckout() {
 
           <div className="checkout__totaux">
             <div className="checkout__ligne-total">
-              <span>Sous-total · {articles.reduce((n, a) => n + a.quantite, 0)} article{articles.length > 1 ? 's' : ''}</span>
+              <span>Sous-total · {articles.reduce((n: any, a: any) => n + a.quantite, 0)} article{articles.length > 1 ? 's' : ''}</span>
               <span>{formaterPrix(sousTotal)}</span>
             </div>
             {reduction > 0 && (

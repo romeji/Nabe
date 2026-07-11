@@ -95,7 +95,7 @@ export default function ReglagesClient({
           <div className="reglages-client__sous-champ">
             <label>Collections à mettre en avant (3 maximum)</label>
             <div className="reglages-client__categories">
-              {collections.map((c) => (
+              {collections.map((c: any) => (
                 <button
                   key={c.id}
                   type="button"
@@ -147,7 +147,7 @@ export default function ReglagesClient({
               onChange={(e) => maj('carrousel_nouvelle_collection_id', e.target.value)}
             >
               <option value="">Sélectionner une collection</option>
-              {collections.map((c) => (
+              {collections.map((c: any) => (
                 <option key={c.id} value={c.id}>
                   {c.nom}
                 </option>
@@ -181,7 +181,7 @@ export default function ReglagesClient({
           <div className="reglages-client__sous-champ">
             <label>Catégories à mettre en avant (4 maximum)</label>
             <div className="reglages-client__categories">
-              {categories.map((c) => (
+              {categories.map((c: any) => (
                 <button
                   key={c.id}
                   type="button"
@@ -358,7 +358,7 @@ export default function ReglagesClient({
                 onChange={(e) => maj('boite_cadeau_produit_id', e.target.value)}
               >
                 <option value="">— Choisir un article —</option>
-                {produits.map((p) => (
+                {produits.map((p: any) => (
                   <option key={p.id} value={p.id}>
                     {p.nom} — {parseFloat(p.prix).toFixed(2)} €
                   </option>
@@ -484,7 +484,7 @@ export default function ReglagesClient({
                 onChange={(e) => maj('popup_panier_article_bonus_id', e.target.value)}
               >
                 <option value="">— Choisir un article —</option>
-                {produits.map((p) => (
+                {produits.map((p: any) => (
                   <option key={p.id} value={p.id}>
                     {p.nom} — {parseFloat(p.prix).toFixed(2)} €
                   </option>
@@ -547,6 +547,22 @@ export default function ReglagesClient({
           son prix, séparés par des virgules — ex. "500:4.95,1000:6.90" veut dire 4,95&nbsp;€ jusqu'à 500g,
           puis 6,90&nbsp;€ jusqu'à 1kg.
         </p>
+
+        <label className="reglages-client__toggle">
+          <input
+            type="checkbox"
+            checked={config.livraison_incluse_dans_prix === 'true'}
+            onChange={(e) => maj('livraison_incluse_dans_prix', e.target.checked ? 'true' : 'false')}
+          />
+          <div>
+            <strong>Livraison incluse dans le prix des produits</strong>
+            <p>
+              Si activé, la livraison n'est jamais facturée en plus au checkout (affichée "incluse").
+              À vous d'avoir répercuté son coût dans le prix de vos bijoux. Si désactivé (par défaut), le
+              tarif est calculé séparément selon les grilles ci-dessous.
+            </p>
+          </div>
+        </label>
 
         <label className="reglages-client__toggle">
           <input
@@ -621,6 +637,35 @@ export default function ReglagesClient({
             placeholder="Fourni par La Poste Entreprises"
           />
         </div>
+      </div>
+
+      <div className="admin-carte reglages-client__section">
+        <h2>Google Analytics</h2>
+        <p className="formulaire-produit__aide">
+          Ne se déclenche jamais sans le consentement explicite du visiteur (bandeau cookies affiché sur
+          le site). Récupérez votre identifiant de mesure sur analytics.google.com (format "G-XXXXXXXXXX").
+        </p>
+        <label className="reglages-client__toggle">
+          <input
+            type="checkbox"
+            checked={config.google_analytics_actif === 'true'}
+            onChange={(e) => maj('google_analytics_actif', e.target.checked ? 'true' : 'false')}
+          />
+          <div>
+            <strong>Activer Google Analytics</strong>
+          </div>
+        </label>
+        {config.google_analytics_actif === 'true' && (
+          <div className="reglages-client__sous-champ">
+            <label>Identifiant de mesure (G-XXXXXXXXXX)</label>
+            <input
+              type="text"
+              value={config.google_analytics_id}
+              onChange={(e) => maj('google_analytics_id', e.target.value)}
+              placeholder="G-XXXXXXXXXX"
+            />
+          </div>
+        )}
       </div>
 
       <div className="reglages-client__actions">

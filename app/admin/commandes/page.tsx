@@ -33,7 +33,7 @@ export default async function PageAdminCommandes() {
           </tr>
         </thead>
         <tbody>
-          {commandes.map((c) => (
+          {commandes.map((c: any) => (
             <tr key={c.id}>
               <td>{c.numero}</td>
               <td>{new Date(c.createdAt).toLocaleDateString('fr-FR')}</td>

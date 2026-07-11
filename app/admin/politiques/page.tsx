@@ -22,7 +22,7 @@ export default async function AdminPolitiquesPage() {
   const enDb = await prisma.contenuPolitique.findMany({ orderBy: { ordre: 'asc' } });
 
   const politiques = Object.entries(DEFAUTS).map(([cle, defaut]) => {
-    const db = enDb.find(i => i.cle === cle);
+    const db = enDb.find((i: any) => i.cle === cle);
     return { cle, titre: db?.titre ?? defaut.titre, contenu: db?.contenu ?? defaut.contenu, ordre: defaut.ordre };
   });
 

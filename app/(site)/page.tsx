@@ -16,7 +16,7 @@ const DUREE_NOUVEAU_JOURS = 21;
 
 function serialiser(produits: any[]) {
   const seuilNouveau = Date.now() - DUREE_NOUVEAU_JOURS * 24 * 60 * 60 * 1000;
-  return produits.map((p) => ({
+  return produits.map((p: any) => ({
     id: p.id,
     nom: p.nom,
     slug: p.slug,
@@ -77,13 +77,13 @@ export default async function PageAccueil() {
         : Promise.resolve([]),
     ]);
 
-  const idsFavoris = favorisIds.map((f) => f.produitId);
+  const idsFavoris = favorisIds.map((f: any) => f.produitId);
   // On respecte l'ordre choisi par l'admin plutôt que l'ordre renvoyé par la requête
   const categoriesAccueilOrdonnees = idsCategoriesAccueil
-    .map((id) => categoriesAccueil.find((c) => c.id === id))
+    .map((id: any) => categoriesAccueil.find((c: any) => c.id === id))
     .filter(Boolean) as typeof categoriesAccueil;
   const collectionsSelectionOrdonnees = idsCollectionsSelection
-    .map((id) => collectionsSelection.find((c) => c.id === id))
+    .map((id: any) => collectionsSelection.find((c: any) => c.id === id))
     .filter(Boolean) as typeof collectionsSelection;
 
   return (
@@ -143,7 +143,7 @@ export default async function PageAccueil() {
         <section className="accueil-categories-section conteneur">
           <span className="etiquette etiquette--centre">{contenu.collections_label}</span>
           <CategoriesAccueil
-            categories={categoriesAccueilOrdonnees.map((c) => ({
+            categories={categoriesAccueilOrdonnees.map((c: any) => ({
               id: c.id,
               nom: c.nom,
               slug: c.slug,
@@ -263,7 +263,7 @@ export default async function PageAccueil() {
             Notre <span className="accent">sélection</span>
           </h2>
           <div className="accueil-selection__grille">
-            {collectionsSelectionOrdonnees.map((collection) => (
+            {collectionsSelectionOrdonnees.map((collection: any) => (
               <Link
                 key={collection.id}
                 href={`/collections?collection=${collection.slug}`}
@@ -301,7 +301,7 @@ export default async function PageAccueil() {
               ‹
             </button>
             <div className="accueil-temoignages__grille">
-              {temoignages.map((t) => (
+              {temoignages.map((t: any) => (
                 <div key={t.id} className="accueil-temoignages__carte">
                   <div className="accueil-temoignages__etoiles">{'★'.repeat(t.note)}</div>
                   <p>« {t.texte} »</p>

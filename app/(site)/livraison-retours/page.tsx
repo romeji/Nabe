@@ -1,8 +1,12 @@
 import '../page-info.css';
+import { getConfigSite } from '@/lib/config-site';
 
 export const metadata = { title: 'Livraison & Retours' };
 
-export default function PageLivraisonRetours() {
+export default async function PageLivraisonRetours() {
+  const config = await getConfigSite();
+  const livraisonIncluse = config.livraison_incluse_dans_prix === 'true';
+
   return (
     <div className="page-info">
       <div className="page-info__entete">
@@ -13,10 +17,21 @@ export default function PageLivraisonRetours() {
       <section className="page-info__section">
         <h2>Livraison</h2>
         <p>
-          Chaque commande est emballée avec soin dans notre atelier avant expédition. Les frais de
-          livraison sont calculés automatiquement selon le poids de votre commande et le mode choisi
-          au moment du paiement (livraison à domicile Colissimo ou point relais Mondial Relay) ;
-          le montant exact vous est indiqué avant validation du paiement.
+          {livraisonIncluse ? (
+            <>
+              Chaque commande est emballée avec soin dans notre atelier avant expédition. Les frais de
+              livraison sont <strong>inclus dans le prix affiché</strong> de nos bijoux : aucun montant
+              supplémentaire ne vous sera facturé au moment du paiement, quel que soit le mode de
+              livraison choisi (livraison à domicile Colissimo ou point relais Mondial Relay).
+            </>
+          ) : (
+            <>
+              Chaque commande est emballée avec soin dans notre atelier avant expédition. Les frais de
+              livraison sont calculés automatiquement selon le poids de votre commande et le mode choisi
+              au moment du paiement (livraison à domicile Colissimo ou point relais Mondial Relay) ;
+              le montant exact vous est indiqué avant validation du paiement.
+            </>
+          )}
         </p>
         <h3>Délais d'expédition</h3>
         <ul>

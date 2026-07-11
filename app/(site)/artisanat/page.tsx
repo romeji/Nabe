@@ -68,7 +68,7 @@ export default function PageArtisanat() {
       <section className="artisanat-etapes marque-section">
         <span className="marque-label">Les étapes de fabrication</span>
         <div className="artisanat-etapes__liste">
-          {etapes.map((etape, index) => (
+          {etapes.map((etape: any, index: number) => (
             <article className="artisanat-etape" key={etape.titre}>
               <span className="artisanat-etape__numero">{String(index + 1).padStart(2, '0')}</span>
               <div className="artisanat-etape__image">
@@ -87,7 +87,7 @@ export default function PageArtisanat() {
         <div className="marque-section">
           <span className="marque-label">Des matériaux d’exception</span>
           <div className="artisanat-materiaux__grille">
-            {materiaux.map((matiere) => (
+            {materiaux.map((matiere: any) => (
               <article className="artisanat-matiere" key={matiere.titre}>
                 <div>
                   <Image src={matiere.image} alt={matiere.titre} width={180} height={140} />
@@ -103,7 +103,7 @@ export default function PageArtisanat() {
       <section className="artisanat-qualites">
         <span className="marque-label">Nos engagements qualité</span>
         <div className="artisanat-qualites__grille">
-          {qualites.map((qualite) => (
+          {qualites.map((qualite: any) => (
             <article key={qualite.titre}>
               <span className={`marque-icone marque-icone--${qualite.icone}`} aria-hidden="true" />
               <h2>{qualite.titre}</h2>

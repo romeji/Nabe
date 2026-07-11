@@ -31,9 +31,9 @@ export async function GET(req: NextRequest) {
 
   // Fusionner avec les défauts pour les clés manquantes
   const resultat = DEFAUTS_POLITIQUES
-    .filter(d => !section || d.cle.startsWith(section))
-    .map(defaut => {
-      const enDb = items.find(i => i.cle === defaut.cle);
+    .filter((d: any) => !section || d.cle.startsWith(section))
+    .map((defaut: any) => {
+      const enDb = items.find((i: any) => i.cle === defaut.cle);
       return enDb || { ...defaut, updatedAt: new Date() };
     });
 
@@ -48,7 +48,7 @@ export async function PUT(req: NextRequest) {
     const items: Array<{ cle: string; titre: string; contenu: string; ordre: number }> = await req.json();
 
     await Promise.all(
-      items.map(item =>
+      items.map((item: any) =>
         prisma.contenuPolitique.upsert({
           where: { cle: item.cle },
           create: { cle: item.cle, titre: item.titre, contenu: item.contenu, ordre: item.ordre ?? 0 },

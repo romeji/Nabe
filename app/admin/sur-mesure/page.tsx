@@ -20,7 +20,7 @@ export default async function PageAdminSurMesure() {
       </div>
 
       <div className="admin-sur-mesure__liste">
-        {demandes.map((d) => (
+        {demandes.map((d: any) => (
           <DemandeSurMesureCarte
             key={d.id}
             demande={{

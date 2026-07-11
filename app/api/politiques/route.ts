@@ -21,9 +21,9 @@ export async function GET(req: NextRequest) {
     orderBy: { ordre: 'asc' },
   });
 
-  const clesSection = Object.keys(DEFAUTS_POLITIQUES).filter(k => !section || k.startsWith(section));
-  const resultat = clesSection.map(cle => {
-    const enDb = items.find(i => i.cle === cle);
+  const clesSection = Object.keys(DEFAUTS_POLITIQUES).filter((k: any) => !section || k.startsWith(section));
+  const resultat = clesSection.map((cle: any) => {
+    const enDb = items.find((i: any) => i.cle === cle);
     if (enDb) return enDb;
     return { cle, ...DEFAUTS_POLITIQUES[cle], updatedAt: new Date() };
   }).sort((a, b) => a.ordre - b.ordre);

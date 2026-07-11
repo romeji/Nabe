@@ -15,12 +15,12 @@ type ArticleMeta = { id: string; q: number; taille: string; pu?: number };
  */
 async function decrementerStockEtJournaliser(articlesMeta: ArticleMeta[], numeroCommande: string) {
   const produitsDb = await prisma.produit.findMany({
-    where: { id: { in: articlesMeta.map((a) => a.id) } },
+    where: { id: { in: articlesMeta.map((a: any) => a.id) } },
     include: { stockTailles: true },
   });
 
   for (const a of articlesMeta) {
-    const produit = produitsDb.find((p) => p.id === a.id);
+    const produit = produitsDb.find((p: any) => p.id === a.id);
     if (!produit) continue;
 
     await prisma.produit.update({
@@ -29,7 +29,7 @@ async function decrementerStockEtJournaliser(articlesMeta: ArticleMeta[], numero
     });
 
     if (produit.stockTailles.length > 0 && a.taille) {
-      const ligne = produit.stockTailles.find((s) => s.taille === a.taille);
+      const ligne = produit.stockTailles.find((s: any) => s.taille === a.taille);
       if (ligne) {
         await prisma.stockTaille.update({
           where: { id: ligne.id },
@@ -71,7 +71,7 @@ async function envoyerEmailConfirmation(commandeId: string) {
       html: genererHtmlConfirmationCommande({
         prenom,
         numero: commande.numero,
-        lignes: commande.lignes.map((l) => ({
+        lignes: commande.lignes.map((l: any) => ({
           nomProduit: l.nomProduit,
           taille: l.taille,
           quantite: l.quantite,
@@ -134,7 +134,7 @@ export async function POST(req: NextRequest) {
       const total = intent.amount / 100;
 
       const produitsDb = await prisma.produit.findMany({
-        where: { id: { in: articlesMeta.map((a) => a.id) } },
+        where: { id: { in: articlesMeta.map((a: any) => a.id) } },
       });
 
       const commande = await prisma.commande.create({
@@ -160,8 +160,8 @@ export async function POST(req: NextRequest) {
           total,
           stripePaymentIntentId: intent.id,
           lignes: {
-            create: articlesMeta.map((a) => {
-              const produit = produitsDb.find((p) => p.id === a.id);
+            create: articlesMeta.map((a: any) => {
+              const produit = produitsDb.find((p: any) => p.id === a.id);
               return {
                 produitId: produit?.id,
                 nomProduit: produit?.nom || 'Produit',
@@ -195,7 +195,7 @@ export async function POST(req: NextRequest) {
       const codeReductionId = session.metadata?.codeReductionId || undefined;
 
       const produitsDb = await prisma.produit.findMany({
-        where: { id: { in: articlesMeta.map((a) => a.id) } },
+        where: { id: { in: articlesMeta.map((a: any) => a.id) } },
       });
 
       const sousTotal = (session.amount_subtotal || 0) / 100;
@@ -222,8 +222,8 @@ export async function POST(req: NextRequest) {
           stripePaymentIntentId:
             typeof session.payment_intent === 'string' ? session.payment_intent : undefined,
           lignes: {
-            create: articlesMeta.map((a) => {
-              const produit = produitsDb.find((p) => p.id === a.id);
+            create: articlesMeta.map((a: any) => {
+              const produit = produitsDb.find((p: any) => p.id === a.id);
               return {
                 produitId: produit?.id,
                 nomProduit: produit?.nom || 'Produit',

@@ -104,7 +104,7 @@ export default function TemoignagesAdminClient({ temoignages }: { temoignages: T
           </tr>
         </thead>
         <tbody>
-          {temoignages.map((t) => (
+          {temoignages.map((t: any) => (
             <tr key={t.id}>
               {enEdition === t.id ? (
                 <>
@@ -128,7 +128,7 @@ export default function TemoignagesAdminClient({ temoignages }: { temoignages: T
                       value={brouillon.note ?? 5}
                       onChange={(e) => setBrouillon((b) => ({ ...b, note: Number(e.target.value) }))}
                     >
-                      {[1, 2, 3, 4, 5].map((n) => (
+                      {[1, 2, 3, 4, 5].map((n: any) => (
                         <option key={n} value={n}>
                           {'★'.repeat(n)}
                         </option>
@@ -197,7 +197,7 @@ export default function TemoignagesAdminClient({ temoignages }: { temoignages: T
           <div>
             <label>Note</label>
             <select value={nouveau.note} onChange={(e) => setNouveau((n) => ({ ...n, note: Number(e.target.value) }))}>
-              {[1, 2, 3, 4, 5].map((n) => (
+              {[1, 2, 3, 4, 5].map((n: any) => (
                 <option key={n} value={n}>
                   {'★'.repeat(n)}
                 </option>

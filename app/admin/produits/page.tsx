@@ -41,7 +41,7 @@ export default async function PageAdminProduits() {
           </tr>
         </thead>
         <tbody>
-          {produits.map((p) => (
+          {produits.map((p: any) => (
             <tr key={p.id}>
               <td>
                 {p.images[0] ? (

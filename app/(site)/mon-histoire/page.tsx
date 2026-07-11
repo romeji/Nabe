@@ -55,7 +55,7 @@ export default function PageMonHistoire() {
       <section className="marque-frise">
         <span className="marque-label">Notre histoire en quelques dates</span>
         <div className="marque-frise__grille">
-          {dates.map((item) => (
+          {dates.map((item: any) => (
             <article className="marque-frise__item" key={item.titre}>
               <span className={`marque-icone marque-icone--${item.icone}`} aria-hidden="true" />
               <h3>{item.titre}</h3>
@@ -68,7 +68,7 @@ export default function PageMonHistoire() {
       <section className="histoire-atelier marque-section">
         <span className="marque-label">Notre atelier</span>
         <div className="histoire-galerie">
-          {galerie.map((image, index) => (
+          {galerie.map((image: any, index: number) => (
             <div className={`histoire-galerie__image histoire-galerie__image--${index + 1}`} key={image.src}>
               <Image src={image.src} alt={image.alt} width={520} height={360} />
             </div>

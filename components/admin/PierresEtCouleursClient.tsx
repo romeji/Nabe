@@ -62,7 +62,7 @@ export default function PierresEtCouleursClient({
                 </tr>
               </thead>
               <tbody>
-                {pierres.map((p) => (
+                {pierres.map((p: any) => (
                   <LignePierre key={p.id} pierre={p} couleurs={couleurs} />
                 ))}
               </tbody>
@@ -90,7 +90,7 @@ export default function PierresEtCouleursClient({
                 </tr>
               </thead>
               <tbody>
-                {couleurs.map((c) => (
+                {couleurs.map((c: any) => (
                   <LigneCouleurPierre key={c.id} couleur={c as any} />
                 ))}
               </tbody>

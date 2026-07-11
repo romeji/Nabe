@@ -21,7 +21,7 @@ export default function ComposerAvec({ produits }: { produits: ProduitSuggere[] 
     <div className="composer-avec">
       <h3>À composer avec</h3>
       <div className="composer-avec__grille">
-        {produits.map((p) => {
+        {produits.map((p: any) => {
           const enPromo = promoEstActive({
             promoActive: !!p.promoActive,
             prixPromo: p.prixPromo ?? null,

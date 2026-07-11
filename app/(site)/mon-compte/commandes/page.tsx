@@ -34,7 +34,7 @@ export default async function PageCommandesClient() {
         </p>
       ) : (
         <div className="commandes-client-liste">
-          {commandes.map((c) => (
+          {commandes.map((c: any) => (
             <Link key={c.id} href={`/mon-compte/commandes/${c.id}`} className="commandes-client-carte">
               <div className="commandes-client-carte__entete">
                 <div>
@@ -44,7 +44,7 @@ export default async function PageCommandesClient() {
                 <span className="admin-badge admin-badge--neutre">{LABELS_STATUT_COMMANDE[c.statut]}</span>
               </div>
               <ul>
-                {c.lignes.map((l) => (
+                {c.lignes.map((l: any) => (
                   <li key={l.id}>
                     {l.quantite} × {l.nomProduit}
                     {l.taille ? ` (taille ${l.taille})` : ''}

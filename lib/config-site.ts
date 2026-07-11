@@ -53,13 +53,21 @@ export const DEFAUTS_CONFIG: Record<string, string> = {
   // Numéro de compte Colissimo Business (contrat Pro La Poste), pour une intégration
   // API complète (étiquettes, tracking) ultérieure.
   colissimo_numero_compte: '',
+  // Si activé : la livraison n'est jamais facturée séparément au checkout
+  // (elle est réputée déjà incluse dans le prix des produits, à vous de le
+  // répercuter vous-même sur vos prix). Si désactivé (défaut) : le calcul
+  // au poids réel s'applique normalement (voir lib/livraison.ts).
+  livraison_incluse_dans_prix: 'false',
+  // Google Analytics (GA4) — ne se charge jamais sans consentement explicite (RGPD)
+  google_analytics_actif: 'false',
+  google_analytics_id: '', // ex: G-XXXXXXXXXX
 };
 
 /** Récupère toutes les valeurs de config, fusionnées avec les défauts. */
 export async function getConfigSite(): Promise<Record<string, string>> {
   const enregistres = await prisma.configSite.findMany();
   const valeurs = { ...DEFAUTS_CONFIG };
-  enregistres.forEach((item) => {
+  enregistres.forEach((item: any) => {
     valeurs[item.cle] = item.valeur;
   });
   return valeurs;

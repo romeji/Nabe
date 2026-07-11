@@ -32,14 +32,14 @@ export default async function PageAdminContenu({
 
   const { page } = await searchParams;
   const slugActif = page || REGISTRE_CONTENU[0].slug;
-  const pageRegistre = REGISTRE_CONTENU.find((p) => p.slug === slugActif) || REGISTRE_CONTENU[0];
+  const pageRegistre = REGISTRE_CONTENU.find((p: any) => p.slug === slugActif) || REGISTRE_CONTENU[0];
 
   // Cas particulier : l'onglet "Popups fiche produit" utilise un système de données différent
   // (ContenuPolitique), avec son propre éditeur.
   if (pageRegistre.slug === 'popups-produit') {
     const enDb = await prisma.contenuPolitique.findMany({ orderBy: { ordre: 'asc' } });
     const politiques = Object.entries(DEFAUTS_POLITIQUES).map(([cle, defaut]) => {
-      const db = enDb.find((i) => i.cle === cle);
+      const db = enDb.find((i: any) => i.cle === cle);
       return { cle, titre: db?.titre ?? defaut.titre, contenu: db?.contenu ?? defaut.contenu, ordre: defaut.ordre };
     });
 
@@ -64,10 +64,10 @@ export default async function PageAdminContenu({
   // Récupère ce qui est déjà enregistré en base pour cette page précise
   const enregistres = await prisma.contenuPage.findMany({ where: { page: pageRegistre.slug } });
   const valeursEnDb: Record<string, string> = {};
-  enregistres.forEach((item) => (valeursEnDb[item.cle] = item.valeur));
+  enregistres.forEach((item: any) => (valeursEnDb[item.cle] = item.valeur));
 
   // Pré-remplit chaque champ : valeur en DB si elle existe et n'est pas vide, sinon le texte par défaut du code
-  const valeursInitiales = pageRegistre.champs.reduce((acc, champ) => {
+  const valeursInitiales = pageRegistre.champs.reduce((acc: any, champ: any) => {
     const valeurDb = valeursEnDb[champ.cle];
     acc[champ.cle] = valeurDb && valeurDb.trim() !== '' ? valeurDb : champ.defaut;
     return acc;

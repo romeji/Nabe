@@ -14,7 +14,7 @@ export default function SelecteurPageContenu({
 
   return (
     <div className="admin-contenu__onglets">
-      {pages.map((p) => (
+      {pages.map((p: any) => (
         <button
           key={p.slug}
           className={`admin-contenu__onglet ${p.slug === slugActif ? 'actif' : ''}`}

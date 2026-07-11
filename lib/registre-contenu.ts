@@ -265,14 +265,14 @@ export const REGISTRE_CONTENU: PageContenu[] = [
 
 /** Récupère la définition complète d'une page du registre par son slug. */
 export function getPageRegistre(slug: string): PageContenu | undefined {
-  return REGISTRE_CONTENU.find((p) => p.slug === slug);
+  return REGISTRE_CONTENU.find((p: any) => p.slug === slug);
 }
 
 /** Construit un objet { cle: valeurParDefaut } pour une page, pratique comme filet de sécurité. */
 export function getDefautsPage(slug: string): Record<string, string> {
   const page = getPageRegistre(slug);
   if (!page) return {};
-  return page.champs.reduce((acc, champ) => {
+  return page.champs.reduce((acc: any, champ: any) => {
     acc[champ.cle] = champ.defaut;
     return acc;
   }, {} as Record<string, string>);

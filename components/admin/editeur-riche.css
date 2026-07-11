@@ -54,6 +54,11 @@
   outline: none;
 }
 
+.editeur-riche__zone:focus-visible {
+  outline: 2px solid var(--nabe-terracotta, #9f5434);
+  outline-offset: 2px;
+}
+
 .editeur-riche__zone:empty::before {
   content: attr(data-placeholder);
   color: var(--texte-secondaire);

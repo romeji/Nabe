@@ -34,7 +34,7 @@ export default async function PageAdminCollections() {
             </tr>
           </thead>
           <tbody>
-            {collections.map((c) => (
+            {collections.map((c: any) => (
               <LigneCollection key={c.id} collection={c} />
             ))}
           </tbody>

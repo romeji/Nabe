@@ -100,7 +100,7 @@ export default function SuiviCommandeDetail({
 
       {!estAnnulee && (
         <div className="suivi-commande__timeline">
-          {ETAPES.map((etape, i) => (
+          {ETAPES.map((etape: any, i: number) => (
             <div key={etape.cle} className={`suivi-commande__etape${i <= etapeActuelle ? ' suivi-commande__etape--faite' : ''}`}>
               <span className="suivi-commande__point" />
               <span>{etape.label}</span>
@@ -140,7 +140,7 @@ export default function SuiviCommandeDetail({
       <div className="suivi-commande__bloc">
         <h3>Articles</h3>
         <ul className="suivi-commande__lignes">
-          {commande.lignes.map((l) => (
+          {commande.lignes.map((l: any) => (
             <li key={l.id}>
               <span>
                 {l.quantite} × {l.nomProduit}

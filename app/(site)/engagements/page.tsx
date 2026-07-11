@@ -47,7 +47,7 @@ export default function PageEngagements() {
       <section className="engagements-valeurs marque-section">
         <span className="marque-label">Nos valeurs</span>
         <div className="engagements-valeurs__grille">
-          {valeurs.map((valeur) => (
+          {valeurs.map((valeur: any) => (
             <article className="engagements-valeurs__carte" key={valeur.titre}>
               <span className={`marque-icone marque-icone--${valeur.icone}`} aria-hidden="true" />
               <h2>{valeur.titre}</h2>
@@ -75,7 +75,7 @@ export default function PageEngagements() {
       <section className="marque-processus marque-section">
         <span className="marque-label">Pourquoi choisir Nabe ?</span>
         <div className="marque-processus__grille">
-          {raisons.map((raison) => (
+          {raisons.map((raison: any) => (
             <article className="marque-processus__item" key={raison.titre}>
               <span className={`marque-icone marque-icone--${raison.icone}`} aria-hidden="true" />
               <h3>{raison.titre}</h3>
@@ -96,7 +96,7 @@ export default function PageEngagements() {
       <section className="engagements-faq marque-section">
         <span className="marque-label">Questions fréquentes</span>
         <div className="engagements-faq__liste">
-          {questions.map((question) => (
+          {questions.map((question: any) => (
             <details key={question}>
               <summary>{question}</summary>
               <p>Chaque réponse dépend de la pièce choisie. Contactez l’atelier pour une information précise.</p>

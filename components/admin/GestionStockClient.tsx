@@ -70,7 +70,7 @@ export default function GestionStockClient({
             <label>Bijou</label>
             <select value={produitId} onChange={(e) => setProduitId(e.target.value)}>
               <option value="">Sélectionnez un bijou</option>
-              {produits.map((p) => (
+              {produits.map((p: any) => (
                 <option key={p.id} value={p.id}>
                   {p.nom} (stock actuel : {p.stock})
                 </option>
@@ -129,7 +129,7 @@ export default function GestionStockClient({
             </tr>
           </thead>
           <tbody>
-            {mouvements.map((m) => (
+            {mouvements.map((m: any) => (
               <tr key={m.id}>
                 <td>{new Date(m.createdAt).toLocaleDateString('fr-FR')}</td>
                 <td>{m.produitNom}</td>

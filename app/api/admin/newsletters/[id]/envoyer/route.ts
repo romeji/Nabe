@@ -46,7 +46,7 @@ export async function POST(req: NextRequest, { params: paramsPromise }: { params
       const lot = abonnes.slice(i, i + TAILLE_LOT);
       try {
         const { error } = await resend.batch.send(
-          lot.map((abonne) => ({
+          lot.map((abonne: any) => ({
             from: EMAIL_EXPEDITEUR,
             to: abonne.email,
             subject: newsletter.sujet,

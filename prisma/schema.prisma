@@ -472,6 +472,16 @@ model ContenuPage {
 // NEWSLETTER
 // ============================================================
 
+// Limitation de fréquence générique (voir lib/rate-limit.ts), utilisée pour
+// les points d'entrée publics sans authentification (newsletter, contact,
+// sur-mesure, suivi de commande, recherche d'adresse...).
+model LimiteTaux {
+  id       String   @id @default(cuid())
+  cle      String   @unique // ex: "newsletter:82.65.12.4"
+  compteur Int      @default(1)
+  expireA  DateTime
+}
+
 model AbonneNewsletter {
   id        String   @id @default(cuid())
   email     String   @unique

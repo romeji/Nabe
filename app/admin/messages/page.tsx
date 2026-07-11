@@ -20,7 +20,7 @@ export default async function PageAdminMessages() {
       </div>
 
       <div className="admin-messages__liste">
-        {messages.map((m) => (
+        {messages.map((m: any) => (
           <MessageCarte
             key={m.id}
             message={{

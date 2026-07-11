@@ -36,7 +36,7 @@ export default function SurMesureFormulaire({
   const [envoiEnCours, setEnvoiEnCours] = useState(false);
   const [erreur, setErreur] = useState('');
 
-  const produitsFiltres = produits.filter((p) => p.type === ongletActif);
+  const produitsFiltres = produits.filter((p: any) => p.type === ongletActif);
 
   async function gererSoumission(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -45,7 +45,7 @@ export default function SurMesureFormulaire({
 
     const formData = new FormData(e.currentTarget);
     const donnees = {
-      modeleSelectionne: produits.find((p) => p.id === modeleId)?.nom || formData.get('modeleSelectionne'),
+      modeleSelectionne: produits.find((p: any) => p.id === modeleId)?.nom || formData.get('modeleSelectionne'),
       tailleSouhaitee: formData.get('tailleSouhaitee'),
       matiere: formData.get('matiere'),
       pierre: formData.get('pierre'),
@@ -79,7 +79,7 @@ export default function SurMesureFormulaire({
         <p className="surmesure-formulaire__sous-titre">{colonne1Texte}</p>
 
         <div className="surmesure-formulaire__onglets">
-          {ONGLETS.map((o) => (
+          {ONGLETS.map((o: any) => (
             <button
               key={o.valeur}
               type="button"
@@ -95,7 +95,7 @@ export default function SurMesureFormulaire({
           {produitsFiltres.length === 0 ? (
             <p className="surmesure-formulaire__vide">Aucun modèle dans cette catégorie pour le moment.</p>
           ) : (
-            produitsFiltres.map((p) => (
+            produitsFiltres.map((p: any) => (
               <button
                 key={p.id}
                 type="button"
@@ -131,7 +131,7 @@ export default function SurMesureFormulaire({
             <label>Taille souhaitée</label>
             <select name="tailleSouhaitee">
               <option value="">Sélectionnez votre taille</option>
-              {['48', '50', '52', '54', '56', '58', '60'].map((t) => (
+              {['48', '50', '52', '54', '56', '58', '60'].map((t: any) => (
                 <option key={t} value={t}>
                   {t}
                 </option>

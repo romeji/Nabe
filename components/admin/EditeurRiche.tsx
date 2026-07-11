@@ -115,7 +115,7 @@ export default function EditeurRiche({
           onChange={(e) => appliquerTaille(e.target.value)}
           title="Taille du texte"
         >
-          {TAILLES.map((t) => (
+          {TAILLES.map((t: any) => (
             <option key={t.valeur} value={t.valeur}>
               {t.label}
             </option>
@@ -134,7 +134,7 @@ export default function EditeurRiche({
         </label>
         <span className="editeur-riche__separateur" />
         <div className="editeur-riche__couleurs">
-          {COULEURS.map((c) => (
+          {COULEURS.map((c: any) => (
             <button
               key={c.valeur}
               type="button"

@@ -13,7 +13,7 @@ export default function FormulairePierre({ couleurs }: { couleurs: CouleurOption
   const [erreur, setErreur] = useState('');
 
   function basculerCouleur(id: string) {
-    setCouleursIds(prev => prev.includes(id) ? prev.filter(c => c !== id) : [...prev, id]);
+    setCouleursIds(prev => prev.includes(id) ? prev.filter((c: any) => c !== id) : [...prev, id]);
   }
 
   async function gererSoumission(e: React.FormEvent) {
@@ -63,7 +63,7 @@ export default function FormulairePierre({ couleurs }: { couleurs: CouleurOption
             </p>
           ) : (
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.5rem' }}>
-              {couleurs.map((c) => (
+              {couleurs.map((c: any) => (
                 <button key={c.id} type="button"
                   onClick={() => basculerCouleur(c.id)}
                   style={{

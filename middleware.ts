@@ -15,23 +15,8 @@ export default withAuth({
 });
 
 export const config = {
-  matcher: [
-    '/admin',
-    '/admin/produits/:path*',
-    '/admin/promotions/:path*',
-    '/admin/categories/:path*',
-    '/admin/collections/:path*',
-    '/admin/matieres/:path*',
-    '/admin/pierres/:path*',
-    '/admin/couleurs-pierre/:path*',
-    '/admin/stock/:path*',
-    '/admin/commandes/:path*',
-    '/admin/sur-mesure/:path*',
-    '/admin/messages/:path*',
-    '/admin/contenu/:path*',
-    '/admin/newsletters/:path*',
-    '/admin/codes-promo/:path*',
-    '/admin/temoignages/:path*',
-    '/admin/reglages/:path*',
-  ],
+  // Protège TOUTES les routes /admin/* sauf /admin/login (sinon boucle de
+  // redirection), sans avoir à lister chaque page une par une — l'ancienne
+  // liste manuelle avait déjà oublié /admin/politiques.
+  matcher: ['/admin', '/admin/((?!login).*)'],
 };

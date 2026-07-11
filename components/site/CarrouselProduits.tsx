@@ -44,7 +44,7 @@ export default function CarrouselProduits({
       </button>
 
       <div className="carrousel-produits__piste" ref={scrollRef}>
-        {produits.map((p) => {
+        {produits.map((p: any) => {
           const enPromo = promoEstActive({
             promoActive: !!p.promoActive,
             prixPromo: p.prixPromo ?? null,

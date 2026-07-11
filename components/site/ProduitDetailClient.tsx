@@ -164,7 +164,7 @@ export default function ProduitDetailClient({
   // Stock disponible pour la taille choisie (ou stock global si pas de système de taille)
   function stockDisponiblePour(taille: string): number {
     if (produit.stockTailles.length > 0) {
-      const ligne = produit.stockTailles.find((s) => s.taille === taille);
+      const ligne = produit.stockTailles.find((s: any) => s.taille === taille);
       return ligne?.quantite ?? 0;
     }
     return produit.stock;
@@ -209,7 +209,7 @@ export default function ProduitDetailClient({
       <div className={`produit-principal conteneur produit-principal--${galeriePosition}`}>
         <div ref={galerieRef} className={`produit-galerie produit-galerie--${galeriePosition}`}>
           <div className="produit-galerie__vignettes">
-            {imagesAffichees.map((img, i) => (
+            {imagesAffichees.map((img: any, i: number) => (
               <button
                 key={img.id}
                 className={`produit-galerie__vignette ${i === imageActive ? 'actif' : ''}`}
@@ -249,7 +249,7 @@ export default function ProduitDetailClient({
           </div>
 
           <p className="produit-infos__matiere-pierre">
-            {[produit.matiere?.nom, ...produit.pierres.map((p) => p.nom)].filter(Boolean).join(', ')}
+            {[produit.matiere?.nom, ...produit.pierres.map((p: any) => p.nom)].filter(Boolean).join(', ')}
           </p>
 
           {/* Référence + lien Détails produits */}
@@ -296,7 +296,7 @@ export default function ProduitDetailClient({
                     if (!isNaN(na) && !isNaN(nb)) return na - nb;
                     return a.localeCompare(b);
                   })
-                  .map((t) => {
+                  .map((t: any) => {
                   const stockTaille = stockDisponiblePour(t);
                   const epuisee = produit.stockTailles.length > 0 && stockTaille <= 0;
                   return (
@@ -353,7 +353,7 @@ export default function ProduitDetailClient({
         <div className="produit-suggestions conteneur">
           <h2>Découvrez également ces créations</h2>
           <div className="produit-suggestions__grille">
-            {suggestions.map((s) => {
+            {suggestions.map((s: any) => {
               const sEnPromo = promoEstActive({
                 promoActive: !!s.promoActive,
                 prixPromo: s.prixPromo ?? null,

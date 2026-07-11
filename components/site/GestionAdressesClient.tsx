@@ -235,7 +235,7 @@ export default function GestionAdressesClient() {
       )}
 
       <div className="gestion-adresses__liste">
-        {adresses.map((a) => (
+        {adresses.map((a: any) => (
           <div key={a.id} className="gestion-adresses__carte">
             {a.parDefaut && <span className="gestion-adresses__badge">Par défaut</span>}
             {a.libelle && <strong>{a.libelle}</strong>}

@@ -54,7 +54,7 @@ export default function SidebarAdmin() {
           Nabe
         </Link>
         <nav className="admin-sidebar__nav">
-          {LIENS.map((lien) => {
+          {LIENS.map((lien: any) => {
             const actif = pathname === lien.href || (lien.href !== '/admin' && pathname?.startsWith(lien.href));
             return (
               <Link key={lien.href} href={lien.href} className={`admin-sidebar__lien ${actif ? 'actif' : ''}`}>

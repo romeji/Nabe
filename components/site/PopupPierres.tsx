@@ -20,7 +20,7 @@ export default function PopupPierres({ pierres }: { pierres: PierreInfo[] }) {
       <button type="button" className="popup-pierres__lien" onClick={() => setOuvert(true)}>
         En savoir plus sur {pierres.length > 1 ? 'ces pierres' : 'cette pierre'}
         <span className="popup-pierres__pastilles">
-          {pierres.flatMap((p) => p.couleurs).slice(0, 4).map((c, i) => (
+          {pierres.flatMap((p: any) => p.couleurs).slice(0, 4).map((c: any, i: number) => (
             <span key={i} className="popup-pierres__pastille" style={{ backgroundColor: c.codeHex }} />
           ))}
         </span>
@@ -33,7 +33,7 @@ export default function PopupPierres({ pierres }: { pierres: PierreInfo[] }) {
 
             {pierres.length > 1 && (
               <div className="popup-pierres__onglets">
-                {pierres.map((p, i) => (
+                {pierres.map((p: any, i: number) => (
                   <button key={p.id} className={i === ongletActif ? 'actif' : ''} onClick={() => setOngletActif(i)}>
                     {p.couleurs[0] && (
                       <span className="popup-pierres__pastille-onglet" style={{ backgroundColor: p.couleurs[0].codeHex }} />
@@ -48,7 +48,7 @@ export default function PopupPierres({ pierres }: { pierres: PierreInfo[] }) {
               <h3>{pierres[ongletActif].nom}</h3>
               {pierres[ongletActif].couleurs.length > 0 && (
                 <p style={{ color: '#888', fontSize: '0.85rem', marginBottom: '0.75rem' }}>
-                  Couleurs : {pierres[ongletActif].couleurs.map(c => c.nom).join(', ')}
+                  Couleurs : {pierres[ongletActif].couleurs.map((c: any) => c.nom).join(', ')}
                 </p>
               )}
               <p>{pierres[ongletActif].description || 'Description à venir.'}</p>

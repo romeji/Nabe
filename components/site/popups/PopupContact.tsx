@@ -23,8 +23,8 @@ export default function PopupContact({ ouverte, onFermer }: PopupContactProps) {
     }
   }, [ouverte]);
 
-  const intro = sections.find(s => s.cle === 'contact-intro');
-  const items = sections.filter(s => s.cle !== 'contact-intro');
+  const intro = sections.find((s: any) => s.cle === 'contact-intro');
+  const items = sections.filter((s: any) => s.cle !== 'contact-intro');
 
   return (
     <PopupLaterale ouverte={ouverte} onFermer={onFermer} titre="UNE QUESTION ?">
@@ -35,7 +35,7 @@ export default function PopupContact({ ouverte, onFermer }: PopupContactProps) {
 
         <div className="popup-politique__items">
           {/* NOUS APPELER */}
-          {items.filter(i => i.cle === 'contact-appeler').map(item => (
+          {items.filter((i: any) => i.cle === 'contact-appeler').map((item: any) => (
             <div key={item.cle} className="popup-politique__item">
               <button
                 className="popup-politique__item-titre"
@@ -58,7 +58,7 @@ export default function PopupContact({ ouverte, onFermer }: PopupContactProps) {
           ))}
 
           {/* NOUS ÉCRIRE */}
-          {items.filter(i => i.cle === 'contact-ecrire').map(item => (
+          {items.filter((i: any) => i.cle === 'contact-ecrire').map((item: any) => (
             <div key={item.cle} className="popup-politique__item">
               <button
                 className="popup-politique__item-titre"

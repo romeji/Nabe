@@ -43,7 +43,7 @@ export const usePanierStore = create<PanierState>()(
             const quantiteVoulue = existant.quantite + article.quantite;
             const quantiteFinale = typeof plafond === 'number' ? Math.min(quantiteVoulue, plafond) : quantiteVoulue;
             return {
-              articles: state.articles.map((a) =>
+              articles: state.articles.map((a: any) =>
                 a.produitId === article.produitId && a.taille === article.taille
                   ? { ...a, quantite: quantiteFinale, stockMax: plafond }
                   : a
@@ -66,7 +66,7 @@ export const usePanierStore = create<PanierState>()(
 
       modifierQuantite: (produitId, quantite, taille) => {
         set((state) => ({
-          articles: state.articles.map((a) => {
+          articles: state.articles.map((a: any) => {
             if (a.produitId !== produitId || a.taille !== taille) return a;
             const plafonnee = typeof a.stockMax === 'number' ? Math.min(quantite, Math.max(a.stockMax, 1)) : quantite;
             return { ...a, quantite: plafonnee };
@@ -79,11 +79,11 @@ export const usePanierStore = create<PanierState>()(
       vider: () => set({ articles: [], codePromoApplique: null }),
 
       total: () => {
-        return get().articles.reduce((acc, a) => acc + a.prix * a.quantite, 0);
+        return get().articles.reduce((acc: any, a: any) => acc + a.prix * a.quantite, 0);
       },
 
       nombreArticles: () => {
-        return get().articles.reduce((acc, a) => acc + a.quantite, 0);
+        return get().articles.reduce((acc: any, a: any) => acc + a.quantite, 0);
       },
     }),
     { name: 'nabe-panier' }

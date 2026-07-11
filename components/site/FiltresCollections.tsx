@@ -248,7 +248,7 @@ export default function FiltresCollections({
           <div className="filtres-collections__groupe">
             <h3>Taille</h3>
             <div className="filtres-collections__tailles">
-              {optionsTailles.map((t) => (
+              {optionsTailles.map((t: any) => (
                 <button
                   key={t}
                   type="button"
@@ -264,7 +264,7 @@ export default function FiltresCollections({
 
         <div className="filtres-collections__groupe">
           <h3>Matière</h3>
-          {matieres.map((m) => (
+          {matieres.map((m: any) => (
             <label key={m.id} className="filtres-collections__case">
               <input
                 type="checkbox"
@@ -282,7 +282,7 @@ export default function FiltresCollections({
         {pierres.length > 0 && (
           <div className="filtres-collections__groupe">
             <h3>Pierre</h3>
-            {pierres.map((p) => (
+            {pierres.map((p: any) => (
               <label key={p.id} className="filtres-collections__case">
                 <input
                   type="checkbox"
@@ -302,7 +302,7 @@ export default function FiltresCollections({
           <div className="filtres-collections__groupe">
             <h3>Couleur de pierre</h3>
             <div className="filtres-collections__couleurs-liste">
-              {couleurs.map((c) => (
+              {couleurs.map((c: any) => (
                 <label key={c.id} className="filtres-collections__case filtres-collections__case-couleur">
                   <input
                     type="radio"

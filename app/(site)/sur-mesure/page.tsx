@@ -19,11 +19,11 @@ export default async function PageSurMesure() {
     }),
   ]);
 
-  const produitsSerialises = produits.map((p) => ({
+  const produitsSerialises = produits.map((p: any) => ({
     id: p.id,
     nom: p.nom,
     type: p.type,
-    images: p.images.map((img) => ({ url: img.url })),
+    images: p.images.map((img: any) => ({ url: img.url })),
   }));
 
   return (

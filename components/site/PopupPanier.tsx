@@ -64,6 +64,16 @@ export default function PopupPanier({ ouverte, onFermer }: PopupPanierProps) {
     return () => { document.body.style.overflow = ''; };
   }, [ouverte]);
 
+  // Fermeture au clavier (touche Échap), pour les personnes qui naviguent sans souris
+  useEffect(() => {
+    if (!ouverte) return;
+    function fermerAvecEchap(e: KeyboardEvent) {
+      if (e.key === 'Escape') onFermer();
+    }
+    window.addEventListener('keydown', fermerAvecEchap);
+    return () => window.removeEventListener('keydown', fermerAvecEchap);
+  }, [ouverte, onFermer]);
+
   // Charge la config à la première ouverture
   const chargerConfig = useCallback(async () => {
     if (cfgChargee) return;
@@ -79,7 +89,9 @@ export default function PopupPanier({ ouverte, onFermer }: PopupPanierProps) {
       }
       setCfg({
         seuilLivraison: parseFloat(data.popup_panier_seuil_livraison) || 60,
-        seuilLivraisonActif: data.popup_panier_seuil_livraison_actif !== 'false',
+        // Si la livraison est incluse dans le prix des produits (réglage admin), ce message
+        // "plus que X€ pour la livraison offerte" n'a plus de sens : on le désactive automatiquement.
+        seuilLivraisonActif: data.popup_panier_seuil_livraison_actif !== 'false' && data.livraison_incluse_dans_prix !== 'true',
         seuilSurprise: parseFloat(data.popup_panier_seuil_surprise) || 100,
         surpriseActif: data.popup_panier_surprise_actif === 'true',
         articleBonusActif: data.popup_panier_article_bonus_actif === 'true',
@@ -107,7 +119,7 @@ export default function PopupPanier({ ouverte, onFermer }: PopupPanierProps) {
 
   // — Helpers article bonus —
   const articleBonus = cfg.articleBonusActif && cfg.articleBonusId && cfg.articleBonusNom;
-  const bonusDansPanier = articles.some(a => a.estBonus);
+  const bonusDansPanier = articles.some((a: any) => a.estBonus);
 
   function basculerBonus(coche: boolean) {
     if (!cfg.articleBonusId) return;
@@ -123,7 +135,7 @@ export default function PopupPanier({ ouverte, onFermer }: PopupPanierProps) {
     if (!codePromoSaisi.trim()) return;
     setValidationCode(true); setErreurCode('');
     try {
-      const sousTotal = articles.reduce((s, a) => s + a.prix * a.quantite, 0);
+      const sousTotal = articles.reduce((s: any, a: any) => s + a.prix * a.quantite, 0);
       const res = await fetch('/api/codes-promo/valider', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ code: codePromoSaisi, sousTotal }),
@@ -145,9 +157,9 @@ export default function PopupPanier({ ouverte, onFermer }: PopupPanierProps) {
   }
 
   // — Calculs —
-  const articlesFiltres = articles.filter(a => !a.estBonus);
+  const articlesFiltres = articles.filter((a: any) => !a.estBonus);
   const panierVide = articlesFiltres.length === 0 && !articleBonus;
-  const sousTotal = articles.reduce((s, a) => s + a.prix * a.quantite, 0);
+  const sousTotal = articles.reduce((s: any, a: any) => s + a.prix * a.quantite, 0);
   const reduction = codePromoApplique?.reduction || 0;
   const total = Math.max(0, sousTotal - reduction);
 
@@ -193,7 +205,7 @@ export default function PopupPanier({ ouverte, onFermer }: PopupPanierProps) {
               <div className="popup-panier__suggestions">
                 <p className="popup-panier__suggestions-titre">Nos meilleures ventes</p>
                 <div className="popup-panier__suggestions-grille">
-                  {bestsellers.map(p => (
+                  {bestsellers.map((p: any) => (
                     <Link key={p.id} href={`/collections/${p.slug}`} className="popup-panier__suggestion-carte" onClick={onFermer}>
                       <div className="popup-panier__suggestion-image">
                         {p.image
@@ -219,7 +231,7 @@ export default function PopupPanier({ ouverte, onFermer }: PopupPanierProps) {
 
             {/* Articles (zone scrollable) */}
             <div className="popup-panier__articles">
-              {articlesFiltres.map(article => (
+              {articlesFiltres.map((article: any) => (
                 <div key={`${article.produitId}-${article.taille ?? ''}`} className="popup-panier__article">
                   <div className="popup-panier__article-image">
                     {article.image && (

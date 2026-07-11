@@ -36,7 +36,7 @@ export default function PromotionsClient() {
   }, []);
 
   const produitsFiltres = useMemo(() => {
-    return produits.filter((p) => {
+    return produits.filter((p: any) => {
       const matchRecherche =
         !recherche ||
         p.nom.toLowerCase().includes(recherche.toLowerCase()) ||
@@ -50,7 +50,7 @@ export default function PromotionsClient() {
   }, [produits, recherche, filtre]);
 
   function majChamp(id: string, champ: keyof ProduitPromo, valeur: any) {
-    setProduits((prev) => prev.map((p) => (p.id === id ? { ...p, [champ]: valeur } : p)));
+    setProduits((prev) => prev.map((p: any) => (p.id === id ? { ...p, [champ]: valeur } : p)));
     setSucces((prev) => ({ ...prev, [id]: false }));
   }
 
@@ -90,7 +90,7 @@ export default function PromotionsClient() {
     return <p className="admin-promotions__chargement">Chargement des bijoux...</p>;
   }
 
-  const nombreEnPromo = produits.filter((p) => p.promoActive && p.prixPromo).length;
+  const nombreEnPromo = produits.filter((p: any) => p.promoActive && p.prixPromo).length;
 
   return (
     <div className="admin-promotions__corps">
@@ -129,7 +129,7 @@ export default function PromotionsClient() {
         <p className="admin-promotions__vide">Aucun bijou ne correspond à votre recherche.</p>
       ) : (
         <div className="admin-promotions__liste">
-          {produitsFiltres.map((produit) => {
+          {produitsFiltres.map((produit: any) => {
             const pourcentage =
               produit.prixPromo && parseFloat(produit.prixPromo) > 0
                 ? pourcentageReduction(produit.prix, produit.prixPromo)

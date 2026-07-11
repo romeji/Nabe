@@ -1,19 +1,26 @@
 'use client';
 
-import { useState } from 'react';
-import { signIn } from 'next-auth/react';
+import { useEffect, useState } from 'react';
+import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import '../connexion/connexion.css';
 
 export default function PageInscription() {
   const router = useRouter();
+  const { data: session, status } = useSession();
   const [nom, setNom] = useState('');
   const [email, setEmail] = useState('');
   const [motDePasse, setMotDePasse] = useState('');
   const [erreur, setErreur] = useState('');
   const [chargement, setChargement] = useState(false);
   const [chargementGoogle, setChargementGoogle] = useState(false);
+
+  useEffect(() => {
+    if (status === 'authenticated' && session?.user) {
+      router.replace('/mon-compte');
+    }
+  }, [status, session, router]);
 
   async function gererInscription(e: React.FormEvent) {
     e.preventDefault();

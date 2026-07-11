@@ -90,7 +90,7 @@ export default function PanneauNavigation({
           {menu.categoriesActif && (
             <section className="panneau-nav__section">
               <h3>Collections</h3>
-              {categories.map((c, index) => {
+              {categories.map((c: any, index: number) => {
                 const logo = c.logoAccueil || c.image;
                 return (
                   <Link key={c.id} href={`/collections?categorie=${c.slug}`} className="panneau-nav__lien panneau-nav__lien--icone" onClick={onFermer}>
@@ -109,7 +109,7 @@ export default function PanneauNavigation({
           {menu.collectionsActif && collections.length > 0 && (
             <section className="panneau-nav__section">
               <h3>Collections</h3>
-              {collections.map((c) => (
+              {collections.map((c: any) => (
                 <Link key={c.id} href={`/collections?collection=${c.slug}`} className="panneau-nav__lien" onClick={onFermer}>
                   <span>{c.nom}</span>
                 </Link>

@@ -62,7 +62,7 @@ export default function CategoriesAccueil({ categories }: { categories: Categori
 
   return (
     <div className="accueil-categories__grille">
-      {categories.map((c) => (
+      {categories.map((c: any) => (
         <Link key={c.id} href={`/collections?categorie=${c.slug}`} className="accueil-categories__carte">
           <div className="accueil-categories__image">
             {c.image ? (

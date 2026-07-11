@@ -75,7 +75,7 @@ export async function POST(req: NextRequest) {
     // Si un stock par taille est fourni, le stock global = somme des quantités par taille
     const stockTotalCalcule =
       donnees.stockParTaille && Object.keys(donnees.stockParTaille).length > 0
-        ? Object.values(donnees.stockParTaille).reduce((a, b) => a + b, 0)
+        ? Object.values(donnees.stockParTaille).reduce((a: any, b: any) => a + b, 0)
         : donnees.stock ?? 0;
 
     const produit = await prisma.produit.create({
@@ -101,7 +101,7 @@ export async function POST(req: NextRequest) {
         composerAvecActif: donnees.composerAvecActif ?? true,
         images: donnees.images
           ? {
-              create: donnees.images.map((img, i) => ({
+              create: donnees.images.map((img: any, i: number) => ({
                 url: img.url,
                 publicId: img.publicId,
                 alt: img.alt || donnees.nom,
@@ -111,12 +111,12 @@ export async function POST(req: NextRequest) {
           : undefined,
         pierres: donnees.pierresIds
           ? {
-              create: donnees.pierresIds.map((pierreId) => ({ pierreId })),
+              create: donnees.pierresIds.map((pierreId: any) => ({ pierreId })),
             }
           : undefined,
         composeAvec: donnees.composeAvecIds
           ? {
-              create: donnees.composeAvecIds.map((produitSuggereId, i) => ({ produitSuggereId, ordre: i })),
+              create: donnees.composeAvecIds.map((produitSuggereId: any, i: number) => ({ produitSuggereId, ordre: i })),
             }
           : undefined,
         stockTailles: donnees.stockParTaille && Object.keys(donnees.stockParTaille).length > 0

@@ -27,7 +27,7 @@ export async function GET(req: NextRequest) {
         ? (customer.invoice_settings?.default_payment_method as string | null)
         : null;
 
-    const moyensPaiement = methodes.data.map((m) => ({
+    const moyensPaiement = methodes.data.map((m: any) => ({
       id: m.id,
       marque: m.card?.brand || 'carte',
       derniers4: m.card?.last4 || '----',

@@ -32,7 +32,7 @@ export default async function PageAdminCategories() {
             </tr>
           </thead>
           <tbody>
-            {categories.map((c) => (
+            {categories.map((c: any) => (
               <LigneCategorie key={c.id} categorie={c} />
             ))}
           </tbody>

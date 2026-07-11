@@ -16,7 +16,7 @@ export async function GET() {
     },
   });
 
-  const resultat = produits.map((p) => ({
+  const resultat = produits.map((p: any) => ({
     id: p.id,
     reference: p.reference,
     nom: p.nom,

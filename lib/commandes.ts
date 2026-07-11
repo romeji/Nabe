@@ -74,7 +74,7 @@ export async function annulerCommande(commandeId: string): Promise<{ ok: true } 
     });
 
     if (ligne.taille) {
-      const stockTaille = produit.stockTailles.find((s) => s.taille === ligne.taille);
+      const stockTaille = produit.stockTailles.find((s: any) => s.taille === ligne.taille);
       if (stockTaille) {
         await prisma.stockTaille.update({
           where: { id: stockTaille.id },

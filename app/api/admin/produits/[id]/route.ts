@@ -50,7 +50,7 @@ export async function PATCH(req: NextRequest, { params: paramsPromise }: { param
     // Si un stock par taille est fourni, le stock global = somme des quantités par taille
     const aStockParTaille = stockParTaille && Object.keys(stockParTaille).length > 0;
     const stockFinal = aStockParTaille
-      ? Object.values(stockParTaille as Record<string, number>).reduce((a, b) => a + b, 0)
+      ? Object.values(stockParTaille as Record<string, number>).reduce((a: any, b: any) => a + b, 0)
       : typeof stock === 'number'
       ? stock
       : undefined;

@@ -20,7 +20,7 @@ export default function PopupLivraison({ ouverte, onFermer }: { ouverte: boolean
   return (
     <PopupLaterale ouverte={ouverte} onFermer={onFermer} titre="LIVRAISON ET PAIEMENT">
       <div className="popup-politique">
-        {sections.map(item => (
+        {sections.map((item: any) => (
           <div key={item.cle} className="popup-politique__section">
             <h3 className="popup-politique__section-titre">{item.titre}</h3>
             <div className="popup-politique__section-corps">

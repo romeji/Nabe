@@ -3,9 +3,15 @@ import { getServerSession } from 'next-auth';
 import { authClientOptions } from '@/lib/auth-client';
 import { prisma } from '@/lib/prisma';
 import { annulerCommande } from '@/lib/commandes';
+import { verifierLimiteTaux, obtenirIp } from '@/lib/rate-limit';
 
 export async function POST(req: NextRequest) {
   try {
+    const { autorise } = await verifierLimiteTaux('commandes-annuler', obtenirIp(req), 10, 15);
+    if (!autorise) {
+      return NextResponse.json({ error: 'Trop de tentatives. Réessayez dans quelques minutes.' }, { status: 429 });
+    }
+
     const { commandeId, numero, email } = await req.json();
 
     let commande;

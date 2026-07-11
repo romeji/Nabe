@@ -1,13 +1,14 @@
 'use client';
 
-import { useState } from 'react';
-import { signIn } from 'next-auth/react';
+import { useEffect, useState } from 'react';
+import { signIn, useSession } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
 export default function ConnexionContenu() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { data: session, status } = useSession();
   const [email, setEmail] = useState('');
   const [motDePasse, setMotDePasse] = useState('');
   const [erreur, setErreur] = useState('');
@@ -16,6 +17,13 @@ export default function ConnexionContenu() {
 
   const redirectParam = searchParams.get('redirect');
   const urlRetour = redirectParam?.startsWith('/') && !redirectParam.startsWith('//') ? redirectParam : '/mon-compte';
+
+  useEffect(() => {
+    if (status === 'authenticated' && session?.user) {
+      router.replace(urlRetour);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status, session]);
 
   async function gererConnexion(e: React.FormEvent) {
     e.preventDefault();

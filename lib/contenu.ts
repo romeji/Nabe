@@ -15,7 +15,7 @@ export async function getContenuPage(slug: string): Promise<Record<string, strin
 
   const enregistres = await prisma.contenuPage.findMany({ where: { page: slug } });
   const valeurs = { ...defauts };
-  enregistres.forEach((item) => {
+  enregistres.forEach((item: any) => {
     if (item.valeur && item.valeur.trim() !== '') {
       valeurs[item.cle] = item.valeur;
     }

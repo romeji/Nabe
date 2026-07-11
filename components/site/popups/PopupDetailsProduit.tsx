@@ -48,12 +48,12 @@ export default function PopupDetailsProduit({
             <div className="details-produit__ligne">
               <span className="details-produit__libelle">PIERRE{pierres.length > 1 ? 'S' : ''}</span>
               <div className="details-produit__valeur">
-                {pierres.map((p, i) => (
+                {pierres.map((p: any, i: number) => (
                   <div key={i}>
                     <span>{p.nom}</span>
                     {p.couleurs.length > 0 && (
                       <span style={{ color: '#888', fontSize: '0.85rem' }}>
-                        {' — '}{p.couleurs.map(c => c.nom).join(', ')}
+                        {' — '}{p.couleurs.map((c: any) => c.nom).join(', ')}
                       </span>
                     )}
                   </div>

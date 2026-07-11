@@ -17,8 +17,8 @@ export default function PopupEntretien({ ouverte, onFermer }: { ouverte: boolean
     }
   }, [ouverte]);
 
-  const intro = sections.find(s => s.cle === 'entretien-intro');
-  const items = sections.filter(s => s.cle !== 'entretien-intro');
+  const intro = sections.find((s: any) => s.cle === 'entretien-intro');
+  const items = sections.filter((s: any) => s.cle !== 'entretien-intro');
 
   return (
     <PopupLaterale ouverte={ouverte} onFermer={onFermer} titre="SERVICE D'ENTRETIEN">
@@ -29,7 +29,7 @@ export default function PopupEntretien({ ouverte, onFermer }: { ouverte: boolean
             <div className="popup-politique__separateur" />
           </>
         )}
-        {items.map(item => (
+        {items.map((item: any) => (
           <div key={item.cle} className="popup-politique__section">
             <h3 className="popup-politique__section-titre">{item.titre}</h3>
             <div className="popup-politique__section-corps">

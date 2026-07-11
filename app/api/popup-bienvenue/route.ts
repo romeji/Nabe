@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { resend, EMAIL_EXPEDITEUR } from '@/lib/resend';
 import { getConfigSite } from '@/lib/config-site';
+import { verifierLimiteTaux, obtenirIp } from '@/lib/rate-limit';
 
 function genererSegmentCode(): string {
   return Math.random().toString(36).substring(2, 7).toUpperCase();
@@ -9,6 +10,11 @@ function genererSegmentCode(): string {
 
 export async function POST(req: NextRequest) {
   try {
+    const { autorise } = await verifierLimiteTaux('popup-bienvenue', obtenirIp(req), 5, 60);
+    if (!autorise) {
+      return NextResponse.json({ error: 'Trop de tentatives. Réessayez plus tard.' }, { status: 429 });
+    }
+
     const { prenom, email } = await req.json();
 
     if (!prenom || !prenom.trim() || !email || !email.includes('@')) {

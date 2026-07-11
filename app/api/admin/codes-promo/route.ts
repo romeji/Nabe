@@ -15,10 +15,10 @@ export async function GET(req: NextRequest) {
 
   // On calcule pour chaque code : nombre d'utilisations + chiffre d'affaires généré
   // (utile pour le futur calcul de commission collaborateur)
-  const codesAvecStats = codes.map((c) => ({
+  const codesAvecStats = codes.map((c: any) => ({
     ...c,
     nombreUtilisations: c._count.commandes,
-    chiffreAffairesGenere: c.commandes.reduce((acc, cmd) => acc + parseFloat(cmd.total.toString()), 0),
+    chiffreAffairesGenere: c.commandes.reduce((acc: any, cmd: any) => acc + parseFloat(cmd.total.toString()), 0),
   }));
 
   return NextResponse.json(codesAvecStats);

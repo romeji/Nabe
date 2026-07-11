@@ -48,7 +48,7 @@ export default async function PageAdminNewsletters() {
             </tr>
           </thead>
           <tbody>
-            {newsletters.map((n) => (
+            {newsletters.map((n: any) => (
               <tr key={n.id}>
                 <td>{n.sujet}</td>
                 <td>

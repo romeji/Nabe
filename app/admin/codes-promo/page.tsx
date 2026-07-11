@@ -16,7 +16,7 @@ export default async function PageAdminCodesPromo() {
     include: { commandes: { select: { total: true } } },
   });
 
-  const codesAvecStats = codes.map((c) => ({
+  const codesAvecStats = codes.map((c: any) => ({
     id: c.id,
     code: c.code,
     type: c.type,
@@ -27,7 +27,7 @@ export default async function PageAdminCodesPromo() {
     dateExpiration: c.dateExpiration?.toISOString() || null,
     utilisationMax: c.utilisationMax,
     nombreUtilisations: c.commandes.length,
-    chiffreAffairesGenere: c.commandes.reduce((acc, cmd) => acc + parseFloat(cmd.total.toString()), 0),
+    chiffreAffairesGenere: c.commandes.reduce((acc: any, cmd: any) => acc + parseFloat(cmd.total.toString()), 0),
   }));
 
   return (
@@ -51,7 +51,7 @@ export default async function PageAdminCodesPromo() {
               </tr>
             </thead>
             <tbody>
-              {codesAvecStats.map((c) => (
+              {codesAvecStats.map((c: any) => (
                 <LigneCodePromo key={c.id} code={c} />
               ))}
             </tbody>

@@ -103,26 +103,26 @@ export default async function PageCollections({ searchParams: searchParamsPromis
   const prixMinGlobal = Math.floor(parseFloat(bornesPrix._min.prix?.toString() || '0'));
   const prixMaxGlobal = Math.ceil(parseFloat(bornesPrix._max.prix?.toString() || '1000'));
 
-  const comptesTypeMap = Object.fromEntries(comptesParType.map((c) => [c.type, c._count._all]));
-  const comptesDispoMap = Object.fromEntries(comptesParDispo.map((c) => [c.disponibilite, c._count._all]));
+  const comptesTypeMap = Object.fromEntries(comptesParType.map((c: any) => [c.type, c._count._all]));
+  const comptesDispoMap = Object.fromEntries(comptesParDispo.map((c: any) => [c.disponibilite, c._count._all]));
 
-  const matieresDisponibles = matieresBrutes.map((m) => ({
+  const matieresDisponibles = matieresBrutes.map((m: any) => ({
     id: m.id,
     nom: m.nom,
     nombreProduits: m._count.produits,
   }));
 
-  const pierresDisponibles = pierresBrutes.map((p) => ({
+  const pierresDisponibles = pierresBrutes.map((p: any) => ({
     id: p.id,
     nom: p.nom,
-    nombreProduits: p.produits.filter((pp) => pp.produit.actif).length,
+    nombreProduits: p.produits.filter((pp: any) => pp.produit.actif).length,
   }));
 
   // Calcule, pour chaque couleur, le nombre de bijoux actifs distincts qui ont une pierre de cette couleur
-  const couleursDisponibles = couleursBrutes.map((couleur) => {
+  const couleursDisponibles = couleursBrutes.map((couleur: any) => {
     const idsProduits = new Set<string>();
-    couleur.pierres.forEach((pierreCouleur) => {
-      pierreCouleur.pierre.produits.forEach((pp) => {
+    couleur.pierres.forEach((pierreCouleur: any) => {
+      pierreCouleur.pierre.produits.forEach((pp: any) => {
         if (pp.produit.actif) idsProduits.add(pp.produitId);
       });
     });
@@ -162,7 +162,7 @@ export default async function PageCollections({ searchParams: searchParamsPromis
             </p>
           ) : (
             <div className="collections-grille">
-              {produits.map((produit) => (
+              {produits.map((produit: any) => (
                 <div key={produit.id} className="produit-carte">
                   <Link href={`/collections/${produit.slug}`} className="produit-carte__lien">
                     <div className="produit-carte__image">
