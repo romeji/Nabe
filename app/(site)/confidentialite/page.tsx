@@ -72,6 +72,22 @@ export default function PageConfidentialite() {
           de limitation et de suppression des données vous concernant. Pour exercer ces droits,
           contactez-nous via la page <a href="/contact">Contact</a>.
         </p>
+        <p>
+          Vous disposez également du droit d’introduire une réclamation auprès de la Commission
+          Nationale de l’Informatique et des Libertés (CNIL), autorité de contrôle française, si vous
+          estimez que le traitement de vos données personnelles constitue une violation du RGPD
+          (<a href="https://www.cnil.fr/fr/plaintes" target="_blank" rel="noreferrer">www.cnil.fr/fr/plaintes</a>).
+        </p>
+      </section>
+
+      <section className="page-info__section">
+        <h2>Transferts de données hors Union européenne</h2>
+        <p>
+          Certains de nos prestataires (Stripe, Google, Vercel) peuvent traiter des données en dehors
+          de l’Union européenne, notamment aux États-Unis. Ces transferts s’appuient sur les garanties
+          prévues par le RGPD (clauses contractuelles types de la Commission européenne, ou
+          certification équivalente propre à chaque prestataire).
+        </p>
       </section>
 
       <section className="page-info__section">

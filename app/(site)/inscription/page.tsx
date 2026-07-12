@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { signIn, useSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import '../connexion/connexion.css';
@@ -36,9 +36,21 @@ export default function PageInscription() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Erreur lors de la création du compte');
 
-      // Connexion automatique après inscription réussie
-      const connexion = await signIn('credentials', { email, password: motDePasse, redirect: false });
-      if (connexion?.error) {
+      // Connexion automatique après inscription réussie. Comme dans
+      // ConnexionContenu.tsx : jamais signIn() de next-auth/react, qui
+      // dépend d'un état global partagé avec le système admin — appel
+      // direct et explicite à l'endpoint client.
+      const csrfRes = await fetch('/api/auth-client/csrf');
+      const { csrfToken } = await csrfRes.json();
+
+      const reponse = await fetch('/api/auth-client/callback/credentials', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ csrfToken: csrfToken || '', email, password: motDePasse, json: 'true' }),
+      });
+      const dataConnexion = await reponse.json().catch(() => ({}));
+
+      if (!reponse.ok || (dataConnexion?.url && /[?&]error=/.test(dataConnexion.url))) {
         router.push('/connexion');
         return;
       }
@@ -53,7 +65,27 @@ export default function PageInscription() {
 
   async function gererInscriptionGoogle() {
     setChargementGoogle(true);
-    await signIn('google', { callbackUrl: '/mon-compte' });
+    try {
+      const csrfRes = await fetch('/api/auth-client/csrf');
+      const { csrfToken } = await csrfRes.json();
+
+      const reponse = await fetch('/api/auth-client/signin/google', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ csrfToken: csrfToken || '', callbackUrl: '/mon-compte', json: 'true' }),
+      });
+      const data = await reponse.json().catch(() => ({}));
+
+      if (data?.url) {
+        window.location.href = data.url;
+      } else {
+        setChargementGoogle(false);
+        setErreur('Impossible de démarrer la connexion Google. Réessayez.');
+      }
+    } catch {
+      setChargementGoogle(false);
+      setErreur('Impossible de démarrer la connexion Google. Réessayez.');
+    }
   }
 
   return (

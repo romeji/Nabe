@@ -21,6 +21,11 @@ export default function PagePaiementSecurise() {
           Vos coordonnées bancaires ne sont jamais stockées sur nos serveurs : elles transitent
           uniquement, de façon chiffrée, entre votre navigateur et Stripe.
         </p>
+        <p>
+          Selon votre banque, une authentification forte (3D Secure) peut vous être demandée au
+          moment du paiement, conformément à la réglementation européenne DSP2 sur les paiements en
+          ligne — une étape supplémentaire de vérification directement avec votre banque.
+        </p>
       </section>
 
       <section className="page-info__section">
@@ -28,6 +33,15 @@ export default function PagePaiementSecurise() {
         <ul>
           <li>Carte bancaire (Visa, Mastercard, American Express)</li>
         </ul>
+      </section>
+
+      <section className="page-info__section">
+        <h2>Remboursement</h2>
+        <p>
+          En cas d'annulation ou de retour accepté, le remboursement est effectué sur le moyen de
+          paiement utilisé lors de l'achat, sous quelques jours ouvrés selon les délais propres à
+          votre banque.
+        </p>
       </section>
 
       <section className="page-info__section">

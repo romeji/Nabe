@@ -81,10 +81,39 @@ export default function PageCGV() {
       </section>
 
       <section className="page-info__section">
-        <h2>Article 9 — Litiges</h2>
+        <h2>Article 9 — Litiges et médiation</h2>
         <p>
           Les présentes CGV sont soumises au droit français. En cas de litige, une solution amiable
-          sera recherchée en priorité avant toute action judiciaire.
+          sera recherchée en priorité avant toute action judiciaire. Conformément aux articles
+          L.616-1 et R.616-1 du Code de la consommation, vous pouvez également recourir gratuitement
+          à un médiateur de la consommation (voir nos{' '}
+          <a href="/mentions-legales">Mentions légales</a> pour ses coordonnées), après démarche
+          écrite préalable auprès de nous.
+        </p>
+      </section>
+
+      <section className="page-info__section">
+        <h2>Article 10 — Preuve et archivage</h2>
+        <p>
+          Les registres informatisés de Nabe et de son prestataire de paiement Stripe sont
+          conservés dans des conditions raisonnables de sécurité et considérés comme preuve des
+          communications, commandes et paiements intervenus entre les parties.
+        </p>
+      </section>
+
+      <section className="page-info__section">
+        <h2>Article 11 — Force majeure</h2>
+        <p>
+          Nabe ne pourra être tenue responsable de tout retard ou inexécution consécutif à la
+          survenance d'un cas de force majeure habituellement reconnu par la jurisprudence française.
+        </p>
+      </section>
+
+      <section className="page-info__section">
+        <h2>Article 12 — Modification des CGV</h2>
+        <p>
+          Nabe se réserve le droit de modifier les présentes CGV à tout moment. Les CGV applicables
+          sont celles en vigueur à la date de la commande.
         </p>
       </section>
     </div>

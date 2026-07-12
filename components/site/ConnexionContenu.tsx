@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { signIn, useSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
@@ -70,7 +70,37 @@ export default function ConnexionContenu() {
 
   async function gererConnexionGoogle() {
     setChargementGoogle(true);
-    await signIn('google', { callbackUrl: urlRetour });
+    try {
+      // Même raison que pour gererConnexion() ci-dessus : signIn('google', ...)
+      // dépend de l'état global partagé de next-auth/react, qui peut pointer
+      // vers le mauvais système (admin) selon ce qui a été monté en dernier
+      // dans le navigateur. On construit donc nous-mêmes, explicitement,
+      // l'appel vers /api/auth-client (jamais /api/auth).
+      const csrfRes = await fetch('/api/auth-client/csrf');
+      const { csrfToken } = await csrfRes.json();
+
+      const reponse = await fetch('/api/auth-client/signin/google', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          csrfToken: csrfToken || '',
+          callbackUrl: urlRetour,
+          json: 'true',
+        }),
+      });
+
+      const data = await reponse.json().catch(() => ({}));
+
+      if (data?.url) {
+        window.location.href = data.url;
+      } else {
+        setChargementGoogle(false);
+        setErreur('Impossible de démarrer la connexion Google. Réessayez.');
+      }
+    } catch {
+      setChargementGoogle(false);
+      setErreur('Impossible de démarrer la connexion Google. Réessayez.');
+    }
   }
 
   return (
