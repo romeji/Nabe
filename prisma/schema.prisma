@@ -65,6 +65,8 @@ model AdressePostale {
   parDefaut    Boolean  @default(false)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+
+  @@index([clientId])
 }
 
 model CompteOAuth {
@@ -258,6 +260,10 @@ model Produit {
 
   @@index([type])
   @@index([disponibilite])
+  @@index([matiereId])
+  @@index([categorieId])
+  @@index([collectionId])
+  @@index([actif])
 }
 
 // Table de liaison pour le bloc "À composer avec" (2 suggestions maximum par produit,
@@ -282,6 +288,8 @@ model ProduitImage {
   produitId String
   produit   Produit  @relation(fields: [produitId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
+
+  @@index([produitId])
 }
 
 // ============================================================
@@ -303,6 +311,8 @@ model MouvementStock {
   quantite   Int // positif ou négatif selon le type
   motif      String?
   createdAt  DateTime      @default(now())
+
+  @@index([produitId])
 }
 
 // Stock détaillé par taille (ex: Bague taille 52 -> 3 en stock, taille 54 -> 0).
@@ -387,6 +397,9 @@ model Commande {
   lignes                LigneCommande[]
   createdAt             DateTime        @default(now())
   updatedAt              DateTime       @updatedAt
+
+  @@index([clientId])
+  @@index([statut])
 }
 
 model LigneCommande {
@@ -399,6 +412,9 @@ model LigneCommande {
   taille      String?
   prixUnitaire Decimal @db.Decimal(10, 2)
   quantite    Int
+
+  @@index([commandeId])
+  @@index([produitId])
 }
 
 // ============================================================

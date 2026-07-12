@@ -12,6 +12,19 @@ type ArticleMeta = { id: string; q: number; taille: string; pu?: number };
  * compteur de ventes et journalise le mouvement pour chaque article vendu.
  * Utilisé après la création d'une commande, quelle que soit la source
  * (ancien flow Checkout Session ou nouveau flow PaymentIntent intégré).
+ *
+ * IMPORTANT (course critique / race condition) : le stock est vérifié une
+ * première fois à la création du paiement (avant que le client paie), mais
+ * comme le paiement Stripe est asynchrone, deux clients pourraient en théorie
+ * payer le(s) dernier(s) exemplaire(s) d'un même produit avant que l'un des
+ * deux webhooks n'ait décrémenté le stock — particulièrement critique pour
+ * une "pièce unique". La décrémentation ici est donc faite de façon atomique
+ * et conditionnelle au niveau de la base (UPDATE ... WHERE stock >= quantité)
+ * plutôt qu'un simple decrement aveugle : si le stock est insuffisant au
+ * moment précis de la décrémentation, la commande est quand même créée
+ * (le paiement a déjà été capturé, impossible de l'annuler silencieusement)
+ * mais un e-mail d'alerte est envoyé pour un traitement manuel (contact
+ * client, remboursement partiel, réapprovisionnement...).
  */
 async function decrementerStockEtJournaliser(articlesMeta: ArticleMeta[], numeroCommande: string) {
   const produitsDb = await prisma.produit.findMany({
@@ -19,22 +32,41 @@ async function decrementerStockEtJournaliser(articlesMeta: ArticleMeta[], numero
     include: { stockTailles: true },
   });
 
+  const alertesSurvente: string[] = [];
+
   for (const a of articlesMeta) {
     const produit = produitsDb.find((p: any) => p.id === a.id);
     if (!produit) continue;
 
-    await prisma.produit.update({
-      where: { id: produit.id },
+    // Décrémentation conditionnelle atomique : ne réussit que si le stock
+    // encore disponible au moment exact de l'exécution est suffisant.
+    const resultatStock = await prisma.produit.updateMany({
+      where: { id: produit.id, stock: { gte: a.q } },
       data: { stock: { decrement: a.q }, nombreVentes: { increment: a.q } },
     });
+
+    if (resultatStock.count === 0) {
+      // Stock insuffisant au moment de la vente : on décrémente quand même
+      // (le stock peut aller à 0 ou en négatif pour rester traçable), mais
+      // on remonte l'alerte pour un traitement manuel.
+      await prisma.produit.update({
+        where: { id: produit.id },
+        data: { stock: { decrement: a.q }, nombreVentes: { increment: a.q } },
+      });
+      alertesSurvente.push(`${produit.nom} (commande ${numeroCommande}, quantité ${a.q})`);
+    }
 
     if (produit.stockTailles.length > 0 && a.taille) {
       const ligne = produit.stockTailles.find((s: any) => s.taille === a.taille);
       if (ligne) {
-        await prisma.stockTaille.update({
-          where: { id: ligne.id },
+        const resultatTaille = await prisma.stockTaille.updateMany({
+          where: { id: ligne.id, quantite: { gte: a.q } },
           data: { quantite: { decrement: a.q } },
         });
+        if (resultatTaille.count === 0) {
+          await prisma.stockTaille.update({ where: { id: ligne.id }, data: { quantite: { decrement: a.q } } });
+          alertesSurvente.push(`${produit.nom} taille ${a.taille} (commande ${numeroCommande})`);
+        }
       }
     }
 
@@ -46,6 +78,22 @@ async function decrementerStockEtJournaliser(articlesMeta: ArticleMeta[], numero
         motif: `Commande ${numeroCommande}`,
       },
     });
+  }
+
+  if (alertesSurvente.length > 0) {
+    console.error('⚠️ SURVENTE détectée :', alertesSurvente.join(' | '));
+    try {
+      await resend.emails.send({
+        from: EMAIL_EXPEDITEUR,
+        to: EMAIL_EXPEDITEUR,
+        subject: `⚠️ Survente détectée — commande ${numeroCommande}`,
+        html: `<p>Stock insuffisant au moment de la vente pour :</p><ul>${alertesSurvente
+          .map((a) => `<li>${a}</li>`)
+          .join('')}</ul><p>Une action manuelle est nécessaire (contact client, remboursement partiel, ou réapprovisionnement).</p>`,
+      });
+    } catch (err) {
+      console.error("Erreur envoi email d'alerte survente :", err);
+    }
   }
 
   return produitsDb;

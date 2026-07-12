@@ -17,3 +17,17 @@
   font-style: italic;
   padding: var(--espace-xl) 0;
 }
+
+.admin-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2rem;
+  margin-top: 1.5rem;
+  font-size: 0.85rem;
+}
+
+.admin-pagination a {
+  color: var(--nabe-terracotta);
+  font-weight: 600;
+}
