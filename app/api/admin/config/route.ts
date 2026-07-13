@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { verifierSessionAdmin } from '@/lib/auth-helpers';
-import { getConfigSite } from '@/lib/config-site';
+import { DEFAUTS_CONFIG, getConfigSite } from '@/lib/config-site';
 
 export async function GET(req: NextRequest) {
   const session = await verifierSessionAdmin();
@@ -22,8 +22,12 @@ export async function POST(req: NextRequest) {
   try {
     const donnees: Record<string, string> = await req.json();
 
+    const entreesAutorisees = Object.entries(donnees).filter(([cle]) =>
+      Object.prototype.hasOwnProperty.call(DEFAUTS_CONFIG, cle)
+    );
+
     await Promise.all(
-      Object.entries(donnees).map(([cle, valeur]) =>
+      entreesAutorisees.map(([cle, valeur]) =>
         prisma.configSite.upsert({
           where: { cle },
           update: { valeur: String(valeur) },

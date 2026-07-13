@@ -92,7 +92,7 @@ export default function PageInscription() {
           'Content-Type': 'application/x-www-form-urlencoded',
           'X-Auth-Return-Redirect': '1',
         },
-        body: new URLSearchParams({ csrfToken: csrfToken || '', callbackUrl: '/mon-compte' }),
+        body: new URLSearchParams({ csrfToken: csrfToken || '', callbackUrl: '/mon-compte', json: 'true' }),
       });
       const data = await reponse.json().catch(() => ({}));
 

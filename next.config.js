@@ -1,5 +1,8 @@
+const path = require('path');
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  outputFileTracingRoot: path.join(__dirname),
   images: {
     remotePatterns: [
       {
@@ -31,12 +34,14 @@ const nextConfig = {
             // silencieusement le paiement Stripe ou d'autres scripts sans erreur visible pour l'utilisateur.
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://www.googletagmanager.com https://www.google-analytics.com",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://www.googletagmanager.com https://www.google-analytics.com https://www.googleadservices.com",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-              "img-src 'self' data: blob: https://res.cloudinary.com https://www.google-analytics.com",
+              "img-src 'self' data: blob: https://res.cloudinary.com https://www.google-analytics.com https://www.googletagmanager.com https://www.google.com https://www.google.fr",
               "font-src 'self' data: https://fonts.gstatic.com",
-              "connect-src 'self' https://api.stripe.com https://www.google-analytics.com https://data.geopf.fr https://api.mondialrelay.com",
-              "frame-src 'self' https://js.stripe.com https://hooks.stripe.com",
+              "connect-src 'self' https://api.stripe.com https://r.stripe.com https://m.stripe.network https://www.google-analytics.com https://analytics.google.com https://stats.g.doubleclick.net https://accounts.google.com https://data.geopf.fr https://api.mondialrelay.com",
+              "frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://www.googletagmanager.com https://accounts.google.com",
+              "frame-ancestors 'self'",
+              "form-action 'self' https://accounts.google.com",
               "object-src 'none'",
               "base-uri 'self'",
             ].join('; '),

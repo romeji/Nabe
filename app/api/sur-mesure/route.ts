@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 import { verifierLimiteTaux, obtenirIp } from '@/lib/rate-limit';
+import { EMAIL_CONTACT, EMAIL_EXPEDITEUR, genererHtmlNotificationSurMesure, resend } from '@/lib/resend';
 
 const schema = z.object({
   modeleSelectionne: z.string().optional().nullable(),
@@ -38,6 +39,18 @@ export async function POST(req: NextRequest) {
         telephone: donnees.telephone || undefined,
       },
     });
+
+    try {
+      await resend.emails.send({
+        from: EMAIL_EXPEDITEUR,
+        to: EMAIL_CONTACT,
+        replyTo: donnees.email,
+        subject: `Nouvelle demande sur-mesure - ${donnees.nom}`,
+        html: genererHtmlNotificationSurMesure(donnees),
+      });
+    } catch (err) {
+      console.error('Erreur envoi notification sur-mesure (demande conservee) :', err);
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {

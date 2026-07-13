@@ -110,6 +110,7 @@ export default function ConnexionContenu() {
         body: new URLSearchParams({
           csrfToken: csrfToken || '',
           callbackUrl: urlRetour,
+          json: 'true',
         }),
       });
 
@@ -189,6 +190,10 @@ export default function ConnexionContenu() {
             {chargement ? 'Connexion...' : 'Se connecter'}
           </button>
         </form>
+
+        <p className="connexion-lien">
+          <Link href="/mot-de-passe-oublie">Mot de passe oublie ?</Link>
+        </p>
 
         <p className="connexion-lien">
           Pas encore de compte ? <Link href="/inscription">Créer un compte</Link>

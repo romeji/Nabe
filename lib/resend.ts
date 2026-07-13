@@ -8,6 +8,16 @@ export const resend = new Resend(process.env.RESEND_API_KEY || '');
 
 /** Adresse d'expédition par défaut. Doit être un domaine vérifié sur resend.com en production. */
 export const EMAIL_EXPEDITEUR = process.env.RESEND_FROM_EMAIL || 'Nabe <onboarding@resend.dev>';
+export const EMAIL_CONTACT = process.env.RESEND_CONTACT_EMAIL || EMAIL_EXPEDITEUR;
+
+function echapperHtml(valeur: string | null | undefined): string {
+  return String(valeur || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
 
 /**
  * Génère un email HTML élégant à partir d'un sujet et d'un contenu déjà au
@@ -69,6 +79,80 @@ export function genererHtmlSuppressionCompte(prenom: string): string {
     <p>Nous confirmons la suppression de votre compte Nabe, comme vous l'avez demandé.</p>
     <p>Vos informations personnelles (nom, adresses, favoris) ont été supprimées de nos systèmes. Si vous aviez déjà passé commande, nous conservons uniquement les informations de facturation nécessaires à nos obligations légales et comptables, sans qu'elles restent associées à un compte actif.</p>
     <p>Vous pouvez recréer un compte à tout moment si vous changez d'avis.</p>`
+  );
+}
+
+/** Email de securite envoye apres changement de mot de passe. */
+export function genererHtmlMotDePasseModifie(prenom: string): string {
+  return enveloppeEmail(
+    `Votre mot de passe Nabe a ete modifie`,
+    `
+    <p>Bonjour ${prenom},</p>
+    <p>Nous confirmons que le mot de passe de votre compte Nabe vient d'etre modifie.</p>
+    <p>Si vous n'etes pas a l'origine de cette action, contactez-nous immediatement en repondant a cet e-mail.</p>`
+  );
+}
+
+/** Email de demande de reinitialisation de mot de passe. */
+export function genererHtmlReinitialisationMotDePasse(prenom: string, lien: string): string {
+  return enveloppeEmail(
+    `Reinitialiser votre mot de passe Nabe`,
+    `
+    <p>Bonjour ${prenom},</p>
+    <p>Vous avez demande a reinitialiser le mot de passe de votre compte Nabe.</p>
+    <p><a href="${lien}" style="display:inline-block; background-color:#8b4a32; color:#ffffff; padding:12px 18px; border-radius:4px; text-decoration:none;">Choisir un nouveau mot de passe</a></p>
+    <p style="font-size:13px; color:#7a6a55;">Ce lien est valable 1 heure. Si vous n'etes pas a l'origine de cette demande, vous pouvez ignorer cet e-mail.</p>`
+  );
+}
+
+/** Notification interne lorsqu'un formulaire de contact est depose. */
+export function genererHtmlNotificationContact(params: {
+  nom: string;
+  email: string;
+  sujet: string;
+  message: string;
+}): string {
+  return enveloppeEmail(
+    `Nouveau message de contact`,
+    `
+    <p><strong>Nom :</strong> ${echapperHtml(params.nom)}</p>
+    <p><strong>E-mail :</strong> ${echapperHtml(params.email)}</p>
+    <p><strong>Sujet :</strong> ${echapperHtml(params.sujet)}</p>
+    <p style="white-space:pre-wrap;">${echapperHtml(params.message)}</p>`
+  );
+}
+
+/** Notification interne lorsqu'une demande sur-mesure est deposee. */
+export function genererHtmlNotificationSurMesure(params: {
+  nom: string;
+  email: string;
+  telephone?: string | null;
+  modeleSelectionne?: string | null;
+  tailleSouhaitee?: string | null;
+  matiere?: string | null;
+  pierre?: string | null;
+  gravure?: string | null;
+  message: string;
+}): string {
+  const details = [
+    ['Modele', params.modeleSelectionne],
+    ['Taille', params.tailleSouhaitee],
+    ['Matiere', params.matiere],
+    ['Pierre', params.pierre],
+    ['Gravure', params.gravure],
+    ['Telephone', params.telephone],
+  ]
+    .filter(([, valeur]) => valeur)
+    .map(([label, valeur]) => `<p><strong>${label} :</strong> ${echapperHtml(valeur)}</p>`)
+    .join('');
+
+  return enveloppeEmail(
+    `Nouvelle demande sur-mesure`,
+    `
+    <p><strong>Nom :</strong> ${echapperHtml(params.nom)}</p>
+    <p><strong>E-mail :</strong> ${echapperHtml(params.email)}</p>
+    ${details}
+    <p style="white-space:pre-wrap;">${echapperHtml(params.message)}</p>`
   );
 }
 

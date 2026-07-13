@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 import { verifierLimiteTaux, obtenirIp } from '@/lib/rate-limit';
+import { EMAIL_CONTACT, EMAIL_EXPEDITEUR, genererHtmlNotificationContact, resend } from '@/lib/resend';
 
 const schema = z.object({
   nom: z.string().min(1),
@@ -23,6 +24,18 @@ export async function POST(req: NextRequest) {
     await prisma.messageContact.create({
       data: donnees,
     });
+
+    try {
+      await resend.emails.send({
+        from: EMAIL_EXPEDITEUR,
+        to: EMAIL_CONTACT,
+        replyTo: donnees.email,
+        subject: `Nouveau message contact - ${donnees.sujet}`,
+        html: genererHtmlNotificationContact(donnees),
+      });
+    } catch (err) {
+      console.error('Erreur envoi notification contact (message conserve) :', err);
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {

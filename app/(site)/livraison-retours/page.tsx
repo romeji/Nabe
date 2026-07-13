@@ -39,6 +39,16 @@ export default async function PageLivraisonRetours() {
           <li>Bijoux en fabrication sur commande : délai indiqué sur la fiche produit (généralement 2 à 3 semaines)</li>
           <li>Pièces sur-mesure : délai communiqué individuellement après validation du devis</li>
         </ul>
+        <h3>DÃ©lais de transport indicatifs</h3>
+        <ul>
+          <li>Colissimo domicile : 2 Ã  3 jours ouvrÃ©s aprÃ¨s expÃ©dition</li>
+          <li>Mondial Relay : 3 Ã  5 jours ouvrÃ©s aprÃ¨s expÃ©dition</li>
+        </ul>
+        <p>
+          Ces dÃ©lais de transport sont indicatifs et s'ajoutent au dÃ©lai de prÃ©paration ou de fabrication.
+          Si aucun dÃ©lai spÃ©cifique n'est indiquÃ© avant la commande, la livraison interviendra au plus tard
+          dans le dÃ©lai lÃ©gal de 30 jours suivant la validation de la commande.
+        </p>
         <h3>Zones de livraison</h3>
         <p>
           Nous livrons actuellement en France métropolitaine. Pour toute autre destination,
