@@ -22,6 +22,17 @@ export default function PageInscription() {
     }
   }, [status, session, router]);
 
+  // Garde-fou absolu (non négociable) : cette page ne doit jamais naviguer
+  // vers /admin, quelle qu'en soit la raison.
+  function estCibleAdminSuspecte(url: string | undefined | null) {
+    if (!url) return false;
+    try {
+      return /^\/admin(\/|$|\?)/.test(new URL(url, window.location.origin).pathname);
+    } catch {
+      return false;
+    }
+  }
+
   async function gererInscription(e: React.FormEvent) {
     e.preventDefault();
     setChargement(true);
@@ -50,6 +61,12 @@ export default function PageInscription() {
       });
       const dataConnexion = await reponse.json().catch(() => ({}));
 
+      if (estCibleAdminSuspecte(dataConnexion?.url) || estCibleAdminSuspecte(reponse.url)) {
+        console.error('Navigation vers /admin bloquée depuis l’inscription boutique (garde-fou de sécurité).');
+        router.push('/connexion');
+        return;
+      }
+
       if (!reponse.ok || (dataConnexion?.url && /[?&]error=/.test(dataConnexion.url))) {
         router.push('/connexion');
         return;
@@ -71,10 +88,20 @@ export default function PageInscription() {
 
       const reponse = await fetch('/api/auth-client/signin/google', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({ csrfToken: csrfToken || '', callbackUrl: '/mon-compte', json: 'true' }),
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'X-Auth-Return-Redirect': '1',
+        },
+        body: new URLSearchParams({ csrfToken: csrfToken || '', callbackUrl: '/mon-compte' }),
       });
       const data = await reponse.json().catch(() => ({}));
+
+      if (estCibleAdminSuspecte(data?.url) || estCibleAdminSuspecte(reponse.url)) {
+        console.error('Navigation vers /admin bloquée depuis l’inscription boutique (garde-fou de sécurité).');
+        setChargementGoogle(false);
+        setErreur('La connexion avec Google n’est pas encore configurée. Utilisez le formulaire ci-dessous.');
+        return;
+      }
 
       if (data?.url) {
         window.location.href = data.url;

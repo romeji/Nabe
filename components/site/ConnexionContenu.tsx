@@ -16,7 +16,22 @@ export default function ConnexionContenu() {
   const [chargementGoogle, setChargementGoogle] = useState(false);
 
   const redirectParam = searchParams.get('redirect');
-  const urlRetour = redirectParam?.startsWith('/') && !redirectParam.startsWith('//') ? redirectParam : '/mon-compte';
+  const urlRetour =
+    redirectParam?.startsWith('/') && !redirectParam.startsWith('//') && !/^\/admin(\/|$|\?)/.test(redirectParam)
+      ? redirectParam
+      : '/mon-compte';
+
+  // Garde-fou absolu (non négociable) : cette page ne doit jamais naviguer
+  // vers /admin, quelle qu'en soit la raison (configuration manquante,
+  // erreur NextAuth, manipulation de l'URL...).
+  function estCibleAdminSuspecte(url: string | undefined | null) {
+    if (!url) return false;
+    try {
+      return /^\/admin(\/|$|\?)/.test(new URL(url, window.location.origin).pathname);
+    } catch {
+      return false;
+    }
+  }
 
   useEffect(() => {
     if (status === 'authenticated' && session?.user) {
@@ -53,6 +68,13 @@ export default function ConnexionContenu() {
       });
 
       const data = await reponse.json().catch(() => ({}));
+
+      if (estCibleAdminSuspecte(data?.url) || estCibleAdminSuspecte(reponse.url)) {
+        console.error('Navigation vers /admin bloquée depuis la connexion boutique (garde-fou de sécurité).');
+        setErreur('Une erreur est survenue. Réessayez, ou contactez-nous si cela persiste.');
+        setChargement(false);
+        return;
+      }
 
       if (!reponse.ok || (data?.url && /[?&]error=/.test(data.url))) {
         setErreur('Email ou mot de passe incorrect.');
@@ -94,6 +116,18 @@ export default function ConnexionContenu() {
       const data = await reponse.json().catch(() => ({}));
 
       console.log('[debug google signin]', { status: reponse.status, url: reponse.url, data });
+
+      // GARDE-FOU ABSOLU (non négociable) : la boutique ne doit JAMAIS
+      // rediriger ou naviguer vers /admin, quelle qu'en soit la raison
+      // (mauvaise config, erreur NextAuth, comportement inattendu du
+      // serveur...). On vérifie explicitement avant toute navigation, sur
+      // l'URL renvoyée dans le corps ET sur l'URL finale de la réponse elle-même.
+      if (estCibleAdminSuspecte(data?.url) || estCibleAdminSuspecte(reponse.url)) {
+        console.error('Navigation vers /admin bloquée depuis la connexion boutique (garde-fou de sécurité).');
+        setChargementGoogle(false);
+        setErreur('La connexion avec Google n’est pas encore configurée. Utilisez votre e-mail et mot de passe, ou réessayez plus tard.');
+        return;
+      }
 
       if (data?.url) {
         window.location.href = data.url;

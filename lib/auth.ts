@@ -11,6 +11,7 @@ export const authOptions: NextAuthOptions = {
   },
   pages: {
     signIn: '/admin/login',
+    error: '/admin/login',
   },
   // IMPORTANT (sécurité) : nom de cookie distinct de celui du site client
   // (voir lib/auth-client.ts). Sans cela, les deux configurations NextAuth
