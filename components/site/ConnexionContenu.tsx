@@ -81,15 +81,19 @@ export default function ConnexionContenu() {
 
       const reponse = await fetch('/api/auth-client/signin/google', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'X-Auth-Return-Redirect': '1',
+        },
         body: new URLSearchParams({
           csrfToken: csrfToken || '',
           callbackUrl: urlRetour,
-          json: 'true',
         }),
       });
 
       const data = await reponse.json().catch(() => ({}));
+
+      console.log('[debug google signin]', { status: reponse.status, url: reponse.url, data });
 
       if (data?.url) {
         window.location.href = data.url;
