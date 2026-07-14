@@ -467,6 +467,7 @@ export default function FormulaireCheckout() {
                 )}
               </div>
 
+              {!livraisonIncluse && (
               <div className="checkout__etape checkout__mode-expedition">
                 <h2>Étape 3/3 : mode d’expédition</h2>
                 {chargementModes && <p className="checkout__aide">Calcul des frais de livraison...</p>}
