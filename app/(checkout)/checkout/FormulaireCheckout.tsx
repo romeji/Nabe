@@ -299,8 +299,10 @@ export default function FormulaireCheckout() {
 
   function champsAdresseValides() {
     const adresseOk = Boolean(adresse.email && adresse.prenom && adresse.nom && adresse.adresse && adresse.ville && adresse.codePostal);
-    if (!adresseOk || !modeLivraison) return false;
-    if (modeLivraison.necessitePointRelais && !pointRelaisChoisi) return false;
+    if (!adresseOk) return false;
+    // Si livraison incluse dans le prix, pas besoin de sélectionner un mode
+    if (!livraisonIncluse && !modeLivraison) return false;
+    if (modeLivraison?.necessitePointRelais && !pointRelaisChoisi) return false;
     return true;
   }
 
