@@ -146,12 +146,24 @@ export default function FormulaireCheckout() {
     })
       .then((r) => (r.ok ? r.json() : { modes: [] }))
       .then((data: { modes: ModeLivraison[]; livraisonIncluse?: boolean }) => {
-        setModesLivraison(data.modes || []);
-        if (data.modes?.length > 0) setModeLivraisonId((actuel) => actuel || data.modes[0].id);
-        // Si livraison incluse dans le prix, on sélectionne auto le premier mode sans afficher le choix
-        if (data.livraisonIncluse) setLivraisonIncluse(true);
+        if (data.livraisonIncluse) {
+          // Livraison incluse : on crée un mode fictif pour que le checkout puisse continuer
+          setLivraisonIncluse(true);
+          const modeFictif: ModeLivraison = { id: 'incluse', label: 'Livraison incluse', prix: 0, delai: '', necessitePointRelais: false };
+          setModesLivraison([modeFictif]);
+          setModeLivraisonId('incluse');
+        } else {
+          setModesLivraison(data.modes || []);
+          if (data.modes?.length > 0) setModeLivraisonId((actuel) => actuel || data.modes[0].id);
+        }
       })
-      .catch(() => setModesLivraison([]))
+      .catch(() => {
+        // En cas d'erreur, si livraison incluse on met quand même un mode fictif
+        const modeFictif: ModeLivraison = { id: 'incluse', label: 'Livraison incluse', prix: 0, delai: '', necessitePointRelais: false };
+        setModesLivraison([modeFictif]);
+        setModeLivraisonId('incluse');
+        setLivraisonIncluse(true);
+      })
       .finally(() => setChargementModes(false));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [articles.map((a: any) => `${a.produitId}:${a.quantite}`).join(',')]);
