@@ -246,15 +246,21 @@ export default function FormulaireCheckout() {
   }, [statutSession]);
 
   function appliquerAdresseEnregistree(a: AdresseEnregistree) {
-    const [prenom, ...resteNom] = a.destinataire.split(' ');
+    // Découpe le destinataire en prénom + nom
+    // Fallback sur le nom de la session si destinataire est vide
+    const nomComplet = (a.destinataire || session?.user?.name || '').trim();
+    const parties = nomComplet.split(' ');
+    const prenom = parties[0] || '';
+    const nom = parties.slice(1).join(' ') || parties[0] || '';
     setAdresse((prev) => ({
       ...prev,
-      prenom: prenom || '',
-      nom: resteNom.join(' ') || '',
-      adresse: a.ligne1,
+      email: prev.email || '',
+      prenom,
+      nom,
+      adresse: a.ligne1 || '',
       complement: a.ligne2 || '',
-      ville: a.ville,
-      codePostal: a.codePostal,
+      ville: a.ville || '',
+      codePostal: a.codePostal || '',
       pays: a.pays || 'FR',
       telephone: a.telephone || '',
     }));
@@ -310,7 +316,11 @@ export default function FormulaireCheckout() {
   }
 
   function champsAdresseValides() {
-    const adresseOk = Boolean(adresse.email && adresse.prenom && adresse.nom && adresse.adresse && adresse.ville && adresse.codePostal);
+    const adresseEnregistree = adresseSelectionneeId !== 'nouvelle' && adressesEnregistrees.find((a: any) => a.id === adresseSelectionneeId);
+    // Si adresse enregistrée sélectionnée, prénom/nom viennent du destinataire — pas besoin de les valider séparément
+    const adresseOk = adresseEnregistree
+      ? Boolean(adresse.email && adresse.adresse && adresse.ville && adresse.codePostal)
+      : Boolean(adresse.email && adresse.prenom && adresse.nom && adresse.adresse && adresse.ville && adresse.codePostal);
     if (!adresseOk) return false;
     // Si livraison incluse dans le prix, pas besoin de sélectionner un mode
     if (!livraisonIncluse && !modeLivraison) return false;

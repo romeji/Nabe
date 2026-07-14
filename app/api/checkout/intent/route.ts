@@ -135,16 +135,17 @@ export async function POST(req: NextRequest) {
       })
     );
     const configSite = await getConfigSite();
-    const modesDisponibles = calculerModesLivraison(poidsTotal, configSite);
-    const modeChoisi = modesDisponibles.find((m: any) => m.id === modeLivraison?.id) || modesDisponibles[0];
+    const livraisonIncluse = configSite.livraison_incluse_dans_prix === 'true';
+    const modesDisponibles = livraisonIncluse ? [] : calculerModesLivraison(poidsTotal, configSite);
+    const modeChoisi = livraisonIncluse ? null : (modesDisponibles.find((m: any) => m.id === modeLivraison?.id) || modesDisponibles[0]);
 
-    if (!modeChoisi) {
+    if (!livraisonIncluse && !modeChoisi) {
       return NextResponse.json({ error: 'Aucun mode de livraison disponible.' }, { status: 400 });
     }
-    if (modeChoisi.necessitePointRelais && !pointRelais?.numero) {
+    if (!livraisonIncluse && modeChoisi?.necessitePointRelais && !pointRelais?.numero) {
       return NextResponse.json({ error: 'Merci de sélectionner un point relais.' }, { status: 400 });
     }
-    const fraisLivraison = modeChoisi.prix;
+    const fraisLivraison = livraisonIncluse ? 0 : (modeChoisi?.prix || 0);
 
     let codeReductionId: string | undefined;
     let montantReduction = 0;
