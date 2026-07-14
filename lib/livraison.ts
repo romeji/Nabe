@@ -17,7 +17,7 @@
 export type TrancheTarif = { poidsMaxGrammes: number; prix: number };
 
 export type ModeLivraisonCalcule = {
-  id: 'colissimo_domicile' | 'mondial_relay';
+  id: 'mondial_relay';
   label: string;
   prix: number;
   delai: string;
@@ -55,20 +55,6 @@ export function calculerModesLivraison(
 ): ModeLivraisonCalcule[] {
   const modes: ModeLivraisonCalcule[] = [];
   const livraisonIncluse = config.livraison_incluse_dans_prix === 'true';
-
-  if (config.livraison_colissimo_domicile_actif === 'true') {
-    const grille = parserGrilleTarifs(config.livraison_colissimo_domicile_grille || '');
-    const prix = livraisonIncluse ? 0 : calculerPrixPourPoids(poidsTotalGrammes, grille);
-    if (prix !== null) {
-      modes.push({
-        id: 'colissimo_domicile',
-        label: livraisonIncluse ? 'Livraison à domicile (Colissimo) — incluse' : 'Livraison à domicile (Colissimo)',
-        prix,
-        delai: '2 à 3 jours ouvrés',
-        necessitePointRelais: false,
-      });
-    }
-  }
 
   if (config.livraison_mondial_relay_actif === 'true') {
     const grille = parserGrilleTarifs(config.livraison_mondial_relay_grille || '');

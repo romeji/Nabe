@@ -131,6 +131,7 @@ export default function FormulaireCheckout() {
   const [etape, setEtape] = useState<'adresse' | 'paiement'>('adresse');
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [chargementIntent, setChargementIntent] = useState(false);
+  const [livraisonIncluse, setLivraisonIncluse] = useState(false);
   const [erreurIntent, setErreurIntent] = useState('');
 
   useEffect(() => setMonte(true), []);
@@ -144,9 +145,11 @@ export default function FormulaireCheckout() {
       body: JSON.stringify({ articles: articles.map((a: any) => ({ id: a.produitId, quantite: a.quantite })) }),
     })
       .then((r) => (r.ok ? r.json() : { modes: [] }))
-      .then((data: { modes: ModeLivraison[] }) => {
+      .then((data: { modes: ModeLivraison[]; livraisonIncluse?: boolean }) => {
         setModesLivraison(data.modes || []);
         if (data.modes?.length > 0) setModeLivraisonId((actuel) => actuel || data.modes[0].id);
+        // Si livraison incluse dans le prix, on sélectionne auto le premier mode sans afficher le choix
+        if (data.livraisonIncluse) setLivraisonIncluse(true);
       })
       .catch(() => setModesLivraison([]))
       .finally(() => setChargementModes(false));
@@ -527,6 +530,7 @@ export default function FormulaireCheckout() {
                   </div>
                 )}
               </div>
+              )}
 
               {erreurIntent && <p className="checkout__erreur">{erreurIntent}</p>}
 

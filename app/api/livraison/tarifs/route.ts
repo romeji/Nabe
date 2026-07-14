@@ -27,7 +27,8 @@ export async function POST(req: NextRequest) {
     const config = await getConfigSite();
     const modes = calculerModesLivraison(poidsTotal, config);
 
-    return NextResponse.json({ poidsTotalGrammes: poidsTotal, modes });
+    const livraisonIncluse = config.livraison_incluse_dans_prix === 'true';
+    return NextResponse.json({ poidsTotalGrammes: poidsTotal, modes, livraisonIncluse });
   } catch (error: any) {
     console.error('Erreur calcul tarifs livraison:', error);
     return NextResponse.json({ error: error.message || 'Erreur' }, { status: 400 });
