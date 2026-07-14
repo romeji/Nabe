@@ -2,8 +2,14 @@
 
 import { SessionProvider } from 'next-auth/react';
 
-export default function ProvidersClient({ children }: { children: React.ReactNode }) {
+export default function ProvidersClient({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <SessionProvider basePath="/api/auth-client">{children}</SessionProvider>
+    <SessionProvider basePath="/api/auth">
+      {children}
+    </SessionProvider>
   );
 }
