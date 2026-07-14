@@ -2,8 +2,8 @@ import { NextAuthOptions } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
-import { PrismaAdapter } from '@auth/prisma-adapter';
 import { prisma } from '@/lib/prisma';
+import { AuthClientAdapter } from '@/lib/auth-client-adapter';
 import {
   estVerrouille,
   calculerApresEchec,
@@ -11,7 +11,7 @@ import {
 } from '@/lib/anti-bruteforce';
 
 export const authClientOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma) as any,
+  adapter: AuthClientAdapter(),
 
   session: {
     strategy: 'jwt',
@@ -42,6 +42,14 @@ export const authClientOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID ?? '',
       clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? '',
+
+      authorization: {
+        params: {
+          prompt: 'select_account',
+          access_type: 'offline',
+          response_type: 'code',
+        },
+      },
     }),
 
     CredentialsProvider({
@@ -81,13 +89,19 @@ export const authClientOptions: NextAuthOptions = {
 
           await prisma.client.update({
             where: { id: client.id },
-            data: { tentativesEchouees, verrouJusqua },
+            data: {
+              tentativesEchouees,
+              verrouJusqua,
+            },
           });
 
           return null;
         }
 
-        if (client.tentativesEchouees > 0 || client.verrouJusqua) {
+        if (
+          client.tentativesEchouees > 0 ||
+          client.verrouJusqua
+        ) {
           await prisma.client.update({
             where: { id: client.id },
             data: ETAT_APRES_SUCCES,
@@ -105,7 +119,14 @@ export const authClientOptions: NextAuthOptions = {
   ],
 
   callbacks: {
-    async signIn() {
+    async signIn({ user, account }) {
+      if (
+        account?.provider === 'google' &&
+        !user.email
+      ) {
+        return false;
+      }
+
       return true;
     },
 
@@ -141,8 +162,11 @@ export const authClientOptions: NextAuthOptions = {
 
     async session({ session, token }) {
       if (session.user) {
-        (session.user as typeof session.user & { id?: string }).id =
-          token.id as string | undefined;
+        (
+          session.user as typeof session.user & {
+            id?: string;
+          }
+        ).id = token.id as string | undefined;
       }
 
       return session;
