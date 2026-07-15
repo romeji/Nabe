@@ -136,16 +136,31 @@ export async function POST(req: NextRequest) {
     );
     const configSite = await getConfigSite();
     const livraisonIncluse = configSite.livraison_incluse_dans_prix === 'true';
-    const modesDisponibles = livraisonIncluse ? [] : calculerModesLivraison(poidsTotal, configSite);
-    const modeChoisi = livraisonIncluse ? null : (modesDisponibles.find((m: any) => m.id === modeLivraison?.id) || modesDisponibles[0]);
 
-    if (!livraisonIncluse && !modeChoisi) {
-      return NextResponse.json({ error: 'Aucun mode de livraison disponible.' }, { status: 400 });
+    // Deux chemins clairs et exclusifs : soit le marchand a inclus la
+    // livraison dans le prix (il expédie lui-même, aucun transporteur à
+    // choisir), soit on applique la grille tarifaire réelle du transporteur
+    // choisi. Chaque variable est toujours définie à la sortie du bloc —
+    // aucune valeur "null" ou fictive ne circule dans le reste de la route.
+    let fraisLivraison = 0;
+    let modeLivraisonLabel = 'Livraison incluse';
+    let modeLivraisonId = 'incluse';
+
+    if (!livraisonIncluse) {
+      const modesDisponibles = calculerModesLivraison(poidsTotal, configSite);
+      const modeChoisi = modesDisponibles.find((m: any) => m.id === modeLivraison?.id) || modesDisponibles[0];
+
+      if (!modeChoisi) {
+        return NextResponse.json({ error: 'Aucun mode de livraison disponible.' }, { status: 400 });
+      }
+      if (modeChoisi.necessitePointRelais && !pointRelais?.numero) {
+        return NextResponse.json({ error: 'Merci de sélectionner un point relais.' }, { status: 400 });
+      }
+
+      fraisLivraison = modeChoisi.prix;
+      modeLivraisonLabel = modeChoisi.label;
+      modeLivraisonId = modeChoisi.id;
     }
-    if (!livraisonIncluse && modeChoisi?.necessitePointRelais && !pointRelais?.numero) {
-      return NextResponse.json({ error: 'Merci de sélectionner un point relais.' }, { status: 400 });
-    }
-    const fraisLivraison = livraisonIncluse ? 0 : (modeChoisi?.prix || 0);
 
     let codeReductionId: string | undefined;
     let montantReduction = 0;
@@ -223,8 +238,8 @@ export async function POST(req: NextRequest) {
         sousTotal: sousTotal.toFixed(2),
         montantReduction: montantReduction.toFixed(2),
         fraisLivraison: fraisLivraison.toFixed(2),
-        modeLivraisonLabel: modeChoisi.label,
-        modeLivraison: modeChoisi.id,
+        modeLivraisonLabel: modeLivraisonLabel,
+        modeLivraison: modeLivraisonId,
         pointRelaisNumero: pointRelais?.numero || '',
         pointRelaisNom: pointRelais?.nom || '',
         pointRelaisAdresse: pointRelais ? `${pointRelais.adresse}, ${pointRelais.codePostal} ${pointRelais.ville}` : '',

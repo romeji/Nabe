@@ -53,16 +53,23 @@ export function calculerModesLivraison(
   poidsTotalGrammes: number,
   config: Record<string, string>
 ): ModeLivraisonCalcule[] {
+  // Si le marchand a inclus la livraison dans le prix des produits, il n'y a
+  // par définition aucun mode/transporteur à choisir : le marchand expédie
+  // lui-même, sans passer par une API de transporteur. On ne renvoie donc
+  // jamais de mode dans ce cas — c'est le seul point de vérité de cette règle.
+  if (config.livraison_incluse_dans_prix === 'true') {
+    return [];
+  }
+
   const modes: ModeLivraisonCalcule[] = [];
-  const livraisonIncluse = config.livraison_incluse_dans_prix === 'true';
 
   if (config.livraison_mondial_relay_actif === 'true') {
     const grille = parserGrilleTarifs(config.livraison_mondial_relay_grille || '');
-    const prix = livraisonIncluse ? 0 : calculerPrixPourPoids(poidsTotalGrammes, grille);
+    const prix = calculerPrixPourPoids(poidsTotalGrammes, grille);
     if (prix !== null) {
       modes.push({
         id: 'mondial_relay',
-        label: livraisonIncluse ? 'Point relais (Mondial Relay) — inclus' : 'Point relais (Mondial Relay)',
+        label: 'Point relais (Mondial Relay)',
         prix,
         delai: '3 à 5 jours ouvrés',
         necessitePointRelais: true,

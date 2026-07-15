@@ -146,24 +146,16 @@ export default function FormulaireCheckout() {
     })
       .then((r) => (r.ok ? r.json() : { modes: [] }))
       .then((data: { modes: ModeLivraison[]; livraisonIncluse?: boolean }) => {
-        if (data.livraisonIncluse) {
-          // Livraison incluse : on crée un mode fictif pour que le checkout puisse continuer
-          setLivraisonIncluse(true);
-          const modeFictif: ModeLivraison = { id: 'incluse', label: 'Livraison incluse', prix: 0, delai: '', necessitePointRelais: false };
-          setModesLivraison([modeFictif]);
-          setModeLivraisonId('incluse');
-        } else {
-          setModesLivraison(data.modes || []);
-          if (data.modes?.length > 0) setModeLivraisonId((actuel) => actuel || data.modes[0].id);
-        }
+        // Quand la livraison est incluse, l'API renvoie modes: [] par design
+        // (voir lib/livraison.ts) : aucun transporteur à choisir, le marchand
+        // expédie lui-même. On se contente de refléter cet état, sans créer
+        // de mode fictif — le reste du composant traite livraisonIncluse
+        // comme un état à part entière, pas comme un mode de livraison.
+        setLivraisonIncluse(Boolean(data.livraisonIncluse));
+        setModesLivraison(data.modes || []);
+        if (data.modes?.length > 0) setModeLivraisonId((actuel) => actuel || data.modes[0].id);
       })
-      .catch(() => {
-        // En cas d'erreur, si livraison incluse on met quand même un mode fictif
-        const modeFictif: ModeLivraison = { id: 'incluse', label: 'Livraison incluse', prix: 0, delai: '', necessitePointRelais: false };
-        setModesLivraison([modeFictif]);
-        setModeLivraisonId('incluse');
-        setLivraisonIncluse(true);
-      })
+      .catch(() => setModesLivraison([]))
       .finally(() => setChargementModes(false));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [articles.map((a: any) => `${a.produitId}:${a.quantite}`).join(',')]);
@@ -343,7 +335,7 @@ export default function FormulaireCheckout() {
           articles,
           codeReduction: codeApplique?.code,
           adresse,
-          modeLivraison: { id: modeLivraison?.id },
+          modeLivraison: modeLivraison ? { id: modeLivraison.id } : undefined,
           pointRelais: pointRelaisChoisi
             ? {
                 numero: pointRelaisChoisi.numero,
