@@ -11,7 +11,7 @@ export default async function PageAdminNewsletters() {
 
   const [newsletters, nombreAbonnes] = await Promise.all([
     prisma.newsletter.findMany({ orderBy: { createdAt: 'desc' } }),
-    prisma.abonneNewsletter.count(),
+    prisma.abonneNewsletter.count({ where: { actif: true } }),
   ]);
 
   return (

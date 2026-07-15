@@ -5,6 +5,7 @@ import { stripe } from '@/lib/stripe';
 import { prisma } from '@/lib/prisma';
 import { getConfigSite } from '@/lib/config-site';
 import { calculerModesLivraison, calculerPoidsPanier } from '@/lib/livraison';
+import { getOuCreerStripeCustomerId } from '@/lib/stripe-customer';
 
 type ArticlePanier = {
   produitId: string;
@@ -200,9 +201,22 @@ export async function POST(req: NextRequest) {
     }
 
     const paysStripe = normaliserPaysStripe(adresse.pays);
+
+    // Si le client est connecté, on rattache le paiement à son Customer Stripe
+    // pour que ses moyens de paiement déjà enregistrés (ajoutés depuis
+    // "Mon compte") apparaissent automatiquement dans le formulaire de
+    // paiement, et pour qu'il puisse enregistrer une nouvelle carte pour
+    // ses prochains achats.
+    const session = await getServerSession(authClientOptions);
+    const stripeCustomerId = session?.user?.id
+      ? await getOuCreerStripeCustomerId(session.user.id)
+      : undefined;
+
     const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.round(total * 100),
       currency: 'eur',
+      customer: stripeCustomerId,
+      setup_future_usage: stripeCustomerId ? 'off_session' : undefined,
       automatic_payment_methods: { enabled: true },
       receipt_email: adresse.email,
       shipping: {

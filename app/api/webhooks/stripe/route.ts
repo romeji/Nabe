@@ -226,6 +226,35 @@ export async function POST(req: NextRequest) {
       await envoyerEmailConfirmation(commande.id);
     }
 
+    // ── Paiement refusé (carte déclinée, fonds insuffisants, 3D Secure
+    // annulé, etc.) — on journalise et on alerte le marchand par email pour
+    // qu'il puisse éventuellement recontacter le client. Le client voit déjà
+    // l'erreur affichée dans le formulaire de paiement Stripe (PaymentElement),
+    // donc on ne lui envoie rien pour éviter la confusion.
+    if (event.type === 'payment_intent.payment_failed') {
+      const intent = event.data.object as Stripe.PaymentIntent;
+      const raison = intent.last_payment_error?.message || 'Raison inconnue';
+      console.error(`Paiement échoué — PaymentIntent ${intent.id} : ${raison}`);
+
+      try {
+        await resend.emails.send({
+          from: EMAIL_EXPEDITEUR,
+          to: EMAIL_EXPEDITEUR,
+          subject: `⚠️ Paiement échoué — ${(intent.amount / 100).toFixed(2)} €`,
+          html: `<p>Un paiement a échoué :</p>
+                 <ul>
+                   <li><strong>Montant :</strong> ${(intent.amount / 100).toFixed(2)} €</li>
+                   <li><strong>Email :</strong> ${intent.receipt_email || 'non renseigné'}</li>
+                   <li><strong>Raison :</strong> ${raison}</li>
+                   <li><strong>Référence Stripe :</strong> ${intent.id}</li>
+                 </ul>
+                 <p>Aucune commande n'a été créée. Le client a vu l'erreur s'afficher directement sur la page de paiement.</p>`,
+        });
+      } catch (err) {
+        console.error("Erreur envoi email d'alerte paiement échoué :", err);
+      }
+    }
+
     // ── Ancien flow (Stripe Checkout Session hébergée) — conservé par sécurité
     // pour toute session déjà initiée avant la bascule vers le checkout intégré.
     if (event.type === 'checkout.session.completed') {

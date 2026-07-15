@@ -16,11 +16,11 @@ export default async function AdminLayout({
   // /admin/login, donc si on arrive ici sans session c'est qu'on est forcément
   // sur la page de login : on affiche alors le contenu sans sidebar.
   if (!session) {
-    return <Providers>{children}</Providers>;
+    return <Providers session={session}>{children}</Providers>;
   }
 
   return (
-    <Providers>
+    <Providers session={session}>
       <div className="admin-layout">
         <SidebarAdmin />
         <main className="admin-layout__contenu">{children}</main>

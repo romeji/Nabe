@@ -35,12 +35,9 @@ export async function POST(req: NextRequest) {
       create: { email },
     });
 
-    // Si la requête vient d'un formulaire HTML classique, on redirige
-    if (!contentType.includes('application/json')) {
-      return NextResponse.redirect(new URL('/?inscription=ok', req.url));
-    }
-
-    // Email de bienvenue
+    // Email de bienvenue — envoyé dans tous les cas (formulaire HTML classique
+    // ou appel JSON), donc placé avant le redirect qui court-circuiterait
+    // sinon le reste de la fonction pour les formulaires HTML.
     try {
       await resend.emails.send({
         from: EMAIL_EXPEDITEUR,
@@ -72,6 +69,11 @@ export async function POST(req: NextRequest) {
       });
     } catch (err) {
       console.error('Erreur envoi email bienvenue newsletter :', err);
+    }
+
+    // Si la requête vient d'un formulaire HTML classique, on redirige
+    if (!contentType.includes('application/json')) {
+      return NextResponse.redirect(new URL('/?inscription=ok', req.url));
     }
 
     return NextResponse.json({ success: true });
