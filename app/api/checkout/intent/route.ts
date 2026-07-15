@@ -206,10 +206,10 @@ export async function POST(req: NextRequest) {
     // pour que ses moyens de paiement déjà enregistrés (ajoutés depuis
     // "Mon compte") apparaissent automatiquement dans le formulaire de
     // paiement, et pour qu'il puisse enregistrer une nouvelle carte pour
-    // ses prochains achats.
-    const session = await getServerSession(authClientOptions);
-    const stripeCustomerId = session?.user?.id
-      ? await getOuCreerStripeCustomerId(session.user.id)
+    // ses prochains achats. (clientId est déjà résolu plus haut depuis la
+    // session récupérée en tout début de route.)
+    const stripeCustomerId = clientId
+      ? await getOuCreerStripeCustomerId(clientId)
       : undefined;
 
     const paymentIntent = await stripe.paymentIntents.create({
