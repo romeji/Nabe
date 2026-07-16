@@ -410,7 +410,12 @@ model LigneCommande {
   commandeId  String
   commande    Commande @relation(fields: [commandeId], references: [id], onDelete: Cascade)
   produitId   String?
-  produit     Produit? @relation(fields: [produitId], references: [id])
+  // onDelete: SetNull -> si le bijou est supprimé du catalogue, la commande
+  // n'est JAMAIS affectée : seul le lien vers la fiche produit disparaît.
+  // nomProduit, imageUrl et prixUnitaire ci-dessous sont des copies figées
+  // au moment de l'achat, donc la commande reste lisible et exacte pour
+  // toujours, même pour un bijou qui n'existe plus.
+  produit     Produit? @relation(fields: [produitId], references: [id], onDelete: SetNull)
   nomProduit  String // snapshot du nom au moment de la commande
   imageUrl    String? // snapshot de l'image principale au moment de la commande
   taille      String?
