@@ -1,8 +1,31 @@
 import type { Metadata } from 'next';
-import Script from 'next/script';
-
-const GA_ID = 'G-DCRHVSBYYC';
+import { Cormorant_Garamond, Jost } from 'next/font/google';
 import './globals.css';
+
+// next/font héberge les polices directement sur le domaine du site (Vercel) au
+// lieu d'aller les chercher chez Google à chaque visite : ça supprime un
+// aller-retour réseau complet avant que le texte ne s'affiche, et empêche
+// tout décalage de mise en page (CLS) pendant le chargement. Nettement plus
+// rapide que l'ancien `@import` dans le CSS, qui bloquait le rendu.
+//
+// "Imperial Script" (logo) n'a pas besoin d'être optimisée ainsi : elle n'est
+// utilisée qu'à un seul endroit précis (le logo), son poids est négligeable
+// et son import direct dans le CSS reste la solution la plus simple pour cet
+// usage ponctuel.
+const cormorantGaramond = Cormorant_Garamond({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600'],
+  style: ['normal', 'italic'],
+  variable: '--font-cormorant',
+  display: 'swap',
+});
+
+const jost = Jost({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600'],
+  variable: '--font-jost',
+  display: 'swap',
+});
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://nabe-bijoux.fr';
 
@@ -43,39 +66,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fr">
-      <head>
-        <Script
-          src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
-          strategy="afterInteractive"
-        />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', '${GA_ID}');
-          `}
-        </Script>
-        <Script id="google-tag-manager" strategy="beforeInteractive">
-          {`
-            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-            })(window,document,'script','dataLayer','GTM-K4TMHB8F');
-          `}
-        </Script>
-      </head>
+    <html lang="fr" className={`${cormorantGaramond.variable} ${jost.variable}`}>
+      <head></head>
       <body>
-        <noscript>
-          <iframe
-            src="https://www.googletagmanager.com/ns.html?id=GTM-K4TMHB8F"
-            height="0"
-            width="0"
-            style={{ display: 'none', visibility: 'hidden' }}
-          />
-        </noscript>
         {children}
       </body>
     </html>

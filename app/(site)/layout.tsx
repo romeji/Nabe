@@ -4,6 +4,7 @@ import Footer from '@/components/site/Footer';
 import ProvidersClient from '@/components/site/ProvidersClient';
 import PopupBienvenue from '@/components/site/PopupBienvenue';
 import ConsentementCookies from '@/components/site/ConsentementCookies';
+import SuiviPageVue from '@/components/site/SuiviPageVue';
 import { getConfigSite } from '@/lib/config-site';
 import { authClientOptions } from '@/lib/auth-client';
 
@@ -22,6 +23,7 @@ export default async function SiteLayout({
 
   return (
     <ProvidersClient session={session}>
+      <SuiviPageVue />
       <Header />
       <main>{children}</main>
       <Footer />

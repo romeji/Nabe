@@ -90,6 +90,14 @@ export default async function PageAccueil() {
     <div className="page-accueil">
       {/* HERO */}
       <section className="accueil-hero">
+        <Image
+          src="/images/hero-mains.jpg"
+          alt="Bijoux Nabe façonnés à la main"
+          fill
+          priority
+          sizes="100vw"
+          className="accueil-hero__image"
+        />
         <div className="accueil-hero__overlay" />
         <div className="accueil-hero__contenu">
           <h1 className="accueil-hero__titre">

@@ -4,7 +4,11 @@
    Inspiration : arches, bohème-chic, cocooning, minimaliste
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Imperial+Script&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap');
+/* Imperial Script (logo) : usage ponctuel unique, import direct suffisant.
+   Cormorant Garamond et Jost sont désormais chargées via next/font (voir
+   app/layout.tsx) — auto-hébergées sur le domaine du site, sans aller-retour
+   réseau vers Google ni décalage de mise en page pendant le chargement. */
+@import url('https://fonts.googleapis.com/css2?family=Imperial+Script&display=swap');
 
 :root {
   /* Couleurs principales — palette de référence */
@@ -38,8 +42,8 @@
 
   /* Typographies */
   --font-logo: 'Imperial Script', cursive;
-  --font-titres: 'Cormorant Garamond', serif;
-  --font-texte: 'Jost', sans-serif;
+  --font-titres: var(--font-cormorant), serif;
+  --font-texte: var(--font-jost), sans-serif;
 
   /* Espacements */
   --espace-xs: 0.5rem;

@@ -23,12 +23,15 @@
   min-height: clamp(520px, 64vh, 700px);
   display: flex;
   align-items: center;
-  background-image: url('/images/hero-mains.jpg');
-  background-size: cover;
-  background-position: center 36%;
   color: var(--texte-clair);
   isolation: isolate;
   overflow: hidden;
+}
+
+.accueil-hero__image {
+  z-index: -1;
+  object-fit: cover;
+  object-position: center 36%;
 }
 
 .accueil-hero__overlay {
@@ -875,7 +878,9 @@
 @media (max-width: 600px) {
   .accueil-hero {
     min-height: 620px;
-    background-position: 60% center;
+  }
+  .accueil-hero__image {
+    object-position: 60% center;
   }
   .accueil-hero__titre {
     font-size: 3.25rem;
