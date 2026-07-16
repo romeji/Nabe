@@ -5,7 +5,8 @@ import { z } from 'zod';
 import { resend, EMAIL_EXPEDITEUR, genererHtmlBienvenueCompte } from '@/lib/resend';
 
 const schema = z.object({
-  nom: z.string().min(1),
+  prenom: z.string().min(1, 'Le prénom est requis'),
+  nomDeFamille: z.string().min(1, 'Le nom est requis'),
   email: z.string().email(),
   password: z.string().min(6, 'Le mot de passe doit contenir au moins 6 caractères'),
 });
@@ -25,9 +26,12 @@ export async function POST(req: NextRequest) {
 
     const motDePasseHash = await bcrypt.hash(donnees.password, 10);
 
+    const nomComplet = `${donnees.prenom} ${donnees.nomDeFamille}`.trim();
     const client = await prisma.client.create({
       data: {
-        nom: donnees.nom,
+        prenom: donnees.prenom,
+        nomDeFamille: donnees.nomDeFamille,
+        nom: nomComplet,
         email: donnees.email,
         password: motDePasseHash,
       },

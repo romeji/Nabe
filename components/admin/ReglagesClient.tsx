@@ -564,29 +564,6 @@ export default function ReglagesClient({
           </div>
         </label>
 
-        <label className="reglages-client__toggle">
-          <input
-            type="checkbox"
-            checked={config.livraison_colissimo_domicile_actif === 'true'}
-            onChange={(e) => maj('livraison_colissimo_domicile_actif', e.target.checked ? 'true' : 'false')}
-          />
-          <div>
-            <strong>Livraison à domicile (Colissimo)</strong>
-            <p>Tarif calculé selon la grille ci-dessous.</p>
-          </div>
-        </label>
-        {config.livraison_colissimo_domicile_actif === 'true' && (
-          <div className="reglages-client__sous-champ">
-            <label>Grille tarifaire Colissimo domicile</label>
-            <input
-              type="text"
-              value={config.livraison_colissimo_domicile_grille}
-              onChange={(e) => maj('livraison_colissimo_domicile_grille', e.target.value)}
-              placeholder="500:4.95,1000:6.90,2000:8.50"
-            />
-          </div>
-        )}
-
         <label className="reglages-client__toggle" style={{ marginTop: '1rem' }}>
           <input
             type="checkbox"
@@ -627,16 +604,68 @@ export default function ReglagesClient({
             </p>
           </div>
         )}
+      </div>
 
-        <div className="reglages-client__sous-champ" style={{ marginTop: '1rem' }}>
-          <label>Numéro de compte Colissimo Business (optionnel, pour une intégration API complète)</label>
+      <div className="admin-carte reglages-client__section">
+        <h2>Identité de facturation</h2>
+        <p className="formulaire-produit__aide">
+          Ces informations apparaissent sur les factures téléchargeables par vos clients. Le SIRET peut
+          rester vide tant que votre société n'est pas encore immatriculée.
+        </p>
+        <label>Nom affiché sur la facture</label>
+        <input
+          type="text"
+          value={config.facturation_nom}
+          onChange={(e) => maj('facturation_nom', e.target.value)}
+          placeholder="Nabe"
+        />
+        <label>Adresse</label>
+        <input
+          type="text"
+          value={config.facturation_adresse}
+          onChange={(e) => maj('facturation_adresse', e.target.value)}
+          placeholder="12 rue de l'Atelier, 75000 Paris"
+        />
+        <label>SIRET (optionnel)</label>
+        <input
+          type="text"
+          value={config.facturation_siret}
+          onChange={(e) => maj('facturation_siret', e.target.value)}
+          placeholder="Laissez vide si pas encore immatriculé"
+        />
+      </div>
+
+      <div className="admin-carte reglages-client__section">
+        <h2>TVA</h2>
+        <p className="formulaire-produit__aide">
+          Tant que votre activité n'est pas immatriculée en société (franchise en base de TVA en
+          micro-entreprise), aucune TVA ne doit apparaître sur vos factures : laissez cette option
+          désactivée. Activez-la uniquement une fois votre société créée et votre régime de TVA connu.
+        </p>
+        <label className="reglages-client__toggle">
           <input
-            type="text"
-            value={config.colissimo_numero_compte}
-            onChange={(e) => maj('colissimo_numero_compte', e.target.value)}
-            placeholder="Fourni par La Poste Entreprises"
+            type="checkbox"
+            checked={config.tva_applicable === 'true'}
+            onChange={(e) => maj('tva_applicable', e.target.checked ? 'true' : 'false')}
           />
-        </div>
+          <div>
+            <strong>Afficher la TVA sur les factures et récapitulatifs</strong>
+          </div>
+        </label>
+        {config.tva_applicable === 'true' && (
+          <div className="reglages-client__sous-champ">
+            <label>Taux de TVA applicable (%)</label>
+            <input
+              type="number"
+              step="0.1"
+              min="0"
+              max="100"
+              value={config.tva_taux}
+              onChange={(e) => maj('tva_taux', e.target.value)}
+              placeholder="20"
+            />
+          </div>
+        )}
       </div>
 
       <div className="admin-carte reglages-client__section">

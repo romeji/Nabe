@@ -25,6 +25,60 @@
   min-width: 640px;
 }
 
+/* En dessous de 640px, le défilement horizontal devient peu pratique sur un
+   tableau de suivi (numéro de commande, client, statut...) : chaque ligne
+   se transforme en carte verticale, plus lisible qu'un scroll latéral sur
+   mobile. Le marquage se fait uniquement via l'attribut data-label posé sur
+   chaque <td> — aucun JS, aucune duplication de contenu. */
+@media (max-width: 640px) {
+  .admin-table-scroll {
+    overflow-x: visible;
+  }
+  .admin-table-scroll .admin-table {
+    min-width: 0;
+  }
+  .admin-table-scroll .admin-table thead {
+    display: none;
+  }
+  .admin-table-scroll .admin-table,
+  .admin-table-scroll .admin-table tbody,
+  .admin-table-scroll .admin-table tr,
+  .admin-table-scroll .admin-table td {
+    display: block;
+    width: 100%;
+  }
+  .admin-table-scroll .admin-table tr {
+    margin-bottom: 0.9rem;
+    border: 1px solid var(--nabe-beige-fonce);
+    border-radius: var(--rayon-bordure);
+    overflow: hidden;
+  }
+  .admin-table-scroll .admin-table td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8rem;
+    text-align: right;
+    border-bottom: 1px solid var(--nabe-beige);
+  }
+  .admin-table-scroll .admin-table tr td:last-child {
+    border-bottom: none;
+  }
+  .admin-table-scroll .admin-table td::before {
+    content: attr(data-label);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--texte-secondaire);
+    text-align: left;
+    flex-shrink: 0;
+  }
+  /* Cellules sans label utile (actions, select de statut) : pas de pseudo-libellé */
+  .admin-table-scroll .admin-table td:not([data-label])::before {
+    content: none;
+  }
+}
+
 .admin-entete {
   display: flex;
   align-items: center;

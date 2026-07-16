@@ -131,13 +131,13 @@ export default function GestionStockClient({
           <tbody>
             {mouvements.map((m: any) => (
               <tr key={m.id}>
-                <td>{new Date(m.createdAt).toLocaleDateString('fr-FR')}</td>
-                <td>{m.produitNom}</td>
-                <td>{LABELS_TYPE[m.type]}</td>
-                <td style={{ color: m.quantite < 0 ? '#a8412a' : '#2e6b2e' }}>
+                <td data-label="Date">{new Date(m.createdAt).toLocaleDateString('fr-FR')}</td>
+                <td data-label="Bijou">{m.produitNom}</td>
+                <td data-label="Type">{LABELS_TYPE[m.type]}</td>
+                <td data-label="Quantité" style={{ color: m.quantite < 0 ? '#a8412a' : '#2e6b2e' }}>
                   {m.quantite > 0 ? `+${m.quantite}` : m.quantite}
                 </td>
-                <td>{m.motif || '—'}</td>
+                <td data-label="Motif">{m.motif || '—'}</td>
               </tr>
             ))}
           </tbody>

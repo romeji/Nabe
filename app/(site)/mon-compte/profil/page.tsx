@@ -16,13 +16,21 @@ export default async function PageProfil() {
 
   if (!client) redirect('/connexion');
 
+  // Compatibilité : si le compte a été créé avant l'ajout des champs
+  // prénom/nom séparés, on les déduit du nom complet existant plutôt que
+  // d'afficher des champs vides.
+  const parties = (client.nom || '').trim().split(' ');
+  const prenomAffiche = client.prenom || parties[0] || '';
+  const nomAffiche = client.nomDeFamille || parties.slice(1).join(' ') || '';
+
   return (
     <div className="page-mon-compte conteneur">
       <div className="mon-compte__entete">
         <h1>Mon profil</h1>
       </div>
       <FormulaireProfilClient
-        nom={client.nom || ''}
+        prenom={prenomAffiche}
+        nomDeFamille={nomAffiche}
         email={client.email}
         telephone={client.telephone || ''}
         aUnMotDePasse={!!client.password}

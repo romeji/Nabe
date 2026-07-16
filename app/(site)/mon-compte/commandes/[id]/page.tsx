@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { getServerSession } from 'next-auth';
 import { authClientOptions } from '@/lib/auth-client';
 import { prisma } from '@/lib/prisma';
+import { getConfigSite } from '@/lib/config-site';
 import SuiviCommandeDetail from '@/components/site/SuiviCommandeDetail';
 import '../../mon-compte.css';
 
@@ -13,10 +14,13 @@ export default async function PageDetailCommande({ params: paramsPromise }: { pa
 
   const clientId = (session.user as any).id as string;
 
-  const commande = await prisma.commande.findUnique({
-    where: { id: params.id },
-    include: { lignes: true },
-  });
+  const [commande, config] = await Promise.all([
+    prisma.commande.findUnique({
+      where: { id: params.id },
+      include: { lignes: true },
+    }),
+    getConfigSite(),
+  ]);
 
   if (!commande || commande.clientId !== clientId) notFound();
 
@@ -39,6 +43,9 @@ export default async function PageDetailCommande({ params: paramsPromise }: { pa
           lignes: commande.lignes.map((l: any) => ({ ...l, prixUnitaire: l.prixUnitaire.toString() })),
         }}
         modeAnnulation={{ type: 'connecte', commandeId: commande.id }}
+        urlFacture={`/mon-compte/commandes/${commande.id}/facture`}
+        tvaApplicable={config.tva_applicable === 'true'}
+        tvaTaux={parseFloat(config.tva_taux) || 20}
       />
     </div>
   );

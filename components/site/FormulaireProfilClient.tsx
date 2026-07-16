@@ -5,18 +5,21 @@ import { signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
 export default function FormulaireProfilClient({
-  nom: nomInitial,
+  prenom: prenomInitial,
+  nomDeFamille: nomDeFamilleInitial,
   email,
   telephone: telephoneInitial,
   aUnMotDePasse,
 }: {
-  nom: string;
+  prenom: string;
+  nomDeFamille: string;
   email: string;
   telephone: string;
   aUnMotDePasse: boolean;
 }) {
   const router = useRouter();
-  const [nom, setNom] = useState(nomInitial);
+  const [prenom, setPrenom] = useState(prenomInitial);
+  const [nomDeFamille, setNomDeFamille] = useState(nomDeFamilleInitial);
   const [telephone, setTelephone] = useState(telephoneInitial);
   const [enregistrement, setEnregistrement] = useState(false);
   const [succes, setSucces] = useState(false);
@@ -59,7 +62,7 @@ export default function FormulaireProfilClient({
       const res = await fetch('/api/mon-compte/profil', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nom, telephone }),
+        body: JSON.stringify({ prenom, nomDeFamille, telephone }),
       });
       if (!res.ok) {
         const data = await res.json();
@@ -116,8 +119,11 @@ export default function FormulaireProfilClient({
         <input type="email" value={email} disabled />
         <p className="formulaire-profil__aide">L'e-mail ne peut pas être modifié.</p>
 
+        <label>Prénom</label>
+        <input type="text" value={prenom} onChange={(e) => setPrenom(e.target.value)} />
+
         <label>Nom</label>
-        <input type="text" value={nom} onChange={(e) => setNom(e.target.value)} />
+        <input type="text" value={nomDeFamille} onChange={(e) => setNomDeFamille(e.target.value)} />
 
         <label>Téléphone</label>
         <input type="tel" value={telephone} onChange={(e) => setTelephone(e.target.value)} />

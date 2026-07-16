@@ -51,17 +51,21 @@ export default async function PageAdminCommandes({
         </thead>
         <tbody>
           {commandes.map((c: any) => (
-            <tr key={c.id}>
-              <td>{c.numero}</td>
-              <td>{new Date(c.createdAt).toLocaleDateString('fr-FR')}</td>
-              <td>
+            <tr key={c.id} className="admin-commandes__ligne-cliquable">
+              <td data-label="Numéro">
+                <Link href={`/admin/commandes/${c.id}`} className="admin-commandes__lien-numero">
+                  {c.numero}
+                </Link>
+              </td>
+              <td data-label="Date">{new Date(c.createdAt).toLocaleDateString('fr-FR')}</td>
+              <td data-label="Client">
                 {c.clientNom}
                 <br />
                 <span className="admin-commandes__email">{c.clientEmail}</span>
               </td>
-              <td>{c.lignes.length}</td>
-              <td>{formaterPrix(c.total.toString())}</td>
-              <td>
+              <td data-label="Articles">{c.lignes.length}</td>
+              <td data-label="Total">{formaterPrix(c.total.toString())}</td>
+              <td data-label="Statut" onClick={(e) => e.stopPropagation()}>
                 <StatutCommandeSelect commandeId={c.id} statutInitial={c.statut} />
               </td>
             </tr>

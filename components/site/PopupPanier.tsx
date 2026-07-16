@@ -24,6 +24,7 @@ type ConfigPopup = {
   articleBonusNom: string;
   articleBonusPrix: number;
   articleBonusImage: string;
+  articleBonusStock: number;
   panierVideSuggestionsActif: boolean;
 };
 
@@ -32,6 +33,7 @@ const CFG_DEFAUT: ConfigPopup = {
   seuilSurprise: 100, surpriseActif: false,
   articleBonusActif: false, articleBonusId: '',
   articleBonusNom: '', articleBonusPrix: 0, articleBonusImage: '',
+  articleBonusStock: 0,
   panierVideSuggestionsActif: false,
 };
 
@@ -80,11 +82,12 @@ export default function PopupPanier({ ouverte, onFermer }: PopupPanierProps) {
     try {
       const data = await fetch('/api/config-public').then(r => r.json());
       const bonusId = data.popup_panier_article_bonus_id || '';
-      let bonusNom = '', bonusPrix = 0, bonusImage = '';
+      let bonusNom = '', bonusPrix = 0, bonusImage = '', bonusStock = 0;
       if (bonusId && data.popup_panier_article_bonus_actif === 'true') {
         try {
           const p = await fetch(`/api/produits/${bonusId}`).then(r => r.json());
           bonusNom = p.nom || ''; bonusPrix = parseFloat(p.prix) || 0; bonusImage = p.images?.[0]?.url || '';
+          bonusStock = typeof p.stock === 'number' ? p.stock : 0;
         } catch {}
       }
       setCfg({
@@ -97,6 +100,7 @@ export default function PopupPanier({ ouverte, onFermer }: PopupPanierProps) {
         articleBonusActif: data.popup_panier_article_bonus_actif === 'true',
         articleBonusId: bonusId, articleBonusNom: bonusNom,
         articleBonusPrix: bonusPrix, articleBonusImage: bonusImage,
+        articleBonusStock: bonusStock,
         panierVideSuggestionsActif: data.popup_panier_vide_actif === 'true',
       });
       setCfgChargee(true);
@@ -119,10 +123,11 @@ export default function PopupPanier({ ouverte, onFermer }: PopupPanierProps) {
 
   // — Helpers article bonus —
   const articleBonus = cfg.articleBonusActif && cfg.articleBonusId && cfg.articleBonusNom;
+  const articleBonusRupture = Boolean(articleBonus) && cfg.articleBonusStock <= 0;
   const bonusDansPanier = articles.some((a: any) => a.estBonus);
 
   function basculerBonus(coche: boolean) {
-    if (!cfg.articleBonusId) return;
+    if (!cfg.articleBonusId || articleBonusRupture) return;
     if (coche) {
       ajouterArticle({ produitId: cfg.articleBonusId, nom: cfg.articleBonusNom, prix: cfg.articleBonusPrix, image: cfg.articleBonusImage, quantite: 1, estBonus: true });
     } else {
@@ -272,18 +277,30 @@ export default function PopupPanier({ ouverte, onFermer }: PopupPanierProps) {
                 </div>
               ))}
 
-              {/* Article bonus optionnel */}
+              {/* Article bonus optionnel (ex : coffret cadeau configuré dans l'admin) */}
               {articleBonus && (
-                <div className="popup-panier__boite">
-                  <div className="popup-panier__boite-img">
-                    {cfg.articleBonusImage
-                      ? <Image src={cfg.articleBonusImage} alt={cfg.articleBonusNom} width={36} height={36} style={{ objectFit: 'cover' }} />
-                      : <div style={{ width: 36, height: 36, background: '#f1e0cb', borderRadius: 4 }} />
-                    }
+                <div className="popup-panier__boite-bloc">
+                  <p className="popup-panier__boite-titre">Complétez votre commande avec</p>
+                  <div className={`popup-panier__boite${articleBonusRupture ? ' popup-panier__boite--rupture' : ''}`}>
+                    <div className="popup-panier__boite-img">
+                      {cfg.articleBonusImage
+                        ? <Image src={cfg.articleBonusImage} alt={cfg.articleBonusNom} width={36} height={36} style={{ objectFit: 'cover' }} />
+                        : <div style={{ width: 36, height: 36, background: '#f1e0cb', borderRadius: 4 }} />
+                      }
+                    </div>
+                    <span className="popup-panier__boite-nom">
+                      {cfg.articleBonusNom.toUpperCase()}
+                      {articleBonusRupture && <span className="popup-panier__boite-badge-rupture">Rupture de stock</span>}
+                    </span>
+                    <span className="popup-panier__boite-prix">{formaterPrix(cfg.articleBonusPrix)}</span>
+                    <input
+                      type="checkbox"
+                      checked={bonusDansPanier}
+                      disabled={articleBonusRupture}
+                      onChange={e => basculerBonus(e.target.checked)}
+                      className="popup-panier__boite-check"
+                    />
                   </div>
-                  <span className="popup-panier__boite-nom">{cfg.articleBonusNom.toUpperCase()}</span>
-                  <span className="popup-panier__boite-prix">{formaterPrix(cfg.articleBonusPrix)}</span>
-                  <input type="checkbox" checked={bonusDansPanier} onChange={e => basculerBonus(e.target.checked)} className="popup-panier__boite-check" />
                 </div>
               )}
             </div>

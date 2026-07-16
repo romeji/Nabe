@@ -1,8 +1,13 @@
 'use client';
 
 import { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 
 export default function ContactFormulaire() {
+  const searchParams = useSearchParams();
+  const sujetInitial = searchParams.get('sujet') || '';
+  const messageInitial = searchParams.get('message') || '';
+
   const [envoye, setEnvoye] = useState(false);
   const [envoiEnCours, setEnvoiEnCours] = useState(false);
   const [erreur, setErreur] = useState('');
@@ -53,10 +58,10 @@ export default function ContactFormulaire() {
       <input type="email" name="email" placeholder="Votre e-mail" required />
 
       <label>Sujet</label>
-      <input type="text" name="sujet" placeholder="Sujet de votre message" required />
+      <input type="text" name="sujet" placeholder="Sujet de votre message" defaultValue={sujetInitial} required />
 
       <label>Votre message</label>
-      <textarea name="message" placeholder="Votre message" rows={6} required />
+      <textarea name="message" placeholder="Votre message" rows={6} defaultValue={messageInitial} required />
 
       {erreur && <p className="contact-formulaire__erreur">{erreur}</p>}
 

@@ -177,3 +177,49 @@
   color: var(--texte-secondaire, #a89a86);
   font-style: italic;
 }
+
+/* ── Ligne article avec image ── */
+.suivi-commande__ligne-article {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.suivi-commande__ligne-image {
+  width: 52px;
+  height: 52px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--nabe-beige, #f1e0cb);
+  flex-shrink: 0;
+}
+
+.suivi-commande__ligne-placeholder {
+  width: 100%;
+  height: 100%;
+  background: var(--nabe-beige-fonce, #e4dccf);
+}
+
+.suivi-commande__ligne-nom {
+  flex: 1;
+}
+
+/* ── Actions secondaires (facture, signaler un problème) ── */
+.suivi-commande__actions-secondaires {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  margin-top: 1.2rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid var(--nabe-beige-fonce, #e4dccf);
+}
+
+@media (max-width: 480px) {
+  .suivi-commande__actions-secondaires {
+    flex-direction: column;
+  }
+  .suivi-commande__actions-secondaires .btn {
+    width: 100%;
+    text-align: center;
+  }
+}

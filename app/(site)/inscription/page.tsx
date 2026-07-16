@@ -9,7 +9,8 @@ import '../connexion/connexion.css';
 export default function PageInscription() {
   const router = useRouter();
   const { data: session, status } = useSession();
-  const [nom, setNom] = useState('');
+  const [prenom, setPrenom] = useState('');
+  const [nomDeFamille, setNomDeFamille] = useState('');
   const [email, setEmail] = useState('');
   const [motDePasse, setMotDePasse] = useState('');
   const [erreur, setErreur] = useState('');
@@ -42,7 +43,7 @@ export default function PageInscription() {
       const res = await fetch('/api/auth-client/inscription', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nom, email, password: motDePasse }),
+        body: JSON.stringify({ prenom, nomDeFamille, email, password: motDePasse }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Erreur lors de la création du compte');
@@ -136,8 +137,11 @@ export default function PageInscription() {
         </div>
 
         <form onSubmit={gererInscription}>
-          <label>Prénom / Nom</label>
-          <input type="text" value={nom} onChange={(e) => setNom(e.target.value)} required autoFocus />
+          <label>Prénom</label>
+          <input type="text" value={prenom} onChange={(e) => setPrenom(e.target.value)} required autoFocus />
+
+          <label>Nom</label>
+          <input type="text" value={nomDeFamille} onChange={(e) => setNomDeFamille(e.target.value)} required />
 
           <label>Email</label>
           <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />

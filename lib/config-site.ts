@@ -37,27 +37,32 @@ export const DEFAUTS_CONFIG: Record<string, string> = {
   temoignages_actif: 'true', // affiche ou non la section "Ils nous font confiance" sur l'accueil
 
   // ── Livraison — tarifs calculés en temps réel à partir du poids réel du panier ──
-  // Colissimo n'expose pas d'API publique de tarification en temps réel aux marchands
-  // sans contrat Business/Pro : le calcul se fait donc ici à partir de votre grille
-  // tarifaire contractuelle (par tranche de poids), appliquée instantanément au poids
-  // réel du panier — c'est le fonctionnement standard utilisé par la quasi-totalité
-  // des sites e-commerce français pour "le tarif en temps réel".
-  livraison_colissimo_domicile_actif: 'true',
-  livraison_colissimo_domicile_grille: '500:4.95,1000:6.90,2000:8.50,5000:11.90,30000:16.90', // "poidsMaxGrammes:prixEuros" séparés par des virgules
+  // Colissimo n'est plus proposé au checkout pour le moment (nécessite un
+  // contrat Business/Pro non encore souscrit) — seul Mondial Relay est actif.
   livraison_mondial_relay_actif: 'true',
   livraison_mondial_relay_grille: '500:3.65,1000:5.40,2000:6.90,5000:9.90,30000:13.90',
   // Identifiants Mondial Relay (fournis par Mondial Relay à la signature du contrat pro),
   // nécessaires pour la recherche réelle de points relais et le calcul officiel des frais.
   mondial_relay_enseigne: '',
   mondial_relay_cle_privee: '',
-  // Numéro de compte Colissimo Business (contrat Pro La Poste), pour une intégration
-  // API complète (étiquettes, tracking) ultérieure.
-  colissimo_numero_compte: '',
   // Si activé : la livraison n'est jamais facturée séparément au checkout
   // (elle est réputée déjà incluse dans le prix des produits, à vous de le
   // répercuter vous-même sur vos prix). Si désactivé (défaut) : le calcul
   // au poids réel s'applique normalement (voir lib/livraison.ts).
   livraison_incluse_dans_prix: 'false',
+  // TVA : désactivée par défaut car tant que l'activité n'est pas immatriculée
+  // en société (franchise en base de TVA en micro-entreprise), aucune TVA ne
+  // doit apparaître sur les factures. À activer manuellement une fois la
+  // société créée et le taux de TVA applicable connu.
+  tva_applicable: 'false',
+  tva_taux: '20', // en pourcentage, ex: 20 pour 20%
+  // Identité de facturation — affichée sur les factures téléchargeables.
+  // Le SIRET peut rester vide tant que la société n'est pas immatriculée ;
+  // dans ce cas la facture indique "Auto-entrepreneur en cours d'immatriculation"
+  // plutôt qu'un numéro invalide.
+  facturation_nom: 'Nabe',
+  facturation_adresse: '',
+  facturation_siret: '',
   // Google Analytics (GA4) — ne se charge jamais sans consentement explicite (RGPD)
   google_analytics_actif: 'false',
   google_analytics_id: '', // ex: G-XXXXXXXXXX

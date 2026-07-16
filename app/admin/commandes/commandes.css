@@ -31,3 +31,114 @@
   color: var(--nabe-terracotta);
   font-weight: 600;
 }
+
+/* ── Détail d'une commande (admin) ── */
+.admin-commande-detail__section {
+  margin-bottom: 1.2rem;
+}
+
+.admin-commande-detail__ligne-info {
+  display: flex;
+  gap: 2.5rem;
+  flex-wrap: wrap;
+}
+
+.admin-commande-detail__ligne-info strong {
+  display: block;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--texte-secondaire);
+  margin-bottom: 0.3rem;
+}
+
+.admin-commande-detail__grille {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.2rem;
+}
+
+.admin-commande-detail__article {
+  display: grid;
+  grid-template-columns: 56px 1fr auto auto auto;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid var(--nabe-beige);
+}
+
+.admin-commande-detail__article:last-child {
+  border-bottom: none;
+}
+
+.admin-commande-detail__article-image {
+  width: 56px;
+  height: 56px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--nabe-beige);
+  flex-shrink: 0;
+}
+
+.admin-commande-detail__article-placeholder {
+  width: 100%;
+  height: 100%;
+  background: var(--nabe-beige-fonce);
+}
+
+.admin-commande-detail__article-info p {
+  margin: 0;
+  font-weight: 600;
+}
+
+.admin-commande-detail__article-info span {
+  font-size: 0.8rem;
+  color: var(--texte-secondaire);
+}
+
+.admin-commande-detail__totaux {
+  margin-top: 1rem;
+  margin-left: auto;
+  max-width: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.admin-commande-detail__totaux > div {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+}
+
+.admin-commande-detail__total-final {
+  border-top: 2px solid var(--nabe-encre, #2a1c14);
+  padding-top: 0.5rem;
+  font-weight: 700;
+}
+
+@media (max-width: 768px) {
+  .admin-commande-detail__grille {
+    grid-template-columns: 1fr;
+  }
+  .admin-commande-detail__article {
+    grid-template-columns: 48px 1fr;
+    grid-template-areas: "img info" "img prix";
+    row-gap: 0.2rem;
+  }
+  .admin-commande-detail__article-image { grid-area: img; }
+  .admin-commande-detail__article-info { grid-area: info; }
+  .admin-commande-detail__article > span:nth-child(3),
+  .admin-commande-detail__article > span:nth-child(4) {
+    display: none;
+  }
+  .admin-commande-detail__article > strong {
+    grid-area: prix;
+    font-size: 0.85rem;
+  }
+}
+
+.admin-commandes__lien-numero {
+  color: var(--nabe-terracotta, #9f5434);
+  font-weight: 600;
+}

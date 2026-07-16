@@ -79,10 +79,10 @@ export default async function PageDashboardAdmin() {
               <tbody>
                 {commandesRecentes.map((c: any) => (
                   <tr key={c.id}>
-                    <td>{c.numero}</td>
-                    <td>{c.clientNom}</td>
-                    <td>{LABELS_STATUT_COMMANDE[c.statut]}</td>
-                    <td>{formaterPrix(c.total.toString())}</td>
+                    <td data-label="Numéro">{c.numero}</td>
+                    <td data-label="Client">{c.clientNom}</td>
+                    <td data-label="Statut">{LABELS_STATUT_COMMANDE[c.statut]}</td>
+                    <td data-label="Total">{formaterPrix(c.total.toString())}</td>
                   </tr>
                 ))}
               </tbody>

@@ -224,6 +224,21 @@ export default function FormulaireCheckout() {
   useEffect(() => {
     if (statutSession !== 'authenticated') return;
 
+    // Préremplit prénom/nom depuis le profil dès la connexion, avant même
+    // qu'une adresse enregistrée ne soit sélectionnée (utile si le client
+    // n'a encore aucune adresse enregistrée).
+    fetch('/api/mon-compte/profil')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((profil: { prenom?: string; nomDeFamille?: string } | null) => {
+        if (!profil) return;
+        setAdresse((prev) => ({
+          ...prev,
+          prenom: prev.prenom || profil.prenom || '',
+          nom: prev.nom || profil.nomDeFamille || '',
+        }));
+      })
+      .catch(() => {});
+
     fetch('/api/mon-compte/adresses')
       .then((r) => (r.ok ? r.json() : []))
       .then((data: AdresseEnregistree[]) => {

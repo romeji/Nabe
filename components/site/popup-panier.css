@@ -393,6 +393,14 @@
 }
 
 /* ── Boîte cadeau / article bonus ── */
+.popup-panier__boite-titre {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--texte-secondaire, #8a7a68);
+  margin: 0.6rem 0 0.3rem;
+}
 .popup-panier__boite {
   display: flex;
   align-items: center;
@@ -400,8 +408,19 @@
   padding: 0.5rem 0.65rem;
   border: 1px solid #e8e4de;
   border-radius: 8px;
-  margin: 0.4rem 0 0.15rem;
+  margin: 0 0 0.15rem;
   background: #faf8f5;
+}
+.popup-panier__boite--rupture {
+  background: #f3f1ee;
+  opacity: 0.65;
+}
+.popup-panier__boite--rupture .popup-panier__boite-img {
+  filter: grayscale(1);
+}
+.popup-panier__boite--rupture .popup-panier__boite-nom,
+.popup-panier__boite--rupture .popup-panier__boite-prix {
+  text-decoration: line-through;
 }
 .popup-panier__boite-img {
   width: 36px;
@@ -417,6 +436,17 @@
   font-weight: 600;
   letter-spacing: 0.04em;
   color: var(--nabe-encre, #2a1c14);
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.popup-panier__boite-badge-rupture {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-decoration: none;
+  color: var(--nabe-terracotta-fonce, #7a3a24);
+  text-transform: uppercase;
 }
 .popup-panier__boite-prix {
   font-size: 0.8rem;

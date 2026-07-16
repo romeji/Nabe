@@ -2,12 +2,15 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import Image from 'next/image';
 import { formaterPrix } from '@/lib/utils';
 import './suivi-commande.css';
 
 type LigneCommande = {
   id: string;
   nomProduit: string;
+  imageUrl: string | null;
   taille: string | null;
   quantite: number;
   prixUnitaire: string | number;
@@ -22,7 +25,9 @@ export type CommandeDetail = {
   adresseLivraison: string | null;
   ville: string | null;
   codePostal: string | null;
+  pays: string | null;
   modeLivraison: string | null;
+  modePaiementLabel: string | null;
   pointRelaisNom: string | null;
   pointRelaisAdresse: string | null;
   numeroSuivi: string | null;
@@ -46,10 +51,17 @@ const STATUTS_ANNULABLES = ['EN_ATTENTE', 'PAYEE', 'EN_PREPARATION'];
 export default function SuiviCommandeDetail({
   commande,
   modeAnnulation,
+  urlFacture,
+  tvaApplicable = false,
+  tvaTaux = 20,
 }: {
   commande: CommandeDetail;
   /** 'connecte' envoie commandeId (vérifié via la session), 'invite' envoie numero+email. */
   modeAnnulation: { type: 'connecte'; commandeId: string } | { type: 'invite'; numero: string; email: string };
+  /** Lien vers la page facture imprimable ; masqué si non fourni (ex: commande invité). */
+  urlFacture?: string;
+  tvaApplicable?: boolean;
+  tvaTaux?: number;
 }) {
   const router = useRouter();
   const [confirmationDemandee, setConfirmationDemandee] = useState(false);
@@ -110,7 +122,7 @@ export default function SuiviCommandeDetail({
       )}
 
       <div className="suivi-commande__bloc">
-        <h3>Livraison</h3>
+        <h3>Livraison à :</h3>
         {commande.modeLivraison === 'mondial_relay' && commande.pointRelaisNom ? (
           <p>
             Point relais : <strong>{commande.pointRelaisNom}</strong>
@@ -119,9 +131,12 @@ export default function SuiviCommandeDetail({
           </p>
         ) : (
           <p>
+            {commande.clientNom}
+            <br />
             {commande.adresseLivraison}
             <br />
             {commande.codePostal} {commande.ville}
+            {commande.pays ? `, ${commande.pays}` : ''}
           </p>
         )}
         {commande.numeroSuivi && (
@@ -137,12 +152,26 @@ export default function SuiviCommandeDetail({
         )}
       </div>
 
+      {commande.modePaiementLabel && (
+        <div className="suivi-commande__bloc">
+          <h3>Mode de paiement</h3>
+          <p>{commande.modePaiementLabel}</p>
+        </div>
+      )}
+
       <div className="suivi-commande__bloc">
         <h3>Articles</h3>
         <ul className="suivi-commande__lignes">
           {commande.lignes.map((l: any) => (
-            <li key={l.id}>
-              <span>
+            <li key={l.id} className="suivi-commande__ligne-article">
+              <div className="suivi-commande__ligne-image">
+                {l.imageUrl ? (
+                  <Image src={l.imageUrl} alt={l.nomProduit} width={52} height={52} style={{ objectFit: 'cover' }} />
+                ) : (
+                  <div className="suivi-commande__ligne-placeholder" />
+                )}
+              </div>
+              <span className="suivi-commande__ligne-nom">
                 {l.quantite} × {l.nomProduit}
                 {l.taille ? ` (taille ${l.taille})` : ''}
               </span>
@@ -165,11 +194,49 @@ export default function SuiviCommandeDetail({
             <span>Livraison</span>
             <span>{Number(commande.fraisLivraison) === 0 ? 'Offerte' : formaterPrix(commande.fraisLivraison)}</span>
           </div>
-          <div className="suivi-commande__total-final">
-            <span>Total</span>
-            <span>{formaterPrix(commande.total)}</span>
-          </div>
+          {tvaApplicable ? (
+            (() => {
+              const total = Number(commande.total);
+              const totalHT = total / (1 + tvaTaux / 100);
+              const montantTva = total - totalHT;
+              return (
+                <>
+                  <div>
+                    <span>Total hors TVA</span>
+                    <span>{formaterPrix(totalHT)}</span>
+                  </div>
+                  <div>
+                    <span>Estimation de la TVA ({tvaTaux}%)</span>
+                    <span>{formaterPrix(montantTva)}</span>
+                  </div>
+                  <div className="suivi-commande__total-final">
+                    <span>Montant total TTC</span>
+                    <span>{formaterPrix(total)}</span>
+                  </div>
+                </>
+              );
+            })()
+          ) : (
+            <div className="suivi-commande__total-final">
+              <span>Total</span>
+              <span>{formaterPrix(commande.total)}</span>
+            </div>
+          )}
         </div>
+      </div>
+
+      <div className="suivi-commande__actions-secondaires">
+        {urlFacture && (
+          <a href={urlFacture} target="_blank" rel="noreferrer" className="btn">
+            Télécharger la facture
+          </a>
+        )}
+        <Link
+          href={`/contact?sujet=${encodeURIComponent(`Problème avec ma commande ${commande.numero}`)}&message=${encodeURIComponent(`Bonjour,\n\nJ'ai un problème concernant ma commande ${commande.numero}.\n\n`)}`}
+          className="btn"
+        >
+          Signaler un problème
+        </Link>
       </div>
 
       {peutAnnuler && (

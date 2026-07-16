@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { getContenuPage } from '@/lib/contenu';
 import TexteRiche from '@/components/site/TexteRiche';
 import ContactFormulaire from '@/components/site/ContactFormulaire';
@@ -39,7 +40,9 @@ export default async function PageContact() {
           </div>
         </div>
 
-        <ContactFormulaire />
+        <Suspense fallback={null}>
+          <ContactFormulaire />
+        </Suspense>
       </section>
 
       <section className="contact-rdv conteneur">

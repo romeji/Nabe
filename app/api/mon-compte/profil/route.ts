@@ -5,6 +5,28 @@ import { authClientOptions } from '@/lib/auth-client';
 import { prisma } from '@/lib/prisma';
 import { EMAIL_EXPEDITEUR, genererHtmlMotDePasseModifie, resend } from '@/lib/resend';
 
+export async function GET() {
+  const session = await getServerSession(authClientOptions);
+  if (!session?.user) {
+    return NextResponse.json({ error: 'Connexion requise' }, { status: 401 });
+  }
+  const clientId = (session.user as any).id as string;
+
+  const client = await prisma.client.findUnique({
+    where: { id: clientId },
+    select: { prenom: true, nomDeFamille: true, nom: true, email: true, telephone: true },
+  });
+  if (!client) return NextResponse.json({ error: 'Client introuvable' }, { status: 404 });
+
+  // Compatibilité comptes créés avant l'ajout des champs séparés.
+  const parties = (client.nom || '').trim().split(' ');
+  return NextResponse.json({
+    ...client,
+    prenom: client.prenom || parties[0] || '',
+    nomDeFamille: client.nomDeFamille || parties.slice(1).join(' ') || '',
+  });
+}
+
 export async function PATCH(req: NextRequest) {
   const session = await getServerSession(authClientOptions);
   if (!session?.user) {
@@ -13,10 +35,16 @@ export async function PATCH(req: NextRequest) {
   const clientId = (session.user as any).id as string;
 
   try {
-    const { nom, telephone, motDePasseActuel, nouveauMotDePasse } = await req.json();
+    const { prenom, nomDeFamille, telephone, motDePasseActuel, nouveauMotDePasse } = await req.json();
 
     const donnees: any = {};
-    if (nom !== undefined) donnees.nom = nom;
+    if (prenom !== undefined) donnees.prenom = prenom;
+    if (nomDeFamille !== undefined) donnees.nomDeFamille = nomDeFamille;
+    // Le champ "nom" (nom complet) reste recalculé automatiquement pour rester
+    // cohérent avec tous les affichages existants ailleurs dans le site.
+    if (prenom !== undefined || nomDeFamille !== undefined) {
+      donnees.nom = `${prenom ?? ''} ${nomDeFamille ?? ''}`.trim() || undefined;
+    }
     if (telephone !== undefined) donnees.telephone = telephone;
 
     let motDePasseModifie = false;

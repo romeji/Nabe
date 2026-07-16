@@ -183,7 +183,25 @@ export async function POST(req: NextRequest) {
 
       const produitsDb = await prisma.produit.findMany({
         where: { id: { in: articlesMeta.map((a: any) => a.id) } },
+        include: { images: { orderBy: { ordre: 'asc' }, take: 1 } },
       });
+
+      // Libellé du moyen de paiement (ex: "Carte •••• 4242") — récupéré
+      // auprès de Stripe pour affichage dans la commande et la facture.
+      // N'importe jamais la création de la commande si cet appel échoue.
+      let modePaiementLabel: string | undefined;
+      try {
+        if (intent.payment_method) {
+          const pm = await stripe.paymentMethods.retrieve(intent.payment_method as string);
+          if (pm.card) {
+            modePaiementLabel = `Carte •••• ${pm.card.last4}`;
+          } else if (pm.type) {
+            modePaiementLabel = pm.type.charAt(0).toUpperCase() + pm.type.slice(1).replace(/_/g, ' ');
+          }
+        }
+      } catch (err) {
+        console.error('Impossible de récupérer le moyen de paiement Stripe :', err);
+      }
 
       const commande = await prisma.commande.create({
         data: {
@@ -202,6 +220,7 @@ export async function POST(req: NextRequest) {
           sousTotal,
           fraisLivraison,
           modeLivraison: meta.modeLivraison || undefined,
+          modePaiementLabel,
           pointRelaisNumero: meta.pointRelaisNumero || undefined,
           pointRelaisNom: meta.pointRelaisNom || undefined,
           pointRelaisAdresse: meta.pointRelaisAdresse || undefined,
@@ -213,6 +232,7 @@ export async function POST(req: NextRequest) {
               return {
                 produitId: produit?.id,
                 nomProduit: produit?.nom || 'Produit',
+                imageUrl: produit?.images?.[0]?.url || undefined,
                 taille: a.taille || undefined,
                 prixUnitaire: a.pu ?? produit?.prix ?? 0,
                 quantite: a.q,

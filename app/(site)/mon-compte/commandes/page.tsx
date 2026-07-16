@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { getServerSession } from 'next-auth';
 import { authClientOptions } from '@/lib/auth-client';
 import { prisma } from '@/lib/prisma';
@@ -38,19 +39,29 @@ export default async function PageCommandesClient() {
             <Link key={c.id} href={`/mon-compte/commandes/${c.id}`} className="commandes-client-carte">
               <div className="commandes-client-carte__entete">
                 <div>
+                  <span className="commandes-client-carte__numero-label">Commande n°</span>
                   <strong>{c.numero}</strong>
                   <span>{new Date(c.createdAt).toLocaleDateString('fr-FR')}</span>
                 </div>
                 <span className="admin-badge admin-badge--neutre">{LABELS_STATUT_COMMANDE[c.statut]}</span>
               </div>
-              <ul>
+              <div className="commandes-client-carte__articles">
                 {c.lignes.map((l: any) => (
-                  <li key={l.id}>
-                    {l.quantite} × {l.nomProduit}
-                    {l.taille ? ` (taille ${l.taille})` : ''}
-                  </li>
+                  <div key={l.id} className="commandes-client-carte__article">
+                    <div className="commandes-client-carte__article-image">
+                      {l.imageUrl ? (
+                        <Image src={l.imageUrl} alt={l.nomProduit} width={48} height={48} style={{ objectFit: 'cover' }} />
+                      ) : (
+                        <div className="commandes-client-carte__article-placeholder" />
+                      )}
+                    </div>
+                    <span>
+                      {l.quantite} × {l.nomProduit}
+                      {l.taille ? ` (taille ${l.taille})` : ''}
+                    </span>
+                  </div>
                 ))}
-              </ul>
+              </div>
               <div className="commandes-client-carte__total">
                 Total : {formaterPrix(c.total.toString())}
               </div>
