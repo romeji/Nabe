@@ -28,7 +28,9 @@ export async function POST(req: NextRequest) {
     const modes = calculerModesLivraison(poidsTotal, config);
 
     const livraisonIncluse = config.livraison_incluse_dans_prix === 'true';
-    return NextResponse.json({ poidsTotalGrammes: poidsTotal, modes, livraisonIncluse });
+    const tvaApplicable = config.tva_applicable === 'true';
+    const tvaTaux = parseFloat(config.tva_taux) || 20;
+    return NextResponse.json({ poidsTotalGrammes: poidsTotal, modes, livraisonIncluse, tvaApplicable, tvaTaux });
   } catch (error: any) {
     console.error('Erreur calcul tarifs livraison:', error);
     return NextResponse.json({ error: error.message || 'Erreur' }, { status: 400 });

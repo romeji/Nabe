@@ -65,7 +65,7 @@ export default async function PageAdminCommandes({
               </td>
               <td data-label="Articles">{c.lignes.length}</td>
               <td data-label="Total">{formaterPrix(c.total.toString())}</td>
-              <td data-label="Statut" onClick={(e) => e.stopPropagation()}>
+              <td data-label="Statut">
                 <StatutCommandeSelect commandeId={c.id} statutInitial={c.statut} />
               </td>
             </tr>

@@ -502,6 +502,26 @@ model LimiteTaux {
   expireA  DateTime
 }
 
+// File d'attente légère pour les e-mails transactionnels critiques
+// (confirmation de commande, etc). Si l'envoi échoue (Resend en panne,
+// erreur réseau...), une ligne est créée ici plutôt que de perdre l'email
+// silencieusement. Une tâche planifiée (cron Vercel, voir
+// app/api/cron/relancer-emails) repasse dessus toutes les 5 minutes et
+// retente jusqu'à 5 fois avant d'alerter le marchand pour un envoi manuel.
+model EmailEnAttente {
+  id            String    @id @default(cuid())
+  destinataire  String
+  sujet         String
+  html          String    @db.Text
+  tentatives    Int       @default(0)
+  derniereErreur String?  @db.Text
+  envoye        Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  derniereTentativeA DateTime?
+
+  @@index([envoye])
+}
+
 model AbonneNewsletter {
   id        String   @id @default(cuid())
   email     String   @unique

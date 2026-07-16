@@ -3,6 +3,7 @@ import { stripe } from '@/lib/stripe';
 import { prisma } from '@/lib/prisma';
 import { genererNumeroCommande } from '@/lib/utils';
 import { resend, EMAIL_EXPEDITEUR, genererHtmlConfirmationCommande } from '@/lib/resend';
+import { envoyerEmailFiable } from '@/lib/email-fiable';
 import Stripe from 'stripe';
 
 type ArticleMeta = { id: string; q: number; taille: string; pu?: number };
@@ -112,8 +113,10 @@ async function envoyerEmailConfirmation(commandeId: string) {
     if (!commande || !commande.clientEmail) return;
 
     const prenom = commande.clientNom.split(' ')[0] || 'vous';
-    await resend.emails.send({
-      from: EMAIL_EXPEDITEUR,
+    // Utilise la file d'attente avec retry automatique : un e-mail de
+    // confirmation de commande ne doit jamais disparaître silencieusement
+    // si Resend est temporairement indisponible.
+    await envoyerEmailFiable({
       to: commande.clientEmail,
       subject: `Commande ${commande.numero} confirmée — Nabe`,
       html: genererHtmlConfirmationCommande({
@@ -133,6 +136,22 @@ async function envoyerEmailConfirmation(commandeId: string) {
         ville: commande.ville || undefined,
         codePostal: commande.codePostal || undefined,
       }),
+    });
+
+    // Notification de vente au marchand — utilise aussi la file fiable :
+    // recevoir cette alerte est important pour le suivi de l'activité,
+    // pas seulement un "nice to have".
+    await envoyerEmailFiable({
+      to: EMAIL_EXPEDITEUR,
+      subject: `💰 Nouvelle vente — ${commande.numero} (${Number(commande.total).toFixed(2)} €)`,
+      html: `<p>Une nouvelle commande vient d'être payée :</p>
+             <ul>
+               <li><strong>Numéro :</strong> ${commande.numero}</li>
+               <li><strong>Client :</strong> ${commande.clientNom} (${commande.clientEmail})</li>
+               <li><strong>Total :</strong> ${Number(commande.total).toFixed(2)} €</li>
+               <li><strong>Articles :</strong> ${commande.lignes.map((l: any) => `${l.quantite} × ${l.nomProduit}${l.taille ? ` (taille ${l.taille})` : ''}`).join(', ')}</li>
+             </ul>
+             <p>Retrouvez tous les détails et la facture dans votre <a href="${process.env.NEXTAUTH_URL || ''}/admin/commandes/${commande.id}">espace admin</a>.</p>`,
     });
   } catch (err) {
     console.error('Erreur envoi email de confirmation de commande (commande conservée) :', err);
@@ -242,7 +261,19 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      await decrementerStockEtJournaliser(articlesMeta, commande.numero);
+      // IMPORTANT : chaque étape est isolée dans son propre try/catch.
+      // Avant ce correctif, une erreur dans la décrémentation du stock
+      // faisait planter toute la fonction -> Stripe recevait un 500 ->
+      // Stripe retentait le webhook plus tard -> au retry, la commande
+      // existait déjà (voir la vérification commandeExistante plus haut)
+      // -> le code s'arrêtait immédiatement sans jamais renvoyer l'email
+      // de confirmation. La commande était donc bien créée, mais l'email
+      // perdu silencieusement, sans aucune nouvelle tentative possible.
+      try {
+        await decrementerStockEtJournaliser(articlesMeta, commande.numero);
+      } catch (err) {
+        console.error(`Erreur décrémentation stock (commande ${commande.numero}, conservée) :`, err);
+      }
       await envoyerEmailConfirmation(commande.id);
     }
 
@@ -333,7 +364,19 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      await decrementerStockEtJournaliser(articlesMeta, commande.numero);
+      // IMPORTANT : chaque étape est isolée dans son propre try/catch.
+      // Avant ce correctif, une erreur dans la décrémentation du stock
+      // faisait planter toute la fonction -> Stripe recevait un 500 ->
+      // Stripe retentait le webhook plus tard -> au retry, la commande
+      // existait déjà (voir la vérification commandeExistante plus haut)
+      // -> le code s'arrêtait immédiatement sans jamais renvoyer l'email
+      // de confirmation. La commande était donc bien créée, mais l'email
+      // perdu silencieusement, sans aucune nouvelle tentative possible.
+      try {
+        await decrementerStockEtJournaliser(articlesMeta, commande.numero);
+      } catch (err) {
+        console.error(`Erreur décrémentation stock (commande ${commande.numero}, conservée) :`, err);
+      }
       await envoyerEmailConfirmation(commande.id);
     }
   } catch (error) {

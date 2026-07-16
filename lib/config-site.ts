@@ -50,12 +50,9 @@ export const DEFAUTS_CONFIG: Record<string, string> = {
   // répercuter vous-même sur vos prix). Si désactivé (défaut) : le calcul
   // au poids réel s'applique normalement (voir lib/livraison.ts).
   livraison_incluse_dans_prix: 'false',
-  // TVA : désactivée par défaut car tant que l'activité n'est pas immatriculée
-  // en société (franchise en base de TVA en micro-entreprise), aucune TVA ne
-  // doit apparaître sur les factures. À activer manuellement une fois la
-  // société créée et le taux de TVA applicable connu.
-  tva_applicable: 'false',
-  tva_taux: '20', // en pourcentage, ex: 20 pour 20%
+  // TVA activée sur demande explicite (société en cours de lancement).
+  tva_applicable: 'true',
+  tva_taux: '20', // en pourcentage — à ajuster dans Réglages selon le régime réel une fois la société créée
   // Identité de facturation — affichée sur les factures téléchargeables.
   // Le SIRET peut rester vide tant que la société n'est pas immatriculée ;
   // dans ce cas la facture indique "Auto-entrepreneur en cours d'immatriculation"

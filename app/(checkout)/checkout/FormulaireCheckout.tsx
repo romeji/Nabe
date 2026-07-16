@@ -132,6 +132,8 @@ export default function FormulaireCheckout() {
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [chargementIntent, setChargementIntent] = useState(false);
   const [livraisonIncluse, setLivraisonIncluse] = useState(false);
+  const [tvaApplicable, setTvaApplicable] = useState(false);
+  const [tvaTaux, setTvaTaux] = useState(20);
   const [erreurIntent, setErreurIntent] = useState('');
 
   useEffect(() => setMonte(true), []);
@@ -145,13 +147,15 @@ export default function FormulaireCheckout() {
       body: JSON.stringify({ articles: articles.map((a: any) => ({ id: a.produitId, quantite: a.quantite })) }),
     })
       .then((r) => (r.ok ? r.json() : { modes: [] }))
-      .then((data: { modes: ModeLivraison[]; livraisonIncluse?: boolean }) => {
+      .then((data: { modes: ModeLivraison[]; livraisonIncluse?: boolean; tvaApplicable?: boolean; tvaTaux?: number }) => {
         // Quand la livraison est incluse, l'API renvoie modes: [] par design
         // (voir lib/livraison.ts) : aucun transporteur à choisir, le marchand
         // expédie lui-même. On se contente de refléter cet état, sans créer
         // de mode fictif — le reste du composant traite livraisonIncluse
         // comme un état à part entière, pas comme un mode de livraison.
         setLivraisonIncluse(Boolean(data.livraisonIncluse));
+        setTvaApplicable(Boolean(data.tvaApplicable));
+        setTvaTaux(data.tvaTaux || 20);
         setModesLivraison(data.modes || []);
         if (data.modes?.length > 0) setModeLivraisonId((actuel) => actuel || data.modes[0].id);
       })
@@ -667,10 +671,27 @@ export default function FormulaireCheckout() {
               <span>Livraison</span>
               <span>{fraisLivraison === 0 ? 'Offerte' : formaterPrix(fraisLivraison)}</span>
             </div>
-            <div className="checkout__ligne-total checkout__ligne-total--final">
-              <span>Total</span>
-              <span>{formaterPrix(total)}</span>
-            </div>
+            {tvaApplicable ? (
+              <>
+                <div className="checkout__ligne-total">
+                  <span>Total hors TVA</span>
+                  <span>{formaterPrix(total / (1 + tvaTaux / 100))}</span>
+                </div>
+                <div className="checkout__ligne-total">
+                  <span>Estimation de la TVA ({tvaTaux}%)</span>
+                  <span>{formaterPrix(total - total / (1 + tvaTaux / 100))}</span>
+                </div>
+                <div className="checkout__ligne-total checkout__ligne-total--final">
+                  <span>Montant total TTC</span>
+                  <span>{formaterPrix(total)}</span>
+                </div>
+              </>
+            ) : (
+              <div className="checkout__ligne-total checkout__ligne-total--final">
+                <span>Total</span>
+                <span>{formaterPrix(total)}</span>
+              </div>
+            )}
           </div>
         </aside>
       </div>
