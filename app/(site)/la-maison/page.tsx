@@ -27,13 +27,13 @@ export default async function PageLaMaison() {
           <TexteRiche html={c.parcours_texte} />
         </div>
         <div className="maison-parcours__image">
-          <Image src="/images/croquis.jpg" alt="Croquis d'atelier" width={500} height={400} />
+          <Image src={c.parcours_image} alt="Croquis d'atelier" width={500} height={400} />
         </div>
       </section>
 
       <section className="maison-savoirfaire conteneur">
         <div className="maison-savoirfaire__image">
-          <Image src="/images/bague-atelier.jpg" alt="Bague en atelier" width={500} height={400} />
+          <Image src={c.savoirfaire_image} alt="Bague en atelier" width={500} height={400} />
         </div>
         <div className="maison-savoirfaire__texte">
           <span className="etiquette">{c.savoirfaire_label}</span>

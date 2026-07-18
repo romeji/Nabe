@@ -1,62 +1,56 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { getContenuPage } from '@/lib/contenu';
+import TexteRiche from '@/components/site/TexteRiche';
 import '../pages-marque.css';
 
 export const metadata = { title: 'Mon Histoire' };
 
-const dates = [
-  { icone: 'coeur', titre: '2024', texte: 'Création de Nabe' },
-  { icone: 'atelier', titre: '100 %', texte: 'Fabrication artisanale' },
-  { icone: 'bijou', titre: 'Chaque bijou', texte: 'Fabriqué à la commande' },
-  { icone: 'outil', titre: '1 atelier', texte: 'En France' },
-];
+export default async function PageMonHistoire() {
+  const c = await getContenuPage('mon-histoire');
 
-const galerie = [
-  { src: '/images/atelier-mains.jpg', alt: 'Bijou façonné à la main' },
-  { src: '/images/bague-atelier.jpg', alt: 'Outils et bijoux sur établi' },
-  { src: '/images/atelier-portrait.jpg', alt: 'Atelier de joaillerie' },
-  { src: '/images/savoirfaire-inspiration.jpg', alt: 'Vase et fleurs dans l’atelier' },
-  { src: '/images/savoirfaire-fabrication.jpg', alt: 'Finition d’une bague' },
-];
+  const dates = [
+    { icone: c.date1_icone, titre: c.date1_titre, texte: c.date1_texte },
+    { icone: c.date2_icone, titre: c.date2_titre, texte: c.date2_texte },
+    { icone: c.date3_icone, titre: c.date3_titre, texte: c.date3_texte },
+    { icone: c.date4_icone, titre: c.date4_titre, texte: c.date4_texte },
+  ];
 
-export default function PageMonHistoire() {
+  const galerie = [
+    { src: c.galerie1_image, alt: 'Bijou façonné à la main' },
+    { src: c.galerie2_image, alt: 'Outils et bijoux sur établi' },
+    { src: c.galerie3_image, alt: 'Atelier de joaillerie' },
+    { src: c.galerie4_image, alt: 'Vase et fleurs dans l’atelier' },
+    { src: c.galerie5_image, alt: 'Finition d’une bague' },
+  ];
+
   return (
     <main className="page-marque page-marque--histoire">
-      <section className="marque-hero marque-hero--centre" style={{ backgroundImage: "url('/images/atelier-portrait.jpg')" }}>
+      <section className="marque-hero marque-hero--centre" style={{ backgroundImage: `url('${c.hero_image}')` }}>
         <div className="marque-hero__ombre" />
         <div className="marque-hero__contenu">
-          <h1>Notre histoire</h1>
-          <p>Chaque bijou commence par une émotion.</p>
-          <p>Fabriqué à la main dans notre atelier en France.</p>
-          <Link href="/la-maison" className="marque-bouton">Découvrir l’atelier</Link>
+          <h1>{c.hero_titre}</h1>
+          <TexteRiche html={c.hero_texte} />
+          <Link href="/la-maison" className="marque-bouton">{c.hero_bouton}</Link>
         </div>
       </section>
 
       <section className="histoire-vision marque-section">
         <div className="histoire-vision__image">
-          <Image src="/images/main-bague.jpg" alt="Bijoux Nabe portés à la main" width={540} height={720} />
+          <Image src={c.vision_image} alt="Bijoux Nabe portés à la main" width={540} height={720} />
         </div>
         <div className="histoire-vision__texte">
-          <span className="marque-label">Notre vision</span>
-          <h2>Créer des bijoux qui traversent le temps.</h2>
-          <p>
-            Nabe est née d’une envie simple : proposer des créations artisanales,
-            intemporelles et réalisées avec passion.
-          </p>
-          <p>
-            Chaque pièce est imaginée, dessinée puis fabriquée dans notre atelier.
-          </p>
-          <p>
-            Nous privilégions les petites séries, les matériaux de qualité et le travail minutieux.
-          </p>
+          <span className="marque-label">{c.vision_label}</span>
+          <h2>{c.vision_titre}</h2>
+          <TexteRiche html={c.vision_texte} />
         </div>
       </section>
 
       <section className="marque-frise">
-        <span className="marque-label">Notre histoire en quelques dates</span>
+        <span className="marque-label">{c.frise_label}</span>
         <div className="marque-frise__grille">
-          {dates.map((item: any) => (
-            <article className="marque-frise__item" key={item.titre}>
+          {dates.map((item: any, index: number) => (
+            <article className="marque-frise__item" key={index}>
               <span className={`marque-icone marque-icone--${item.icone}`} aria-hidden="true" />
               <h3>{item.titre}</h3>
               <p>{item.texte}</p>
@@ -66,10 +60,10 @@ export default function PageMonHistoire() {
       </section>
 
       <section className="histoire-atelier marque-section">
-        <span className="marque-label">Notre atelier</span>
+        <span className="marque-label">{c.atelier_label}</span>
         <div className="histoire-galerie">
           {galerie.map((image: any, index: number) => (
-            <div className={`histoire-galerie__image histoire-galerie__image--${index + 1}`} key={image.src}>
+            <div className={`histoire-galerie__image histoire-galerie__image--${index + 1}`} key={index}>
               <Image src={image.src} alt={image.alt} width={520} height={360} />
             </div>
           ))}
@@ -77,16 +71,15 @@ export default function PageMonHistoire() {
       </section>
 
       <section className="marque-citation">
-        <span aria-hidden="true">“</span>
-        <p>Nous ne fabriquons pas seulement des bijoux.</p>
-        <p>Nous créons des souvenirs.</p>
+        <span aria-hidden="true">"</span>
+        <TexteRiche html={c.citation_texte} />
       </section>
 
-      <section className="marque-cta" style={{ backgroundImage: "url('/images/signature-bague.jpg')" }}>
+      <section className="marque-cta" style={{ backgroundImage: `url('${c.cta_image}')` }}>
         <div>
-          <span className="marque-label">Découvrez notre univers</span>
-          <h2>Découvrez nos collections</h2>
-          <Link href="/collections" className="marque-bouton">Voir les bijoux</Link>
+          <span className="marque-label">{c.cta_label}</span>
+          <h2>{c.cta_titre}</h2>
+          <Link href="/collections" className="marque-bouton">{c.cta_bouton}</Link>
         </div>
       </section>
     </main>

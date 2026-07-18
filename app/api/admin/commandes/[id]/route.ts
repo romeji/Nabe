@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { verifierSessionAdmin } from '@/lib/auth-helpers';
 import { resend, EMAIL_EXPEDITEUR, genererHtmlAnnulationCommande, genererHtmlExpeditionCommande } from '@/lib/resend';
+import { getContenuPage } from '@/lib/contenu';
 
 export async function GET(req: NextRequest, { params: paramsPromise }: { params: Promise<{ id: string }> }) {
   const params = await paramsPromise;
@@ -44,15 +45,18 @@ export async function PATCH(req: NextRequest, { params: paramsPromise }: { param
 
     if ((statut === 'ANNULEE' || statut === 'REMBOURSEE') && commande.clientEmail) {
       try {
+        const emailsContenu = await getContenuPage('emails');
+        const sujetDefaut = `Commande {numero} ${statut === 'REMBOURSEE' ? 'remboursée' : 'annulée'} — Nabe`;
         await resend.emails.send({
           from: EMAIL_EXPEDITEUR,
           to: commande.clientEmail,
-          subject: `Commande ${commande.numero} ${statut === 'REMBOURSEE' ? 'remboursée' : 'annulée'} — Nabe`,
+          subject: (emailsContenu.commande_annulee_sujet || sujetDefaut).replace('{numero}', commande.numero),
           html: genererHtmlAnnulationCommande({
             prenom: commande.clientNom.split(' ')[0] || 'vous',
             numero: commande.numero,
             total: Number(commande.total),
             rembourse: statut === 'REMBOURSEE',
+            messagePersonnalise: emailsContenu.commande_annulee_message,
           }),
         });
       } catch (err) {
@@ -62,15 +66,17 @@ export async function PATCH(req: NextRequest, { params: paramsPromise }: { param
 
     if (statut === 'EXPEDIEE' && commande.clientEmail) {
       try {
+        const emailsContenu = await getContenuPage('emails');
         await resend.emails.send({
           from: EMAIL_EXPEDITEUR,
           to: commande.clientEmail,
-          subject: `Commande ${commande.numero} expédiée — Nabe`,
+          subject: (emailsContenu.commande_expediee_sujet || 'Commande {numero} expédiée — Nabe').replace('{numero}', commande.numero),
           html: genererHtmlExpeditionCommande({
             prenom: commande.clientNom.split(' ')[0] || 'vous',
             numero: commande.numero,
             numeroSuivi: commande.numeroSuivi,
             urlSuivi: commande.urlSuivi,
+            messagePersonnalise: emailsContenu.commande_expediee_message,
           }),
         });
       } catch (err) {

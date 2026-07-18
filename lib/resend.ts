@@ -23,6 +23,36 @@ function echapperHtml(valeur: string | null | undefined): string {
  * Génère un email HTML élégant à partir d'un sujet et d'un contenu déjà au
  * format HTML (produit par l'éditeur de texte riche du backoffice).
  */
+/** Email de bienvenue envoyé lors de l'inscription à la newsletter. */
+export function genererHtmlBienvenueNewsletter(messagePersonnalise?: string): string {
+  return enveloppeEmail(
+    `Bienvenue dans l'univers Nabe`,
+    messagePersonnalise ||
+    `
+    <p>Merci de nous rejoindre. Vous serez parmi les premiers informés de nos nouvelles créations, de nos collections exclusives et de nos événements.</p>
+    <p>Avec élégance,<br/>L'équipe Nabe</p>`
+  );
+}
+
+/** Email contenant le code de réduction de bienvenue (popup d'inscription). */
+export function genererHtmlSurprisePopup(params: {
+  prenom: string;
+  pourcentage: number;
+  code: string;
+  messagePersonnalise?: string;
+}): string {
+  const { prenom, pourcentage, code, messagePersonnalise } = params;
+  return enveloppeEmail(
+    `Bonjour ${prenom},`,
+    `
+    ${
+      messagePersonnalise ||
+      `<p>Merci de rejoindre l'univers Nabe. Voici votre code de réduction de <strong>${pourcentage}%</strong>, valable sur votre prochaine commande :</p>`
+    }
+    <p style="font-size: 24px; letter-spacing: 2px; background-color:#ede3d3; padding: 14px; border-radius:4px; color:#8b4a32; font-weight:bold; text-align:center;">${code}</p>`
+  );
+}
+
 export function genererHtmlNewsletter(sujet: string, contenuHtml: string, email: string, tokenDesabonnement: string): string {
   const urlBase = process.env.NEXT_PUBLIC_SITE_URL || 'https://nabe-bijoux.fr';
   const urlDesabonnement = `${urlBase}/newsletter/desabonnement?email=${encodeURIComponent(email)}&token=${tokenDesabonnement}`;
@@ -61,9 +91,10 @@ export function genererHtmlNewsletter(sujet: string, contenuHtml: string, email:
 }
 
 /** Email envoyé après la création d'un compte client (distinct de l'email code promo du popup d'accueil). */
-export function genererHtmlBienvenueCompte(prenom: string): string {
+export function genererHtmlBienvenueCompte(prenom: string, messagePersonnalise?: string): string {
   return enveloppeEmail(
     `Bienvenue chez Nabe, ${prenom} !`,
+    messagePersonnalise ||
     `
     <p>Votre compte a bien été créé. Vous pouvez désormais suivre vos commandes, gérer vos favoris et vos informations depuis votre espace client.</p>
     <p>À très vite,<br/>L'équipe Nabe</p>`
@@ -71,9 +102,10 @@ export function genererHtmlBienvenueCompte(prenom: string): string {
 }
 
 /** Email envoyé lorsqu'un client supprime son compte. */
-export function genererHtmlSuppressionCompte(prenom: string): string {
+export function genererHtmlSuppressionCompte(prenom: string, messagePersonnalise?: string): string {
   return enveloppeEmail(
     `Votre compte Nabe a été supprimé`,
+    messagePersonnalise ||
     `
     <p>Bonjour ${prenom},</p>
     <p>Nous confirmons la suppression de votre compte Nabe, comme vous l'avez demandé.</p>
@@ -83,9 +115,10 @@ export function genererHtmlSuppressionCompte(prenom: string): string {
 }
 
 /** Email de securite envoye apres changement de mot de passe. */
-export function genererHtmlMotDePasseModifie(prenom: string): string {
+export function genererHtmlMotDePasseModifie(prenom: string, messagePersonnalise?: string): string {
   return enveloppeEmail(
     `Votre mot de passe Nabe a ete modifie`,
+    messagePersonnalise ||
     `
     <p>Bonjour ${prenom},</p>
     <p>Nous confirmons que le mot de passe de votre compte Nabe vient d'etre modifie.</p>
@@ -94,12 +127,12 @@ export function genererHtmlMotDePasseModifie(prenom: string): string {
 }
 
 /** Email de demande de reinitialisation de mot de passe. */
-export function genererHtmlReinitialisationMotDePasse(prenom: string, lien: string): string {
+export function genererHtmlReinitialisationMotDePasse(prenom: string, lien: string, messagePersonnalise?: string): string {
   return enveloppeEmail(
     `Reinitialiser votre mot de passe Nabe`,
     `
     <p>Bonjour ${prenom},</p>
-    <p>Vous avez demande a reinitialiser le mot de passe de votre compte Nabe.</p>
+    ${messagePersonnalise || `<p>Vous avez demande a reinitialiser le mot de passe de votre compte Nabe.</p>`}
     <p><a href="${lien}" style="display:inline-block; background-color:#8b4a32; color:#ffffff; padding:12px 18px; border-radius:4px; text-decoration:none;">Choisir un nouveau mot de passe</a></p>
     <p style="font-size:13px; color:#7a6a55;">Ce lien est valable 1 heure. Si vous n'etes pas a l'origine de cette demande, vous pouvez ignorer cet e-mail.</p>`
   );
@@ -210,12 +243,13 @@ export function genererHtmlConfirmationCommande(params: {
   adresseLivraison?: string;
   ville?: string;
   codePostal?: string;
+  messagePersonnalise?: string;
 }): string {
   const { prenom, numero, lignes, sousTotal, montantReduction, fraisLivraison, total, adresseLivraison, ville, codePostal } = params;
   return enveloppeEmail(
     `Merci pour votre commande, ${prenom} !`,
     `
-    <p>Votre commande <strong>${numero}</strong> est confirmée et va être préparée avec soin.</p>
+    ${params.messagePersonnalise || `<p>Votre commande <strong>${numero}</strong> est confirmée et va être préparée avec soin.</p>`}
     ${tableauLignes(lignes)}
     <table width="100%" cellpadding="0" cellspacing="0" style="font-size: 14px; margin-top: 8px;">
       <tr><td>Sous-total</td><td style="text-align:right;">${sousTotal.toFixed(2)} €</td></tr>
@@ -238,13 +272,14 @@ export function genererHtmlExpeditionCommande(params: {
   numero: string;
   numeroSuivi?: string | null;
   urlSuivi?: string | null;
+  messagePersonnalise?: string;
 }): string {
-  const { prenom, numero, numeroSuivi, urlSuivi } = params;
+  const { prenom, numero, numeroSuivi, urlSuivi, messagePersonnalise } = params;
   return enveloppeEmail(
     `Votre commande ${numero} est en route !`,
     `
     <p>Bonjour ${prenom},</p>
-    <p>Votre commande vient d'être expédiée et est en chemin vers vous.</p>
+    ${messagePersonnalise || `<p>Votre commande vient d'être expédiée et est en chemin vers vous.</p>`}
     ${
       numeroSuivi
         ? `<p>Numéro de suivi : <strong>${numeroSuivi}</strong>${
@@ -262,15 +297,16 @@ export function genererHtmlAnnulationCommande(params: {
   numero: string;
   total: number;
   rembourse: boolean;
+  messagePersonnalise?: string;
 }): string {
-  const { prenom, numero, total, rembourse } = params;
+  const { prenom, numero, total, rembourse, messagePersonnalise } = params;
   return enveloppeEmail(
     `Votre commande ${numero} a été ${rembourse ? 'remboursée' : 'annulée'}`,
     `
     <p>Bonjour ${prenom},</p>
-    <p>Nous vous informons que votre commande <strong>${numero}</strong> d'un montant de ${total.toFixed(2)} € a été ${
+    ${messagePersonnalise || `<p>Nous vous informons que votre commande <strong>${numero}</strong> d'un montant de ${total.toFixed(2)} € a été ${
       rembourse ? 'annulée et remboursée' : 'annulée'
-    }.</p>
+    }.</p>`}
     ${
       rembourse
         ? `<p>Le remboursement sera visible sur votre moyen de paiement d'origine sous quelques jours ouvrés.</p>`

@@ -1,54 +1,57 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { getContenuPage } from '@/lib/contenu';
+import TexteRiche from '@/components/site/TexteRiche';
 import '../pages-marque.css';
 
 export const metadata = { title: 'Engagements' };
 
-const valeurs = [
-  { icone: 'outils', titre: 'Artisanat', texte: 'Chaque bijou est fabriqué à la main avec savoir-faire et passion.' },
-  { icone: 'soleil', titre: 'Durabilité', texte: 'Nous créons des bijoux faits pour durer, avec des matériaux de qualité.' },
-  { icone: 'fleur', titre: 'Éthique', texte: 'Nous travaillons avec des fournisseurs sélectionnés avec soin et éthique.' },
-  { icone: 'globe', titre: 'Transparence', texte: 'Nous vous partageons toutes les informations sur nos matériaux et pratiques.' },
-];
+export default async function PageEngagements() {
+  const c = await getContenuPage('engagements');
 
-const raisons = [
-  { icone: 'boite', titre: 'Bijoux fabriqués à la commande' },
-  { icone: 'soleil', titre: 'Moins de gaspillage' },
-  { icone: 'carte', titre: 'Production raisonnée' },
-  { icone: 'coeur', titre: 'Créations intemporelles' },
-];
+  const valeurs = [
+    { icone: c.valeur1_icone, titre: c.valeur1_titre, texte: c.valeur1_texte },
+    { icone: c.valeur2_icone, titre: c.valeur2_titre, texte: c.valeur2_texte },
+    { icone: c.valeur3_icone, titre: c.valeur3_titre, texte: c.valeur3_texte },
+    { icone: c.valeur4_icone, titre: c.valeur4_titre, texte: c.valeur4_texte },
+  ];
 
-const stats = [
-  ['100 %', 'Fabrication artisanale'],
-  ['95 %', 'Clients satisfaits'],
-  ['100 %', 'Contrôle qualité'],
-  ['100 %', 'Passion'],
-];
+  const raisons = [
+    { icone: c.raison1_icone, titre: c.raison1_titre },
+    { icone: c.raison2_icone, titre: c.raison2_titre },
+    { icone: c.raison3_icone, titre: c.raison3_titre },
+    { icone: c.raison4_icone, titre: c.raison4_titre },
+  ];
 
-const questions = [
-  'Comment fabriquez-vous les bijoux ?',
-  'Pourquoi uniquement de petites séries ?',
-  'Quels matériaux utilisez-vous ?',
-  'Puis-je commander un bijou personnalisé ?',
-];
+  const stats = [
+    [c.stat1_valeur, c.stat1_label],
+    [c.stat2_valeur, c.stat2_label],
+    [c.stat3_valeur, c.stat3_label],
+    [c.stat4_valeur, c.stat4_label],
+  ];
 
-export default function PageEngagements() {
+  const questions = [
+    { question: c.faq1_question, reponse: c.faq1_reponse },
+    { question: c.faq2_question, reponse: c.faq2_reponse },
+    { question: c.faq3_question, reponse: c.faq3_reponse },
+    { question: c.faq4_question, reponse: c.faq4_reponse },
+  ];
+
   return (
     <main className="page-marque page-marque--engagements">
-      <section className="marque-hero" style={{ backgroundImage: "url('/images/signature-bague.jpg')" }}>
+      <section className="marque-hero" style={{ backgroundImage: `url('${c.hero_image}')` }}>
         <div className="marque-hero__ombre" />
         <div className="marque-hero__contenu">
-          <h1>Nos engagements</h1>
-          <p>Créer de beaux bijoux</p>
-          <p>sans compromis.</p>
+          <h1>{c.hero_titre}</h1>
+          <TexteRiche html={c.hero_texte} />
         </div>
       </section>
 
       <section className="engagements-valeurs marque-section">
-        <span className="marque-label">Nos valeurs</span>
+        <span className="marque-label">{c.valeurs_label}</span>
         <div className="engagements-valeurs__grille">
-          {valeurs.map((valeur: any) => (
-            <article className="engagements-valeurs__carte" key={valeur.titre}>
+          {valeurs.map((valeur: any, index: number) => (
+            <article className="engagements-valeurs__carte" key={index}>
               <span className={`marque-icone marque-icone--${valeur.icone}`} aria-hidden="true" />
               <h2>{valeur.titre}</h2>
               <p>{valeur.texte}</p>
@@ -59,24 +62,20 @@ export default function PageEngagements() {
 
       <section className="engagements-fabrication">
         <div className="engagements-fabrication__texte">
-          <h2>Une fabrication responsable</h2>
-          <p>
-            Nos bijoux sont fabriqués à la commande, en petites séries,
-            pour limiter la surproduction et le gaspillage.
-          </p>
-          <p>Nous privilégions les circuits courts et le savoir-faire local.</p>
-          <Link href="/artisanat" className="marque-bouton">En savoir plus</Link>
+          <h2>{c.fabrication_titre}</h2>
+          <TexteRiche html={c.fabrication_texte} />
+          <Link href="/artisanat" className="marque-bouton">{c.fabrication_bouton}</Link>
         </div>
         <div className="engagements-fabrication__image">
-          <Image src="/images/atelier-mains.jpg" alt="Bijou assemblé à la main" width={620} height={560} />
+          <Image src={c.fabrication_image} alt="Bijou assemblé à la main" width={620} height={560} />
         </div>
       </section>
 
       <section className="marque-processus marque-section">
-        <span className="marque-label">Pourquoi choisir Nabe ?</span>
+        <span className="marque-label">{c.raisons_label}</span>
         <div className="marque-processus__grille">
-          {raisons.map((raison: any) => (
-            <article className="marque-processus__item" key={raison.titre}>
+          {raisons.map((raison: any, index: number) => (
+            <article className="marque-processus__item" key={index}>
               <span className={`marque-icone marque-icone--${raison.icone}`} aria-hidden="true" />
               <h3>{raison.titre}</h3>
             </article>
@@ -85,8 +84,8 @@ export default function PageEngagements() {
       </section>
 
       <section className="engagements-stats">
-        {stats.map(([valeur, label]) => (
-          <div key={label}>
+        {stats.map(([valeur, label], index) => (
+          <div key={index}>
             <strong>{valeur}</strong>
             <span>{label}</span>
           </div>
@@ -94,22 +93,22 @@ export default function PageEngagements() {
       </section>
 
       <section className="engagements-faq marque-section">
-        <span className="marque-label">Questions fréquentes</span>
+        <span className="marque-label">{c.faq_label}</span>
         <div className="engagements-faq__liste">
-          {questions.map((question: any) => (
-            <details key={question}>
-              <summary>{question}</summary>
-              <p>Chaque réponse dépend de la pièce choisie. Contactez l’atelier pour une information précise.</p>
+          {questions.map((item: any, index: number) => (
+            <details key={index}>
+              <summary>{item.question}</summary>
+              <TexteRiche html={item.reponse} as="div" />
             </details>
           ))}
         </div>
       </section>
 
-      <section className="marque-cta marque-cta--sombre" style={{ backgroundImage: "url('/images/savoirfaire-inspiration.jpg')" }}>
+      <section className="marque-cta marque-cta--sombre" style={{ backgroundImage: `url('${c.cta_image}')` }}>
         <div>
-          <h2>Découvrez l’univers Nabe</h2>
-          <p>Des bijoux artisanaux, intemporels et porteurs de sens.</p>
-          <Link href="/collections" className="marque-bouton">Voir les collections</Link>
+          <h2>{c.cta_titre}</h2>
+          <p>{c.cta_texte}</p>
+          <Link href="/collections" className="marque-bouton">{c.cta_bouton}</Link>
         </div>
       </section>
     </main>

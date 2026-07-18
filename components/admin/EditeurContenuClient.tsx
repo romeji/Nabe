@@ -1,7 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
+import Image from 'next/image';
 import type { ChampContenu } from '@/lib/registre-contenu';
+import { ICONES_DISPONIBLES } from '@/lib/registre-contenu';
 import EditeurRiche from './EditeurRiche';
 
 export default function EditeurContenuClient({
@@ -20,6 +22,8 @@ export default function EditeurContenuClient({
   const [succesCle, setSuccesCle] = useState<string | null>(null);
   const [enregistrementTout, setEnregistrementTout] = useState(false);
   const [succesTout, setSuccesTout] = useState(false);
+  const [uploadEnCoursCle, setUploadEnCoursCle] = useState<string | null>(null);
+  const inputsFichier = useRef<Record<string, HTMLInputElement | null>>({});
 
   async function sauvegarderChamp(cle: string, type: string) {
     setEnregistrementCle(cle);
@@ -66,6 +70,30 @@ export default function EditeurContenuClient({
     setValeurs((v) => ({ ...v, [champ.cle]: champ.defaut }));
   }
 
+  async function televerserImage(cle: string, fichier: File) {
+    setUploadEnCoursCle(cle);
+    try {
+      const base64 = await new Promise<string>((resolve, reject) => {
+        const lecteur = new FileReader();
+        lecteur.onload = () => resolve(lecteur.result as string);
+        lecteur.onerror = reject;
+        lecteur.readAsDataURL(fichier);
+      });
+      const res = await fetch('/api/admin/upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fichier: base64 }),
+      });
+      if (!res.ok) throw new Error();
+      const { url } = await res.json();
+      setValeurs((v) => ({ ...v, [cle]: url }));
+    } catch {
+      alert("Erreur lors de l'envoi de l'image.");
+    } finally {
+      setUploadEnCoursCle(null);
+    }
+  }
+
   return (
     <div className="admin-carte editeur-contenu">
       <div className="editeur-contenu__entete">
@@ -98,6 +126,43 @@ export default function EditeurContenuClient({
                 valeur={valeurs[champ.cle] ?? ''}
                 onChange={(html) => setValeurs((v) => ({ ...v, [champ.cle]: html }))}
               />
+            ) : champ.type === 'image' ? (
+              <div className="editeur-contenu__champ-image">
+                {valeurs[champ.cle] && (
+                  <div className="editeur-contenu__apercu-image">
+                    <Image src={valeurs[champ.cle]} alt="" width={160} height={110} style={{ objectFit: 'cover' }} />
+                  </div>
+                )}
+                <input
+                  ref={(el) => { inputsFichier.current[champ.cle] = el; }}
+                  type="file"
+                  accept="image/*"
+                  style={{ display: 'none' }}
+                  onChange={(e) => {
+                    const fichier = e.target.files?.[0];
+                    if (fichier) televerserImage(champ.cle, fichier);
+                  }}
+                />
+                <button
+                  type="button"
+                  className="btn"
+                  onClick={() => inputsFichier.current[champ.cle]?.click()}
+                  disabled={uploadEnCoursCle === champ.cle}
+                >
+                  {uploadEnCoursCle === champ.cle ? 'Envoi en cours…' : 'Changer l\u2019image'}
+                </button>
+              </div>
+            ) : champ.type === 'icone' ? (
+              <select
+                value={valeurs[champ.cle] ?? ''}
+                onChange={(e) => setValeurs((v) => ({ ...v, [champ.cle]: e.target.value }))}
+              >
+                {ICONES_DISPONIBLES.map((icone) => (
+                  <option key={icone} value={icone}>
+                    {icone}
+                  </option>
+                ))}
+              </select>
             ) : (
               <input
                 type="text"

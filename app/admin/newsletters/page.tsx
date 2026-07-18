@@ -18,9 +18,14 @@ export default async function PageAdminNewsletters() {
     <div className="admin-newsletters">
       <div className="admin-entete">
         <h1>Newsletters</h1>
-        <Link href="/admin/newsletters/nouvelle" className="btn btn-primaire">
-          + Rédiger une newsletter
-        </Link>
+        <div style={{ display: 'flex', gap: '0.6rem' }}>
+          <Link href="/admin/contenu?page=emails" className="btn">
+            ✉️ Modifier les e-mails automatiques
+          </Link>
+          <Link href="/admin/newsletters/nouvelle" className="btn btn-primaire">
+            + Rédiger une newsletter
+          </Link>
+        </div>
       </div>
 
       <div className="admin-newsletters__bandeau">

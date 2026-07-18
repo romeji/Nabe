@@ -307,8 +307,13 @@ enum TypeMouvement {
 
 model MouvementStock {
   id         String        @id @default(cuid())
-  produitId  String
-  produit    Produit       @relation(fields: [produitId], references: [id], onDelete: Cascade)
+  produitId  String?
+  // onDelete: SetNull -> mêmes garanties que pour les commandes : supprimer
+  // un bijou du catalogue ne supprime jamais son historique de mouvements
+  // de stock, seul le lien vers la fiche produit disparaît. produitNom est
+  // une copie figée du nom au moment du mouvement.
+  produit    Produit?      @relation(fields: [produitId], references: [id], onDelete: SetNull)
+  produitNom String // snapshot du nom au moment du mouvement
   type       TypeMouvement
   quantite   Int // positif ou négatif selon le type
   motif      String?

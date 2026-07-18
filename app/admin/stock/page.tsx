@@ -16,7 +16,6 @@ export default async function PageAdminStock() {
       orderBy: { nom: 'asc' },
     }),
     prisma.mouvementStock.findMany({
-      include: { produit: { select: { nom: true } } },
       orderBy: { createdAt: 'desc' },
       take: 100,
     }),
@@ -31,7 +30,7 @@ export default async function PageAdminStock() {
         produits={produits}
         mouvements={mouvements.map((m: any) => ({
           id: m.id,
-          produitNom: m.produit.nom,
+          produitNom: m.produitNom,
           type: m.type,
           quantite: m.quantite,
           motif: m.motif,

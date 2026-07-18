@@ -142,3 +142,51 @@
   color: var(--nabe-terracotta, #9f5434);
   font-weight: 600;
 }
+
+/* ── Export CSV livre des recettes ── */
+.export-ventes-csv {
+  margin-bottom: 1rem;
+}
+
+.export-ventes-csv__panneau {
+  margin-top: 0.8rem;
+  padding: 1.2rem;
+  background: var(--nabe-beige, #f1e0cb);
+  border-radius: var(--rayon-bordure);
+}
+
+.export-ventes-csv__raccourcis {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.export-ventes-csv__periode {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--nabe-beige-fonce, #e4dccf);
+}
+
+.export-ventes-csv__periode label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.8rem;
+  gap: 0.3rem;
+}
+
+.export-ventes-csv__aide {
+  font-size: 0.78rem;
+  color: var(--texte-secondaire);
+  margin: 0.8rem 0 0;
+}
+
+@media (max-width: 480px) {
+  .export-ventes-csv__periode {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

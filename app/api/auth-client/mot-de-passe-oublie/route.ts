@@ -3,6 +3,7 @@ import crypto from 'crypto';
 import { prisma } from '@/lib/prisma';
 import { verifierLimiteTaux, obtenirIp } from '@/lib/rate-limit';
 import { EMAIL_EXPEDITEUR, genererHtmlReinitialisationMotDePasse, resend } from '@/lib/resend';
+import { getContenuPage } from '@/lib/contenu';
 
 function hacherToken(token: string) {
   return crypto.createHash('sha256').update(token).digest('hex');
@@ -41,11 +42,12 @@ export async function POST(req: NextRequest) {
     const lien = `${urlBase}/reinitialiser-mot-de-passe?email=${encodeURIComponent(emailNormalise)}&token=${token}`;
 
     try {
+      const emailsContenu = await getContenuPage('emails');
       await resend.emails.send({
         from: EMAIL_EXPEDITEUR,
         to: emailNormalise,
-        subject: 'Reinitialiser votre mot de passe Nabe',
-        html: genererHtmlReinitialisationMotDePasse(client.nom?.split(' ')[0] || 'vous', lien),
+        subject: emailsContenu.mdp_reinit_sujet || 'Reinitialiser votre mot de passe Nabe',
+        html: genererHtmlReinitialisationMotDePasse(client.nom?.split(' ')[0] || 'vous', lien, emailsContenu.mdp_reinit_message),
       });
     } catch (err) {
       console.error('Erreur envoi email reinitialisation mot de passe :', err);

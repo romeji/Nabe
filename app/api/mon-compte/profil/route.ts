@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs';
 import { authClientOptions } from '@/lib/auth-client';
 import { prisma } from '@/lib/prisma';
 import { EMAIL_EXPEDITEUR, genererHtmlMotDePasseModifie, resend } from '@/lib/resend';
+import { getContenuPage } from '@/lib/contenu';
 
 export async function GET() {
   const session = await getServerSession(authClientOptions);
@@ -86,11 +87,12 @@ export async function PATCH(req: NextRequest) {
 
     if (motDePasseModifie && clientPourEmail?.email) {
       try {
+        const emailsContenu = await getContenuPage('emails');
         await resend.emails.send({
           from: EMAIL_EXPEDITEUR,
           to: clientPourEmail.email,
-          subject: 'Votre mot de passe Nabe a ete modifie',
-          html: genererHtmlMotDePasseModifie(clientPourEmail.nom?.split(' ')[0] || 'vous'),
+          subject: emailsContenu.mdp_modifie_sujet || 'Votre mot de passe Nabe a ete modifie',
+          html: genererHtmlMotDePasseModifie(clientPourEmail.nom?.split(' ')[0] || 'vous', emailsContenu.mdp_modifie_message),
         });
       } catch (err) {
         console.error('Erreur envoi email changement mot de passe (profil mis a jour) :', err);

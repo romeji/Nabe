@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth';
 import { authClientOptions } from '@/lib/auth-client';
 import { prisma } from '@/lib/prisma';
 import { resend, EMAIL_EXPEDITEUR, genererHtmlSuppressionCompte } from '@/lib/resend';
+import { getContenuPage } from '@/lib/contenu';
 
 /**
  * Suppression de compte à la demande du client.
@@ -38,11 +39,12 @@ export async function DELETE() {
   // On envoie l'e-mail de confirmation AVANT d'effacer l'adresse e-mail du client.
   if (client.email) {
     try {
+      const emailsContenu = await getContenuPage('emails');
       await resend.emails.send({
         from: EMAIL_EXPEDITEUR,
         to: client.email,
-        subject: 'Confirmation de suppression de votre compte Nabe',
-        html: genererHtmlSuppressionCompte(client.nom?.split(' ')[0] || 'vous'),
+        subject: emailsContenu.suppression_sujet || 'Confirmation de suppression de votre compte Nabe',
+        html: genererHtmlSuppressionCompte(client.nom?.split(' ')[0] || 'vous', emailsContenu.suppression_message),
       });
     } catch (err) {
       console.error('Erreur envoi email de suppression de compte (suppression effectuée quand même) :', err);

@@ -104,3 +104,20 @@
   margin: 0.5rem 0;
   display: block;
 }
+
+/* ── Champs image/icône dans l'éditeur de contenu ── */
+.editeur-contenu__champ-image {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.editeur-contenu__apercu-image {
+  width: 160px;
+  height: 110px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--nabe-beige, #f1e0cb);
+  flex-shrink: 0;
+}

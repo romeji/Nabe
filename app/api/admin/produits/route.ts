@@ -132,6 +132,7 @@ export async function POST(req: NextRequest) {
       await prisma.mouvementStock.create({
         data: {
           produitId: produit.id,
+          produitNom: produit.nom,
           type: 'ENTREE',
           quantite: stockTotalCalcule,
           motif: 'Stock initial à la création',

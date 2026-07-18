@@ -9,7 +9,6 @@ export async function GET(req: NextRequest) {
   }
 
   const mouvements = await prisma.mouvementStock.findMany({
-    include: { produit: { select: { nom: true, slug: true } } },
     orderBy: { createdAt: 'desc' },
     take: 200,
   });
@@ -30,11 +29,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Données invalides' }, { status: 400 });
     }
 
+    const produit = await prisma.produit.findUnique({ where: { id: produitId }, select: { nom: true } });
+    if (!produit) {
+      return NextResponse.json({ error: 'Produit introuvable' }, { status: 404 });
+    }
+
     const quantiteSignee = type === 'SORTIE' ? -Math.abs(quantite) : Math.abs(quantite);
 
     const [mouvement] = await prisma.$transaction([
       prisma.mouvementStock.create({
-        data: { produitId, type, quantite: quantiteSignee, motif },
+        data: { produitId, produitNom: produit.nom, type, quantite: quantiteSignee, motif },
       }),
       prisma.produit.update({
         where: { id: produitId },

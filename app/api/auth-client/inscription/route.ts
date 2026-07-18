@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 import { resend, EMAIL_EXPEDITEUR, genererHtmlBienvenueCompte } from '@/lib/resend';
+import { getContenuPage } from '@/lib/contenu';
 
 const schema = z.object({
   prenom: z.string().min(1, 'Le prénom est requis'),
@@ -38,11 +39,12 @@ export async function POST(req: NextRequest) {
     });
 
     try {
+      const emailsContenu = await getContenuPage('emails');
       await resend.emails.send({
         from: EMAIL_EXPEDITEUR,
         to: client.email,
-        subject: 'Bienvenue chez Nabe',
-        html: genererHtmlBienvenueCompte(client.nom?.split(' ')[0] || 'vous'),
+        subject: emailsContenu.inscription_sujet || 'Bienvenue chez Nabe',
+        html: genererHtmlBienvenueCompte(client.nom?.split(' ')[0] || 'vous', emailsContenu.inscription_message),
       });
     } catch (err) {
       console.error('Erreur envoi email de bienvenue (compte créé quand même) :', err);

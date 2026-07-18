@@ -61,6 +61,7 @@ export async function PATCH(req: NextRequest, { params: paramsPromise }: { param
       await prisma.mouvementStock.create({
         data: {
           produitId: params.id,
+          produitNom: produitActuel.nom,
           type: 'AJUSTEMENT',
           quantite: difference,
           motif: 'Ajustement manuel depuis le backoffice',

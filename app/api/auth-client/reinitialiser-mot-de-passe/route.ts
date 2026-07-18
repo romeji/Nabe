@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs';
 import { prisma } from '@/lib/prisma';
 import { verifierLimiteTaux, obtenirIp } from '@/lib/rate-limit';
 import { EMAIL_EXPEDITEUR, genererHtmlMotDePasseModifie, resend } from '@/lib/resend';
+import { getContenuPage } from '@/lib/contenu';
 
 function hacherToken(token: string) {
   return crypto.createHash('sha256').update(token).digest('hex');
@@ -53,11 +54,12 @@ export async function POST(req: NextRequest) {
     await prisma.verificationToken.delete({ where: { token: tokenHash } });
 
     try {
+      const emailsContenu = await getContenuPage('emails');
       await resend.emails.send({
         from: EMAIL_EXPEDITEUR,
         to: client.email,
-        subject: 'Votre mot de passe Nabe a ete modifie',
-        html: genererHtmlMotDePasseModifie(client.nom?.split(' ')[0] || 'vous'),
+        subject: emailsContenu.mdp_modifie_sujet || 'Votre mot de passe Nabe a ete modifie',
+        html: genererHtmlMotDePasseModifie(client.nom?.split(' ')[0] || 'vous', emailsContenu.mdp_modifie_message),
       });
     } catch (err) {
       console.error('Erreur envoi email confirmation reset mot de passe :', err);

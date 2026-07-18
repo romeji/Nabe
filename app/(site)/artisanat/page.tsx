@@ -1,82 +1,59 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { getContenuPage } from '@/lib/contenu';
+import TexteRiche from '@/components/site/TexteRiche';
 import '../pages-marque.css';
 
 export const metadata = { title: 'Artisanat' };
 
-const etapes = [
-  {
-    image: '/images/croquis.jpg',
-    titre: 'Inspiration',
-    texte: 'Tout commence par une idée, une émotion, une histoire. Nous imaginons des bijoux intemporels et élégants.',
-  },
-  {
-    image: '/images/savoirfaire-creation.jpg',
-    titre: 'Croquis',
-    texte: 'Nos créations prennent vie sur papier, où chaque détail est soigneusement pensé.',
-  },
-  {
-    image: '/images/signature-bague.jpg',
-    titre: 'Sélection des pierres',
-    texte: 'Nous sélectionnons avec soin des pierres naturelles et perles de haute qualité.',
-  },
-  {
-    image: '/images/atelier-mains.jpg',
-    titre: 'Fabrication',
-    texte: 'Chaque pièce est façonnée à la main par nos artisans dans notre atelier.',
-  },
-  {
-    image: '/images/savoirfaire-fabrication.jpg',
-    titre: 'Polissage',
-    texte: 'Nos bijoux sont polis avec soin pour révéler tout leur éclat et leur finesse.',
-  },
-  {
-    image: '/images/bague-atelier.jpg',
-    titre: 'Contrôle qualité',
-    texte: 'Chaque bijou est vérifié minutieusement avant de vous être expédié.',
-  },
-];
+export default async function PageArtisanat() {
+  const c = await getContenuPage('artisanat');
 
-const materiaux = [
-  { image: '/images/savoirfaire-fabrication.jpg', titre: 'Argent 925', texte: 'Un métal précieux résistant et lumineux.' },
-  { image: '/images/signature-bague.jpg', titre: 'Or 18 carats', texte: 'Un or de qualité pour des bijoux durables.' },
-  { image: '/images/savoirfaire-inspiration.jpg', titre: 'Pierres naturelles', texte: 'Sélectionnées pour leur beauté et leur éclat.' },
-  { image: '/images/main-bague.jpg', titre: 'Perles', texte: 'Perles d’eau douce aux reflets uniques.' },
-];
+  const etapes = [
+    { image: c.etape1_image, titre: c.etape1_titre, texte: c.etape1_texte },
+    { image: c.etape2_image, titre: c.etape2_titre, texte: c.etape2_texte },
+    { image: c.etape3_image, titre: c.etape3_titre, texte: c.etape3_texte },
+    { image: c.etape4_image, titre: c.etape4_titre, texte: c.etape4_texte },
+    { image: c.etape5_image, titre: c.etape5_titre, texte: c.etape5_texte },
+    { image: c.etape6_image, titre: c.etape6_titre, texte: c.etape6_texte },
+  ];
 
-const qualites = [
-  { icone: 'fleur', titre: 'Fait main', texte: 'Chaque bijou est réalisé à la main dans notre atelier.' },
-  { icone: 'balance', titre: 'Durable', texte: 'Nous utilisons des matériaux de qualité et responsables.' },
-  { icone: 'bouclier', titre: 'Responsable', texte: 'Nous privilégions une production raisonnée et éthique.' },
-  { icone: 'soleil', titre: 'Contrôlé', texte: 'Chaque pièce est contrôlée avec soin avant expédition.' },
-];
+  const materiaux = [
+    { image: c.materiau1_image, titre: c.materiau1_titre, texte: c.materiau1_texte },
+    { image: c.materiau2_image, titre: c.materiau2_titre, texte: c.materiau2_texte },
+    { image: c.materiau3_image, titre: c.materiau3_titre, texte: c.materiau3_texte },
+    { image: c.materiau4_image, titre: c.materiau4_titre, texte: c.materiau4_texte },
+  ];
 
-export default function PageArtisanat() {
+  const qualites = [
+    { icone: c.qualite1_icone, titre: c.qualite1_titre, texte: c.qualite1_texte },
+    { icone: c.qualite2_icone, titre: c.qualite2_titre, texte: c.qualite2_texte },
+    { icone: c.qualite3_icone, titre: c.qualite3_titre, texte: c.qualite3_texte },
+    { icone: c.qualite4_icone, titre: c.qualite4_titre, texte: c.qualite4_texte },
+  ];
+
   return (
     <main className="page-marque page-marque--artisanat">
-      <section className="marque-hero" style={{ backgroundImage: "url('/images/atelier-mains.jpg')" }}>
+      <section className="marque-hero" style={{ backgroundImage: `url('${c.hero_image}')` }}>
         <div className="marque-hero__ombre" />
         <div className="marque-hero__contenu">
-          <h1>L’art de créer avec passion.</h1>
-          <p>
-            Chaque bijou est le fruit d’un savoir-faire artisanal et d’une attention
-            méticuleuse à chaque étape.
-          </p>
+          <h1>{c.hero_titre}</h1>
+          <TexteRiche html={c.hero_texte} />
         </div>
       </section>
 
       <section className="artisanat-etapes marque-section">
-        <span className="marque-label">Les étapes de fabrication</span>
+        <span className="marque-label">{c.etapes_label}</span>
         <div className="artisanat-etapes__liste">
           {etapes.map((etape: any, index: number) => (
-            <article className="artisanat-etape" key={etape.titre}>
+            <article className="artisanat-etape" key={index}>
               <span className="artisanat-etape__numero">{String(index + 1).padStart(2, '0')}</span>
               <div className="artisanat-etape__image">
                 <Image src={etape.image} alt={etape.titre} width={320} height={220} />
               </div>
               <div className="artisanat-etape__texte">
                 <h2>{etape.titre}</h2>
-                <p>{etape.texte}</p>
+                <TexteRiche html={etape.texte} as="div" />
               </div>
             </article>
           ))}
@@ -85,10 +62,10 @@ export default function PageArtisanat() {
 
       <section className="artisanat-materiaux">
         <div className="marque-section">
-          <span className="marque-label">Des matériaux d’exception</span>
+          <span className="marque-label">{c.materiaux_label}</span>
           <div className="artisanat-materiaux__grille">
-            {materiaux.map((matiere: any) => (
-              <article className="artisanat-matiere" key={matiere.titre}>
+            {materiaux.map((matiere: any, index: number) => (
+              <article className="artisanat-matiere" key={index}>
                 <div>
                   <Image src={matiere.image} alt={matiere.titre} width={180} height={140} />
                 </div>
@@ -101,10 +78,10 @@ export default function PageArtisanat() {
       </section>
 
       <section className="artisanat-qualites">
-        <span className="marque-label">Nos engagements qualité</span>
+        <span className="marque-label">{c.qualites_label}</span>
         <div className="artisanat-qualites__grille">
-          {qualites.map((qualite: any) => (
-            <article key={qualite.titre}>
+          {qualites.map((qualite: any, index: number) => (
+            <article key={index}>
               <span className={`marque-icone marque-icone--${qualite.icone}`} aria-hidden="true" />
               <h2>{qualite.titre}</h2>
               <p>{qualite.texte}</p>
@@ -113,11 +90,11 @@ export default function PageArtisanat() {
         </div>
       </section>
 
-      <section className="marque-cta marque-cta--atelier" style={{ backgroundImage: "url('/images/atelier-portrait.jpg')" }}>
+      <section className="marque-cta marque-cta--atelier" style={{ backgroundImage: `url('${c.cta_image}')` }}>
         <div>
-          <h2>Chaque création est réalisée dans notre atelier.</h2>
-          <p>Aucune production industrielle.</p>
-          <Link href="/mon-histoire" className="marque-bouton">Découvrir notre histoire</Link>
+          <h2>{c.cta_titre}</h2>
+          <p>{c.cta_texte}</p>
+          <Link href="/mon-histoire" className="marque-bouton">{c.cta_bouton}</Link>
         </div>
       </section>
     </main>

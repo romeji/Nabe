@@ -3,6 +3,7 @@ import { stripe } from '@/lib/stripe';
 import { prisma } from '@/lib/prisma';
 import { genererNumeroCommande } from '@/lib/utils';
 import { resend, EMAIL_EXPEDITEUR, genererHtmlConfirmationCommande } from '@/lib/resend';
+import { getContenuPage } from '@/lib/contenu';
 import { envoyerEmailFiable } from '@/lib/email-fiable';
 import Stripe from 'stripe';
 
@@ -74,6 +75,7 @@ async function decrementerStockEtJournaliser(articlesMeta: ArticleMeta[], numero
     await prisma.mouvementStock.create({
       data: {
         produitId: produit.id,
+        produitNom: produit.nom,
         type: 'VENTE',
         quantite: -a.q,
         motif: `Commande ${numeroCommande}`,
@@ -113,12 +115,13 @@ async function envoyerEmailConfirmation(commandeId: string) {
     if (!commande || !commande.clientEmail) return;
 
     const prenom = commande.clientNom.split(' ')[0] || 'vous';
+    const emailsContenu = await getContenuPage('emails');
     // Utilise la file d'attente avec retry automatique : un e-mail de
     // confirmation de commande ne doit jamais disparaître silencieusement
     // si Resend est temporairement indisponible.
     await envoyerEmailFiable({
       to: commande.clientEmail,
-      subject: `Commande ${commande.numero} confirmée — Nabe`,
+      subject: (emailsContenu.commande_confirmee_sujet || 'Commande {numero} confirmée — Nabe').replace('{numero}', commande.numero),
       html: genererHtmlConfirmationCommande({
         prenom,
         numero: commande.numero,
@@ -135,6 +138,7 @@ async function envoyerEmailConfirmation(commandeId: string) {
         adresseLivraison: commande.adresseLivraison || undefined,
         ville: commande.ville || undefined,
         codePostal: commande.codePostal || undefined,
+        messagePersonnalise: emailsContenu.commande_confirmee_message,
       }),
     });
 

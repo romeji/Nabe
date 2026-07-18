@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/prisma';
 import { stripe } from '@/lib/stripe';
 import { resend, EMAIL_EXPEDITEUR, genererHtmlAnnulationCommande } from '@/lib/resend';
+import { getContenuPage } from '@/lib/contenu';
 
 /**
  * Statuts à partir desquels un client peut encore annuler lui-même sa
@@ -86,6 +87,7 @@ export async function annulerCommande(commandeId: string): Promise<{ ok: true } 
     await prisma.mouvementStock.create({
       data: {
         produitId: produit.id,
+        produitNom: produit.nom,
         type: 'ENTREE',
         quantite: ligne.quantite,
         motif: `Annulation commande ${commande.numero}`,
@@ -102,15 +104,18 @@ export async function annulerCommande(commandeId: string): Promise<{ ok: true } 
 
   if (commande.clientEmail) {
     try {
+      const emailsContenu = await getContenuPage('emails');
+      const sujetDefaut = `Commande {numero} ${rembourse ? 'remboursée' : 'annulée'} — Nabe`;
       await resend.emails.send({
         from: EMAIL_EXPEDITEUR,
         to: commande.clientEmail,
-        subject: `Commande ${commande.numero} ${rembourse ? 'remboursée' : 'annulée'} — Nabe`,
+        subject: (emailsContenu.commande_annulee_sujet || sujetDefaut).replace('{numero}', commande.numero),
         html: genererHtmlAnnulationCommande({
           prenom: commande.clientNom.split(' ')[0] || 'vous',
           numero: commande.numero,
           total: Number(commande.total),
           rembourse,
+          messagePersonnalise: emailsContenu.commande_annulee_message,
         }),
       });
     } catch (err) {

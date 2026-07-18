@@ -6,6 +6,7 @@ import { prisma } from '@/lib/prisma';
 import { formaterPrix } from '@/lib/utils';
 import StatutCommandeSelect from '@/components/admin/StatutCommandeSelect';
 import BoutonRetroImages from '@/components/admin/BoutonRetroImages';
+import ExportVentesCsv from '@/components/admin/ExportVentesCsv';
 import './commandes.css';
 
 const PAR_PAGE = 50;
@@ -39,6 +40,7 @@ export default async function PageAdminCommandes({
         <h1>Ventes ({total})</h1>
       </div>
 
+      <ExportVentesCsv />
       <BoutonRetroImages />
 
       <div className="admin-table-scroll"><table className="admin-table">

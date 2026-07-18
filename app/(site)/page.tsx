@@ -91,7 +91,7 @@ export default async function PageAccueil() {
       {/* HERO */}
       <section className="accueil-hero">
         <Image
-          src="/images/hero-mains.jpg"
+          src={contenu.hero_image}
           alt="Bijoux Nabe façonnés à la main"
           fill
           priority
@@ -195,7 +195,7 @@ export default async function PageAccueil() {
         <div className="accueil-histoire__carte">
           <div className="accueil-histoire__image">
             <Image
-              src="/images/atelier-mains.jpg"
+              src={contenu.histoire_image}
               alt="Artisan façonnant un bijou"
               width={560}
               height={460}
