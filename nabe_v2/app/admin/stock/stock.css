@@ -1,0 +1,17 @@
+.admin-stock__grille {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: var(--espace-lg);
+  align-items: start;
+}
+
+.admin-stock__grille h2 {
+  font-size: 1.1rem;
+  margin-bottom: var(--espace-sm);
+}
+
+@media (max-width: 1000px) {
+  .admin-stock__grille {
+    grid-template-columns: 1fr;
+  }
+}

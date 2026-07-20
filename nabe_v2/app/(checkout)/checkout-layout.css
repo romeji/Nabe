@@ -1,0 +1,19 @@
+.checkout-layout {
+  min-height: 100vh;
+  background: #fff;
+}
+
+.checkout-layout__entete {
+  display: flex;
+  justify-content: center;
+  padding: 1.5rem 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+.checkout-layout__logo {
+  font-family: var(--font-titres, serif);
+  font-size: 1.8rem;
+  color: var(--nabe-encre, #2a1c14);
+  text-decoration: none;
+  letter-spacing: 0.02em;
+}

@@ -1,0 +1,111 @@
+.reglages-client {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espace-lg);
+  max-width: 720px;
+}
+
+.reglages-client__section h2 {
+  font-size: 1.1rem;
+  margin-bottom: var(--espace-md);
+}
+
+.reglages-client__section > label {
+  display: block;
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--texte-secondaire);
+  margin-bottom: 0.4rem;
+}
+
+.reglages-client__section > select {
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--nabe-argile);
+  border-radius: 999px;
+  background-color: var(--nabe-blanc);
+}
+
+.reglages-client__toggle {
+  display: flex;
+  gap: var(--espace-sm);
+  align-items: flex-start;
+  padding: var(--espace-sm) 0;
+  border-bottom: 1px solid var(--nabe-beige);
+  cursor: pointer;
+}
+
+.reglages-client__toggle:last-of-type {
+  border-bottom: none;
+}
+
+.reglages-client__toggle input {
+  margin-top: 0.3rem;
+  accent-color: var(--nabe-terracotta);
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.reglages-client__toggle strong {
+  display: block;
+  font-size: 0.95rem;
+  margin-bottom: 0.2rem;
+}
+
+.reglages-client__toggle p {
+  font-size: 0.85rem;
+  color: var(--texte-secondaire);
+}
+
+.reglages-client__sous-champ {
+  margin: 0 0 var(--espace-sm) 1.8rem;
+  padding: var(--espace-sm);
+  background-color: var(--nabe-creme);
+  border-radius: var(--rayon-bordure);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.reglages-client__sous-champ label {
+  font-size: 0.78rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--texte-secondaire);
+}
+
+.reglages-client__sous-champ input,
+.reglages-client__sous-champ select,
+.reglages-client__sous-champ textarea {
+  padding: 0.6rem;
+  border: 1px solid var(--nabe-beige-fonce);
+  border-radius: var(--rayon-bordure);
+}
+
+.reglages-client__categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.reglages-client__categorie-bouton {
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--nabe-beige-fonce);
+  border-radius: 20px;
+  font-size: 0.85rem;
+  background-color: var(--nabe-blanc);
+}
+
+.reglages-client__categorie-bouton.actif {
+  background-color: var(--nabe-terracotta);
+  color: var(--texte-clair);
+  border-color: var(--nabe-terracotta);
+}
+
+.reglages-client__actions {
+  position: sticky;
+  bottom: 0;
+  background-color: var(--nabe-creme);
+  padding: var(--espace-sm) 0;
+}

@@ -1,0 +1,711 @@
+.produit-fil-ariane {
+  padding: calc(var(--espace-md) + 5.5rem) var(--espace-md) 0;
+  font-size: 0.8rem;
+  color: var(--texte-secondaire);
+}
+
+.produit-fil-ariane a {
+  color: var(--texte-secondaire);
+}
+
+.produit-fil-ariane a:hover {
+  color: var(--nabe-terracotta);
+}
+
+/* ── Layout principal produit ── */
+.produit-principal {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: var(--espace-2xl);
+  padding: var(--espace-lg) var(--espace-md) var(--espace-xl);
+  max-width: 1100px;
+  margin: 0 auto;
+  align-items: start;
+}
+
+/* La colonne droite (infos) a un ascenseur invisible — max-height fixée par JS via ref */
+.produit-infos--scroll {
+  overflow-y: auto;
+  padding-right: 4px;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+.produit-infos--scroll::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
+.produit-galerie {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--espace-sm);
+}
+
+.produit-galerie--bas {
+  flex-direction: column;
+}
+
+.produit-galerie--bas .produit-galerie__vignettes {
+  flex-direction: row;
+  order: 2;
+}
+
+.produit-galerie--bas .produit-galerie__principale {
+  order: 1;
+}
+
+.produit-galerie__vignettes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espace-xs);
+}
+
+.produit-galerie__vignette {
+  width: 64px;
+  height: 64px;
+  border-radius: 14px;
+  overflow: hidden;
+  background-color: var(--nabe-sable);
+  border: 2px solid transparent;
+  flex-shrink: 0;
+}
+
+.produit-galerie__vignette.actif {
+  border-color: var(--nabe-terracotta);
+}
+
+.produit-galerie__vignette img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.produit-galerie__principale {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  aspect-ratio: 1 / 1;
+  background-color: var(--nabe-sable);
+  border-radius: 32px 32px 14px 14px;
+  overflow: hidden;
+  box-shadow: var(--ombre-moyenne);
+}
+
+.produit-galerie__principale img {
+  border-radius: inherit;
+  object-fit: cover;
+}
+
+.produit-galerie__placeholder {
+  width: 100%;
+  height: 100%;
+  background-color: var(--nabe-sable-fonce);
+}
+
+.produit-infos__entete {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--espace-sm);
+}
+
+.produit-infos__collection {
+  display: inline-block;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--nabe-terracotta);
+  margin-bottom: 0.3rem;
+}
+
+.produit-infos h1 {
+  font-size: 2.4rem;
+  margin-bottom: var(--espace-xs);
+}
+
+.produit-infos__coeur {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+  margin-top: 0.3rem;
+}
+
+.produit-infos__matiere-pierre {
+  font-size: 0.92rem;
+  color: var(--texte-secondaire);
+  margin-bottom: var(--espace-sm);
+}
+
+/* Référence + lien Détails produits, sur une même ligne */
+.produit-infos__reference-ligne {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: var(--espace-md);
+}
+
+.produit-infos__reference {
+  font-size: 0.8rem;
+  color: var(--texte-secondaire);
+  letter-spacing: 0.03em;
+}
+
+.produit-infos__lien-details {
+  display: inline-block;
+  font-size: 0.85rem;
+  color: var(--texte-secondaire);
+  text-decoration: underline;
+}
+
+.produit-infos__lien-details:hover {
+  color: var(--nabe-terracotta);
+}
+
+.produit-infos__prix {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--nabe-terracotta);
+  margin-bottom: var(--espace-lg);
+  padding-bottom: var(--espace-md);
+  border-bottom: 1px solid var(--nabe-argile);
+}
+
+.produit-infos__prix span:not(.produit-infos__badge-promo):not(.produit-infos__prix-barre):not(.produit-infos__prix-promo) {
+  font-size: 0.78rem;
+  font-weight: 400;
+  color: var(--texte-secondaire);
+  margin-left: 0.4rem;
+}
+
+.produit-infos__prix-barre {
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--texte-secondaire);
+  text-decoration: line-through;
+}
+
+.produit-infos__prix-promo {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--nabe-terracotta);
+}
+
+.produit-infos__prix .produit-infos__badge-promo {
+  display: inline-block;
+  background: var(--nabe-terracotta);
+  color: #fff !important;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  margin-left: 0.3rem;
+  vertical-align: middle;
+}
+
+.produit-infos__champ {
+  margin-bottom: var(--espace-md);
+}
+
+.produit-infos__label-taille {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.produit-infos__champ label {
+  display: block;
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 0.6rem;
+  color: var(--texte-secondaire);
+}
+
+.produit-infos__precommande {
+  font-size: 0.8rem;
+  color: var(--texte-secondaire);
+  margin-top: 0.6rem;
+}
+
+.produit-infos__precommande a {
+  color: var(--nabe-terracotta);
+  text-decoration: underline;
+}
+
+.produit-infos__erreur-taille {
+  font-size: 0.8rem;
+  color: var(--nabe-terracotta-fonce);
+  margin-top: 0.4rem;
+}
+
+.produit-infos__stock-faible {
+  font-size: 0.8rem;
+  color: var(--nabe-terracotta-fonce);
+  font-weight: 600;
+  margin-top: 0.4rem;
+}
+
+/* Sélecteur de taille en boutons, façon VCA, couleur "rose"(argile) du site */
+.produit-infos__tailles-boutons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.produit-infos__taille-bouton {
+  min-width: 48px;
+  height: 48px;
+  padding: 0 0.5rem;
+  border: 1px solid var(--nabe-argile);
+  border-radius: 8px;
+  background: var(--nabe-blanc);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--nabe-encre);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.produit-infos__taille-bouton:hover {
+  border-color: var(--nabe-argile);
+  background: var(--nabe-argile);
+}
+
+.produit-infos__taille-bouton--actif {
+  background: var(--nabe-argile);
+  border-color: var(--nabe-argile);
+  color: var(--nabe-blanc);
+}
+
+.guide-tailles__lien {
+  font-size: 0.82rem;
+  color: var(--texte-secondaire);
+  text-decoration: underline;
+  cursor: pointer;
+  margin-left: 0.4rem;
+}
+
+.guide-tailles__lien:hover { color: var(--nabe-terracotta); }
+
+/* Bouton Ajouter au panier — terracotta foncé, pleine largeur, style VCA */
+.produit-infos__ajouter {
+  width: 100%;
+  padding: 1.1rem;
+  border-radius: 999px;
+  background: var(--nabe-terracotta-fonce, #7c4027);
+  color: #ffffff;
+  border: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  margin-bottom: var(--espace-sm);
+}
+
+.produit-infos__ajouter:hover:not(:disabled) {
+  background: var(--nabe-terracotta, #9f5434);
+}
+
+.produit-infos__ajouter:disabled {
+  background: #c4b5a8;
+  color: #f5f0ea;
+  cursor: not-allowed;
+}
+
+.produit-infos__retours {
+  text-align: center;
+  font-size: 0.82rem;
+  color: var(--texte-secondaire);
+  margin-bottom: var(--espace-md);
+}
+
+/* Réassurance (fabrication / livraison / paiement) */
+.reassurance-produit {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--espace-sm);
+  margin: var(--espace-lg) auto;
+  padding: var(--espace-md) 0;
+  border-top: 1px solid var(--nabe-beige-fonce);
+  border-bottom: 1px solid var(--nabe-beige-fonce);
+  max-width: 900px;
+}
+
+.reassurance-produit__item {
+  text-align: center;
+}
+
+.reassurance-produit__item span {
+  font-size: 1.2rem;
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+.reassurance-produit__item p {
+  font-size: 0.72rem;
+  color: var(--texte-secondaire);
+}
+
+/* Accordéon produit (description / satisfait ou remboursé) */
+.accordeon-produit__item {
+  border-bottom: 1px solid var(--nabe-beige-fonce);
+}
+
+.accordeon-produit__entete {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--espace-sm) 0;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.accordeon-produit__entete span {
+  color: var(--nabe-terracotta);
+  font-size: 1.1rem;
+}
+
+.accordeon-produit__contenu {
+  padding-bottom: var(--espace-md);
+  color: var(--texte-secondaire);
+  font-size: 0.9rem;
+}
+
+.accordeon-produit__contenu h4 {
+  font-size: 0.95rem;
+  margin-bottom: 0.3rem;
+  color: var(--texte-principal);
+}
+
+.composer-avec {
+  margin-top: var(--espace-lg);
+  padding-top: var(--espace-md);
+  border-top: 1px solid var(--nabe-argile);
+}
+
+.composer-avec h3 {
+  font-size: 1.05rem;
+  margin-bottom: var(--espace-sm);
+}
+
+.composer-avec__grille {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--espace-sm);
+}
+
+.composer-avec__carte {
+  display: flex;
+  align-items: center;
+  gap: var(--espace-sm);
+  padding: 0.6rem;
+  border-radius: 16px;
+  background-color: var(--nabe-creme);
+  transition: var(--transition-douce);
+}
+
+.composer-avec__carte:hover {
+  background-color: var(--nabe-sable);
+}
+
+.composer-avec__carte img,
+.composer-avec__placeholder {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 12px;
+  background-color: var(--nabe-sable);
+  flex-shrink: 0;
+}
+
+.composer-avec__image-conteneur {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.composer-avec__badge-promo {
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  background: var(--nabe-terracotta-fonce, #7c4027);
+  color: #fff;
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 0.1rem 0.35rem;
+  border-radius: 999px;
+  z-index: 2;
+}
+
+.composer-avec__carte span {
+  display: block;
+  font-size: 0.85rem;
+}
+
+.composer-avec__carte strong {
+  font-size: 0.85rem;
+  color: var(--nabe-terracotta);
+}
+
+.composer-avec__prix--promo {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+}
+
+.composer-avec__prix-barre {
+  font-weight: 400;
+  font-size: 0.78rem;
+  color: var(--texte-secondaire);
+  text-decoration: line-through;
+}
+
+.composer-avec__prix-reduit {
+  font-weight: 700;
+  color: var(--nabe-terracotta, #9f5434);
+}
+
+.bandeau-reassurance {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  max-width: var(--largeur-max);
+  margin: var(--espace-xl) auto var(--espace-2xl);
+  padding: 0 var(--espace-md);
+  border-top: none;
+}
+
+.bandeau-reassurance__item {
+  text-align: center;
+  padding: 1.35rem 1.15rem;
+  color: var(--texte-clair);
+  background: var(--nabe-argile);
+  position: relative;
+}
+
+.bandeau-reassurance__item:first-child {
+  border-radius: 18px 0 0 18px;
+}
+
+.bandeau-reassurance__item:last-child {
+  border-radius: 0 18px 18px 0;
+}
+
+.bandeau-reassurance__item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 18%;
+  right: 0;
+  width: 1px;
+  height: 64%;
+  background: rgba(255, 255, 255, 0.42);
+}
+
+.bandeau-reassurance__item svg {
+  color: var(--texte-clair);
+  margin: 0 auto var(--espace-sm);
+}
+
+.bandeau-reassurance__item h4 {
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-family: var(--font-texte);
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+  color: var(--texte-clair);
+}
+
+.bandeau-reassurance__item p {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.86);
+}
+
+.bandeau-reassurance__item a {
+  text-decoration: underline;
+  color: var(--texte-clair);
+}
+
+@media (max-width: 900px) {
+  .bandeau-reassurance {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .bandeau-reassurance__item:first-child {
+    border-radius: 18px 0 0 0;
+  }
+
+  .bandeau-reassurance__item:nth-child(2) {
+    border-radius: 0 18px 0 0;
+  }
+
+  .bandeau-reassurance__item:nth-child(3) {
+    border-radius: 0 0 0 18px;
+  }
+
+  .bandeau-reassurance__item:last-child {
+    border-radius: 0 0 18px 0;
+  }
+
+  .bandeau-reassurance__item:nth-child(2)::after {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .bandeau-reassurance {
+    grid-template-columns: 1fr;
+  }
+
+  .bandeau-reassurance__item,
+  .bandeau-reassurance__item:first-child,
+  .bandeau-reassurance__item:nth-child(2),
+  .bandeau-reassurance__item:nth-child(3),
+  .bandeau-reassurance__item:last-child {
+    border-radius: 0;
+  }
+
+  .bandeau-reassurance__item:first-child {
+    border-radius: 18px 18px 0 0;
+  }
+
+  .bandeau-reassurance__item:last-child {
+    border-radius: 0 0 18px 18px;
+  }
+
+  .bandeau-reassurance__item:not(:last-child)::after {
+    display: block;
+    top: auto;
+    bottom: 0;
+    left: 12%;
+    width: 76%;
+    height: 1px;
+  }
+}
+
+.produit-suggestions {
+  padding-top: var(--espace-xl);
+  padding-bottom: var(--espace-2xl);
+  border-top: 1px solid var(--nabe-argile);
+  text-align: center;
+}
+
+.produit-suggestions h2 {
+  font-size: 1.8rem;
+  margin-bottom: var(--espace-xl);
+  font-family: var(--font-titres);
+  letter-spacing: 0.04em;
+}
+
+.produit-suggestions__grille {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 190px));
+  justify-content: center;
+  gap: var(--espace-md);
+}
+
+.produit-suggestions__image-conteneur {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 24px 24px 8px 8px;
+  margin-bottom: var(--espace-xs);
+  box-shadow: var(--ombre-douce);
+  background-color: var(--nabe-sable);
+}
+
+.produit-suggestions__carte img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.produit-suggestions__placeholder {
+  width: 100%;
+  height: 100%;
+  background-color: var(--nabe-sable);
+}
+
+.produit-suggestions__badge-promo {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: var(--nabe-terracotta-fonce, #7c4027);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  z-index: 2;
+}
+
+.produit-suggestions__carte p {
+  font-size: 0.9rem;
+  text-align: center;
+  margin-bottom: 0.2rem;
+}
+
+.produit-suggestions__carte span {
+  display: block;
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.produit-suggestions__prix--promo {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+.produit-suggestions__prix-barre {
+  font-weight: 400;
+  font-size: 0.78rem;
+  color: var(--texte-secondaire);
+  text-decoration: line-through;
+}
+
+.produit-suggestions__prix-reduit {
+  font-weight: 700;
+  color: var(--nabe-terracotta, #9f5434);
+}
+
+@media (max-width: 900px) {
+  .produit-principal {
+    grid-template-columns: 1fr;
+  }
+  .produit-suggestions__grille {
+    grid-template-columns: repeat(2, minmax(0, 160px));
+  }
+}
+
+@media (max-width: 480px) {
+  .produit-galerie {
+    flex-direction: column;
+  }
+  /* Image principale toujours en haut, vignettes toujours en dessous,
+     quelle que soit la position choisie dans l'admin (gauche/bas) : sur
+     mobile il n'y a qu'une seule colonne possible, donc on force un ordre
+     explicite au lieu de dépendre de column-reverse (qui, combiné à
+     l'"order" défini par .produit-galerie--bas, inversait le résultat et
+     affichait les vignettes AU-DESSUS de la photo au lieu d'en dessous). */
+  .produit-galerie__principale {
+    order: 1;
+  }
+  .produit-galerie__vignettes {
+    order: 2;
+    flex-direction: row;
+  }
+}
+
+.produit-infos__taille-bouton--epuise {
+  opacity: 0.35;
+  text-decoration: line-through;
+  cursor: not-allowed;
+}
+.produit-infos__taille-bouton--epuise:hover {
+  border-color: var(--nabe-argile);
+  background: var(--nabe-blanc);
+}

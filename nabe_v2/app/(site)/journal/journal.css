@@ -1,0 +1,25 @@
+.page-journal {
+  padding: calc(var(--espace-2xl) + 5.5rem) var(--espace-md) var(--espace-2xl);
+  min-height: 60vh;
+}
+
+.journal-hero {
+  text-align: center;
+  margin-bottom: var(--espace-xl);
+}
+
+.journal-hero h1 {
+  font-size: 2.4rem;
+  margin-bottom: var(--espace-xs);
+}
+
+.journal-hero p {
+  color: var(--texte-secondaire);
+}
+
+.journal-vide {
+  text-align: center;
+  color: var(--texte-secondaire);
+  font-style: italic;
+  padding: var(--espace-xl) 0;
+}

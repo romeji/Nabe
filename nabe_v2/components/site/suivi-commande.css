@@ -1,0 +1,225 @@
+.suivi-commande {
+  background: #fff;
+  border: 1px solid var(--nabe-beige-fonce, #e4dccf);
+  border-radius: 14px;
+  padding: 1.5rem 1.75rem;
+  max-width: 640px;
+}
+
+.suivi-commande__entete {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.4rem;
+}
+
+.suivi-commande__entete h2 {
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.suivi-commande__entete p {
+  margin: 0.2rem 0 0;
+  color: var(--texte-secondaire, #7a6a55);
+  font-size: 0.85rem;
+}
+
+.suivi-commande__badge {
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  background: var(--nabe-creme, #f5f2ee);
+  color: var(--nabe-terracotta, #9f5434);
+  white-space: nowrap;
+}
+
+.suivi-commande__badge--annulee,
+.suivi-commande__badge--remboursee {
+  background: #f6e6e2;
+  color: #a8412a;
+}
+
+.suivi-commande__timeline {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1.8rem;
+  position: relative;
+}
+
+.suivi-commande__timeline::before {
+  content: '';
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  right: 6px;
+  height: 2px;
+  background: var(--nabe-beige-fonce, #e4dccf);
+  z-index: 0;
+}
+
+.suivi-commande__etape {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+  font-size: 0.72rem;
+  color: var(--texte-secondaire, #a89a86);
+  text-align: center;
+}
+
+.suivi-commande__point {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--nabe-beige-fonce, #e4dccf);
+  border: 2px solid #fff;
+}
+
+.suivi-commande__etape--faite {
+  color: var(--nabe-terracotta, #9f5434);
+  font-weight: 600;
+}
+
+.suivi-commande__etape--faite .suivi-commande__point {
+  background: var(--nabe-terracotta, #9f5434);
+}
+
+.suivi-commande__bloc {
+  margin-bottom: 1.4rem;
+}
+
+.suivi-commande__bloc h3 {
+  font-size: 0.9rem;
+  margin: 0 0 0.5rem;
+}
+
+.suivi-commande__bloc p {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--texte-secondaire, #5c4632);
+  line-height: 1.5;
+}
+
+.suivi-commande__lignes {
+  list-style: none;
+  margin: 0 0 0.8rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.suivi-commande__lignes li {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  gap: 1rem;
+}
+
+.suivi-commande__totaux {
+  border-top: 1px solid var(--nabe-beige-fonce, #e4dccf);
+  padding-top: 0.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.85rem;
+}
+
+.suivi-commande__totaux > div {
+  display: flex;
+  justify-content: space-between;
+}
+
+.suivi-commande__total-final {
+  font-weight: 700;
+  font-size: 1rem;
+  padding-top: 0.3rem;
+}
+
+.suivi-commande__annulation {
+  border-top: 1px solid var(--nabe-beige-fonce, #e4dccf);
+  padding-top: 1.2rem;
+}
+
+.suivi-commande__confirmation p {
+  font-size: 0.85rem;
+  color: var(--texte-secondaire, #5c4632);
+  margin-bottom: 0.8rem;
+}
+
+.suivi-commande__confirmation > div {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.suivi-commande__erreur {
+  color: #a8412a;
+  font-size: 0.82rem;
+  margin-top: 0.6rem;
+}
+
+.suivi-commande__succes {
+  color: #2f6e4f;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-top: 1rem;
+}
+
+.suivi-commande__aide {
+  font-size: 0.8rem;
+  color: var(--texte-secondaire, #a89a86);
+  font-style: italic;
+}
+
+/* ── Ligne article avec image ── */
+.suivi-commande__ligne-article {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.suivi-commande__ligne-image {
+  width: 52px;
+  height: 52px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--nabe-beige, #f1e0cb);
+  flex-shrink: 0;
+}
+
+.suivi-commande__ligne-placeholder {
+  width: 100%;
+  height: 100%;
+  background: var(--nabe-beige-fonce, #e4dccf);
+}
+
+.suivi-commande__ligne-nom {
+  flex: 1;
+}
+
+/* ── Actions secondaires (facture, signaler un problème) ── */
+.suivi-commande__actions-secondaires {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  margin-top: 1.2rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid var(--nabe-beige-fonce, #e4dccf);
+}
+
+@media (max-width: 480px) {
+  .suivi-commande__actions-secondaires {
+    flex-direction: column;
+  }
+  .suivi-commande__actions-secondaires .btn {
+    width: 100%;
+    text-align: center;
+  }
+}

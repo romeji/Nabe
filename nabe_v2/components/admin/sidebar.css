@@ -1,0 +1,132 @@
+.admin-sidebar {
+  width: 240px;
+  flex-shrink: 0;
+  background-color: var(--nabe-brun-fonce);
+  color: var(--texte-clair);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: var(--espace-lg) 0;
+  position: sticky;
+  top: 0;
+}
+
+.admin-sidebar__logo {
+  font-family: var(--font-logo);
+  font-size: 2.2rem;
+  color: var(--nabe-or-clair);
+  text-align: center;
+  margin-bottom: var(--espace-lg);
+}
+
+.admin-sidebar__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  flex: 1;
+  padding: 0 var(--espace-sm);
+}
+
+.admin-sidebar__lien {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.7rem 1rem;
+  border-radius: var(--rayon-bordure);
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+  transition: var(--transition-douce);
+}
+
+.admin-sidebar__lien:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: var(--texte-clair);
+}
+
+.admin-sidebar__lien.actif {
+  background-color: var(--nabe-terracotta);
+  color: var(--texte-clair);
+}
+
+.admin-sidebar__bas {
+  padding: 0 var(--espace-sm);
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  margin-top: var(--espace-md);
+  padding-top: var(--espace-md);
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.admin-sidebar__deconnexion {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.7rem 1rem;
+  border-radius: var(--rayon-bordure);
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+  text-align: left;
+  width: 100%;
+}
+
+.admin-sidebar__barre-mobile {
+  display: none;
+}
+
+.admin-sidebar__overlay {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .admin-sidebar__barre-mobile {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--nabe-brun-fonce);
+    padding: 0.8rem var(--espace-md);
+    position: sticky;
+    top: 0;
+    z-index: 200;
+  }
+
+  .admin-sidebar__logo--mobile {
+    margin-bottom: 0;
+    font-size: 1.8rem;
+  }
+
+  .admin-sidebar__burger {
+    color: var(--texte-clair);
+    font-size: 1.3rem;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .admin-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 210;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    box-shadow: var(--ombre-moyenne);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .admin-sidebar--ouvert {
+    transform: translateX(0);
+  }
+
+  .admin-sidebar__overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 205;
+  }
+}

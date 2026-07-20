@@ -1,0 +1,92 @@
+.commandes-client-vide {
+  color: var(--texte-secondaire);
+  font-style: italic;
+}
+
+.commandes-client-vide a {
+  color: var(--nabe-terracotta);
+  text-decoration: underline;
+}
+
+.commandes-client-liste {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espace-md);
+}
+
+.commandes-client-carte {
+  display: block;
+  background-color: var(--nabe-blanc);
+  border: 1px solid var(--nabe-beige-fonce);
+  border-radius: var(--rayon-bordure);
+  padding: var(--espace-md);
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 0.2s;
+}
+
+.commandes-client-carte:hover {
+  border-color: var(--nabe-terracotta);
+}
+
+.commandes-client-carte__entete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--espace-sm);
+}
+
+.commandes-client-carte__entete span {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--texte-secondaire);
+}
+
+.commandes-client-carte ul {
+  font-size: 0.9rem;
+  color: var(--texte-secondaire);
+  margin-bottom: var(--espace-sm);
+}
+
+.commandes-client-carte__total {
+  font-weight: 600;
+  text-align: right;
+}
+
+.commandes-client-carte__numero-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--texte-secondaire);
+  margin-right: 0.3rem;
+}
+
+.commandes-client-carte__articles {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: var(--espace-sm);
+}
+
+.commandes-client-carte__article {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.9rem;
+  color: var(--texte-secondaire);
+}
+
+.commandes-client-carte__article-image {
+  width: 48px;
+  height: 48px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--nabe-beige);
+  flex-shrink: 0;
+}
+
+.commandes-client-carte__article-placeholder {
+  width: 100%;
+  height: 100%;
+  background: var(--nabe-beige-fonce);
+}
