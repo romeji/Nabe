@@ -146,11 +146,12 @@ export function genererHtmlNotificationContact(params: {
   sujet: string;
   message: string;
   estProbleme?: boolean;
+  messagePersonnalise?: string;
 }): string {
   return enveloppeEmail(
     params.estProbleme ? `⚠️ Signalement de problème` : `Nouveau message de contact`,
     `
-    ${params.estProbleme ? `<p style="color:#a8412a; font-weight:bold;">Ce message a été envoyé via le bouton "Signaler un problème" depuis une commande.</p>` : ''}
+    ${params.estProbleme ? `<p style="color:#a8412a; font-weight:bold;">${params.messagePersonnalise || `Ce message a été envoyé via le bouton "Signaler un problème" depuis une commande.`}</p>` : ''}
     <p><strong>Nom :</strong> ${echapperHtml(params.nom)}</p>
     <p><strong>E-mail :</strong> ${echapperHtml(params.email)}</p>
     ${params.telephone ? `<p><strong>Téléphone :</strong> ${echapperHtml(params.telephone)}</p>` : ''}

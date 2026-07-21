@@ -439,6 +439,12 @@ export const REGISTRE_CONTENU: PageContenu[] = [
 
       { cle: 'suppression_sujet', label: 'Confirmation de suppression de compte — Sujet', type: 'texte', defaut: 'Confirmation de suppression de votre compte Nabe' },
       { cle: 'suppression_message', label: 'Confirmation de suppression de compte — Message', type: 'texte_long', defaut: "<p>Nous confirmons la suppression de votre compte Nabe, comme vous l'avez demandé.</p><p>Vos informations personnelles ont été supprimées de nos systèmes.</p><p>Vous pouvez recréer un compte à tout moment si vous changez d'avis.</p>" },
+
+      { cle: 'vente_sujet', label: 'Notification de vente (vous) — Sujet', type: 'texte', defaut: '💰 Nouvelle vente — {numero} ({montant} €)' },
+      { cle: 'vente_message', label: 'Notification de vente (vous) — Note en tête', type: 'texte_long', defaut: "Une nouvelle commande vient d'être payée :" },
+
+      { cle: 'probleme_sujet', label: 'Signalement de problème (vous) — Sujet', type: 'texte', defaut: '⚠️ Signalement de problème — {sujet}' },
+      { cle: 'probleme_message', label: 'Signalement de problème (vous) — Note en tête', type: 'texte_long', defaut: 'Ce message a été envoyé via le bouton "Signaler un problème" depuis une commande.' },
     ],
   },
   {

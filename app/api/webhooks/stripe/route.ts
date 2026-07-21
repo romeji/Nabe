@@ -147,8 +147,10 @@ async function envoyerEmailConfirmation(commandeId: string) {
     // pas seulement un "nice to have".
     await envoyerEmailFiable({
       to: EMAIL_EXPEDITEUR,
-      subject: `💰 Nouvelle vente — ${commande.numero} (${Number(commande.total).toFixed(2)} €)`,
-      html: `<p>Une nouvelle commande vient d'être payée :</p>
+      subject: (emailsContenu.vente_sujet || '💰 Nouvelle vente — {numero} ({montant} €)')
+        .replace('{numero}', commande.numero)
+        .replace('{montant}', Number(commande.total).toFixed(2)),
+      html: `<p>${emailsContenu.vente_message || "Une nouvelle commande vient d'être payée :"}</p>
              <ul>
                <li><strong>Numéro :</strong> ${commande.numero}</li>
                <li><strong>Client :</strong> ${commande.clientNom}</li>

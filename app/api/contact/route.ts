@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { verifierLimiteTaux, obtenirIp } from '@/lib/rate-limit';
 import { EMAIL_CONTACT, EMAIL_EXPEDITEUR, genererHtmlNotificationContact, resend } from '@/lib/resend';
 import { getConfigSite } from '@/lib/config-site';
+import { getContenuPage } from '@/lib/contenu';
 
 const schema = z.object({
   nom: z.string().min(1),
@@ -33,18 +34,22 @@ export async function POST(req: NextRequest) {
       // commande) part vers l'adresse dédiée configurée dans Réglages,
       // distincte de l'adresse de contact générale — pour ne jamais la
       // noyer parmi les demandes commerciales/collaborations classiques.
+      const [config, emailsContenu] = await Promise.all([getConfigSite(), getContenuPage('emails')]);
       const destinataire = donnees.estProbleme
-        ? (await getConfigSite()).email_signalement_probleme || EMAIL_CONTACT
+        ? config.email_signalement_probleme || EMAIL_CONTACT
         : EMAIL_CONTACT;
+
+      const sujetProbleme = (emailsContenu.probleme_sujet || '⚠️ Signalement de problème — {sujet}').replace('{sujet}', donnees.sujet);
 
       await resend.emails.send({
         from: EMAIL_EXPEDITEUR,
         to: destinataire,
         replyTo: donnees.email,
-        subject: donnees.estProbleme
-          ? `⚠️ Signalement de problème — ${donnees.sujet}`
-          : `Nouveau message contact - ${donnees.sujet}`,
-        html: genererHtmlNotificationContact(donnees),
+        subject: donnees.estProbleme ? sujetProbleme : `Nouveau message contact - ${donnees.sujet}`,
+        html: genererHtmlNotificationContact({
+          ...donnees,
+          messagePersonnalise: donnees.estProbleme ? emailsContenu.probleme_message : undefined,
+        }),
       });
     } catch (err) {
       console.error('Erreur envoi notification contact (message conserve) :', err);
