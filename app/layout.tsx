@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { Cormorant_Garamond, Jost } from 'next/font/google';
 import './globals.css';
 
-// next/font héberge les polices directement sur le domaine du sites (Vercel) au
+// next/font héberge les polices directement sur le domaine du site (Vercel) au
 // lieu d'aller les chercher chez Google à chaque visite : ça supprime un
 // aller-retour réseau complet avant que le texte ne s'affiche, et empêche
 // tout décalage de mise en page (CLS) pendant le chargement. Nettement plus
