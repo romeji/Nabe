@@ -124,8 +124,7 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/icons/favicon-32.png" sizes="32x32" type="image/png" media="(prefers-color-scheme: light)" />
         <link rel="icon" href="/icons/favicon-32-dark.png" sizes="32x32" type="image/png" media="(prefers-color-scheme: dark)" />
-        <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" sizes="180x180" media="(prefers-color-scheme: light)" />
-        <link rel="apple-touch-icon" href="/icons/apple-touch-icon-dark.png" sizes="180x180" media="(prefers-color-scheme: dark)" />
+        <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" sizes="180x180" />
       </head>
       <body>
         <script
