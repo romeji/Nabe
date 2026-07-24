@@ -3,21 +3,16 @@
  * instantanément à partir du poids réel du panier plutôt que d'un tarif
  * fixe unique — au lieu de "standard / express" à prix figé.
  *
- * Important (transparence technique) : ni Colissimo ni Mondial Relay
- * n'exposent d'API publique qui renvoie un "prix du marché" en temps réel
- * pour un envoi donné — leurs tarifs sont contractuels (grille par tranche
- * de poids, négociée avec La Poste / Mondial Relay). Le calcul "temps réel"
- * ici applique donc VOTRE grille tarifaire (éditable dans Admin > Réglages)
- * au poids exact du panier au moment du checkout, ce qui est le
- * fonctionnement standard des sites e-commerce français. Pour une
- * intégration API complète (étiquettes, tracking automatique), un compte
- * Colissimo Business (Pro) et un contrat Mondial Relay sont nécessaires.
+ * Au lancement, la boutique peut fonctionner sans API transporteur : un mode
+ * "livraison suivie" est calculé depuis une grille de poids puis expédié
+ * manuellement par le marchand. Mondial Relay reste disponible dans le code
+ * pour plus tard, une fois le SIRET et les identifiants professionnels obtenus.
  */
 
 export type TrancheTarif = { poidsMaxGrammes: number; prix: number };
 
 export type ModeLivraisonCalcule = {
-  id: 'mondial_relay';
+  id: 'livraison_manuelle' | 'mondial_relay';
   label: string;
   prix: number;
   delai: string;
@@ -53,23 +48,30 @@ export function calculerModesLivraison(
   poidsTotalGrammes: number,
   config: Record<string, string>
 ): ModeLivraisonCalcule[] {
-  // Si le marchand a inclus la livraison dans le prix des produits, il n'y a
-  // par définition aucun mode/transporteur à choisir : le marchand expédie
-  // lui-même, sans passer par une API de transporteur. On ne renvoie donc
-  // jamais de mode dans ce cas — c'est le seul point de vérité de cette règle.
-  if (config.livraison_incluse_dans_prix === 'true') {
-    return [];
-  }
-
   const modes: ModeLivraisonCalcule[] = [];
+  const livraisonIncluse = config.livraison_incluse_dans_prix === 'true';
+
+  if (config.livraison_manuelle_actif !== 'false') {
+    const grille = parserGrilleTarifs(config.livraison_manuelle_grille || '');
+    const prix = livraisonIncluse ? 0 : calculerPrixPourPoids(poidsTotalGrammes, grille);
+    if (prix !== null) {
+      modes.push({
+        id: 'livraison_manuelle',
+        label: livraisonIncluse ? 'Livraison suivie — incluse' : 'Livraison suivie',
+        prix,
+        delai: config.livraison_manuelle_delai || '3 à 7 jours ouvrés après expédition',
+        necessitePointRelais: false,
+      });
+    }
+  }
 
   if (config.livraison_mondial_relay_actif === 'true') {
     const grille = parserGrilleTarifs(config.livraison_mondial_relay_grille || '');
-    const prix = calculerPrixPourPoids(poidsTotalGrammes, grille);
+    const prix = livraisonIncluse ? 0 : calculerPrixPourPoids(poidsTotalGrammes, grille);
     if (prix !== null) {
       modes.push({
         id: 'mondial_relay',
-        label: 'Point relais (Mondial Relay)',
+        label: livraisonIncluse ? 'Point relais (Mondial Relay) — inclus' : 'Point relais (Mondial Relay)',
         prix,
         delai: '3 à 5 jours ouvrés',
         necessitePointRelais: true,

@@ -8,8 +8,6 @@
    Cormorant Garamond et Jost sont désormais chargées via next/font (voir
    app/layout.tsx) — auto-hébergées sur le domaine du site, sans aller-retour
    réseau vers Google ni décalage de mise en page pendant le chargement. */
-@import url('https://fonts.googleapis.com/css2?family=Imperial+Script&display=swap');
-
 :root {
   /* Couleurs principales — palette de référence */
   --nabe-creme: #f5f2ee;
@@ -41,7 +39,7 @@
   --texte-clair: #ffffff;
 
   /* Typographies */
-  --font-logo: 'Imperial Script', cursive;
+  --font-logo: var(--font-imperial-script), 'Imperial Script', cursive;
   --font-titres: var(--font-cormorant), serif;
   --font-texte: var(--font-jost), sans-serif;
 

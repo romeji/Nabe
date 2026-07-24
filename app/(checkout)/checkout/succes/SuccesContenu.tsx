@@ -39,6 +39,9 @@ export default function SuccesContenu() {
           setNumeroCommande(data.numero);
           setStatut('succes');
           vider();
+          window.dispatchEvent(new CustomEvent('nabe:notification', {
+            detail: { message: `Commande ${data.numero} confirmée.`, type: 'succes' },
+          }));
           return;
         }
       } catch {
@@ -53,6 +56,9 @@ export default function SuccesContenu() {
       } else {
         setStatut('succes');
         vider();
+        window.dispatchEvent(new CustomEvent('nabe:notification', {
+          detail: { message: 'Commande confirmée.', type: 'succes' },
+        }));
       }
     };
     verifier();

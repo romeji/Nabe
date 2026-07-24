@@ -21,7 +21,7 @@ export default function StatutCommandeSelect({
     let numeroSuivi: string | undefined;
     if (nouveauStatut === 'EXPEDIEE') {
       const saisie = window.prompt(
-        'Numéro de suivi Colissimo/Mondial Relay (optionnel, laissez vide si vous ne l’avez pas encore) :'
+        'Numéro de suivi transporteur (optionnel, laissez vide si vous ne l’avez pas encore) :'
       );
       if (saisie === null) return; // annulé : on ne change pas le statut
       numeroSuivi = saisie.trim() || undefined;

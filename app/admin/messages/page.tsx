@@ -1,12 +1,11 @@
-import { getServerSession } from 'next-auth';
+import { verifierSessionAdmin } from '@/lib/auth-helpers';
 import { redirect } from 'next/navigation';
-import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import MessageCarte from '@/components/admin/MessageCarte';
 import './messages.css';
 
 export default async function PageAdminMessages() {
-  const session = await getServerSession(authOptions);
+  const session = await verifierSessionAdmin();
   if (!session) redirect('/admin/login');
 
   const messages = await prisma.messageContact.findMany({

@@ -373,7 +373,7 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
             <label>Délai de fabrication</label>
             <input
               type="text"
-              placeholder="Ex : 2 à 3 semaines"
+              placeholder="Ex : environ 7 jours ouvrés"
               value={donnees.delaiFabrication}
               onChange={(e) => majChamp('delaiFabrication', e.target.value)}
             />
@@ -484,6 +484,9 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
                 </option>
               ))}
             </select>
+            <p className="formulaire-produit__aide">
+              En stock : achat direct selon stock. Fabrication sur commande : achat direct possible même si la taille est à fabriquer. Création sur mesure : pas d'achat direct, le client passe par une demande de devis.
+            </p>
           </div>
         </div>
 

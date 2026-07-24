@@ -5,6 +5,7 @@ import ProvidersClient from '@/components/site/ProvidersClient';
 import PopupBienvenue from '@/components/site/PopupBienvenue';
 import ConsentementCookies from '@/components/site/ConsentementCookies';
 import SuiviPageVue from '@/components/site/SuiviPageVue';
+import NotificationsApp from '@/components/site/NotificationsApp';
 import { getConfigSite } from '@/lib/config-site';
 import { authClientOptions } from '@/lib/auth-client';
 
@@ -24,6 +25,7 @@ export default async function SiteLayout({
   return (
     <ProvidersClient session={session}>
       <SuiviPageVue />
+      <NotificationsApp actif={config.notifications_app_actif === 'true'} />
       <Header />
       <main>{children}</main>
       <Footer />
@@ -31,6 +33,7 @@ export default async function SiteLayout({
       <ConsentementCookies
         googleAnalyticsActif={config.google_analytics_actif === 'true'}
         googleAnalyticsId={config.google_analytics_id || ''}
+        googleTagManagerId={process.env.NEXT_PUBLIC_GTM_ID || ''}
       />
     </ProvidersClient>
   );

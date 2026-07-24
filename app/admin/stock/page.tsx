@@ -1,12 +1,11 @@
-import { getServerSession } from 'next-auth';
+import { verifierSessionAdmin } from '@/lib/auth-helpers';
 import { redirect } from 'next/navigation';
-import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import GestionStockClient from '@/components/admin/GestionStockClient';
 import './stock.css';
 
 export default async function PageAdminStock() {
-  const session = await getServerSession(authOptions);
+  const session = await verifierSessionAdmin();
   if (!session) redirect('/admin/login');
 
   const [produits, mouvements] = await Promise.all([

@@ -101,12 +101,12 @@ export default function LigneCategorie({ categorie }: { categorie: Categorie }) 
 
   if (edition) {
     return (
-      <tr>
+      <tr className="admin-table__edition-row">
         <td colSpan={4}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', padding: '0.5rem 0' }}>
-            <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+          <div className="admin-inline-edit">
+            <div className="admin-inline-edit__media">
               <ApercuCarre url={image} mode="cover" />
-              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              <div className="admin-inline-edit__champs">
                 <input
                   type="text"
                   value={nom}
@@ -126,7 +126,7 @@ export default function LigneCategorie({ categorie }: { categorie: Categorie }) 
               <ApercuImage url={logoAccueil} libelle="Logo accueil" mode="contain" />
             </div>
             {erreur && <p className="admin-categories__erreur">{erreur}</p>}
-            <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <div className="admin-inline-edit__actions">
               <button className="admin-btn-icone" onClick={sauvegarder} disabled={enCours || uploadEnCours}>
                 {enCours ? '...' : 'Enregistrer'}
               </button>

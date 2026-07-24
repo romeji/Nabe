@@ -9,12 +9,12 @@ import { getContenuPage } from '@/lib/contenu';
  * annulation n'est plus proposée (il faut alors gérer un retour, pas une
  * simple annulation) — voir la doc pour le détail du raisonnement.
  */
-export const STATUTS_ANNULABLES_PAR_CLIENT = ['EN_ATTENTE', 'PAYEE', 'EN_PREPARATION'];
+export const STATUTS_ANNULABLES_PAR_CLIENT = ['EN_ATTENTE', 'PAYEE'];
 
 /**
  * Annule une commande : rembourse intégralement via Stripe (produits + frais
- * de port, puisqu'aucune étiquette Colissimo/Mondial Relay n'a encore été
- * achetée à ce stade — voir la documentation pour l'explication complète),
+ * de port, puisqu'aucune expédition n'a encore été engagée à ce stade
+ * — voir la documentation pour l'explication complète),
  * remet le stock à disposition, journalise le mouvement, passe la commande
  * en statut ANNULEE/REMBOURSEE et prévient le client par e-mail.
  *

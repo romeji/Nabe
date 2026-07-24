@@ -66,12 +66,12 @@ export default function LignePierre({ pierre, couleurs }: { pierre: PierreLigne;
 
   if (edition) {
     return (
-      <tr>
+      <tr className="admin-table__edition-row">
         <td colSpan={5}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', padding: '0.5rem 0' }}>
+          <div className="admin-inline-edit">
             <input type="text" value={nom} onChange={(e) => setNom(e.target.value)} placeholder="Nom" />
             <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={3} placeholder="Description" />
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+            <div className="admin-inline-edit__chips">
               {couleurs.map((c: any) => (
                 <button key={c.id} type="button" onClick={() => basculerCouleur(c.id)}
                   style={{
@@ -86,7 +86,7 @@ export default function LignePierre({ pierre, couleurs }: { pierre: PierreLigne;
               ))}
             </div>
             {erreur && <p className="admin-categories__erreur">{erreur}</p>}
-            <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <div className="admin-inline-edit__actions">
               <button className="admin-btn-icone" onClick={sauvegarder} disabled={enCours}>
                 {enCours ? '...' : 'Enregistrer'}
               </button>

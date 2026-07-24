@@ -6,7 +6,7 @@ const QUESTIONS = [
   {
     question: 'Combien de temps faut-il pour recevoir mon bijou ?',
     reponse:
-      "Pour un bijou en stock, comptez 2 à 4 jours ouvrés pour l'expédition. Pour une pièce en fabrication sur commande, le délai (généralement 2 à 3 semaines) est indiqué sur la fiche produit.",
+      "Pour un bijou en stock, comptez 2 à 4 jours ouvrés pour l'expédition. Pour une pièce en fabrication sur commande, le délai est indiqué sur la fiche produit, généralement autour de 7 jours ouvrés avant expédition.",
   },
   {
     question: 'Puis-je faire graver mon bijou ?',

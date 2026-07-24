@@ -1,13 +1,12 @@
-import { getServerSession } from 'next-auth';
+import { verifierSessionAdmin } from '@/lib/auth-helpers';
 import { redirect, notFound } from 'next/navigation';
-import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import FormulaireProduit from '@/components/admin/FormulaireProduit';
 import BoutonSupprimerProduit from '@/components/admin/BoutonSupprimerProduit';
 
 export default async function PageEditionProduit({ params: paramsPromise }: { params: Promise<{ id: string }> }) {
   const params = await paramsPromise;
-  const session = await getServerSession(authOptions);
+  const session = await verifierSessionAdmin();
   if (!session) redirect('/admin/login');
 
   const produit = await prisma.produit.findUnique({

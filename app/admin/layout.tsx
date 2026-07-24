@@ -1,6 +1,5 @@
-import { getServerSession } from 'next-auth';
+import { verifierSessionAdmin } from '@/lib/auth-helpers';
 import { redirect } from 'next/navigation';
-import { authOptions } from '@/lib/auth';
 import Providers from '@/components/admin/Providers';
 import SidebarAdmin from '@/components/admin/SidebarAdmin';
 import './admin.css';
@@ -10,7 +9,7 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getServerSession(authOptions);
+  const session = await verifierSessionAdmin();
 
   // Le middleware (middleware.ts) protège déjà toutes les pages /admin/* sauf
   // /admin/login, donc si on arrive ici sans session c'est qu'on est forcément

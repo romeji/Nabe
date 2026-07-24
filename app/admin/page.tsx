@@ -1,13 +1,12 @@
-import { getServerSession } from 'next-auth';
+import { verifierSessionAdmin } from '@/lib/auth-helpers';
 import { redirect } from 'next/navigation';
-import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
 import { formaterPrix, LABELS_STATUT_COMMANDE } from '@/lib/utils';
 import './dashboard.css';
 
 export default async function PageDashboardAdmin() {
-  const session = await getServerSession(authOptions);
+  const session = await verifierSessionAdmin();
   if (!session) redirect('/admin/login');
 
   const il30Jours = new Date();

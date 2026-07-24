@@ -11,9 +11,11 @@ const CLE_STOCKAGE = 'nabe_consentement_analytics';
 export default function ConsentementCookies({
   googleAnalyticsActif,
   googleAnalyticsId,
+  googleTagManagerId,
 }: {
   googleAnalyticsActif: boolean;
   googleAnalyticsId: string;
+  googleTagManagerId: string;
 }) {
   const [choix, setChoix] = useState<Choix | null>(null);
   const [banniereVisible, setBanniereVisible] = useState(false);
@@ -54,17 +56,22 @@ export default function ConsentementCookies({
         </div>
       )}
 
-      {choix === 'accepte' && googleAnalyticsActif && googleAnalyticsId && (
+      {choix === 'accepte' && googleAnalyticsActif && (googleAnalyticsId || googleTagManagerId) && (
         <>
-          <Script src={`https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsId}`} strategy="afterInteractive" />
           <Script id="google-analytics-init" strategy="afterInteractive">
             {`
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', '${googleAnalyticsId}', { anonymize_ip: true });
+              window.gtag = gtag;
+              ${googleTagManagerId ? `dataLayer.push({'gtm.start': new Date().getTime(), event: 'gtm.js'});` : ''}
+              ${googleAnalyticsId ? `gtag('js', new Date()); gtag('config', '${googleAnalyticsId}', { anonymize_ip: true });` : ''}
             `}
           </Script>
+          {googleTagManagerId ? (
+            <Script src={`https://www.googletagmanager.com/gtm.js?id=${googleTagManagerId}`} strategy="afterInteractive" />
+          ) : (
+            <Script src={`https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsId}`} strategy="afterInteractive" />
+          )}
         </>
       )}
     </>

@@ -1,13 +1,12 @@
-import { getServerSession } from 'next-auth';
+import { verifierSessionAdmin } from '@/lib/auth-helpers';
 import { redirect, notFound } from 'next/navigation';
-import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import FormulaireNewsletter from '@/components/admin/FormulaireNewsletter';
 import BoutonSupprimerNewsletter from '@/components/admin/BoutonSupprimerNewsletter';
 
 export default async function PageEditionNewsletter({ params: paramsPromise }: { params: Promise<{ id: string }> }) {
   const params = await paramsPromise;
-  const session = await getServerSession(authOptions);
+  const session = await verifierSessionAdmin();
   if (!session) redirect('/admin/login');
 
   const [newsletter, nombreAbonnes] = await Promise.all([

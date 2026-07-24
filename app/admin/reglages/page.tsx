@@ -1,13 +1,12 @@
-import { getServerSession } from 'next-auth';
+import { verifierSessionAdmin } from '@/lib/auth-helpers';
 import { redirect } from 'next/navigation';
-import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { getConfigSite } from '@/lib/config-site';
 import ReglagesClient from '@/components/admin/ReglagesClient';
 import './reglages.css';
 
 export default async function PageAdminReglages() {
-  const session = await getServerSession(authOptions);
+  const session = await verifierSessionAdmin();
   if (!session) redirect('/admin/login');
 
   const [config, collections, categories, produits] = await Promise.all([

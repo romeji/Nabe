@@ -8,6 +8,7 @@ import { authClientOptions } from '@/lib/auth-client';
 import CarrouselProduits from '@/components/site/CarrouselProduits';
 import TexteRiche from '@/components/site/TexteRiche';
 import CategoriesAccueil from '@/components/site/CategoriesAccueil';
+import ModulesAccueil from '@/components/site/ModulesAccueil';
 import './accueil.css';
 
 export const revalidate = 60;
@@ -145,6 +146,8 @@ export default async function PageAccueil() {
           <span>Retours sous 14 jours</span>
         </div>
       </section>
+
+      <ModulesAccueil config={config} />
 
       {/* NOS COLLECTIONS (catégories) */}
       {categoriesAccueilActif && categoriesAccueilOrdonnees.length > 0 && (

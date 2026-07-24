@@ -8,8 +8,8 @@ const DEFAUTS_POLITIQUES: Record<string, { titre: string; contenu: string; ordre
   'entretien-intro':    { titre: "SERVICE D'ENTRETIEN", contenu: "Nos créations Nabe sont conçues à partir de matériaux délicats et d'exception.", ordre: 10 },
   'entretien-service':  { titre: 'FAIRE UNE DEMANDE DE SERVICE', contenu: 'Pour toute demande de service, contactez-nous directement ou déposez votre création en boutique.', ordre: 11 },
   'entretien-eclat':    { titre: 'NOUVEL ÉCLAT', contenu: "Votre création peut se voir offrir une brillance nouvelle grâce à un nettoyage en douceur.", ordre: 12 },
-  'livraison-intro':    { titre: 'LIVRAISON', contenu: 'La livraison est offerte pour toute commande. Délai : 3 à 5 jours ouvrés.', ordre: 20 },
-  'livraison-retours':  { titre: 'RETOURS ET ÉCHANGES', contenu: "Retours et échanges offerts dans un délai de 30 jours à compter de la date de livraison.", ordre: 21 },
+  'livraison-intro':    { titre: 'LIVRAISON', contenu: 'Livraison suivie en France métropolitaine. Bijoux en stock : expédition sous 2 à 4 jours ouvrés. Fabrication sur commande : délai indiqué sur la fiche produit, généralement autour de 7 jours ouvrés avant expédition.', ordre: 20 },
+  'livraison-retours':  { titre: 'RETOURS ET ÉCHANGES', contenu: "Droit de rétractation de 14 jours après réception pour les bijoux non personnalisés. Les créations personnalisées, gravées, fabriquées ou ajustées spécialement à votre demande ne sont pas éligibles au retour au titre du droit de rétractation, sauf défaut de conformité ou vice caché.", ordre: 21 },
   'livraison-paiement': { titre: 'PAIEMENT', contenu: 'Paiement sécurisé par carte bancaire, PayPal ou virement.', ordre: 22 },
 };
 

@@ -203,6 +203,82 @@ export default function ReglagesClient({
       </div>
 
       <div className="admin-carte reglages-client__section">
+        <h2>Page d'accueil — Modules optionnels</h2>
+
+        <label className="reglages-client__toggle">
+          <input
+            type="checkbox"
+            checked={config.accueil_module_video_actif === 'true'}
+            onChange={(e) => maj('accueil_module_video_actif', e.target.checked ? 'true' : 'false')}
+          />
+          <div>
+            <strong>Afficher un module vidéo</strong>
+            <p>Bloc éditorial pour montrer l'atelier, une fabrication ou une collection. Désactivé par défaut.</p>
+          </div>
+        </label>
+
+        {config.accueil_module_video_actif === 'true' && (
+          <div className="reglages-client__sous-champ">
+            <label>Titre</label>
+            <input
+              type="text"
+              value={config.accueil_module_video_titre || ''}
+              onChange={(e) => maj('accueil_module_video_titre', e.target.value)}
+            />
+            <label>Texte</label>
+            <textarea
+              rows={3}
+              value={config.accueil_module_video_texte || ''}
+              onChange={(e) => maj('accueil_module_video_texte', e.target.value)}
+            />
+            <label>URL vidéo</label>
+            <input
+              type="url"
+              value={config.accueil_module_video_url || ''}
+              onChange={(e) => maj('accueil_module_video_url', e.target.value)}
+              placeholder="https://... ou /videos/atelier.mp4"
+            />
+            <label>Image de couverture vidéo (optionnel)</label>
+            <input
+              type="url"
+              value={config.accueil_module_video_poster || ''}
+              onChange={(e) => maj('accueil_module_video_poster', e.target.value)}
+              placeholder="https://... ou /images/video-cover.jpg"
+            />
+          </div>
+        )}
+
+        <label className="reglages-client__toggle" style={{ marginTop: '1rem' }}>
+          <input
+            type="checkbox"
+            checked={config.accueil_module_sur_mesure_actif === 'true'}
+            onChange={(e) => maj('accueil_module_sur_mesure_actif', e.target.checked ? 'true' : 'false')}
+          />
+          <div>
+            <strong>Afficher un module sur-mesure</strong>
+            <p>Met en avant la demande de devis pour les créations personnalisées. Désactivé par défaut.</p>
+          </div>
+        </label>
+
+        {config.accueil_module_sur_mesure_actif === 'true' && (
+          <div className="reglages-client__sous-champ">
+            <label>Titre</label>
+            <input
+              type="text"
+              value={config.accueil_module_sur_mesure_titre || ''}
+              onChange={(e) => maj('accueil_module_sur_mesure_titre', e.target.value)}
+            />
+            <label>Texte</label>
+            <textarea
+              rows={3}
+              value={config.accueil_module_sur_mesure_texte || ''}
+              onChange={(e) => maj('accueil_module_sur_mesure_texte', e.target.value)}
+            />
+          </div>
+        )}
+      </div>
+
+      <div className="admin-carte reglages-client__section">
         <h2>Page d'accueil — Ils nous font confiance</h2>
 
         <label className="reglages-client__toggle">
@@ -375,6 +451,18 @@ export default function ReglagesClient({
 
       <div className="admin-carte reglages-client__section">
         <h2>Panier — Comportement</h2>
+
+        <label className="reglages-client__toggle">
+          <input
+            type="checkbox"
+            checked={config.notifications_app_actif === 'true'}
+            onChange={(e) => maj('notifications_app_actif', e.target.checked ? 'true' : 'false')}
+          />
+          <div>
+            <strong>Afficher les notifications dans l'application</strong>
+            <p>Affiche une confirmation discrète après certaines actions : ajout au panier, commande confirmée, etc.</p>
+          </div>
+        </label>
 
         <label className="reglages-client__toggle">
           <input
@@ -567,12 +655,49 @@ export default function ReglagesClient({
         <label className="reglages-client__toggle" style={{ marginTop: '1rem' }}>
           <input
             type="checkbox"
+            checked={config.livraison_manuelle_actif !== 'false'}
+            onChange={(e) => maj('livraison_manuelle_actif', e.target.checked ? 'true' : 'false')}
+          />
+          <div>
+            <strong>Livraison suivie manuelle</strong>
+            <p>
+              Mode de lancement sans API transporteur : vous expédiez vous-même le colis et renseignez
+              le numéro de suivi dans l'admin au moment de l'expédition.
+            </p>
+          </div>
+        </label>
+
+        {config.livraison_manuelle_actif !== 'false' && (
+          <div className="reglages-client__sous-champ">
+            <label>Grille tarifaire livraison suivie</label>
+            <input
+              type="text"
+              value={config.livraison_manuelle_grille}
+              onChange={(e) => maj('livraison_manuelle_grille', e.target.value)}
+              placeholder="500:4.95,1000:6.90,2000:8.50"
+            />
+            <label>Délai de transport affiché</label>
+            <input
+              type="text"
+              value={config.livraison_manuelle_delai}
+              onChange={(e) => maj('livraison_manuelle_delai', e.target.value)}
+              placeholder="3 à 7 jours ouvrés après expédition"
+            />
+          </div>
+        )}
+
+        <label className="reglages-client__toggle" style={{ marginTop: '1rem' }}>
+          <input
+            type="checkbox"
             checked={config.livraison_mondial_relay_actif === 'true'}
             onChange={(e) => maj('livraison_mondial_relay_actif', e.target.checked ? 'true' : 'false')}
           />
           <div>
-            <strong>Point relais (Mondial Relay)</strong>
-            <p>Tarif calculé selon la grille ci-dessous, et sélection d'un point relais réel au checkout.</p>
+            <strong>Point relais (Mondial Relay, plus tard)</strong>
+            <p>
+              À activer uniquement quand vous aurez le SIRET/contrat professionnel et les identifiants
+              Mondial Relay. Désactivé par défaut pour le lancement.
+            </p>
           </div>
         </label>
         {config.livraison_mondial_relay_actif === 'true' && (
