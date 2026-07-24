@@ -1,8 +1,9 @@
 import Link from 'next/link';
 import { getContenuPage } from '@/lib/contenu';
 import TexteRiche from '@/components/site/TexteRiche';
-import { TAILLES } from '@/components/site/GuideTailles';
+import { TAILLES_BAGUES } from '@/lib/tailles';
 import '../page-info.css';
+import '@/components/site/guide-tailles.css';
 
 export const metadata = { title: 'Guide des tailles' };
 
@@ -36,7 +37,7 @@ export default async function PageGuideTailles() {
               </tr>
             </thead>
             <tbody>
-              {TAILLES.map((t: any) => (
+              {TAILLES_BAGUES.map((t: any) => (
                 <tr key={t.iso}>
                   <td>{t.iso}</td>
                   <td>{t.circ}</td>

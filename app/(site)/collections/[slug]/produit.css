@@ -230,6 +230,14 @@
   text-decoration: underline;
 }
 
+.produit-infos__precommande--alerte {
+  padding: 0.8rem 0.9rem;
+  border-radius: 8px;
+  background: #fff4ea;
+  color: #7a4b31;
+  border: 1px solid rgba(159, 84, 52, 0.2);
+}
+
 .produit-infos__erreur-taille {
   font-size: 0.8rem;
   color: var(--nabe-terracotta-fonce);
@@ -705,7 +713,22 @@
   text-decoration: line-through;
   cursor: not-allowed;
 }
+
+.produit-infos__taille-bouton--sur-commande {
+  opacity: 1;
+  text-decoration: none;
+  cursor: pointer;
+  border-color: rgba(159, 84, 52, 0.42);
+  background: #fff4ea;
+  color: #7a4b31;
+}
+
 .produit-infos__taille-bouton--epuise:hover {
   border-color: var(--nabe-argile);
   background: var(--nabe-blanc);
+}
+
+.produit-infos__taille-bouton--sur-commande:hover {
+  border-color: rgba(159, 84, 52, 0.58);
+  background: #fff4ea;
 }

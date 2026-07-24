@@ -1,7 +1,6 @@
-import { getServerSession } from 'next-auth';
+import { verifierSessionAdmin } from '@/lib/auth-helpers';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { formaterPrix } from '@/lib/utils';
 import StatutCommandeSelect from '@/components/admin/StatutCommandeSelect';
@@ -16,7 +15,7 @@ export default async function PageAdminCommandes({
 }: {
   searchParams: Promise<{ page?: string }>;
 }) {
-  const session = await getServerSession(authOptions);
+  const session = await verifierSessionAdmin();
   if (!session) redirect('/admin/login');
 
   const { page: pageParam } = await searchParams;

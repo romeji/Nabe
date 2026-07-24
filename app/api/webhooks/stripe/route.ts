@@ -39,6 +39,7 @@ async function decrementerStockEtJournaliser(articlesMeta: ArticleMeta[], numero
   for (const a of articlesMeta) {
     const produit = produitsDb.find((p: any) => p.id === a.id);
     if (!produit) continue;
+    const achatSurCommande = produit.disponibilite === 'FABRICATION_SUR_COMMANDE';
 
     // Décrémentation conditionnelle atomique : ne réussit que si le stock
     // encore disponible au moment exact de l'exécution est suffisant.
@@ -47,7 +48,12 @@ async function decrementerStockEtJournaliser(articlesMeta: ArticleMeta[], numero
       data: { stock: { decrement: a.q }, nombreVentes: { increment: a.q } },
     });
 
-    if (resultatStock.count === 0) {
+    if (resultatStock.count === 0 && achatSurCommande) {
+      await prisma.produit.update({
+        where: { id: produit.id },
+        data: { stock: { decrement: a.q }, nombreVentes: { increment: a.q } },
+      });
+    } else if (resultatStock.count === 0) {
       // Stock insuffisant au moment de la vente : on décrémente quand même
       // (le stock peut aller à 0 ou en négatif pour rester traçable), mais
       // on remonte l'alerte pour un traitement manuel.
@@ -65,7 +71,9 @@ async function decrementerStockEtJournaliser(articlesMeta: ArticleMeta[], numero
           where: { id: ligne.id, quantite: { gte: a.q } },
           data: { quantite: { decrement: a.q } },
         });
-        if (resultatTaille.count === 0) {
+        if (resultatTaille.count === 0 && achatSurCommande) {
+          await prisma.stockTaille.update({ where: { id: ligne.id }, data: { quantite: { decrement: a.q } } });
+        } else if (resultatTaille.count === 0) {
           await prisma.stockTaille.update({ where: { id: ligne.id }, data: { quantite: { decrement: a.q } } });
           alertesSurvente.push(`${produit.nom} taille ${a.taille} (commande ${numeroCommande})`);
         }

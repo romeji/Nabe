@@ -1,13 +1,12 @@
-import { getServerSession } from 'next-auth';
+import { verifierSessionAdmin } from '@/lib/auth-helpers';
 import { redirect } from 'next/navigation';
-import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import FormulaireCouleurPierre from '@/components/admin/FormulaireCouleurPierre';
 import LigneCouleurPierre from '@/components/admin/LigneCouleurPierre';
 import '../categories/categories.css';
 
 export default async function PageAdminCouleursPierre() {
-  const session = await getServerSession(authOptions);
+  const session = await verifierSessionAdmin();
   if (!session) redirect('/admin/login');
 
   const couleurs = await prisma.couleurPierre.findMany({

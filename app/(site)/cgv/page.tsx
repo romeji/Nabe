@@ -1,8 +1,12 @@
 import '../page-info.css';
+import { getConfigSite } from '@/lib/config-site';
 
 export const metadata = { title: 'Conditions Générales de Vente' };
 
-export default function PageCGV() {
+export default async function PageCGV() {
+  const config = await getConfigSite();
+  const livraisonIncluse = config.livraison_incluse_dans_prix === 'true';
+
   return (
     <div className="page-info">
       <div className="page-info__entete">
@@ -35,6 +39,11 @@ export default function PageCGV() {
           modifier ses prix à tout moment, le prix applicable étant celui en vigueur au moment de la
           validation de la commande.
         </p>
+        <p>
+          {livraisonIncluse
+            ? "Les frais de livraison standard sont inclus dans les prix affichés : aucun frais de livraison supplémentaire n'est ajouté au paiement pour les modes proposés sur le site."
+            : "Les frais de livraison sont calculés séparément au moment de la commande, selon le poids du panier et le mode de livraison choisi. Le montant exact est affiché avant validation du paiement."}
+        </p>
       </section>
 
       <section className="page-info__section">
@@ -51,15 +60,33 @@ export default function PageCGV() {
           Les modalités et délais de livraison sont détaillés sur notre page{' '}
           <a href="/livraison-retours">Livraison &amp; Retours</a>.
         </p>
+        <p>
+          À titre indicatif, les bijoux en stock sont généralement expédiés sous 2 à 4 jours ouvrés.
+          Les bijoux fabriqués sur commande suivent le délai indiqué sur la fiche produit. Les pièces
+          sur-mesure suivent le délai communiqué dans le devis accepté. À défaut de délai spécifique
+          indiqué avant la commande, la livraison interviendra au plus tard dans le délai légal de
+          30 jours suivant la validation de la commande.
+        </p>
       </section>
 
       <section className="page-info__section">
         <h2>Article 6 — Droit de rétractation et retours</h2>
         <p>
           Conformément à la législation en vigueur, vous disposez d'un délai de 14 jours à compter
-          de la réception de votre commande pour exercer votre droit de rétractation, sauf pour les
-          pièces personnalisées ou réalisées sur-mesure, exclues de ce droit conformément à l'article
-          L221-28 du Code de la consommation.
+          de la réception de votre commande pour exercer votre droit de rétractation sur un bijou non
+          personnalisé. Après notification de votre décision, vous disposez de 14 jours pour retourner
+          le bijou dans son état d'origine, non porté, avec son écrin.
+        </p>
+        <p>
+          Les pièces réalisées sur-mesure, personnalisées, gravées, ou fabriquées/ajustées spécialement
+          selon les spécifications du client, sont exclues du droit de rétractation conformément à
+          l'article L221-28 du Code de la consommation, sauf défaut de conformité ou vice caché.
+        </p>
+        <p>
+          En cas de rétractation valable, Nabe rembourse les sommes encaissées, y compris les frais de
+          livraison standard facturés à la commande le cas échéant, dans un délai maximum de 14 jours
+          à compter de la réception de la demande. Le remboursement peut être différé jusqu'à réception
+          du bijou retourné ou jusqu'à fourniture d'une preuve d'expédition du retour.
         </p>
       </section>
 
@@ -77,6 +104,13 @@ export default function PageCGV() {
           Les commandes sur-mesure font l'objet d'un devis préalable et d'un accord spécifique avec
           la cliente ou le client avant tout règlement. Le délai de fabrication est communiqué lors
           de l'acceptation du devis.
+        </p>
+        <p>
+          Le paiement d'une création sur-mesure intervient après acceptation du devis, par lien de
+          paiement sécurisé ou tout autre moyen indiqué dans le devis. La fabrication démarre après
+          acceptation écrite du devis et encaissement du montant demandé. Une fois la fabrication
+          lancée, la commande ne peut plus être annulée au titre du droit de rétractation, sauf défaut
+          de conformité ou vice caché.
         </p>
       </section>
 

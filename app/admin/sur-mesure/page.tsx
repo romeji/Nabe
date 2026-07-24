@@ -1,12 +1,11 @@
-import { getServerSession } from 'next-auth';
+import { verifierSessionAdmin } from '@/lib/auth-helpers';
 import { redirect } from 'next/navigation';
-import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import DemandeSurMesureCarte from '@/components/admin/DemandeSurMesureCarte';
 import './sur-mesure.css';
 
 export default async function PageAdminSurMesure() {
-  const session = await getServerSession(authOptions);
+  const session = await verifierSessionAdmin();
   if (!session) redirect('/admin/login');
 
   const demandes = await prisma.demandeSurMesure.findMany({

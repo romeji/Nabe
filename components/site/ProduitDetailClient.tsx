@@ -160,6 +160,9 @@ export default function ProduitDetailClient({
   }, []);
 
   const imagesAffichees = produit.images.length > 0 ? produit.images : [{ id: 'placeholder', url: '', alt: '' }];
+  const estFabricationSurCommande = produit.disponibilite === 'FABRICATION_SUR_COMMANDE';
+  const estCreationSurMesure = produit.disponibilite === 'CREATION_SUR_MESURE';
+  const delaiFabrication = produit.delaiFabrication || 'environ 7 jours ouvrés';
 
   // Stock disponible pour la taille choisie (ou stock global si pas de système de taille)
   function stockDisponiblePour(taille: string): number {
@@ -177,8 +180,12 @@ export default function ProduitDetailClient({
     }
     setErreurTaille(false);
 
+    if (estCreationSurMesure) {
+      return;
+    }
+
     const stockDispo = stockDisponiblePour(tailleChoisie);
-    if (stockDispo <= 0) {
+    if (stockDispo <= 0 && !estFabricationSurCommande) {
       setErreurStock(true);
       return;
     }
@@ -192,8 +199,16 @@ export default function ProduitDetailClient({
       image: produit.images[0]?.url || '',
       taille: tailleChoisie || undefined,
       quantite: 1,
-      stockMax: stockDispo,
+      stockMax: stockDispo > 0 ? stockDispo : 1,
     });
+    window.dispatchEvent(new CustomEvent('nabe:notification', {
+      detail: {
+        message: estFabricationSurCommande && stockDispo <= 0
+          ? `Ajouté au panier — fabrication à la demande (${delaiFabrication}).`
+          : 'Bijou ajouté au panier.',
+        type: 'succes',
+      },
+    }));
     if (popupOuvertureActive) {
       window.dispatchEvent(new CustomEvent('nabe:ouvrir-panier'));
     }
@@ -299,15 +314,17 @@ export default function ProduitDetailClient({
                   .map((t: any) => {
                   const stockTaille = stockDisponiblePour(t);
                   const epuisee = produit.stockTailles.length > 0 && stockTaille <= 0;
+                  const achetableSurCommande = epuisee && estFabricationSurCommande;
                   return (
                     <button
                       key={t}
                       type="button"
-                      disabled={epuisee}
-                      className={`produit-infos__taille-bouton${tailleChoisie === t ? ' produit-infos__taille-bouton--actif' : ''}${epuisee ? ' produit-infos__taille-bouton--epuise' : ''}`}
+                      disabled={epuisee && !achetableSurCommande}
+                      className={`produit-infos__taille-bouton${tailleChoisie === t ? ' produit-infos__taille-bouton--actif' : ''}${epuisee ? ' produit-infos__taille-bouton--epuise' : ''}${achetableSurCommande ? ' produit-infos__taille-bouton--sur-commande' : ''}`}
                       onClick={() => { setTailleChoisie(t); setErreurTaille(false); setErreurStock(false); }}
                     >
                       {t}
+                      {achetableSurCommande ? ' · sur commande' : ''}
                     </button>
                   );
                 })}
@@ -324,6 +341,11 @@ export default function ProduitDetailClient({
                   Il ne reste plus qu'un seul exemplaire en taille {tailleChoisie} !
                 </p>
               )}
+              {estFabricationSurCommande && tailleChoisie && stockDisponiblePour(tailleChoisie) <= 0 && (
+                <p className="produit-infos__precommande produit-infos__precommande--alerte">
+                  Cette taille sera fabriquée à la demande. Délai indicatif : {delaiFabrication}. Une fois la fabrication lancée, la commande ne pourra plus être annulée.
+                </p>
+              )}
               <p className="produit-infos__precommande">
                 Vous ne trouvez pas votre taille,{' '}
                 <Link href="/sur-mesure">contactez-moi pour une pré-commande</Link>.
@@ -331,17 +353,25 @@ export default function ProduitDetailClient({
             </div>
           )}
 
-          <button
-            className="produit-infos__ajouter"
-            onClick={gererAjoutPanier}
-            disabled={produit.disponibilite === 'EPUISE' || (produit.taillesDisponibles.length === 0 && produit.stock <= 0)}
-          >
-            {produit.disponibilite === 'EPUISE' || (produit.taillesDisponibles.length === 0 && produit.stock <= 0)
-              ? 'ÉPUISÉ'
-              : `AJOUTER AU PANIER · ${formaterPrix(promoEstActive(produit) ? produit.prixPromo! : produit.prix)}`}
-          </button>
+          {estCreationSurMesure ? (
+            <Link href="/sur-mesure" className="produit-infos__ajouter">
+              DEMANDER UN DEVIS
+            </Link>
+          ) : (
+            <button
+              className="produit-infos__ajouter"
+              onClick={gererAjoutPanier}
+              disabled={produit.disponibilite === 'EPUISE' || (!estFabricationSurCommande && produit.taillesDisponibles.length === 0 && produit.stock <= 0)}
+            >
+              {produit.disponibilite === 'EPUISE' || (!estFabricationSurCommande && produit.taillesDisponibles.length === 0 && produit.stock <= 0)
+                ? 'ÉPUISÉ'
+                : `AJOUTER AU PANIER · ${formaterPrix(promoEstActive(produit) ? produit.prixPromo! : produit.prix)}`}
+            </button>
+          )}
 
-          <p className="produit-infos__retours">Retours sans frais dans un délai de 30 jours</p>
+          <p className="produit-infos__retours">
+            Retours sous 14 jours pour les bijoux non personnalisés. Les pièces sur-mesure ou fabriquées à votre demande ne sont pas reprises, sauf défaut de conformité.
+          </p>
 
           <LiensInfoProduit />
 

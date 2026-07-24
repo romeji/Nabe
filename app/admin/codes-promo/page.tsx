@@ -1,6 +1,5 @@
-import { getServerSession } from 'next-auth';
+import { verifierSessionAdmin } from '@/lib/auth-helpers';
 import { redirect } from 'next/navigation';
-import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { formaterPrix } from '@/lib/utils';
 import FormulaireCodePromo from '@/components/admin/FormulaireCodePromo';
@@ -8,7 +7,7 @@ import LigneCodePromo from '@/components/admin/LigneCodePromo';
 import './codes-promo.css';
 
 export default async function PageAdminCodesPromo() {
-  const session = await getServerSession(authOptions);
+  const session = await verifierSessionAdmin();
   if (!session) redirect('/admin/login');
 
   const codes = await prisma.codeReduction.findMany({

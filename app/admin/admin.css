@@ -9,6 +9,7 @@
   padding: var(--espace-lg) var(--espace-xl);
   max-width: 100%;
   min-width: 0;
+  overflow-x: hidden;
 }
 
 /* Enveloppe dédiée aux tableaux larges : seul le tableau défile
@@ -60,6 +61,25 @@
     gap: 0.8rem;
     text-align: right;
     border-bottom: 1px solid var(--nabe-beige);
+    min-width: 0;
+  }
+  .admin-table-scroll .admin-table .admin-table__edition-row,
+  .admin-table-scroll .admin-table .admin-table__edition-row td {
+    display: block;
+    width: 100%;
+  }
+  .admin-table-scroll .admin-table .admin-table__edition-row td::before {
+    content: none;
+  }
+  .admin-table-scroll .admin-table input,
+  .admin-table-scroll .admin-table select,
+  .admin-table-scroll .admin-table textarea {
+    max-width: 100%;
+    min-width: 0;
+  }
+  .admin-table-scroll .admin-table input[type='file'] {
+    width: 100%;
+    font-size: 0.75rem;
   }
   .admin-table-scroll .admin-table tr td:last-child {
     border-bottom: none;
@@ -181,6 +201,7 @@
 .admin-form select,
 .admin-form textarea {
   width: 100%;
+  min-width: 0;
   padding: 0.7rem;
   border: 1px solid var(--nabe-beige-fonce);
   border-radius: var(--rayon-bordure);
@@ -248,6 +269,7 @@
   padding: 0.4rem 0.7rem;
   border-radius: var(--rayon-bordure);
   background-color: var(--nabe-beige);
+  white-space: nowrap;
 }
 
 .admin-btn-icone:hover {

@@ -46,7 +46,7 @@ const ETAPES = [
   { cle: 'LIVREE', label: 'Livrée' },
 ];
 
-const STATUTS_ANNULABLES = ['EN_ATTENTE', 'PAYEE', 'EN_PREPARATION'];
+const STATUTS_ANNULABLES = ['EN_ATTENTE', 'PAYEE'];
 
 export default function SuiviCommandeDetail({
   commande,

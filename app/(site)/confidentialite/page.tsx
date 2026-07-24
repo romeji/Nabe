@@ -46,7 +46,7 @@ export default function PageConfidentialite() {
           <li><strong>Stripe</strong> (paiement) — données de paiement</li>
           <li><strong>Resend</strong> (envoi d'e-mails transactionnels et newsletter) — adresse e-mail, nom</li>
           <li><strong>Cloudinary</strong> (hébergement des images du site) — n'a pas accès à vos données personnelles</li>
-          <li><strong>Mondial Relay / Colissimo</strong> (transporteurs) — nom, adresse, e-mail, téléphone, uniquement pour les commandes livrées par leurs services</li>
+          <li><strong>Transporteurs</strong> — nom, adresse, e-mail, téléphone et numéro de suivi, uniquement lorsque ces informations sont nécessaires à l'expédition de votre commande</li>
           <li><strong>IGN Géoplateforme</strong> (autocomplétion d'adresse au moment de la saisie) — adresse saisie, à titre indicatif, aucune donnée personnelle identifiée n'est conservée par ce service dans ce cadre</li>
           <li><strong>Vercel</strong> et <strong>Neon</strong> (hébergement du site et de la base de données)</li>
           <li><strong>Google</strong> (uniquement si vous choisissez de vous connecter via "Se connecter avec Google")</li>

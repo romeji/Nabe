@@ -90,12 +90,18 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: `${produitDb.nom} n’est plus disponible.` }, { status: 400 });
       }
 
+      if (produitDb.disponibilite === 'CREATION_SUR_MESURE') {
+        return NextResponse.json({ error: `${produitDb.nom} nécessite une demande de devis avant paiement.` }, { status: 400 });
+      }
+
       const stockDisponible =
         produitDb.stockTailles.length > 0
           ? produitDb.stockTailles.find((s: any) => s.taille === article.taille)?.quantite ?? 0
           : produitDb.stock;
 
-      if (article.quantite > stockDisponible) {
+      const achatSurCommandeAutorise = produitDb.disponibilite === 'FABRICATION_SUR_COMMANDE';
+
+      if (article.quantite > stockDisponible && !achatSurCommandeAutorise) {
         return NextResponse.json(
           {
             error:
@@ -136,32 +142,20 @@ export async function POST(req: NextRequest) {
       })
     );
     const configSite = await getConfigSite();
-    const livraisonIncluse = configSite.livraison_incluse_dans_prix === 'true';
 
-    // Deux chemins clairs et exclusifs : soit le marchand a inclus la
-    // livraison dans le prix (il expédie lui-même, aucun transporteur à
-    // choisir), soit on applique la grille tarifaire réelle du transporteur
-    // choisi. Chaque variable est toujours définie à la sortie du bloc —
-    // aucune valeur "null" ou fictive ne circule dans le reste de la route.
-    let fraisLivraison = 0;
-    let modeLivraisonLabel = 'Livraison incluse';
-    let modeLivraisonId = 'incluse';
+    const modesDisponibles = calculerModesLivraison(poidsTotal, configSite);
+    const modeChoisi = modesDisponibles.find((m: any) => m.id === modeLivraison?.id) || modesDisponibles[0];
 
-    if (!livraisonIncluse) {
-      const modesDisponibles = calculerModesLivraison(poidsTotal, configSite);
-      const modeChoisi = modesDisponibles.find((m: any) => m.id === modeLivraison?.id) || modesDisponibles[0];
-
-      if (!modeChoisi) {
-        return NextResponse.json({ error: 'Aucun mode de livraison disponible.' }, { status: 400 });
-      }
-      if (modeChoisi.necessitePointRelais && !pointRelais?.numero) {
-        return NextResponse.json({ error: 'Merci de sélectionner un point relais.' }, { status: 400 });
-      }
-
-      fraisLivraison = modeChoisi.prix;
-      modeLivraisonLabel = modeChoisi.label;
-      modeLivraisonId = modeChoisi.id;
+    if (!modeChoisi) {
+      return NextResponse.json({ error: 'Aucun mode de livraison disponible.' }, { status: 400 });
     }
+    if (modeChoisi.necessitePointRelais && !pointRelais?.numero) {
+      return NextResponse.json({ error: 'Merci de sélectionner un point relais.' }, { status: 400 });
+    }
+
+    const fraisLivraison = modeChoisi.prix;
+    const modeLivraisonLabel = modeChoisi.label;
+    const modeLivraisonId = modeChoisi.id;
 
     let codeReductionId: string | undefined;
     let montantReduction = 0;

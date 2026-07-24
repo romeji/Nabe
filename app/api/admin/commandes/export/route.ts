@@ -1,6 +1,5 @@
+import { verifierSessionAdmin } from '@/lib/auth-helpers';
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { getConfigSite } from '@/lib/config-site';
 
@@ -33,7 +32,7 @@ function formaterMontant(valeur: number): string {
 }
 
 export async function GET(req: NextRequest) {
-  const session = await getServerSession(authOptions);
+  const session = await verifierSessionAdmin();
   if (!session) {
     return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
   }

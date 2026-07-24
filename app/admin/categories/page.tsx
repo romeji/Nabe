@@ -1,13 +1,12 @@
-import { getServerSession } from 'next-auth';
+import { verifierSessionAdmin } from '@/lib/auth-helpers';
 import { redirect } from 'next/navigation';
-import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import FormulaireCategorieClient from '@/components/admin/FormulaireCategorieClient';
 import LigneCategorie from '@/components/admin/LigneCategorie';
 import './categories.css';
 
 export default async function PageAdminCategories() {
-  const session = await getServerSession(authOptions);
+  const session = await verifierSessionAdmin();
   if (!session) redirect('/admin/login');
 
   const categories = await prisma.categorie.findMany({

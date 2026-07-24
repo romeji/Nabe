@@ -1,38 +1,36 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { TAILLES_BAGUES } from '@/lib/tailles';
 import './guide-tailles.css';
-
-export const TAILLES = [
-  { iso: 40, circ: '40.0mm', diam: '12.7mm', us: '1 ¼', uk: 'C', it: 0 },
-  { iso: 41, circ: '41.0mm', diam: '13.1mm', us: '1 ¾', uk: 'D', it: 1 },
-  { iso: 42, circ: '42.0mm', diam: '13.4mm', us: '2 ¼', uk: 'D 1/2', it: 2 },
-  { iso: 43, circ: '43.0mm', diam: '13.7mm', us: '2 ½', uk: 'E 1/2', it: 3 },
-  { iso: 44, circ: '44.0mm', diam: '14.0mm', us: '3', uk: 'F', it: 4 },
-  { iso: 45, circ: '45.0mm', diam: '14.3mm', us: '3 ¼', uk: 'G', it: 5 },
-  { iso: 46, circ: '46.0mm', diam: '14.6mm', us: '3 ¾', uk: 'H', it: 6 },
-  { iso: 47, circ: '47.0mm', diam: '15.0mm', us: '4', uk: 'H 1/2', it: 7 },
-  { iso: 48, circ: '48.0mm', diam: '15.3mm', us: '4 ½', uk: 'I 1/2', it: 8 },
-  { iso: 49, circ: '49.0mm', diam: '15.6mm', us: '5', uk: 'J', it: 9 },
-  { iso: 50, circ: '50.0mm', diam: '15.9mm', us: '5 ¼', uk: 'K', it: 10 },
-  { iso: 51, circ: '51.0mm', diam: '16.2mm', us: '5 ¾', uk: 'L', it: 11 },
-  { iso: 52, circ: '52.0mm', diam: '16.6mm', us: '6', uk: 'L 1/2', it: 12 },
-  { iso: 54, circ: '54.0mm', diam: '17.2mm', us: '6 ¾', uk: 'N', it: 14 },
-  { iso: 56, circ: '56.0mm', diam: '17.8mm', us: '7 ½', uk: 'P', it: 16 },
-  { iso: 58, circ: '58.0mm', diam: '18.5mm', us: '8 ¼', uk: 'R', it: 18 },
-  { iso: 60, circ: '60.0mm', diam: '19.1mm', us: '9', uk: 'T', it: 20 },
-];
 
 export default function GuideTailles({ trigger }: { trigger?: React.ReactNode }) {
   const [ouvert, setOuvert] = useState(false);
   const [onglet, setOnglet] = useState<'mesurer' | 'guide' | 'faq'>('guide');
 
+  useEffect(() => {
+    if (!ouvert) return;
+
+    const ancienOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    function fermerAvecEscape(e: KeyboardEvent) {
+      if (e.key === 'Escape') setOuvert(false);
+    }
+
+    window.addEventListener('keydown', fermerAvecEscape);
+    return () => {
+      document.body.style.overflow = ancienOverflow;
+      window.removeEventListener('keydown', fermerAvecEscape);
+    };
+  }, [ouvert]);
+
   return (
     <>
       {trigger ? (
-        <span onClick={() => setOuvert(true)} style={{ cursor: 'pointer' }}>
+        <button type="button" className="guide-tailles__declencheur" onClick={() => setOuvert(true)}>
           {trigger}
-        </span>
+        </button>
       ) : (
         <button type="button" className="guide-tailles__lien" onClick={() => setOuvert(true)}>
           Trouver ma taille
@@ -41,7 +39,13 @@ export default function GuideTailles({ trigger }: { trigger?: React.ReactNode })
 
       {ouvert && (
         <div className="guide-tailles__overlay" onClick={() => setOuvert(false)}>
-          <div className="guide-tailles__modal" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="guide-tailles__modal"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Guide des tailles"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="guide-tailles__onglets">
               <button className={onglet === 'mesurer' ? 'actif' : ''} onClick={() => setOnglet('mesurer')}>
                 Mesurer
@@ -88,7 +92,7 @@ export default function GuideTailles({ trigger }: { trigger?: React.ReactNode })
                       </tr>
                     </thead>
                     <tbody>
-                      {TAILLES.map((t: any) => (
+                      {TAILLES_BAGUES.map((t: any) => (
                         <tr key={t.iso}>
                           <td>{t.iso}</td>
                           <td>{t.circ}</td>

@@ -1,6 +1,5 @@
+import { verifierSessionAdmin } from '@/lib/auth-helpers';
 import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 
 /**
@@ -17,7 +16,7 @@ import { prisma } from '@/lib/prisma';
  * tout moment, par exemple après un import en masse de commandes.
  */
 export async function POST() {
-  const session = await getServerSession(authOptions);
+  const session = await verifierSessionAdmin();
   if (!session) {
     return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
   }

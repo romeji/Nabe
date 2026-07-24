@@ -11,7 +11,18 @@ import BoutonFavori from '@/components/site/BoutonFavori';
 import '../hero-commun.css';
 import './collections.css';
 
-export const metadata = { title: 'Collections' };
+export const metadata = {
+  title: 'Collections de bijoux artisanaux',
+  description:
+    'Découvrez les bijoux artisanaux Nabe : bagues, colliers, bracelets et pièces uniques façonnés à la main en argent 925 et matières précieuses.',
+  alternates: { canonical: '/collections' },
+  openGraph: {
+    title: 'Collections de bijoux artisanaux | Nabe',
+    description:
+      'Bagues, colliers, bracelets et pièces uniques façonnés à la main en France.',
+    images: [{ url: '/images/collections-hero.jpg', width: 1200, height: 630, alt: 'Collections de bijoux artisanaux Nabe' }],
+  },
+};
 export const revalidate = 60;
 
 type Props = {
