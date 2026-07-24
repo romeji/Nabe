@@ -326,21 +326,6 @@
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .accueil-categories-section,
-  .accueil-nouveautes,
-  .accueil-histoire,
-  .accueil-pourquoi,
-  .accueil-carrousel,
-  .accueil-temoignages,
-  .accueil-newsletter,
-  .accueil-modules {
-    animation: accueilSectionEntree 0.7s ease both;
-    animation-timeline: view();
-    animation-range: entry 8% cover 24%;
-  }
-}
-
 @keyframes accueilSectionEntree {
   from {
     opacity: 0.72;

@@ -333,7 +333,7 @@ export default async function PageAccueil() {
           <h2>Restez inspirée</h2>
           <TexteRiche html={contenu.newsletter_texte} />
           <form className="accueil-newsletter__form" action="/api/newsletter" method="POST">
-            <input type="email" name="email" placeholder="Votre e-mail" required />
+            <input type="email" name="email" placeholder="Votre e-mail" required autoComplete="email" />
             <button type="submit" className="btn btn-or">
               {contenu.newsletter_bouton}
             </button>
