@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Cormorant_Garamond, Imperial_Script, Jost } from 'next/font/google';
 import './globals.css';
 
@@ -58,6 +58,14 @@ export const metadata: Metadata = {
   creator: 'Nabe',
   publisher: 'Nabe',
   manifest: '/manifest.webmanifest',
+  appleWebApp: {
+    capable: true,
+    title: 'Nabe',
+    statusBarStyle: 'default',
+  },
+  formatDetection: {
+    telephone: false,
+  },
   icons: {
     icon: [
       { url: '/icons/favicon-16.png', sizes: '16x16', type: 'image/png' },
@@ -89,6 +97,14 @@ export const metadata: Metadata = {
   alternates: {
     canonical: '/',
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#f6f0e8' },
+    { media: '(prefers-color-scheme: dark)', color: '#241b17' },
+  ],
+  colorScheme: 'light dark',
 };
 
 export default function RootLayout({
