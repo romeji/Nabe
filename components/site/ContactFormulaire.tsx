@@ -62,13 +62,13 @@ export default function ContactFormulaire() {
       )}
 
       <label>Nom</label>
-      <input type="text" name="nom" placeholder="Votre nom" required />
+      <input type="text" name="nom" placeholder="Votre nom" autoComplete="name" required />
 
       <label>E-mail</label>
-      <input type="email" name="email" placeholder="Votre e-mail" required />
+      <input type="email" name="email" placeholder="Votre e-mail" autoComplete="email" required />
 
       <label>Téléphone{estProbleme ? '' : ' (optionnel)'}</label>
-      <input type="tel" name="telephone" placeholder="06 12 34 56 78" required={estProbleme} />
+      <input type="tel" name="telephone" placeholder="06 12 34 56 78" autoComplete="tel" required={estProbleme} />
 
       <label>Sujet</label>
       <input type="text" name="sujet" placeholder="Sujet de votre message" defaultValue={sujetInitial} required />

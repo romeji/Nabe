@@ -83,6 +83,19 @@
   padding: 0.8rem;
   border: 1px solid var(--nabe-beige-fonce);
   border-radius: var(--rayon-bordure);
+  background-color: var(--nabe-blanc);
+  color: var(--texte-principal);
+  caret-color: var(--nabe-terracotta);
+  color-scheme: light;
+}
+
+.connexion-carte input::placeholder {
+  color: rgba(69, 41, 30, 0.48);
+}
+
+.connexion-carte input:focus {
+  outline: 2px solid rgba(159, 84, 52, 0.18);
+  border-color: var(--nabe-terracotta);
 }
 
 .connexion-carte button[type='submit'] {
