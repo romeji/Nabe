@@ -3,6 +3,25 @@ import { prisma } from '@/lib/prisma';
 import { verifierSessionAdmin } from '@/lib/auth-helpers';
 import { deleteImageCloudinary } from '@/lib/cloudinary';
 
+function validerPayloadProduit(body: any) {
+  if (typeof body.nom === 'string' && !body.nom.trim()) return 'Le nom du bijou est obligatoire.';
+  if (typeof body.description === 'string' && !body.description.trim()) return 'La description est obligatoire.';
+  if (typeof body.prix === 'number' && body.prix <= 0) return 'Le prix doit être supérieur à 0 €.';
+  if ('categorieId' in body && !body.categorieId) return 'La catégorie est obligatoire.';
+  if ('matiereId' in body && !body.matiereId) return 'La matière est obligatoire.';
+  if (typeof body.poidsGrammes === 'number' && body.poidsGrammes < 1) return 'Le poids emballé doit être supérieur à 0 gramme.';
+  if (body.actif !== false && Array.isArray(body.images) && body.images.length === 0) {
+    return 'Ajoutez au moins une photo avant de rendre le bijou visible sur le site.';
+  }
+  if (
+    body.disponibilite === 'FABRICATION_SUR_COMMANDE' &&
+    (typeof body.delaiFabrication !== 'string' || !body.delaiFabrication.trim())
+  ) {
+    return 'Indiquez un délai de fabrication pour un bijou fabriqué sur commande.';
+  }
+  return '';
+}
+
 export async function GET(req: NextRequest, { params: paramsPromise }: { params: Promise<{ id: string }> }) {
   const params = await paramsPromise;
   const session = await verifierSessionAdmin();
@@ -39,6 +58,10 @@ export async function PATCH(req: NextRequest, { params: paramsPromise }: { param
 
   try {
     const body = await req.json();
+    const erreurValidation = validerPayloadProduit(body);
+    if (erreurValidation) {
+      return NextResponse.json({ error: erreurValidation }, { status: 400 });
+    }
 
     const { images, stock, id, pierresIds, composeAvecIds, stockParTaille, ...autresDonnees } = body;
 

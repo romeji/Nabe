@@ -142,6 +142,24 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
     }));
   }
 
+  function validerDonneesProduit() {
+    if (!donnees.nom.trim()) return 'Le nom du bijou est obligatoire.';
+    if (!donnees.description.trim()) return 'La description est obligatoire.';
+    if (!Number.isFinite(donnees.prix) || donnees.prix <= 0) return 'Le prix doit être supérieur à 0 €.';
+    if (!donnees.categorieId) return 'La catégorie est obligatoire.';
+    if (!donnees.matiereId) return 'La matière est obligatoire.';
+    if (!Number.isInteger(donnees.poidsGrammes) || donnees.poidsGrammes < 1) {
+      return 'Le poids emballé doit être supérieur à 0 gramme.';
+    }
+    if (donnees.actif && donnees.images.length === 0) {
+      return 'Ajoutez au moins une photo avant de rendre le bijou visible sur le site.';
+    }
+    if (donnees.disponibilite === 'FABRICATION_SUR_COMMANDE' && !donnees.delaiFabrication.trim()) {
+      return 'Indiquez un délai de fabrication pour un bijou fabriqué sur commande.';
+    }
+    return '';
+  }
+
   async function gererUploadImage(e: React.ChangeEvent<HTMLInputElement>) {
     const fichiers = e.target.files;
     if (!fichiers || fichiers.length === 0) return;
@@ -204,6 +222,12 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
 
   async function gererSoumission(e: React.FormEvent) {
     e.preventDefault();
+    const erreurValidation = validerDonneesProduit();
+    if (erreurValidation) {
+      setErreur(erreurValidation);
+      return;
+    }
+
     setEnregistrement(true);
     setErreur('');
 
@@ -213,8 +237,11 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
 
       const payload = {
         ...donnees,
-        categorieId: donnees.categorieId || null,
-        matiereId: donnees.matiereId || null,
+        nom: donnees.nom.trim(),
+        description: donnees.description.trim(),
+        delaiFabrication: donnees.delaiFabrication.trim() || null,
+        categorieId: donnees.categorieId,
+        matiereId: donnees.matiereId,
         collectionId: donnees.collectionId || null,
       };
 
@@ -267,7 +294,7 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
             <input
               type="number"
               step="0.01"
-              min="0"
+              min="0.01"
               value={donnees.prix}
               onChange={(e) => majChamp('prix', parseFloat(e.target.value) || 0)}
               required
@@ -275,7 +302,7 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
           </div>
           <div>
             <label>Type de bijou</label>
-            <select value={donnees.type} onChange={(e) => majChamp('type', e.target.value)}>
+            <select value={donnees.type} onChange={(e) => majChamp('type', e.target.value)} required>
               {Object.entries(LABELS_TYPE_BIJOU).map(([v, l]) => (
                 <option key={v} value={v}>
                   {l}
@@ -288,7 +315,7 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
         <div className="admin-form__ligne">
           <div>
             <label>Catégorie</label>
-            <select value={donnees.categorieId} onChange={(e) => majChamp('categorieId', e.target.value)} disabled={chargementOptions}>
+            <select value={donnees.categorieId} onChange={(e) => majChamp('categorieId', e.target.value)} disabled={chargementOptions} required>
               <option value="">Aucune catégorie</option>
               {categories.map((c: any) => (
                 <option key={c.id} value={c.id}>
@@ -304,7 +331,7 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
           </div>
           <div>
             <label>Matière</label>
-            <select value={donnees.matiereId} onChange={(e) => majChamp('matiereId', e.target.value)} disabled={chargementOptions}>
+            <select value={donnees.matiereId} onChange={(e) => majChamp('matiereId', e.target.value)} disabled={chargementOptions} required>
               <option value="">Sélectionner une matière</option>
               {matieres.map((m: any) => (
                 <option key={m.id} value={m.id}>
@@ -376,6 +403,7 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
               placeholder="Ex : environ 7 jours ouvrés"
               value={donnees.delaiFabrication}
               onChange={(e) => majChamp('delaiFabrication', e.target.value)}
+              required={donnees.disponibilite === 'FABRICATION_SUR_COMMANDE'}
             />
           </div>
         </div>
@@ -439,6 +467,7 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
                         [t]: parseInt(e.target.value) || 0,
                       })
                     }
+                    required
                   />
                 </div>
               ))}
@@ -456,6 +485,7 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
                 min="0"
                 value={donnees.stock}
                 onChange={(e) => majChamp('stock', parseInt(e.target.value) || 0)}
+                required
               />
             </div>
           </div>
@@ -469,6 +499,7 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
               min="1"
               value={donnees.poidsGrammes}
               onChange={(e) => majChamp('poidsGrammes', parseInt(e.target.value) || 1)}
+              required
             />
             <p className="formulaire-produit__aide">Utilisé pour calculer le tarif de livraison réel au checkout.</p>
           </div>
@@ -545,7 +576,17 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
 
       <div className="formulaire-produit__section">
         <h2>Photos</h2>
-        <input type="file" accept="image/*" multiple onChange={gererUploadImage} disabled={uploadEnCours} />
+        <input
+          type="file"
+          accept="image/*"
+          multiple
+          onChange={gererUploadImage}
+          disabled={uploadEnCours}
+          required={donnees.actif && donnees.images.length === 0}
+        />
+        {donnees.actif && donnees.images.length === 0 && (
+          <p className="formulaire-produit__aide">Au moins une photo est obligatoire pour publier un bijou visible.</p>
+        )}
         {uploadEnCours && <p className="formulaire-produit__upload-statut">Envoi en cours...</p>}
 
         <div className="formulaire-produit__images">
