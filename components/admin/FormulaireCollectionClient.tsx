@@ -49,7 +49,7 @@ export default function FormulaireCollectionClient() {
       const res = await fetch('/api/admin/collections', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nom, description, image: image?.url }),
+        body: JSON.stringify({ nom: nom.trim(), description: description.trim(), image: image?.url }),
       });
       if (!res.ok) {
         const data = await res.json();

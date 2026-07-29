@@ -62,7 +62,11 @@ export default function FormulaireProfilClient({
       const res = await fetch('/api/mon-compte/profil', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prenom, nomDeFamille, telephone }),
+        body: JSON.stringify({
+          prenom: prenom.trim(),
+          nomDeFamille: nomDeFamille.trim(),
+          telephone: telephone.trim(),
+        }),
       });
       if (!res.ok) {
         const data = await res.json();
@@ -116,17 +120,17 @@ export default function FormulaireProfilClient({
         <h2>Informations personnelles</h2>
 
         <label>Email</label>
-        <input type="email" value={email} disabled />
+        <input type="email" value={email} autoComplete="email" disabled />
         <p className="formulaire-profil__aide">L'e-mail ne peut pas être modifié.</p>
 
         <label>Prénom</label>
-        <input type="text" value={prenom} onChange={(e) => setPrenom(e.target.value)} />
+        <input type="text" value={prenom} onChange={(e) => setPrenom(e.target.value)} autoComplete="given-name" />
 
         <label>Nom</label>
-        <input type="text" value={nomDeFamille} onChange={(e) => setNomDeFamille(e.target.value)} />
+        <input type="text" value={nomDeFamille} onChange={(e) => setNomDeFamille(e.target.value)} autoComplete="family-name" />
 
         <label>Téléphone</label>
-        <input type="tel" value={telephone} onChange={(e) => setTelephone(e.target.value)} />
+        <input type="tel" value={telephone} onChange={(e) => setTelephone(e.target.value)} autoComplete="tel" />
 
         {erreur && <p className="formulaire-profil__erreur">{erreur}</p>}
 
@@ -146,6 +150,7 @@ export default function FormulaireProfilClient({
               value={motDePasseActuel}
               onChange={(e) => setMotDePasseActuel(e.target.value)}
               required
+              autoComplete="current-password"
             />
           </>
         )}
@@ -157,6 +162,7 @@ export default function FormulaireProfilClient({
           onChange={(e) => setNouveauMotDePasse(e.target.value)}
           minLength={6}
           required
+          autoComplete="new-password"
         />
 
         <label>Confirmer le nouveau mot de passe</label>
@@ -166,6 +172,7 @@ export default function FormulaireProfilClient({
           onChange={(e) => setConfirmationMotDePasse(e.target.value)}
           minLength={6}
           required
+          autoComplete="new-password"
         />
 
         {!aUnMotDePasse && (

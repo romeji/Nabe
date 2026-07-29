@@ -15,13 +15,16 @@ export async function PATCH(req: NextRequest, { params: paramsPromise }: { param
 
     const donnees: any = {};
     if (nom !== undefined) {
-      donnees.nom = nom;
+      if (!nom.trim()) {
+        return NextResponse.json({ error: 'Le nom est requis' }, { status: 400 });
+      }
+      donnees.nom = nom.trim();
       donnees.slug = slugify(nom);
     }
-    if (description !== undefined) donnees.description = description;
-    if (image !== undefined) donnees.image = image;
-    if (imageAccueilFond !== undefined) donnees.imageAccueilFond = imageAccueilFond;
-    if (logoAccueil !== undefined) donnees.logoAccueil = logoAccueil;
+    if (description !== undefined) donnees.description = description?.trim() || null;
+    if (image !== undefined) donnees.image = image || null;
+    if (imageAccueilFond !== undefined) donnees.imageAccueilFond = imageAccueilFond || null;
+    if (logoAccueil !== undefined) donnees.logoAccueil = logoAccueil || null;
     if (ordre !== undefined) donnees.ordre = ordre;
 
     const categorie = await prisma.categorie.update({
@@ -31,6 +34,9 @@ export async function PATCH(req: NextRequest, { params: paramsPromise }: { param
 
     return NextResponse.json(categorie);
   } catch (error: any) {
+    if (error.code === 'P2002') {
+      return NextResponse.json({ error: 'Cette catégorie existe déjà' }, { status: 400 });
+    }
     console.error('Erreur modification catégorie:', error);
     return NextResponse.json({ error: error.message || 'Erreur' }, { status: 400 });
   }

@@ -26,20 +26,27 @@ export async function POST(req: NextRequest) {
   try {
     const { nom, description, image, imageAccueilFond, logoAccueil, ordre } = await req.json();
 
+    if (!nom || !nom.trim()) {
+      return NextResponse.json({ error: 'Le nom est requis' }, { status: 400 });
+    }
+
     const categorie = await prisma.categorie.create({
       data: {
-        nom,
+        nom: nom.trim(),
         slug: slugify(nom),
-        description,
-        image,
-        imageAccueilFond,
-        logoAccueil,
+        description: description?.trim() || null,
+        image: image || null,
+        imageAccueilFond: imageAccueilFond || null,
+        logoAccueil: logoAccueil || null,
         ordre: ordre ?? 0,
       } as any,
     });
 
     return NextResponse.json(categorie, { status: 201 });
   } catch (error: any) {
+    if (error.code === 'P2002') {
+      return NextResponse.json({ error: 'Cette catégorie existe déjà' }, { status: 400 });
+    }
     console.error('Erreur création catégorie:', error);
     return NextResponse.json({ error: error.message || 'Erreur' }, { status: 400 });
   }

@@ -31,7 +31,13 @@ export async function POST(req: NextRequest) {
     }
 
     const collection = await prisma.collection.create({
-      data: { nom: nom.trim(), slug: slugify(nom), description, image, ordre: ordre ?? 0 },
+      data: {
+        nom: nom.trim(),
+        slug: slugify(nom),
+        description: description?.trim() || null,
+        image: image || null,
+        ordre: ordre ?? 0,
+      },
     });
 
     return NextResponse.json(collection, { status: 201 });

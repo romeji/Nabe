@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
       data: {
         nom: nom.trim(),
         slug: slugify(nom),
-        description: description || undefined,
+        description: description?.trim() || null,
         ordre: ordre ?? 0,
         couleurs: couleursIds.length > 0
           ? { create: couleursIds.map((couleurPierreId: string) => ({ couleurPierreId })) }

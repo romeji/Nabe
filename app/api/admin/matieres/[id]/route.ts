@@ -15,7 +15,10 @@ export async function PATCH(req: NextRequest, { params: paramsPromise }: { param
 
     const donnees: any = {};
     if (nom !== undefined) {
-      donnees.nom = nom;
+      if (!nom.trim()) {
+        return NextResponse.json({ error: 'Le nom est requis' }, { status: 400 });
+      }
+      donnees.nom = nom.trim();
       donnees.slug = slugify(nom);
     }
     if (ordre !== undefined) donnees.ordre = ordre;

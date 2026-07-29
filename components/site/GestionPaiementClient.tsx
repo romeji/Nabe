@@ -71,6 +71,7 @@ export default function GestionPaiementClient() {
   const [chargement, setChargement] = useState(true);
   const [formulaireOuvert, setFormulaireOuvert] = useState(false);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [erreur, setErreur] = useState('');
 
   function chargerMoyens() {
     setChargement(true);
@@ -87,9 +88,19 @@ export default function GestionPaiementClient() {
 
   async function ouvrirFormulaire() {
     setFormulaireOuvert(true);
-    const res = await fetch('/api/mon-compte/moyens-paiement/setup-intent', { method: 'POST' });
-    const data = await res.json();
-    setClientSecret(data.clientSecret);
+    setErreur('');
+    setClientSecret(null);
+    try {
+      const res = await fetch('/api/mon-compte/moyens-paiement/setup-intent', { method: 'POST' });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.clientSecret) {
+        throw new Error(data.error || "Impossible de préparer l'ajout de carte.");
+      }
+      setClientSecret(data.clientSecret);
+    } catch (err: any) {
+      setErreur(err.message || "Impossible de préparer l'ajout de carte.");
+      setFormulaireOuvert(false);
+    }
   }
 
   function fermerFormulaire() {
@@ -140,6 +151,8 @@ export default function GestionPaiementClient() {
           + Ajouter une carte
         </button>
       )}
+
+      {erreur && <p className="gestion-paiement__erreur">{erreur}</p>}
 
       {formulaireOuvert && clientSecret && (
         <Elements stripe={stripePromise} options={{ clientSecret }}>

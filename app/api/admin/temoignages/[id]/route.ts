@@ -13,8 +13,14 @@ export async function PATCH(req: NextRequest, { params: paramsPromise }: { param
     const { auteur, texte, note, ordre, actif } = await req.json();
 
     const donnees: any = {};
-    if (auteur !== undefined) donnees.auteur = auteur;
-    if (texte !== undefined) donnees.texte = texte;
+    if (auteur !== undefined) {
+      if (!auteur.trim()) return NextResponse.json({ error: "L'auteur est requis" }, { status: 400 });
+      donnees.auteur = auteur.trim();
+    }
+    if (texte !== undefined) {
+      if (!texte.trim()) return NextResponse.json({ error: 'Le texte est requis' }, { status: 400 });
+      donnees.texte = texte.trim();
+    }
     if (note !== undefined) donnees.note = Math.min(5, Math.max(1, Number(note) || 5));
     if (ordre !== undefined) donnees.ordre = ordre;
     if (actif !== undefined) donnees.actif = actif;

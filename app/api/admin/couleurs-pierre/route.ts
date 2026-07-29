@@ -28,9 +28,12 @@ export async function POST(req: NextRequest) {
     if (!nom || !nom.trim() || !codeHex) {
       return NextResponse.json({ error: 'Le nom et la couleur sont requis' }, { status: 400 });
     }
+    if (!/^#[0-9A-Fa-f]{6}$/.test(codeHex)) {
+      return NextResponse.json({ error: 'La couleur doit être au format #RRGGBB' }, { status: 400 });
+    }
 
     const couleur = await prisma.couleurPierre.create({
-      data: { nom: nom.trim(), codeHex, ordre: ordre ?? 0 },
+      data: { nom: nom.trim(), codeHex: codeHex.toUpperCase(), ordre: ordre ?? 0 },
     });
 
     return NextResponse.json(couleur, { status: 201 });

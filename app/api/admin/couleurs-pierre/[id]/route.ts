@@ -13,8 +13,18 @@ export async function PATCH(req: NextRequest, { params: paramsPromise }: { param
     const { nom, codeHex, ordre } = await req.json();
 
     const donnees: any = {};
-    if (nom !== undefined) donnees.nom = nom;
-    if (codeHex !== undefined) donnees.codeHex = codeHex;
+    if (nom !== undefined) {
+      if (!nom.trim()) {
+        return NextResponse.json({ error: 'Le nom est requis' }, { status: 400 });
+      }
+      donnees.nom = nom.trim();
+    }
+    if (codeHex !== undefined) {
+      if (!/^#[0-9A-Fa-f]{6}$/.test(codeHex)) {
+        return NextResponse.json({ error: 'La couleur doit être au format #RRGGBB' }, { status: 400 });
+      }
+      donnees.codeHex = codeHex.toUpperCase();
+    }
     if (ordre !== undefined) donnees.ordre = ordre;
 
     const couleur = await prisma.couleurPierre.update({

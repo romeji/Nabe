@@ -18,7 +18,7 @@ export default function FormulaireCouleurPierre() {
       const res = await fetch('/api/admin/couleurs-pierre', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nom, codeHex }),
+        body: JSON.stringify({ nom: nom.trim(), codeHex }),
       });
       if (!res.ok) {
         const data = await res.json();

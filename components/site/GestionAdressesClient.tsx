@@ -81,7 +81,17 @@ export default function GestionAdressesClient() {
       const res = await fetch(url, {
         method: methode,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          libelle: formData.libelle.trim(),
+          destinataire: formData.destinataire.trim(),
+          ligne1: formData.ligne1.trim(),
+          ligne2: formData.ligne2.trim(),
+          ville: formData.ville.trim(),
+          codePostal: formData.codePostal.trim(),
+          pays: formData.pays.trim() || 'France',
+          telephone: formData.telephone.trim(),
+        }),
       });
       if (!res.ok) {
         const data = await res.json();
@@ -141,6 +151,7 @@ export default function GestionAdressesClient() {
                 placeholder="Ex : Domicile, Travail..."
                 value={formData.libelle}
                 onChange={(e) => setFormData({ ...formData, libelle: e.target.value })}
+                autoComplete="address-level3"
               />
             </div>
             <div>
@@ -149,6 +160,7 @@ export default function GestionAdressesClient() {
                 type="text"
                 value={formData.destinataire}
                 onChange={(e) => setFormData({ ...formData, destinataire: e.target.value })}
+                autoComplete="name"
                 required
               />
             </div>
@@ -159,6 +171,7 @@ export default function GestionAdressesClient() {
             type="text"
             value={formData.ligne1}
             onChange={(e) => setFormData({ ...formData, ligne1: e.target.value })}
+            autoComplete="address-line1"
             required
           />
           <input
@@ -166,6 +179,7 @@ export default function GestionAdressesClient() {
             placeholder="Complément (optionnel)"
             value={formData.ligne2}
             onChange={(e) => setFormData({ ...formData, ligne2: e.target.value })}
+            autoComplete="address-line2"
           />
 
           <div className="admin-form__ligne">
@@ -175,6 +189,7 @@ export default function GestionAdressesClient() {
                 type="text"
                 value={formData.codePostal}
                 onChange={(e) => setFormData({ ...formData, codePostal: e.target.value })}
+                autoComplete="postal-code"
                 required
               />
             </div>
@@ -184,6 +199,7 @@ export default function GestionAdressesClient() {
                 type="text"
                 value={formData.ville}
                 onChange={(e) => setFormData({ ...formData, ville: e.target.value })}
+                autoComplete="address-level2"
                 required
               />
             </div>
@@ -196,6 +212,8 @@ export default function GestionAdressesClient() {
                 type="text"
                 value={formData.pays}
                 onChange={(e) => setFormData({ ...formData, pays: e.target.value })}
+                autoComplete="country-name"
+                required
               />
             </div>
             <div>
@@ -204,6 +222,7 @@ export default function GestionAdressesClient() {
                 type="tel"
                 value={formData.telephone}
                 onChange={(e) => setFormData({ ...formData, telephone: e.target.value })}
+                autoComplete="tel"
               />
             </div>
           </div>

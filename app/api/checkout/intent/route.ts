@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Stripe n’est pas configuré côté serveur.' }, { status: 500 });
     }
 
-    if (!articles || articles.length === 0) {
+    if (!Array.isArray(articles) || articles.length === 0) {
       return NextResponse.json({ error: 'Le panier est vide.' }, { status: 400 });
     }
 
@@ -64,10 +64,49 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Merci de compléter toutes les informations de livraison.' }, { status: 400 });
     }
 
+    const adresseNormalisee = {
+      email: adresse.email.trim().toLowerCase(),
+      prenom: adresse.prenom.trim(),
+      nom: adresse.nom.trim(),
+      adresse: adresse.adresse.trim(),
+      complement: adresse.complement?.trim() || '',
+      ville: adresse.ville.trim(),
+      codePostal: adresse.codePostal.trim(),
+      pays: adresse.pays?.trim() || 'FR',
+      telephone: adresse.telephone?.trim() || '',
+    };
+
+    if (
+      !adresseNormalisee.email ||
+      !adresseNormalisee.prenom ||
+      !adresseNormalisee.nom ||
+      !adresseNormalisee.adresse ||
+      !adresseNormalisee.ville ||
+      !adresseNormalisee.codePostal
+    ) {
+      return NextResponse.json({ error: 'Merci de compléter toutes les informations de livraison.' }, { status: 400 });
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(adresseNormalisee.email)) {
+      return NextResponse.json({ error: 'Adresse e-mail invalide.' }, { status: 400 });
+    }
+
+    if (articles.some((article) => !article || typeof article.produitId !== 'string')) {
+      return NextResponse.json({ error: 'Article invalide dans le panier.' }, { status: 400 });
+    }
+
+    const articlesAgreges = Array.from(
+      articles.reduce((acc, article) => {
+        const cle = `${article.produitId}::${article.taille || ''}`;
+        const existant = acc.get(cle);
+        acc.set(cle, existant ? { ...existant, quantite: existant.quantite + article.quantite } : article);
+        return acc;
+      }, new Map<string, ArticlePanier>()).values()
+    );
+
     const session = await getServerSession(authClientOptions);
     const clientId = (session?.user as any)?.id as string | undefined;
 
-    const idsProduits = articles.map((a: any) => a.produitId);
+    const idsProduits = [...new Set(articlesAgreges.map((article) => article.produitId))];
     const produitsDb = await prisma.produit.findMany({
       where: { id: { in: idsProduits }, actif: true },
       include: { stockTailles: true },
@@ -76,7 +115,7 @@ export async function POST(req: NextRequest) {
     let sousTotal = 0;
     const lignesValidees: { produitId: string; nom: string; taille?: string; prixUnitaire: number; quantite: number; image: string }[] = [];
 
-    for (const article of articles) {
+    for (const article of articlesAgreges) {
       if (!Number.isInteger(article.quantite) || article.quantite <= 0) {
         return NextResponse.json({ error: 'Quantité invalide dans le panier.' }, { status: 400 });
       }
@@ -194,7 +233,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Le montant total doit être positif.' }, { status: 400 });
     }
 
-    const paysStripe = normaliserPaysStripe(adresse.pays);
+    const paysStripe = normaliserPaysStripe(adresseNormalisee.pays);
 
     // Si le client est connecté, on rattache le paiement à son Customer Stripe
     // pour que ses moyens de paiement déjà enregistrés (ajoutés depuis
@@ -212,15 +251,15 @@ export async function POST(req: NextRequest) {
       customer: stripeCustomerId,
       setup_future_usage: stripeCustomerId ? 'off_session' : undefined,
       automatic_payment_methods: { enabled: true },
-      receipt_email: adresse.email,
+      receipt_email: adresseNormalisee.email,
       shipping: {
-        name: `${adresse.prenom} ${adresse.nom}`,
-        phone: adresse.telephone || undefined,
+        name: `${adresseNormalisee.prenom} ${adresseNormalisee.nom}`,
+        phone: adresseNormalisee.telephone || undefined,
         address: {
-          line1: adresse.adresse,
-          line2: adresse.complement || undefined,
-          city: adresse.ville,
-          postal_code: adresse.codePostal,
+          line1: adresseNormalisee.adresse,
+          line2: adresseNormalisee.complement || undefined,
+          city: adresseNormalisee.ville,
+          postal_code: adresseNormalisee.codePostal,
           country: paysStripe,
         },
       },
@@ -235,14 +274,14 @@ export async function POST(req: NextRequest) {
         ),
         clientId: clientId || '',
         codeReductionId: codeReductionId || '',
-        email: adresse.email,
-        prenom: adresse.prenom,
-        nom: adresse.nom,
-        adresse: adresse.adresse,
-        ville: adresse.ville,
-        codePostal: adresse.codePostal,
+        email: adresseNormalisee.email,
+        prenom: adresseNormalisee.prenom,
+        nom: adresseNormalisee.nom,
+        adresse: adresseNormalisee.adresse,
+        ville: adresseNormalisee.ville,
+        codePostal: adresseNormalisee.codePostal,
         pays: paysStripe,
-        telephone: adresse.telephone || '',
+        telephone: adresseNormalisee.telephone,
         sousTotal: sousTotal.toFixed(2),
         montantReduction: montantReduction.toFixed(2),
         fraisLivraison: fraisLivraison.toFixed(2),

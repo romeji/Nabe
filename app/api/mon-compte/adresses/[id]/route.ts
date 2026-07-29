@@ -32,6 +32,23 @@ export async function PATCH(req: NextRequest, { params: paramsPromise }: { param
       if (body[champ] !== undefined) donnees[champ] = body[champ];
     }
 
+    for (const champ of ['libelle', 'destinataire', 'ligne1', 'ligne2', 'ville', 'codePostal', 'pays', 'telephone'] as const) {
+      if (typeof donnees[champ] === 'string') donnees[champ] = donnees[champ].trim();
+    }
+    if ('libelle' in donnees && !donnees.libelle) donnees.libelle = null;
+    if ('ligne2' in donnees && !donnees.ligne2) donnees.ligne2 = null;
+    if ('telephone' in donnees && !donnees.telephone) donnees.telephone = null;
+    if ('pays' in donnees && !donnees.pays) donnees.pays = 'France';
+
+    if (
+      ('destinataire' in donnees && !donnees.destinataire) ||
+      ('ligne1' in donnees && !donnees.ligne1) ||
+      ('ville' in donnees && !donnees.ville) ||
+      ('codePostal' in donnees && !donnees.codePostal)
+    ) {
+      return NextResponse.json({ error: 'Champs obligatoires manquants.' }, { status: 400 });
+    }
+
     if (donnees.parDefaut) {
       await prisma.adressePostale.updateMany({ where: { clientId }, data: { parDefaut: false } });
     }
@@ -62,7 +79,17 @@ export async function DELETE(req: NextRequest, { params: paramsPromise }: { para
   }
 
   try {
+    const etaitParDefaut = adresseExistante.parDefaut;
     await prisma.adressePostale.delete({ where: { id: params.id } });
+    if (etaitParDefaut) {
+      const suivante = await prisma.adressePostale.findFirst({
+        where: { clientId },
+        orderBy: { createdAt: 'desc' },
+      });
+      if (suivante) {
+        await prisma.adressePostale.update({ where: { id: suivante.id }, data: { parDefaut: true } });
+      }
+    }
     return NextResponse.json({ success: true });
   } catch (error: any) {
     console.error('Erreur suppression adresse:', error);

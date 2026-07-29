@@ -39,14 +39,17 @@ export async function PATCH(req: NextRequest) {
     const { prenom, nomDeFamille, telephone, motDePasseActuel, nouveauMotDePasse } = await req.json();
 
     const donnees: any = {};
-    if (prenom !== undefined) donnees.prenom = prenom;
-    if (nomDeFamille !== undefined) donnees.nomDeFamille = nomDeFamille;
+    const prenomNettoye = typeof prenom === 'string' ? prenom.trim() : prenom;
+    const nomDeFamilleNettoye = typeof nomDeFamille === 'string' ? nomDeFamille.trim() : nomDeFamille;
+
+    if (prenom !== undefined) donnees.prenom = prenomNettoye || null;
+    if (nomDeFamille !== undefined) donnees.nomDeFamille = nomDeFamilleNettoye || null;
     // Le champ "nom" (nom complet) reste recalculé automatiquement pour rester
     // cohérent avec tous les affichages existants ailleurs dans le site.
     if (prenom !== undefined || nomDeFamille !== undefined) {
-      donnees.nom = `${prenom ?? ''} ${nomDeFamille ?? ''}`.trim() || undefined;
+      donnees.nom = `${prenomNettoye ?? ''} ${nomDeFamilleNettoye ?? ''}`.trim() || null;
     }
-    if (telephone !== undefined) donnees.telephone = telephone;
+    if (telephone !== undefined) donnees.telephone = typeof telephone === 'string' ? telephone.trim() || null : telephone;
 
     let motDePasseModifie = false;
     let clientPourEmail: { email: string; nom: string | null } | null = null;

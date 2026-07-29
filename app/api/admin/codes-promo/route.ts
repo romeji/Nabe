@@ -42,15 +42,25 @@ export async function POST(req: NextRequest) {
       montantMinimum,
     } = await req.json();
 
-    if (!code || !code.trim() || !valeur) {
+    if (!code || !code.trim() || valeur === undefined || valeur === null || valeur === '') {
       return NextResponse.json({ error: 'Le code et la valeur sont requis' }, { status: 400 });
+    }
+    if (type && !['POURCENTAGE', 'MONTANT_FIXE'].includes(type)) {
+      return NextResponse.json({ error: 'Type de code promo invalide' }, { status: 400 });
+    }
+    const valeurNumerique = parseFloat(valeur);
+    if (!Number.isFinite(valeurNumerique) || valeurNumerique <= 0) {
+      return NextResponse.json({ error: 'La valeur doit être supérieure à 0' }, { status: 400 });
+    }
+    if ((type || 'POURCENTAGE') === 'POURCENTAGE' && valeurNumerique > 100) {
+      return NextResponse.json({ error: 'Un pourcentage ne peut pas dépasser 100 %' }, { status: 400 });
     }
 
     const codeReduction = await prisma.codeReduction.create({
       data: {
         code: code.trim().toUpperCase(),
         type: type || 'POURCENTAGE',
-        valeur: parseFloat(valeur),
+        valeur: valeurNumerique,
         nomCollaborateur: nomCollaborateur || undefined,
         commissionPourcentage: commissionPourcentage ? parseFloat(commissionPourcentage) : undefined,
         dateExpiration: dateExpiration ? new Date(dateExpiration) : undefined,

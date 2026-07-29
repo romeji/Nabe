@@ -43,7 +43,12 @@ export default function PageInscription() {
       const res = await fetch('/api/auth-client/inscription', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prenom, nomDeFamille, email, password: motDePasse }),
+        body: JSON.stringify({
+          prenom: prenom.trim(),
+          nomDeFamille: nomDeFamille.trim(),
+          email: email.trim().toLowerCase(),
+          password: motDePasse,
+        }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Erreur lors de la création du compte');
@@ -58,7 +63,7 @@ export default function PageInscription() {
       const reponse = await fetch('/api/auth-client/callback/credentials', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({ csrfToken: csrfToken || '', email, password: motDePasse, json: 'true' }),
+        body: new URLSearchParams({ csrfToken: csrfToken || '', email: email.trim().toLowerCase(), password: motDePasse, json: 'true' }),
       });
       const dataConnexion = await reponse.json().catch(() => ({}));
 
@@ -138,13 +143,13 @@ export default function PageInscription() {
 
         <form onSubmit={gererInscription}>
           <label>Prénom</label>
-          <input type="text" value={prenom} onChange={(e) => setPrenom(e.target.value)} required autoFocus />
+          <input type="text" value={prenom} onChange={(e) => setPrenom(e.target.value)} required autoFocus autoComplete="given-name" />
 
           <label>Nom</label>
-          <input type="text" value={nomDeFamille} onChange={(e) => setNomDeFamille(e.target.value)} required />
+          <input type="text" value={nomDeFamille} onChange={(e) => setNomDeFamille(e.target.value)} required autoComplete="family-name" />
 
           <label>Email</label>
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" />
 
           <label>Mot de passe</label>
           <input
@@ -153,6 +158,7 @@ export default function PageInscription() {
             onChange={(e) => setMotDePasse(e.target.value)}
             minLength={6}
             required
+            autoComplete="new-password"
           />
 
           {erreur && <p className="connexion-erreur">{erreur}</p>}

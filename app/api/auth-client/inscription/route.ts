@@ -6,9 +6,9 @@ import { resend, EMAIL_EXPEDITEUR, genererHtmlBienvenueCompte } from '@/lib/rese
 import { getContenuPage } from '@/lib/contenu';
 
 const schema = z.object({
-  prenom: z.string().min(1, 'Le prénom est requis'),
-  nomDeFamille: z.string().min(1, 'Le nom est requis'),
-  email: z.string().email(),
+  prenom: z.string().trim().min(1, 'Le prénom est requis'),
+  nomDeFamille: z.string().trim().min(1, 'Le nom est requis'),
+  email: z.string().trim().toLowerCase().email(),
   password: z.string().min(6, 'Le mot de passe doit contenir au moins 6 caractères'),
 });
 

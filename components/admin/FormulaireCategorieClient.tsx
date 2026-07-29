@@ -57,8 +57,8 @@ export default function FormulaireCategorieClient() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          nom,
-          description,
+          nom: nom.trim(),
+          description: description.trim(),
           image: image?.url,
           imageAccueilFond: imageAccueilFond?.url,
           logoAccueil: logoAccueil?.url,

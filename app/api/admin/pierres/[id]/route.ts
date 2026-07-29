@@ -12,8 +12,12 @@ export async function PATCH(req: NextRequest, { params: paramsPromise }: { param
     const { nom, description, couleursIds, ordre } = await req.json();
 
     const donnees: any = {};
-    if (nom !== undefined) { donnees.nom = nom; donnees.slug = slugify(nom); }
-    if (description !== undefined) donnees.description = description;
+    if (nom !== undefined) {
+      if (!nom.trim()) return NextResponse.json({ error: 'Le nom est requis' }, { status: 400 });
+      donnees.nom = nom.trim();
+      donnees.slug = slugify(nom);
+    }
+    if (description !== undefined) donnees.description = description?.trim() || null;
     if (ordre !== undefined) donnees.ordre = ordre;
 
     // Mettre à jour les couleurs si fournies (supprimer les anciennes, créer les nouvelles)

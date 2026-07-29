@@ -17,7 +17,7 @@ export default function FormulaireMatiereClient() {
       const res = await fetch('/api/admin/matieres', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nom }),
+        body: JSON.stringify({ nom: nom.trim() }),
       });
       if (!res.ok) {
         const data = await res.json();

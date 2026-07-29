@@ -29,7 +29,18 @@ export async function POST(req: NextRequest) {
     const { libelle, destinataire, ligne1, ligne2, ville, codePostal, pays, telephone, parDefaut } =
       await req.json();
 
-    if (!destinataire || !ligne1 || !ville || !codePostal) {
+    const donneesAdresse = {
+      libelle: typeof libelle === 'string' ? libelle.trim() || null : null,
+      destinataire: typeof destinataire === 'string' ? destinataire.trim() : '',
+      ligne1: typeof ligne1 === 'string' ? ligne1.trim() : '',
+      ligne2: typeof ligne2 === 'string' ? ligne2.trim() || null : null,
+      ville: typeof ville === 'string' ? ville.trim() : '',
+      codePostal: typeof codePostal === 'string' ? codePostal.trim() : '',
+      pays: typeof pays === 'string' ? pays.trim() || 'France' : 'France',
+      telephone: typeof telephone === 'string' ? telephone.trim() || null : null,
+    };
+
+    if (!donneesAdresse.destinataire || !donneesAdresse.ligne1 || !donneesAdresse.ville || !donneesAdresse.codePostal) {
       return NextResponse.json({ error: 'Champs obligatoires manquants.' }, { status: 400 });
     }
 
@@ -42,14 +53,7 @@ export async function POST(req: NextRequest) {
     const adresse = await prisma.adressePostale.create({
       data: {
         clientId,
-        libelle,
-        destinataire,
-        ligne1,
-        ligne2,
-        ville,
-        codePostal,
-        pays: pays || 'France',
-        telephone,
+        ...donneesAdresse,
         parDefaut: parDefaut || nombreAdresses === 0,
       },
     });
