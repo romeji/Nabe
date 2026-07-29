@@ -106,7 +106,7 @@ export default async function PageAccueil() {
           </h1>
           <TexteRiche className="accueil-hero__soustitre" html={contenu.hero_soustitre} />
           <div className="accueil-hero__actions">
-            <Link href="/collections" className="btn btn-primaire">
+            <Link href="/nos-bijoux" className="btn btn-primaire">
               {contenu.hero_bouton_1}
             </Link>
             <Link href="/la-maison" className="btn btn-secondaire">
@@ -163,7 +163,7 @@ export default async function PageAccueil() {
             }))}
           />
           <div className="accueil-categories-section__cta">
-            <Link href="/collections" className="btn btn-contour">
+            <Link href="/nos-bijoux" className="btn btn-contour">
               Voir toutes les collections
             </Link>
           </div>
@@ -182,7 +182,7 @@ export default async function PageAccueil() {
               <p>
                 Découvrez nos pièces les plus récentes, imaginées et fabriquées dans notre atelier.
               </p>
-              <Link href="/collections" className="accueil-nouveautes__lien">
+              <Link href="/nos-bijoux" className="accueil-nouveautes__lien">
                 Découvrir →
               </Link>
             </div>
@@ -277,7 +277,7 @@ export default async function PageAccueil() {
             {collectionsSelectionOrdonnees.map((collection: any) => (
               <Link
                 key={collection.id}
-                href={`/collections?collection=${collection.slug}`}
+                href={`/nos-bijoux?collection=${collection.slug}`}
                 className="accueil-selection__carte"
               >
                 {collection.image ? (

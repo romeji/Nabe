@@ -63,7 +63,7 @@ export default function CategoriesAccueil({ categories }: { categories: Categori
   return (
     <div className="accueil-categories__grille">
       {categories.map((c: any) => (
-        <Link key={c.id} href={`/collections?categorie=${c.slug}`} className="accueil-categories__carte">
+        <Link key={c.id} href={`/nos-bijoux?categorie=${c.slug}`} className="accueil-categories__carte">
           <div className="accueil-categories__image">
             {c.image ? (
               <Image src={c.image} alt={c.nom} width={280} height={280} />

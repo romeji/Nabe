@@ -12,7 +12,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const pagesStatiques: MetadataRoute.Sitemap = [
     { url: `${SITE_URL}/`, changeFrequency: 'daily', priority: 1 },
-    { url: `${SITE_URL}/collections`, changeFrequency: 'daily', priority: 0.9 },
+    { url: `${SITE_URL}/nos-bijoux`, changeFrequency: 'daily', priority: 0.9 },
     { url: `${SITE_URL}/la-maison`, changeFrequency: 'monthly', priority: 0.5 },
     { url: `${SITE_URL}/sur-mesure`, changeFrequency: 'monthly', priority: 0.6 },
     { url: `${SITE_URL}/contact`, changeFrequency: 'monthly', priority: 0.4 },
@@ -33,14 +33,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   const pagesCategories: MetadataRoute.Sitemap = categories.map((c: any) => ({
-    url: `${SITE_URL}/collections?categorie=${c.slug}`,
+    url: `${SITE_URL}/nos-bijoux?categorie=${c.slug}`,
     lastModified: c.updatedAt,
     changeFrequency: 'weekly',
     priority: 0.6,
   }));
 
   const pagesCollections: MetadataRoute.Sitemap = collections.map((c: any) => ({
-    url: `${SITE_URL}/collections?collection=${c.slug}`,
+    url: `${SITE_URL}/nos-bijoux?collection=${c.slug}`,
     lastModified: c.updatedAt,
     changeFrequency: 'weekly',
     priority: 0.6,

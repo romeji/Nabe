@@ -34,7 +34,7 @@ export default async function PageFavoris() {
 
       {favoris.length === 0 ? (
         <p className="favoris-vide">
-          Vous n'avez pas encore de favoris. Parcourez nos <Link href="/collections">collections</Link> et
+          Vous n'avez pas encore de favoris. Parcourez nos <Link href="/nos-bijoux">bijoux</Link> et
           cliquez sur le cœur pour les retrouver ici.
         </p>
       ) : (

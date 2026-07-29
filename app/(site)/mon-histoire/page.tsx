@@ -79,7 +79,7 @@ export default async function PageMonHistoire() {
         <div>
           <span className="marque-label">{c.cta_label}</span>
           <h2>{c.cta_titre}</h2>
-          <Link href="/collections" className="marque-bouton">{c.cta_bouton}</Link>
+          <Link href="/nos-bijoux" className="marque-bouton">{c.cta_bouton}</Link>
         </div>
       </section>
     </main>

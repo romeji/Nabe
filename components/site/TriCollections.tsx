@@ -10,7 +10,7 @@ export default function TriCollections() {
   function changerTri(valeur: string) {
     const params = new URLSearchParams(searchParams.toString());
     params.set('tri', valeur);
-    router.push(`/collections?${params.toString()}`);
+    router.push(`/nos-bijoux?${params.toString()}`);
   }
 
   return (

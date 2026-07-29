@@ -217,7 +217,7 @@ export default function ProduitDetailClient({
   return (
     <div className="page-produit">
       <div className="produit-fil-ariane conteneur">
-        <Link href="/">Accueil</Link> / <Link href="/collections">Bijoux</Link> /{' '}
+        <Link href="/">Accueil</Link> / <Link href="/nos-bijoux">Nos bijoux</Link> /{' '}
         <span>{produit.nom}</span>
       </div>
 
@@ -254,7 +254,7 @@ export default function ProduitDetailClient({
           <div className="produit-infos__entete">
             <div>
               {produit.collection && (
-                <Link href={`/collections?collection=${produit.collection.slug}`} className="produit-infos__collection">
+                <Link href={`/nos-bijoux?collection=${produit.collection.slug}`} className="produit-infos__collection">
                   {produit.collection.nom}
                 </Link>
               )}

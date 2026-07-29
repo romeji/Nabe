@@ -103,7 +103,7 @@ export default function SuccesContenu() {
         <Link href="/suivi-commande" className="btn btn-primaire">
           Suivre ma commande
         </Link>
-        <Link href="/collections" className="btn">
+        <Link href="/nos-bijoux" className="btn">
           Continuer mes achats
         </Link>
       </div>

@@ -41,7 +41,7 @@ export default function NotFound() {
 
         <div className="page-404__actions">
           <Link href="/" className="btn btn-primaire">Retour à l&apos;accueil</Link>
-          <Link href="/collections" className="btn">Voir les collections</Link>
+          <Link href="/nos-bijoux" className="btn">Voir nos bijoux</Link>
         </div>
       </div>
     </main>

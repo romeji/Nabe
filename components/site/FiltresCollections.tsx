@@ -57,7 +57,7 @@ export default function FiltresCollections({
     } else {
       params.delete(cle);
     }
-    router.push(`/collections?${params.toString()}`);
+    router.push(`/nos-bijoux?${params.toString()}`);
   }
 
   function basculerDisponibilite(valeur: string) {
@@ -76,11 +76,11 @@ export default function FiltresCollections({
     else params.delete('prixMin');
     if (max < prixMaxGlobal) params.set('prixMax', String(max));
     else params.delete('prixMax');
-    router.push(`/collections?${params.toString()}`);
+    router.push(`/nos-bijoux?${params.toString()}`);
   }
 
   function reinitialiser() {
-    router.push('/collections');
+    router.push('/nos-bijoux');
   }
 
   // ── Double curseur de prix : une seule piste, deux poignées rondes ──

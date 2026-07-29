@@ -383,7 +383,7 @@ export default function FormulaireCheckout() {
     return (
       <div className="checkout checkout--vide conteneur">
         <h1>Votre panier est vide</h1>
-        <Link href="/collections" className="btn btn-primaire">Découvrir les collections</Link>
+        <Link href="/nos-bijoux" className="btn btn-primaire">Découvrir nos bijoux</Link>
       </div>
     );
   }

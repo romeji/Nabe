@@ -58,6 +58,16 @@ const nextConfig = {
         permanent: true,
       },
       {
+        source: '/Nosbijoux',
+        destination: '/nos-bijoux',
+        permanent: true,
+      },
+      {
+        source: '/collections',
+        destination: '/nos-bijoux',
+        permanent: true,
+      },
+      {
         source: '/admin/couleurs-pierre',
         destination: '/admin/pierres',
         permanent: true,

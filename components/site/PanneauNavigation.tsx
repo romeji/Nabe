@@ -93,7 +93,7 @@ export default function PanneauNavigation({
               {categories.map((c: any, index: number) => {
                 const logo = c.logoAccueil || c.image;
                 return (
-                  <Link key={c.id} href={`/collections?categorie=${c.slug}`} className="panneau-nav__lien panneau-nav__lien--icone" onClick={onFermer}>
+                  <Link key={c.id} href={`/nos-bijoux?categorie=${c.slug}`} className="panneau-nav__lien panneau-nav__lien--icone" onClick={onFermer}>
                     {logo ? (
                       <img src={logo} alt="" className="panneau-nav__icone panneau-nav__icone--logo" aria-hidden="true" />
                     ) : (
@@ -109,11 +109,11 @@ export default function PanneauNavigation({
           {menu.collectionsActif && (
             <section className="panneau-nav__section">
               <h3>Collections</h3>
-              <Link href="/collections" className="panneau-nav__lien" onClick={onFermer}>
-                <span>Toutes les collections</span>
+              <Link href="/nos-bijoux" className="panneau-nav__lien" onClick={onFermer}>
+                <span>Tous les bijoux</span>
               </Link>
               {collections.map((c: any) => (
-                <Link key={c.id} href={`/collections?collection=${c.slug}`} className="panneau-nav__lien" onClick={onFermer}>
+                <Link key={c.id} href={`/nos-bijoux?collection=${c.slug}`} className="panneau-nav__lien" onClick={onFermer}>
                   <span>{c.nom}</span>
                 </Link>
               ))}

@@ -31,7 +31,7 @@ export default async function PageCommandesClient() {
       {commandes.length === 0 ? (
         <p className="commandes-client-vide">
           Vous n'avez pas encore passé de commande. Découvrez nos{' '}
-          <Link href="/collections">collections</Link>.
+          <Link href="/nos-bijoux">bijoux</Link>.
         </p>
       ) : (
         <div className="commandes-client-liste">

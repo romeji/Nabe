@@ -31,9 +31,9 @@ export default async function Footer() {
         <details className="nabe-footer__colonne" open>
           <summary>Boutique</summary>
           <ul>
-            <li><Link href="/collections">Collections</Link></li>
-            <li><Link href="/collections">Nouveaut&eacute;s</Link></li>
-            <li><Link href="/collections">Best-sellers</Link></li>
+            <li><Link href="/nos-bijoux">Nos bijoux</Link></li>
+            <li><Link href="/nos-bijoux">Nouveaut&eacute;s</Link></li>
+            <li><Link href="/nos-bijoux">Best-sellers</Link></li>
             <li><Link href="/sur-mesure">Sur mesure</Link></li>
             {journalActif && <li><Link href="/journal">Journal</Link></li>}
           </ul>

@@ -47,7 +47,7 @@ export default function manifest(): MetadataRoute.Manifest {
         name: 'Collections',
         short_name: 'Bijoux',
         description: 'Découvrir les bijoux Nabe',
-        url: '/collections',
+        url: '/nos-bijoux',
         icons: [{ src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' }],
       },
       {
