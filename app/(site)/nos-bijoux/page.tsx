@@ -23,7 +23,8 @@ export const metadata = {
     images: [{ url: '/images/collections-hero.jpg', width: 1200, height: 630, alt: 'Collections de bijoux artisanaux Nabe' }],
   },
 };
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 type Props = {
   searchParams: Promise<{

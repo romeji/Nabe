@@ -37,6 +37,7 @@ export default async function PageEditionProduit({ params: paramsPromise }: { pa
     taillesDisponibles: produit.taillesDisponibles,
     disponibilite: produit.disponibilite,
     stock: produit.stock,
+    poidsGrammes: produit.poidsGrammes,
     stockParTaille: Object.fromEntries(produit.stockTailles.map((st: any) => [st.taille, st.quantite])),
     actif: produit.actif,
     enAvant: produit.enAvant,

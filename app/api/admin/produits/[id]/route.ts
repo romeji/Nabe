@@ -7,12 +7,7 @@ function validerPayloadProduit(body: any) {
   if (typeof body.nom === 'string' && !body.nom.trim()) return 'Le nom du bijou est obligatoire.';
   if (typeof body.description === 'string' && !body.description.trim()) return 'La description est obligatoire.';
   if (typeof body.prix === 'number' && body.prix <= 0) return 'Le prix doit être supérieur à 0 €.';
-  if ('categorieId' in body && !body.categorieId) return 'La catégorie est obligatoire.';
-  if ('matiereId' in body && !body.matiereId) return 'La matière est obligatoire.';
   if (typeof body.poidsGrammes === 'number' && body.poidsGrammes < 1) return 'Le poids emballé doit être supérieur à 0 gramme.';
-  if (body.actif !== false && Array.isArray(body.images) && body.images.length === 0) {
-    return 'Ajoutez au moins une photo avant de rendre le bijou visible sur le site.';
-  }
   if (
     body.disponibilite === 'FABRICATION_SUR_COMMANDE' &&
     (typeof body.delaiFabrication !== 'string' || !body.delaiFabrication.trim())
@@ -71,7 +66,8 @@ export async function PATCH(req: NextRequest, { params: paramsPromise }: { param
     }
 
     // Si un stock par taille est fourni, le stock global = somme des quantités par taille
-    const aStockParTaille = stockParTaille && Object.keys(stockParTaille).length > 0;
+    const stockParTailleFourni = stockParTaille && typeof stockParTaille === 'object';
+    const aStockParTaille = stockParTailleFourni && Object.keys(stockParTaille).length > 0;
     const stockFinal = aStockParTaille
       ? Object.values(stockParTaille as Record<string, number>).reduce((a: any, b: any) => a + b, 0)
       : typeof stock === 'number'
@@ -122,7 +118,7 @@ export async function PATCH(req: NextRequest, { params: paramsPromise }: { param
                 .map((produitSuggereId: string, i: number) => ({ produitSuggereId, ordre: i })),
             }
           : undefined,
-        stockTailles: aStockParTaille
+        stockTailles: stockParTailleFourni
           ? {
               deleteMany: {},
               create: Object.entries(stockParTaille as Record<string, number>).map(([taille, quantite]) => ({

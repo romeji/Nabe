@@ -10,7 +10,7 @@ const schemaProduit = z.object({
   description: z.string().trim().min(1, 'La description est obligatoire.'),
   prix: z.number().positive(),
   type: z.enum(['BAGUE', 'COLLIER', 'BOUCLES_OREILLES', 'BRACELET', 'PIECE_UNIQUE', 'COFFRET_CADEAU']),
-  matiereId: z.string().min(1, 'La matière est obligatoire.'),
+  matiereId: z.string().optional().nullable(),
   pierresIds: z.array(z.string()).optional(),
   delaiFabrication: z.string().optional().nullable(),
   fabriqueEnFrance: z.boolean().optional(),
@@ -22,7 +22,7 @@ const schemaProduit = z.object({
     .optional(),
   stock: z.number().int().min(0).optional(),
   poidsGrammes: z.number().int().min(1).optional(),
-  categorieId: z.string().min(1, 'La catégorie est obligatoire.'),
+  categorieId: z.string().optional().nullable(),
   collectionId: z.string().optional().nullable(),
   actif: z.boolean().optional(),
   enAvant: z.boolean().optional(),
@@ -32,14 +32,6 @@ const schemaProduit = z.object({
     .array(z.object({ url: z.string().min(1), publicId: z.string().optional(), alt: z.string().optional() }))
     .optional(),
 }).superRefine((donnees, ctx) => {
-  if ((donnees.actif ?? true) && (!donnees.images || donnees.images.length === 0)) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      path: ['images'],
-      message: 'Ajoutez au moins une photo avant de rendre le bijou visible sur le site.',
-    });
-  }
-
   if (donnees.disponibilite === 'FABRICATION_SUR_COMMANDE' && !donnees.delaiFabrication?.trim()) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
