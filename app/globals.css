@@ -99,6 +99,7 @@ button {
   cursor: pointer;
   border: none;
   background: none;
+  color: inherit;
 }
 
 img {
@@ -113,6 +114,14 @@ ul {
 input, textarea, select {
   font-family: var(--font-texte);
   font-size: 1rem;
+  background-color: var(--nabe-blanc);
+  color: var(--texte-principal);
+  color-scheme: light;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: rgba(69, 41, 30, 0.5);
 }
 
 /* Conteneur centré réutilisable */

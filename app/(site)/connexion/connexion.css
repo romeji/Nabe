@@ -38,6 +38,7 @@
   border: 1px solid var(--nabe-beige-fonce);
   border-radius: var(--rayon-bordure);
   background-color: var(--nabe-blanc);
+  color: var(--texte-principal);
   font-size: 0.9rem;
   font-weight: 500;
 }
