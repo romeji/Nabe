@@ -62,18 +62,18 @@ export default function PanneauNavigation({
   }, [ouvert, onFermer]);
 
   useEffect(() => {
-    if (ouvert && categories.length === 0 && collections.length === 0) {
-      fetch('/api/menu')
-        .then((res) => res.json())
-        .then((data) => {
-          setCategories(data.categories || []);
-          setCollections(data.collections || []);
-          setJournalActif(!!data.journalActif);
-          setMenu((actuel) => ({ ...actuel, ...(data.menu || {}) }));
-        })
-        .catch(() => {});
-    }
-  }, [ouvert, categories.length, collections.length]);
+    if (!ouvert) return;
+
+    fetch('/api/menu')
+      .then((res) => res.json())
+      .then((data) => {
+        setCategories(data.categories || []);
+        setCollections(data.collections || []);
+        setJournalActif(!!data.journalActif);
+        setMenu((actuel) => ({ ...actuel, ...(data.menu || {}) }));
+      })
+      .catch(() => {});
+  }, [ouvert]);
 
   if (!ouvert || !monte) return null;
 
@@ -106,7 +106,7 @@ export default function PanneauNavigation({
             </section>
           )}
 
-          {menu.collectionsActif && collections.length > 0 && (
+          {menu.collectionsActif && (
             <section className="panneau-nav__section">
               <h3>Collections</h3>
               <Link href="/collections" className="panneau-nav__lien" onClick={onFermer}>
