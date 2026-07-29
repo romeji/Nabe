@@ -89,7 +89,9 @@ export default function PanneauNavigation({
         <div className="panneau-nav__corps">
           {menu.categoriesActif && (
             <section className="panneau-nav__section">
-              <h3>Nos bijoux</h3>
+              <h3>
+                <Link href="/nos-bijoux" onClick={onFermer}>Nos bijoux</Link>
+              </h3>
               {categories.map((c: any, index: number) => {
                 const logo = c.logoAccueil || c.image;
                 return (
@@ -109,9 +111,6 @@ export default function PanneauNavigation({
           {menu.collectionsActif && (
             <section className="panneau-nav__section">
               <h3>Collections</h3>
-              <Link href="/nos-bijoux" className="panneau-nav__lien" onClick={onFermer}>
-                <span>Nos bijoux</span>
-              </Link>
               {collections.map((c: any) => (
                 <Link key={c.id} href={`/nos-bijoux?collection=${c.slug}`} className="panneau-nav__lien" onClick={onFermer}>
                   <span>{c.nom}</span>
