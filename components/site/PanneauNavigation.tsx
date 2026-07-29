@@ -110,7 +110,7 @@ export default function PanneauNavigation({
             <section className="panneau-nav__section">
               <h3>Collections</h3>
               <Link href="/nos-bijoux" className="panneau-nav__lien" onClick={onFermer}>
-                <span>Tous les bijoux</span>
+                <span>Nos bijoux</span>
               </Link>
               {collections.map((c: any) => (
                 <Link key={c.id} href={`/nos-bijoux?collection=${c.slug}`} className="panneau-nav__lien" onClick={onFermer}>
