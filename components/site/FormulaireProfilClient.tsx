@@ -34,6 +34,7 @@ export default function FormulaireProfilClient({
 
   const [confirmationSuppression, setConfirmationSuppression] = useState(false);
   const [texteConfirmation, setTexteConfirmation] = useState('');
+  const [motDePasseSuppression, setMotDePasseSuppression] = useState('');
   const [suppressionEnCours, setSuppressionEnCours] = useState(false);
   const [erreurSuppression, setErreurSuppression] = useState('');
 
@@ -41,7 +42,11 @@ export default function FormulaireProfilClient({
     setSuppressionEnCours(true);
     setErreurSuppression('');
     try {
-      const res = await fetch('/api/auth-client/compte', { method: 'DELETE' });
+      const res = await fetch('/api/auth-client/compte', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ motDePasse: motDePasseSuppression }),
+      });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
         throw new Error(data.error || 'Erreur lors de la suppression du compte.');
@@ -124,10 +129,10 @@ export default function FormulaireProfilClient({
         <p className="formulaire-profil__aide">L'e-mail ne peut pas être modifié.</p>
 
         <label>Prénom</label>
-        <input type="text" value={prenom} onChange={(e) => setPrenom(e.target.value)} autoComplete="given-name" />
+        <input type="text" value={prenom} onChange={(e) => setPrenom(e.target.value)} autoComplete="given-name" required />
 
         <label>Nom</label>
-        <input type="text" value={nomDeFamille} onChange={(e) => setNomDeFamille(e.target.value)} autoComplete="family-name" />
+        <input type="text" value={nomDeFamille} onChange={(e) => setNomDeFamille(e.target.value)} autoComplete="family-name" required />
 
         <label>Téléphone</label>
         <input type="tel" value={telephone} onChange={(e) => setTelephone(e.target.value)} autoComplete="tel" />
@@ -208,7 +213,24 @@ export default function FormulaireProfilClient({
             <label>
               Tapez <strong>SUPPRIMER</strong> pour confirmer
             </label>
-            <input type="text" value={texteConfirmation} onChange={(e) => setTexteConfirmation(e.target.value)} />
+            <input
+              type="text"
+              value={texteConfirmation}
+              onChange={(e) => setTexteConfirmation(e.target.value)}
+              autoComplete="off"
+            />
+            {aUnMotDePasse && (
+              <>
+                <label>Mot de passe actuel</label>
+                <input
+                  type="password"
+                  value={motDePasseSuppression}
+                  onChange={(e) => setMotDePasseSuppression(e.target.value)}
+                  autoComplete="current-password"
+                  required
+                />
+              </>
+            )}
 
             {erreurSuppression && <p className="formulaire-profil__erreur">{erreurSuppression}</p>}
 
@@ -216,7 +238,11 @@ export default function FormulaireProfilClient({
               <button
                 type="button"
                 className="btn formulaire-profil__btn-danger"
-                disabled={texteConfirmation !== 'SUPPRIMER' || suppressionEnCours}
+                disabled={
+                  texteConfirmation !== 'SUPPRIMER' ||
+                  (aUnMotDePasse && !motDePasseSuppression) ||
+                  suppressionEnCours
+                }
                 onClick={supprimerCompte}
               >
                 {suppressionEnCours ? 'Suppression...' : 'Confirmer la suppression définitive'}
@@ -227,6 +253,7 @@ export default function FormulaireProfilClient({
                 onClick={() => {
                   setConfirmationSuppression(false);
                   setTexteConfirmation('');
+                  setMotDePasseSuppression('');
                   setErreurSuppression('');
                 }}
                 disabled={suppressionEnCours}

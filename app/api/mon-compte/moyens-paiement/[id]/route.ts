@@ -8,8 +8,12 @@ async function recupererClientEtVerifier(clientId: string, paymentMethodId: stri
   const client = await prisma.client.findUnique({ where: { id: clientId } });
   if (!client?.stripeCustomerId) return null;
 
-  const methode = await stripe.paymentMethods.retrieve(paymentMethodId);
-  if (methode.customer !== client.stripeCustomerId) return null;
+  try {
+    const methode = await stripe.paymentMethods.retrieve(paymentMethodId);
+    if (methode.customer !== client.stripeCustomerId) return null;
+  } catch {
+    return null;
+  }
 
   return client;
 }
@@ -52,7 +56,23 @@ export async function DELETE(req: NextRequest, { params: paramsPromise }: { para
   }
 
   try {
+    const customer = await stripe.customers.retrieve(client.stripeCustomerId!);
+    const etaitParDefaut =
+      typeof customer !== 'string' &&
+      !customer.deleted &&
+      customer.invoice_settings?.default_payment_method === params.id;
+
     await stripe.paymentMethods.detach(params.id);
+    if (etaitParDefaut) {
+      const restantes = await stripe.paymentMethods.list({
+        customer: client.stripeCustomerId!,
+        type: 'card',
+        limit: 1,
+      });
+      await stripe.customers.update(client.stripeCustomerId!, {
+        invoice_settings: { default_payment_method: restantes.data[0]?.id || '' },
+      });
+    }
     return NextResponse.json({ success: true });
   } catch (error: any) {
     console.error('Erreur suppression moyen de paiement:', error);

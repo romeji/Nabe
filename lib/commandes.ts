@@ -40,67 +40,96 @@ export async function annulerCommande(commandeId: string): Promise<{ ok: true } 
     };
   }
 
+  const statutInitial = commande.statut;
+  const verrou = await prisma.commande.updateMany({
+    where: { id: commande.id, statut: statutInitial },
+    data: { statut: 'ANNULEE' },
+  });
+  if (verrou.count === 0) {
+    return { ok: false, error: 'Cette commande est déjà en cours d’annulation.' };
+  }
+
   let rembourse = false;
 
   // Remboursement Stripe intégral (produits + livraison), uniquement si un
   // paiement a bien été capturé (statut au-delà de EN_ATTENTE).
   if (commande.statut !== 'EN_ATTENTE' && commande.stripePaymentIntentId) {
     try {
-      await stripe.refunds.create({ payment_intent: commande.stripePaymentIntentId });
+      await stripe.refunds.create(
+        { payment_intent: commande.stripePaymentIntentId },
+        { idempotencyKey: `annulation-commande-${commande.id}` },
+      );
       rembourse = true;
     } catch (err: any) {
       // Si Stripe indique que la charge est déjà remboursée, ce n'est pas un
       // échec côté nous : on continue le reste du processus normalement.
       if (err?.code !== 'charge_already_refunded') {
         console.error('Erreur remboursement Stripe:', err);
+        await prisma.commande.updateMany({
+          where: { id: commande.id, statut: 'ANNULEE' },
+          data: { statut: statutInitial },
+        });
         return { ok: false, error: "Le remboursement n'a pas pu être effectué. Réessayez ou contactez le support." };
       }
       rembourse = true;
     }
   }
 
-  // Remise en stock des articles (global + par taille), et journalisation.
-  for (const ligne of commande.lignes) {
-    if (!ligne.produitId) continue;
+  const nouveauStatut = rembourse ? 'REMBOURSEE' : 'ANNULEE';
+  try {
+    await prisma.$transaction(async (tx) => {
+      for (const ligne of commande.lignes) {
+        if (!ligne.produitId) continue;
 
-    const produit = await prisma.produit.findUnique({
-      where: { id: ligne.produitId },
-      include: { stockTailles: true },
-    });
-    if (!produit) continue;
+        const produit = await tx.produit.findUnique({
+          where: { id: ligne.produitId },
+          include: { stockTailles: true },
+        });
+        if (!produit) continue;
 
-    await prisma.produit.update({
-      where: { id: produit.id },
-      data: { stock: { increment: ligne.quantite }, nombreVentes: { decrement: ligne.quantite } },
-    });
+        await tx.produit.update({
+          where: { id: produit.id },
+          data: {
+            stock: { increment: ligne.quantite },
+            nombreVentes: { decrement: Math.min(ligne.quantite, produit.nombreVentes) },
+          },
+        });
 
-    if (ligne.taille) {
-      const stockTaille = produit.stockTailles.find((s: any) => s.taille === ligne.taille);
-      if (stockTaille) {
-        await prisma.stockTaille.update({
-          where: { id: stockTaille.id },
-          data: { quantite: { increment: ligne.quantite } },
+        if (ligne.taille) {
+          const stockTaille = produit.stockTailles.find((stock) => stock.taille === ligne.taille);
+          if (stockTaille) {
+            await tx.stockTaille.update({
+              where: { id: stockTaille.id },
+              data: { quantite: { increment: ligne.quantite } },
+            });
+          }
+        }
+
+        await tx.mouvementStock.create({
+          data: {
+            produitId: produit.id,
+            produitNom: produit.nom,
+            type: 'ENTREE',
+            quantite: ligne.quantite,
+            motif: `Annulation commande ${commande.numero}`,
+          },
         });
       }
-    }
 
-    await prisma.mouvementStock.create({
-      data: {
-        produitId: produit.id,
-        produitNom: produit.nom,
-        type: 'ENTREE',
-        quantite: ligne.quantite,
-        motif: `Annulation commande ${commande.numero}`,
-      },
+      await tx.commande.update({
+        where: { id: commande.id },
+        data: { statut: nouveauStatut },
+      });
     });
+  } catch (error) {
+    console.error('Erreur remise en stock après annulation:', error);
+    return {
+      ok: false,
+      error: rembourse
+        ? 'Le remboursement est effectué, mais la mise à jour du stock nécessite une vérification administrative.'
+        : "La commande est annulée, mais la mise à jour du stock n'a pas pu être effectuée.",
+    };
   }
-
-  const nouveauStatut = rembourse ? 'REMBOURSEE' : 'ANNULEE';
-
-  await prisma.commande.update({
-    where: { id: commande.id },
-    data: { statut: nouveauStatut },
-  });
 
   if (commande.clientEmail) {
     try {

@@ -1,8 +1,35 @@
+import type { Metadata, Viewport } from 'next';
 import { verifierSessionAdmin } from '@/lib/auth-helpers';
 import { redirect } from 'next/navigation';
 import Providers from '@/components/admin/Providers';
 import SidebarAdmin from '@/components/admin/SidebarAdmin';
 import './admin.css';
+
+export const metadata: Metadata = {
+  title: {
+    default: 'Administration',
+    template: '%s | Nabe Admin',
+  },
+  applicationName: 'Nabe Admin',
+  manifest: '/admin/manifest.webmanifest',
+  appleWebApp: {
+    capable: true,
+    title: 'Nabe Admin',
+    statusBarStyle: 'black-translucent',
+  },
+  icons: {
+    apple: [{ url: '/icons/apple-touch-icon-dark.png', sizes: '180x180', type: 'image/png' }],
+  },
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: '#171310',
+  colorScheme: 'light',
+};
 
 export default async function AdminLayout({
   children,

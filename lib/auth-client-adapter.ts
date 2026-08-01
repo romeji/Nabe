@@ -4,6 +4,7 @@ import type {
   VerificationToken,
 } from 'next-auth/adapters';
 import { prisma } from '@/lib/prisma';
+import { rattacherCommandesInvitees } from '@/lib/commandes-client';
 
 type CreateUserInput =
   Parameters<NonNullable<Adapter['createUser']>>[0];
@@ -57,6 +58,8 @@ export function AuthClientAdapter(): Adapter {
           image: user.image ?? null,
         },
       });
+
+      await rattacherCommandesInvitees(client.id, client.email);
 
       return versAdapterUser(client);
     },

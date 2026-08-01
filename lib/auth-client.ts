@@ -9,6 +9,7 @@ import {
   calculerApresEchec,
   ETAT_APRES_SUCCES,
 } from '@/lib/anti-bruteforce';
+import { rattacherCommandesInvitees } from '@/lib/commandes-client';
 
 export const authClientOptions: NextAuthOptions = {
   adapter: AuthClientAdapter(),
@@ -108,6 +109,8 @@ export const authClientOptions: NextAuthOptions = {
           });
         }
 
+        await rattacherCommandesInvitees(client.id, client.email);
+
         return {
           id: client.id,
           email: client.email,
@@ -125,6 +128,10 @@ export const authClientOptions: NextAuthOptions = {
         !user.email
       ) {
         return false;
+      }
+
+      if (user.id && user.email) {
+        await rattacherCommandesInvitees(user.id, user.email);
       }
 
       return true;
@@ -155,13 +162,23 @@ export const authClientOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
+      } else if (token.id) {
+        const client = await prisma.client.findUnique({
+          where: { id: token.id as string },
+          select: { email: true },
+        });
+        if (!client || client.email.endsWith('@nabe.invalid')) {
+          delete token.id;
+        }
       }
 
       return token;
     },
 
     async session({ session, token }) {
-      if (session.user) {
+      if (!token.id) {
+        (session as typeof session & { user?: undefined }).user = undefined;
+      } else if (session.user) {
         (
           session.user as typeof session.user & {
             id?: string;

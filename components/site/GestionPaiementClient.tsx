@@ -75,10 +75,18 @@ export default function GestionPaiementClient() {
 
   function chargerMoyens() {
     setChargement(true);
+    setErreur('');
     fetch('/api/mon-compte/moyens-paiement')
-      .then((res) => res.json())
+      .then(async (res) => {
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.error || 'Impossible de charger les cartes enregistrées.');
+        return data;
+      })
       .then((data) => setMoyens(data.moyensPaiement || []))
-      .catch(() => setMoyens([]))
+      .catch((err) => {
+        setMoyens([]);
+        setErreur(err.message || 'Impossible de charger les cartes enregistrées.');
+      })
       .finally(() => setChargement(false));
   }
 
@@ -117,20 +125,22 @@ export default function GestionPaiementClient() {
     if (!confirm('Retirer cette carte ?')) return;
     try {
       const res = await fetch(`/api/mon-compte/moyens-paiement/${id}`, { method: 'DELETE' });
-      if (!res.ok) throw new Error();
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'Erreur lors de la suppression.');
       chargerMoyens();
-    } catch {
-      alert('Erreur lors de la suppression.');
+    } catch (err: any) {
+      setErreur(err.message || 'Erreur lors de la suppression.');
     }
   }
 
   async function definirParDefaut(id: string) {
     try {
       const res = await fetch(`/api/mon-compte/moyens-paiement/${id}`, { method: 'PATCH' });
-      if (!res.ok) throw new Error();
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'Impossible de définir cette carte par défaut.');
       chargerMoyens();
-    } catch {
-      alert('Erreur.');
+    } catch (err: any) {
+      setErreur(err.message || 'Impossible de définir cette carte par défaut.');
     }
   }
 

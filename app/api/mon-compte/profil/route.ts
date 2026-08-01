@@ -5,6 +5,7 @@ import { authClientOptions } from '@/lib/auth-client';
 import { prisma } from '@/lib/prisma';
 import { EMAIL_EXPEDITEUR, genererHtmlMotDePasseModifie, resend } from '@/lib/resend';
 import { getContenuPage } from '@/lib/contenu';
+import { verifierLimiteTaux } from '@/lib/rate-limit';
 
 export async function GET() {
   const session = await getServerSession(authClientOptions);
@@ -42,12 +43,29 @@ export async function PATCH(req: NextRequest) {
     const prenomNettoye = typeof prenom === 'string' ? prenom.trim() : prenom;
     const nomDeFamilleNettoye = typeof nomDeFamille === 'string' ? nomDeFamille.trim() : nomDeFamille;
 
-    if (prenom !== undefined) donnees.prenom = prenomNettoye || null;
-    if (nomDeFamille !== undefined) donnees.nomDeFamille = nomDeFamilleNettoye || null;
+    if (prenom !== undefined && !prenomNettoye) {
+      return NextResponse.json({ error: 'Le prénom est requis.' }, { status: 400 });
+    }
+    if (nomDeFamille !== undefined && !nomDeFamilleNettoye) {
+      return NextResponse.json({ error: 'Le nom est requis.' }, { status: 400 });
+    }
+
+    if (prenom !== undefined) donnees.prenom = prenomNettoye;
+    if (nomDeFamille !== undefined) donnees.nomDeFamille = nomDeFamilleNettoye;
     // Le champ "nom" (nom complet) reste recalculé automatiquement pour rester
     // cohérent avec tous les affichages existants ailleurs dans le site.
     if (prenom !== undefined || nomDeFamille !== undefined) {
-      donnees.nom = `${prenomNettoye ?? ''} ${nomDeFamilleNettoye ?? ''}`.trim() || null;
+      const clientActuel = await prisma.client.findUnique({
+        where: { id: clientId },
+        select: { prenom: true, nomDeFamille: true, nom: true },
+      });
+      if (!clientActuel) {
+        return NextResponse.json({ error: 'Client introuvable' }, { status: 404 });
+      }
+      const partiesNom = (clientActuel.nom || '').trim().split(' ');
+      const prenomFinal = prenomNettoye ?? clientActuel.prenom ?? partiesNom[0] ?? '';
+      const nomFinal = nomDeFamilleNettoye ?? clientActuel.nomDeFamille ?? partiesNom.slice(1).join(' ');
+      donnees.nom = `${prenomFinal} ${nomFinal}`.trim();
     }
     if (telephone !== undefined) donnees.telephone = typeof telephone === 'string' ? telephone.trim() || null : telephone;
 
@@ -55,6 +73,11 @@ export async function PATCH(req: NextRequest) {
     let clientPourEmail: { email: string; nom: string | null } | null = null;
 
     if (nouveauMotDePasse) {
+      const { autorise } = await verifierLimiteTaux('modification-mot-de-passe', clientId, 5, 15);
+      if (!autorise) {
+        return NextResponse.json({ error: 'Trop de tentatives. Réessayez dans quelques minutes.' }, { status: 429 });
+      }
+
       const client = await prisma.client.findUnique({ where: { id: clientId } });
       if (!client) {
         return NextResponse.json({ error: 'Client introuvable' }, { status: 404 });

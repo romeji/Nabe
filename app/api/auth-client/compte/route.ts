@@ -1,9 +1,11 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
+import bcrypt from 'bcryptjs';
 import { authClientOptions } from '@/lib/auth-client';
 import { prisma } from '@/lib/prisma';
 import { resend, EMAIL_EXPEDITEUR, genererHtmlSuppressionCompte } from '@/lib/resend';
 import { getContenuPage } from '@/lib/contenu';
+import { verifierLimiteTaux } from '@/lib/rate-limit';
 
 /**
  * Suppression de compte à la demande du client.
@@ -21,7 +23,7 @@ import { getContenuPage } from '@/lib/contenu';
  * 17), qui prévoit justement cette exception pour obligation légale
  * (article 17.3.b).
  */
-export async function DELETE() {
+export async function DELETE(req: NextRequest) {
   const session = await getServerSession(authClientOptions);
   const clientId = (session?.user as any)?.id as string | undefined;
 
@@ -29,9 +31,21 @@ export async function DELETE() {
     return NextResponse.json({ error: 'Non autorisé.' }, { status: 401 });
   }
 
+  const { autorise } = await verifierLimiteTaux('suppression-compte', clientId, 5, 15);
+  if (!autorise) {
+    return NextResponse.json({ error: 'Trop de tentatives. Réessayez dans quelques minutes.' }, { status: 429 });
+  }
+
   const client = await prisma.client.findUnique({ where: { id: clientId } });
   if (!client) {
     return NextResponse.json({ error: 'Compte introuvable.' }, { status: 404 });
+  }
+
+  if (client.password) {
+    const body = await req.json().catch(() => ({}));
+    if (!body.motDePasse || !(await bcrypt.compare(body.motDePasse, client.password))) {
+      return NextResponse.json({ error: 'Mot de passe actuel incorrect.' }, { status: 403 });
+    }
   }
 
   const nombreCommandes = await prisma.commande.count({ where: { clientId } });
@@ -60,11 +74,14 @@ export async function DELETE() {
     await prisma.favori.deleteMany({ where: { clientId } });
     await prisma.adressePostale.deleteMany({ where: { clientId } });
     await prisma.compteOAuth.deleteMany({ where: { clientId } });
+    await prisma.sessionClient.deleteMany({ where: { clientId } });
 
     await prisma.client.update({
       where: { id: clientId },
       data: {
         nom: 'Compte supprimé',
+        prenom: null,
+        nomDeFamille: null,
         email: `compte-supprime-${clientId}@nabe.invalid`,
         password: null,
         image: null,

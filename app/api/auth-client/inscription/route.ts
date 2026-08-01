@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 import { resend, EMAIL_EXPEDITEUR, genererHtmlBienvenueCompte } from '@/lib/resend';
 import { getContenuPage } from '@/lib/contenu';
+import { rattacherCommandesInvitees } from '@/lib/commandes-client';
 
 const schema = z.object({
   prenom: z.string().trim().min(1, 'Le prénom est requis'),
@@ -37,6 +38,8 @@ export async function POST(req: NextRequest) {
         password: motDePasseHash,
       },
     });
+
+    await rattacherCommandesInvitees(client.id, client.email);
 
     try {
       const emailsContenu = await getContenuPage('emails');

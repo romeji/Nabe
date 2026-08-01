@@ -9,6 +9,17 @@ import Stripe from 'stripe';
 
 type ArticleMeta = { id: string; q: number; taille: string; pu?: number };
 
+async function resoudreClientId(clientId: string | undefined, email: string | undefined) {
+  if (!clientId || !email) return undefined;
+
+  const client = await prisma.client.findUnique({
+    where: { id: clientId },
+    select: { id: true, email: true },
+  });
+
+  return client?.email.toLowerCase() === email.trim().toLowerCase() ? client.id : undefined;
+}
+
 /**
  * Décrémente le stock (global + par taille si applicable), incrémente le
  * compteur de ventes et journalise le mouvement pour chaque article vendu.
@@ -217,6 +228,7 @@ export async function POST(req: NextRequest) {
       const montantReduction = parseFloat(meta.montantReduction || '0');
       const fraisLivraison = parseFloat(meta.fraisLivraison || '0');
       const total = intent.amount / 100;
+      const clientId = await resoudreClientId(meta.clientId, meta.email);
 
       const produitsDb = await prisma.produit.findMany({
         where: { id: { in: articlesMeta.map((a: any) => a.id) } },
@@ -244,7 +256,7 @@ export async function POST(req: NextRequest) {
         data: {
           numero: genererNumeroCommande(),
           statut: 'PAYEE',
-          clientId: meta.clientId || undefined,
+          clientId,
           clientNom: `${meta.prenom || ''} ${meta.nom || ''}`.trim() || 'Client',
           clientEmail: meta.email || '',
           clientTelephone: meta.telephone || undefined,
@@ -337,7 +349,10 @@ export async function POST(req: NextRequest) {
       }
 
       const articlesMeta: ArticleMeta[] = JSON.parse(session.metadata?.articles || '[]');
-      const clientId = session.metadata?.clientId || undefined;
+      const clientId = await resoudreClientId(
+        session.metadata?.clientId || undefined,
+        session.customer_details?.email || undefined,
+      );
       const codeReductionId = session.metadata?.codeReductionId || undefined;
 
       const produitsDb = await prisma.produit.findMany({

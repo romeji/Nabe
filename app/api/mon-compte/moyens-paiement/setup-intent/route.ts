@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth';
 import { authClientOptions } from '@/lib/auth-client';
 import { stripe } from '@/lib/stripe';
 import { getOuCreerStripeCustomerId } from '@/lib/stripe-customer';
+import { verifierLimiteTaux } from '@/lib/rate-limit';
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authClientOptions);
@@ -12,6 +13,11 @@ export async function POST(req: NextRequest) {
   const clientId = (session.user as any).id as string;
 
   try {
+    const { autorise } = await verifierLimiteTaux('setup-intent', clientId, 10, 15);
+    if (!autorise) {
+      return NextResponse.json({ error: 'Trop de tentatives. Réessayez dans quelques minutes.' }, { status: 429 });
+    }
+
     const stripeCustomerId = await getOuCreerStripeCustomerId(clientId);
 
     const setupIntent = await stripe.setupIntents.create({

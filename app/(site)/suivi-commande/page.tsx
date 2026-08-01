@@ -43,11 +43,17 @@ export default function PageSuiviCommande() {
       <form onSubmit={rechercher} className="page-suivi-commande__form">
         <div>
           <label>Numéro de commande</label>
-          <input value={numero} onChange={(e) => setNumero(e.target.value)} placeholder="NABE-2026-0001" required />
+          <input
+            value={numero}
+            onChange={(e) => setNumero(e.target.value)}
+            placeholder="NABE-2026-0001"
+            autoComplete="off"
+            required
+          />
         </div>
         <div>
           <label>E-mail utilisé à la commande</label>
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" required />
         </div>
         <button type="submit" className="btn btn-primaire" disabled={chargement}>
           {chargement ? 'Recherche...' : 'Rechercher'}

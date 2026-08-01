@@ -17,7 +17,38 @@ export async function POST(req: NextRequest) {
 
     const commande = await prisma.commande.findUnique({
       where: { numero: numero.trim().toUpperCase() },
-      include: { lignes: true },
+      select: {
+        id: true,
+        numero: true,
+        statut: true,
+        createdAt: true,
+        clientNom: true,
+        adresseLivraison: true,
+        ville: true,
+        codePostal: true,
+        pays: true,
+        modeLivraison: true,
+        modePaiementLabel: true,
+        pointRelaisNom: true,
+        pointRelaisAdresse: true,
+        numeroSuivi: true,
+        urlSuivi: true,
+        sousTotal: true,
+        montantReduction: true,
+        fraisLivraison: true,
+        total: true,
+        clientEmail: true,
+        lignes: {
+          select: {
+            id: true,
+            nomProduit: true,
+            imageUrl: true,
+            taille: true,
+            quantite: true,
+            prixUnitaire: true,
+          },
+        },
+      },
     });
 
     // Message volontairement générique (ne pas confirmer si le numéro existe
@@ -26,7 +57,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Aucune commande ne correspond à ces informations.' }, { status: 404 });
     }
 
-    return NextResponse.json({ commande });
+    const { clientEmail: _clientEmail, ...commandePublique } = commande;
+    return NextResponse.json({ commande: commandePublique });
   } catch (error) {
     console.error('Erreur suivi commande:', error);
     return NextResponse.json({ error: 'Une erreur est survenue.' }, { status: 500 });
