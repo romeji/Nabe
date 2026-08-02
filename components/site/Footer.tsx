@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { getConfigSite, configEstActive } from '@/lib/config-site';
 import './footer.css';
+import BoutonInstallationPwa from '@/components/BoutonInstallationPwa';
 
 export default async function Footer() {
   const config = await getConfigSite();
@@ -69,6 +70,7 @@ export default async function Footer() {
         <Link href="/mentions-legales">Mentions l&eacute;gales</Link>
         <Link href="/confidentialite">Confidentialit&eacute;</Link>
         <Link href="/cgv">CGV</Link>
+        <BoutonInstallationPwa />
       </div>
     </footer>
   );

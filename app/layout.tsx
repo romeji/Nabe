@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Cormorant_Garamond, Imperial_Script, Jost } from 'next/font/google';
 import './globals.css';
+import PwaEnregistrement from '@/components/PwaEnregistrement';
 
 // next/font héberge les polices directement sur le domaine du site (Vercel) au
 // lieu d'aller les chercher chez Google à chaque visite : ça supprime un
@@ -127,6 +128,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" sizes="180x180" />
       </head>
       <body>
+        <PwaEnregistrement />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify([jsonLd, websiteJsonLd]).replace(/</g, '\\u003c') }}

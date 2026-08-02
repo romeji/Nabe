@@ -306,3 +306,32 @@ textarea::placeholder {
     padding: 0 var(--espace-sm);
   }
 }
+.pwa-installation__bouton {
+  appearance: none;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.pwa-installation__message {
+  max-width: 28rem;
+  margin: 0.4rem 0 0;
+  font-size: 0.8rem;
+  line-height: 1.35;
+}
+
+.pwa-installation--admin {
+  width: 100%;
+}
+
+.pwa-installation__bouton-admin {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+}

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { signOut } from 'next-auth/react';
 import './sidebar.css';
+import BoutonInstallationPwa from '@/components/BoutonInstallationPwa';
 
 const LIENS = [
   { href: '/admin', label: 'Tableau de bord', icone: '📊' },
@@ -65,6 +66,7 @@ export default function SidebarAdmin() {
           })}
         </nav>
         <div className="admin-sidebar__bas">
+          <BoutonInstallationPwa admin />
           <Link href="/" className="admin-sidebar__lien" target="_blank">
             <span>🌐</span> Voir le site
           </Link>
