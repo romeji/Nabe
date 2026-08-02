@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { getServerSession } from 'next-auth';
 import Header from '@/components/site/Header';
 import Footer from '@/components/site/Footer';
@@ -8,6 +9,19 @@ import SuiviPageVue from '@/components/site/SuiviPageVue';
 import NotificationsApp from '@/components/site/NotificationsApp';
 import { getConfigSite } from '@/lib/config-site';
 import { authClientOptions } from '@/lib/auth-client';
+
+export const metadata: Metadata = {
+  applicationName: 'Nabe',
+  manifest: '/manifest.webmanifest',
+  appleWebApp: {
+    capable: true,
+    title: 'Nabe',
+    statusBarStyle: 'default',
+  },
+  icons: {
+    apple: [{ url: '/icons/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
+  },
+};
 
 export default async function SiteLayout({
   children,

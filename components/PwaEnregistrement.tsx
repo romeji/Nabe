@@ -2,17 +2,6 @@
 
 import { useEffect } from 'react';
 
-export interface InviteInstallationPwa extends Event {
-  prompt: () => Promise<void>;
-  userChoice: Promise<{ outcome: 'accepted' | 'dismissed'; platform: string }>;
-}
-
-declare global {
-  interface Window {
-    __nabeInviteInstallation?: InviteInstallationPwa;
-  }
-}
-
 export default function PwaEnregistrement() {
   useEffect(() => {
     if ('serviceWorker' in navigator) {
@@ -21,14 +10,6 @@ export default function PwaEnregistrement() {
       });
     }
 
-    function memoriserInvite(event: Event) {
-      event.preventDefault();
-      window.__nabeInviteInstallation = event as InviteInstallationPwa;
-      window.dispatchEvent(new Event('nabe-pwa-installable'));
-    }
-
-    window.addEventListener('beforeinstallprompt', memoriserInvite);
-    return () => window.removeEventListener('beforeinstallprompt', memoriserInvite);
   }, []);
 
   return null;

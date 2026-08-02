@@ -54,16 +54,9 @@ export const metadata: Metadata = {
     'bijoux sur mesure',
     'Nabe bijoux',
   ],
-  applicationName: 'Nabe',
   authors: [{ name: 'Nabe' }],
   creator: 'Nabe',
   publisher: 'Nabe',
-  manifest: '/manifest.webmanifest',
-  appleWebApp: {
-    capable: true,
-    title: 'Nabe',
-    statusBarStyle: 'default',
-  },
   formatDetection: {
     telephone: false,
   },
@@ -125,7 +118,6 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/icons/favicon-32.png" sizes="32x32" type="image/png" media="(prefers-color-scheme: light)" />
         <link rel="icon" href="/icons/favicon-32-dark.png" sizes="32x32" type="image/png" media="(prefers-color-scheme: dark)" />
-        <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" sizes="180x180" />
       </head>
       <body>
         <PwaEnregistrement />
