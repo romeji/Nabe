@@ -1107,3 +1107,92 @@
   .accueil-hero__titre { text-align: left; font-size: 3.3rem; }
   .accueil-hero__actions { justify-content: flex-start; }
 }
+
+/* La photographie fournie par l'administration devient le visuel central du hero. */
+@media (min-width: 901px) {
+  .accueil-hero {
+    min-height: 590px;
+  }
+
+  .accueil-hero__image {
+    z-index: 0;
+    top: 50%;
+    right: max(var(--marge-page), calc((100vw - var(--largeur-max)) / 2));
+    bottom: auto;
+    left: auto;
+    width: clamp(300px, 38vw, 465px);
+    height: clamp(300px, 38vw, 465px);
+    border-radius: 50%;
+    opacity: 1;
+    filter: none;
+    object-fit: cover;
+    object-position: center;
+    transform: translateY(-43%);
+    box-shadow: 0 20px 48px rgba(56, 41, 31, 0.08);
+  }
+
+  .accueil-hero__overlay {
+    z-index: -1;
+    background: linear-gradient(180deg, #f7f4ef 0%, #f3efe8 100%);
+  }
+
+  .accueil-hero__embleme {
+    left: auto;
+    right: max(calc(var(--marge-page) + 1rem), calc((100vw - var(--largeur-max)) / 2 + 1rem));
+    top: 68%;
+    width: 6rem;
+    padding: 1.15rem;
+    border-radius: 50%;
+    background: var(--nabe-terracotta);
+    color: #fff;
+    transform: none;
+    box-shadow: 0 10px 22px rgba(56, 41, 31, 0.14);
+  }
+
+  .accueil-hero__contenu {
+    z-index: 2;
+  }
+}
+
+.accueil-histoire__image { opacity: 1; }
+.accueil-histoire__image img { filter: sepia(0.12) saturate(0.78); }
+
+@media (max-width: 900px) {
+  .accueil-hero__image {
+    z-index: 0;
+    top: 6.5rem;
+    right: 1.2rem;
+    bottom: auto;
+    left: auto;
+    width: 14rem;
+    height: 14rem;
+    border-radius: 50%;
+    opacity: 0.9;
+    filter: none;
+    object-fit: cover;
+  }
+
+  .accueil-hero__overlay {
+    z-index: -1;
+    background: linear-gradient(180deg, #f7f4ef 0%, #f3efe8 100%);
+  }
+
+  .accueil-hero__embleme {
+    z-index: 1;
+    padding: 0.7rem;
+    border-radius: 50%;
+    background: var(--nabe-terracotta);
+    color: #fff;
+  }
+}
+
+@media (max-width: 600px) {
+  .accueil-hero__image {
+    top: 5.6rem;
+    right: 0.65rem;
+    width: 10rem;
+    height: 10rem;
+    opacity: 0.7;
+  }
+  .accueil-hero__embleme { top: 9rem; }
+}
