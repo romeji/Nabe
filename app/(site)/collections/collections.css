@@ -38,7 +38,7 @@
 .produit-carte__image {
   position: relative;
   background-color: var(--nabe-sable);
-  border-radius: 26px 26px 8px 8px;
+  border-radius: 18px;
   overflow: hidden;
   aspect-ratio: 1;
   margin-bottom: var(--espace-sm);

@@ -1,0 +1,92 @@
+.instagram-module {
+  padding-top: clamp(3.5rem, 7vw, 6rem);
+  padding-bottom: clamp(4rem, 8vw, 7rem);
+}
+
+.instagram-module__entete {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-bottom: 2.5rem;
+}
+
+.instagram-module h2 {
+  margin: 0.45rem 0 0.8rem;
+  font-size: clamp(2.4rem, 4.5vw, 4.2rem);
+}
+
+.instagram-module__entete p {
+  max-width: 34rem;
+  color: var(--texte-secondaire);
+}
+
+.instagram-module__suivre {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex: 0 0 auto;
+  padding: 0.78rem 1.25rem;
+  border-radius: 999px;
+  background: var(--nabe-brun-fonce);
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.instagram-module__suivre svg { width: 18px; height: 18px; }
+
+.instagram-module__videos {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1.25rem;
+}
+
+.instagram-module__carte {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  aspect-ratio: 9 / 14;
+  border-radius: 18px;
+  background: linear-gradient(145deg, var(--nabe-sable), var(--nabe-terracotta));
+  box-shadow: var(--ombre-douce);
+}
+
+.instagram-module__carte video,
+.instagram-module__carte iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  object-fit: cover;
+}
+
+.instagram-module__lien-externe {
+  display: grid;
+  height: 100%;
+  place-items: center;
+  padding: 1rem;
+  color: #fff;
+  text-align: center;
+  font-family: var(--font-titres);
+  font-size: 1.35rem;
+}
+
+.instagram-module__pied {
+  margin-top: 1.75rem;
+  text-align: center;
+  color: var(--texte-secondaire);
+}
+
+.instagram-module__pied a { color: var(--nabe-terracotta); font-weight: 600; }
+
+@media (max-width: 900px) {
+  .instagram-module__entete { align-items: start; flex-direction: column; }
+  .instagram-module__videos {
+    display: flex;
+    overflow-x: auto;
+    margin-inline: calc(-1 * var(--marge-page));
+    padding-inline: var(--marge-page);
+    scroll-snap-type: x mandatory;
+  }
+  .instagram-module__carte { flex: 0 0 62%; scroll-snap-align: start; }
+}

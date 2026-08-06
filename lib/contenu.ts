@@ -12,14 +12,20 @@ import { getDefautsPage } from '@/lib/registre-contenu';
  */
 export async function getContenuPage(slug: string): Promise<Record<string, string>> {
   const defauts = getDefautsPage(slug);
-
-  const enregistres = await prisma.contenuPage.findMany({ where: { page: slug } });
   const valeurs = { ...defauts };
-  enregistres.forEach((item: any) => {
-    if (item.valeur && item.valeur.trim() !== '') {
-      valeurs[item.cle] = item.valeur;
-    }
-  });
+
+  try {
+    const enregistres = await prisma.contenuPage.findMany({ where: { page: slug } });
+    enregistres.forEach((item: any) => {
+      if (item.valeur && item.valeur.trim() !== '') {
+        valeurs[item.cle] = item.valeur;
+      }
+    });
+  } catch (error) {
+    // Les textes par défaut permettent de continuer à rendre la page si Neon
+    // effectue un réveil ou rencontre une indisponibilité passagère.
+    console.error('Contenu éditorial indisponible :', error instanceof Error ? error.name : 'erreur inconnue');
+  }
 
   return valeurs;
 }

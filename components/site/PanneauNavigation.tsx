@@ -108,7 +108,7 @@ export default function PanneauNavigation({
             </section>
           )}
 
-          {menu.collectionsActif && (
+          {menu.collectionsActif && collections.length > 0 && (
             <section className="panneau-nav__section">
               <h3>Collections</h3>
               {collections.map((c: any) => (

@@ -79,7 +79,7 @@
   background-image: url('/images/main-bague.jpg');
   background-size: cover;
   background-position: center;
-  border-radius: 50% 50% 10px 10px / 26% 26% 4px 4px;
+  border-radius: 24px;
   background-color: var(--nabe-sable);
   box-shadow: var(--ombre-moyenne);
 }

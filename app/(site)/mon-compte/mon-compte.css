@@ -38,7 +38,7 @@
 .mon-compte__carte {
   background-color: var(--nabe-sable);
   padding: var(--espace-lg);
-  border-radius: 30px 30px 10px 10px;
+  border-radius: 18px;
   text-align: center;
   transition: var(--transition-douce);
 }

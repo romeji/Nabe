@@ -24,6 +24,12 @@ export const DEFAUTS_CONFIG: Record<string, string> = {
   accueil_module_video_texte: 'Un geste, une matière, une pièce qui prend forme lentement.',
   accueil_module_video_url: '',
   accueil_module_video_poster: '',
+  instagram_module_actif: 'false',
+  instagram_profil_url: '',
+  instagram_identifiant: '@nabe.bijoux',
+  // Une URL de vidéo ou de Reel Instagram par ligne. Les URLs .mp4 sont lues
+  // directement ; les Reels sont affichés dans l'embed officiel.
+  instagram_videos: '',
   accueil_module_sur_mesure_actif: 'false',
   accueil_module_sur_mesure_titre: 'Une pièce pensée pour vous',
   accueil_module_sur_mesure_texte: "Croquis, photo d'inspiration ou envie précise : envoyez votre idée, nous revenons vers vous avec un devis personnalisé.",
@@ -86,18 +92,30 @@ export const DEFAUTS_CONFIG: Record<string, string> = {
 
 /** Récupère toutes les valeurs de config, fusionnées avec les défauts. */
 export async function getConfigSite(): Promise<Record<string, string>> {
-  const enregistres = await prisma.configSite.findMany();
   const valeurs = { ...DEFAUTS_CONFIG };
-  enregistres.forEach((item: any) => {
-    valeurs[item.cle] = item.valeur;
-  });
+
+  try {
+    const enregistres = await prisma.configSite.findMany();
+    enregistres.forEach((item: any) => {
+      valeurs[item.cle] = item.valeur;
+    });
+  } catch (error) {
+    // Une indisponibilité temporaire de Neon ne doit pas faire tomber la vitrine.
+    console.error('Configuration du site indisponible :', error instanceof Error ? error.name : 'erreur inconnue');
+  }
+
   return valeurs;
 }
 
 /** Récupère une seule clé de config (avec son défaut si non enregistrée). */
 export async function getConfigCle(cle: string): Promise<string> {
-  const item = await prisma.configSite.findUnique({ where: { cle } });
-  return item?.valeur ?? DEFAUTS_CONFIG[cle] ?? '';
+  try {
+    const item = await prisma.configSite.findUnique({ where: { cle } });
+    return item?.valeur ?? DEFAUTS_CONFIG[cle] ?? '';
+  } catch (error) {
+    console.error('Configuration du site indisponible :', error instanceof Error ? error.name : 'erreur inconnue');
+    return DEFAUTS_CONFIG[cle] ?? '';
+  }
 }
 
 export function configEstActive(valeurs: Record<string, string>, cle: string): boolean {

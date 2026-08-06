@@ -47,49 +47,52 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        const email = credentials.email.trim().toLowerCase();
+        try {
+          const email = credentials.email.trim().toLowerCase();
 
-        const admin = await prisma.admin.findUnique({
-          where: { email },
-        });
-
-        if (!admin) {
-          return null;
-        }
-
-        if (estVerrouille(admin.verrouJusqua)) {
-          return null;
-        }
-
-        const motDePasseValide = await bcrypt.compare(
-          credentials.password,
-          admin.password,
-        );
-
-        if (!motDePasseValide) {
-          const { tentativesEchouees, verrouJusqua } =
-            calculerApresEchec(admin.tentativesEchouees);
-
-          await prisma.admin.update({
-            where: { id: admin.id },
-            data: { tentativesEchouees, verrouJusqua },
+          const admin = await prisma.admin.findUnique({
+            where: { email },
           });
 
+          if (!admin || estVerrouille(admin.verrouJusqua)) {
+            return null;
+          }
+
+          const motDePasseValide = await bcrypt.compare(
+            credentials.password,
+            admin.password,
+          );
+
+          if (!motDePasseValide) {
+            const { tentativesEchouees, verrouJusqua } =
+              calculerApresEchec(admin.tentativesEchouees);
+
+            await prisma.admin.update({
+              where: { id: admin.id },
+              data: { tentativesEchouees, verrouJusqua },
+            });
+
+            return null;
+          }
+
+          if (admin.tentativesEchouees > 0 || admin.verrouJusqua) {
+            await prisma.admin.update({
+              where: { id: admin.id },
+              data: ETAT_APRES_SUCCES,
+            });
+          }
+
+          return {
+            id: admin.id,
+            email: admin.email,
+            name: admin.name || 'Admin',
+          };
+        } catch (error) {
+          // NextAuth doit refuser proprement la connexion lorsque Neon est
+          // indisponible, plutôt que laisser remonter une exception serveur.
+          console.error('Connexion admin indisponible :', error instanceof Error ? error.name : 'erreur inconnue');
           return null;
         }
-
-        if (admin.tentativesEchouees > 0 || admin.verrouJusqua) {
-          await prisma.admin.update({
-            where: { id: admin.id },
-            data: ETAT_APRES_SUCCES,
-          });
-        }
-
-        return {
-          id: admin.id,
-          email: admin.email,
-          name: admin.name || 'Admin',
-        };
       },
     }),
   ],

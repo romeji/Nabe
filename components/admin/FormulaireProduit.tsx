@@ -145,6 +145,7 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
   function validerDonneesProduit() {
     if (!donnees.nom.trim()) return 'Le nom du bijou est obligatoire.';
     if (!donnees.description.trim()) return 'La description est obligatoire.';
+    if (!donnees.categorieId) return 'Choisissez une catégorie pour ce bijou.';
     if (!Number.isFinite(donnees.prix) || donnees.prix <= 0) return 'Le prix doit être supérieur à 0 €.';
     if (!Number.isInteger(donnees.poidsGrammes) || donnees.poidsGrammes < 1) {
       return 'Le poids emballé doit être supérieur à 0 gramme.';
@@ -235,7 +236,7 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
         nom: donnees.nom.trim(),
         description: donnees.description.trim(),
         delaiFabrication: donnees.delaiFabrication.trim() || null,
-        categorieId: donnees.categorieId || null,
+        categorieId: donnees.categorieId,
         matiereId: donnees.matiereId || null,
         collectionId: donnees.collectionId || null,
         stockParTaille: Object.fromEntries(
@@ -312,9 +313,9 @@ export default function FormulaireProduit({ produitInitial }: { produitInitial?:
 
         <div className="admin-form__ligne">
           <div>
-            <label>Catégorie</label>
-            <select value={donnees.categorieId} onChange={(e) => majChamp('categorieId', e.target.value)} disabled={chargementOptions}>
-              <option value="">Aucune catégorie</option>
+            <label>Catégorie *</label>
+            <select value={donnees.categorieId} onChange={(e) => majChamp('categorieId', e.target.value)} disabled={chargementOptions} required>
+              <option value="" disabled>Choisir une catégorie</option>
               {categories.map((c: any) => (
                 <option key={c.id} value={c.id}>
                   {c.nom}

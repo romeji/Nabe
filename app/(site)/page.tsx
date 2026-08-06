@@ -9,11 +9,23 @@ import CarrouselProduits from '@/components/site/CarrouselProduits';
 import TexteRiche from '@/components/site/TexteRiche';
 import CategoriesAccueil from '@/components/site/CategoriesAccueil';
 import ModulesAccueil from '@/components/site/ModulesAccueil';
+import InstagramModule from '@/components/site/InstagramModule';
 import './accueil.css';
 
 export const revalidate = 60;
 
 const DUREE_NOUVEAU_JOURS = 21;
+
+async function avecRepli<T>(libelle: string, promesse: Promise<T>, repli: T): Promise<T> {
+  try {
+    return await promesse;
+  } catch (error) {
+    // Les sections facultatives ne doivent pas rendre toute la page d'accueil
+    // indisponible pendant une courte coupure de la base de données.
+    console.error(`${libelle} indisponible :`, error instanceof Error ? error.name : 'erreur inconnue');
+    return repli;
+  }
+}
 
 function serialiser(produits: any[]) {
   const seuilNouveau = Date.now() - DUREE_NOUVEAU_JOURS * 24 * 60 * 60 * 1000;
@@ -33,7 +45,7 @@ function serialiser(produits: any[]) {
 
 export default async function PageAccueil() {
   const config = await getConfigSite();
-  const session = await getServerSession(authClientOptions);
+  const session = await avecRepli('Session client', getServerSession(authClientOptions), null);
   const clientId = (session?.user as any)?.id as string | undefined;
 
   const collectionsSelectionActif = configEstActive(config, 'collections_selection_actif');
@@ -48,33 +60,33 @@ export default async function PageAccueil() {
     await Promise.all([
       getContenuPage('accueil'),
       collectionsSelectionActif && idsCollectionsSelection.length > 0
-        ? prisma.collection.findMany({
+        ? avecRepli('Collections accueil', prisma.collection.findMany({
             where: { id: { in: idsCollectionsSelection }, actif: true },
-          })
+          }), [])
         : Promise.resolve([]),
       carrousselBestsellerActif
-        ? prisma.produit.findMany({
+        ? avecRepli('Meilleures ventes', prisma.produit.findMany({
             where: { actif: true },
             include: { images: { orderBy: { ordre: 'asc' }, take: 1 } },
             orderBy: { nombreVentes: 'desc' },
             take: 8,
-          })
+          }), [])
         : Promise.resolve([]),
       carrousselNouvelleCollectionActif && config.carrousel_nouvelle_collection_id
-        ? prisma.produit.findMany({
+        ? avecRepli('Nouveautés accueil', prisma.produit.findMany({
             where: { actif: true, collectionId: config.carrousel_nouvelle_collection_id },
             include: { images: { orderBy: { ordre: 'asc' }, take: 1 } },
             take: 8,
-          })
+          }), [])
         : Promise.resolve([]),
       temoignagesActif
-        ? prisma.temoignage.findMany({ where: { actif: true }, orderBy: { ordre: 'asc' }, take: 3 })
+        ? avecRepli('Témoignages accueil', prisma.temoignage.findMany({ where: { actif: true }, orderBy: { ordre: 'asc' }, take: 3 }), [])
         : Promise.resolve([]),
       clientId
-        ? prisma.favori.findMany({ where: { clientId }, select: { produitId: true } })
+        ? avecRepli('Favoris client', prisma.favori.findMany({ where: { clientId }, select: { produitId: true } }), [])
         : Promise.resolve([]),
       categoriesAccueilActif && idsCategoriesAccueil.length > 0
-        ? prisma.categorie.findMany({ where: { id: { in: idsCategoriesAccueil } } })
+        ? avecRepli('Catégories accueil', prisma.categorie.findMany({ where: { id: { in: idsCategoriesAccueil } } }), [])
         : Promise.resolve([]),
     ]);
 
@@ -311,6 +323,9 @@ export default async function PageAccueil() {
           <CarrouselProduits produits={serialiser(bestsellers)} favorisIds={idsFavoris} />
         </section>
       )}
+
+      {/* INSTAGRAM — vidéos configurées depuis l'administration */}
+      <InstagramModule config={config} />
 
       {/* TEMOIGNAGES */}
       {temoignages.length > 0 && (

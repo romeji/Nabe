@@ -225,7 +225,7 @@
 }
 
 .accueil-categories__image {
-  border-radius: 50% 50% 4px 4px / 28% 28% 4px 4px;
+  border-radius: 50%;
   overflow: hidden;
   aspect-ratio: 1 / 1.12;
   background-color: var(--nabe-sable);
@@ -1216,8 +1216,24 @@
     overflow: visible;
   }
 
-  .accueil-hero__image,
   .accueil-hero__overlay { display: none; }
+
+  .accueil-hero__image {
+    display: block;
+    z-index: 1;
+    top: 139px !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: calc(50% - 95px) !important;
+    width: 452px !important;
+    height: 452px !important;
+    border-radius: 50%;
+    object-fit: cover;
+    opacity: 1;
+    filter: none;
+    transform: none !important;
+    box-shadow: none;
+  }
 
   .accueil-hero__contenu {
     width: min(var(--accueil-largeur), calc(100% - 4rem));
@@ -1252,6 +1268,7 @@
   .accueil-hero__actions .btn { min-height: 2.7rem; padding-inline: 1.45rem; }
 
   .accueil-hero__embleme {
+    z-index: 2;
     top: 139px;
     left: calc(50% - 95px);
     right: auto;
@@ -1259,7 +1276,9 @@
     height: 452px;
     padding: 0;
     border-radius: 50%;
-    background: #ddbca7;
+    /* La photo administrée constitue désormais le disque du hero : l'icône
+       se superpose sans la masquer. */
+    background: transparent;
     color: #aa5b38;
     box-shadow: none;
     transform: none;
@@ -1372,7 +1391,6 @@
     position: absolute;
     top: 50%;
     right: calc((100% - 475px) / 2 - 25px);
-    z-index: 2;
     display: grid;
     place-items: center;
     width: 64px;
@@ -1427,7 +1445,12 @@
     border-radius: 50%;
     background: #e4c5ae;
   }
-  .accueil-categories__image img { display: none; }
+  .accueil-categories__image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
   .accueil-categories__panneau {
     position: static;
     min-height: 0;
@@ -1473,8 +1496,13 @@
     border-radius: 15px 15px 0 0;
     background: #e2c1aa;
   }
-  .carrousel-produits__image img { display: none; }
-  .carrousel-produits__image::after {
+  .carrousel-produits__image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .carrousel-produits__image:not(:has(img))::after {
     content: '';
     position: absolute;
     top: 50%;
@@ -1486,7 +1514,7 @@
     background: none;
     transform: translate(-50%, -31%);
   }
-  .carrousel-produits__image::before {
+  .carrousel-produits__image:not(:has(img))::before {
     content: '';
     position: absolute;
     z-index: 2;
@@ -1499,8 +1527,8 @@
     transform: rotate(45deg);
   }
   .carrousel-produits__carte:nth-child(2) .carrousel-produits__image { background: #bd7d60; }
-  .carrousel-produits__carte:nth-child(2) .carrousel-produits__image::after { border-color: #fff; }
-  .carrousel-produits__carte:nth-child(2) .carrousel-produits__image::before { border-color: #fff; }
+  .carrousel-produits__carte:nth-child(2) .carrousel-produits__image:not(:has(img))::after { border-color: #fff; }
+  .carrousel-produits__carte:nth-child(2) .carrousel-produits__image:not(:has(img))::before { border-color: #fff; }
   .carrousel-produits__carte:nth-child(3) .carrousel-produits__image { background: #f4e8d8; }
   .carrousel-produits__carte h3 { margin: 0; padding: 0.85rem 1.2rem 0.18rem; font-family: var(--font-titres); font-size: 1.17rem; }
   .carrousel-produits__carte span { padding: 0 1.2rem 0.9rem; font-size: 0.86rem; }
@@ -1535,7 +1563,14 @@
     background: #cf9c83;
     border-radius: 50% 50% 0 0 / 24% 24% 0 0;
   }
-  .accueil-histoire__image img { display: none; }
+  .accueil-histoire__image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.68;
+    mix-blend-mode: normal;
+  }
   .accueil-histoire__icone {
     position: absolute;
     z-index: 2;

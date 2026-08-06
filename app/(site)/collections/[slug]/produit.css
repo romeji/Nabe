@@ -85,7 +85,7 @@
   max-width: 480px;
   aspect-ratio: 1 / 1;
   background-color: var(--nabe-sable);
-  border-radius: 32px 32px 14px 14px;
+  border-radius: 18px;
   overflow: hidden;
   box-shadow: var(--ombre-moyenne);
 }
@@ -617,7 +617,7 @@
   position: relative;
   aspect-ratio: 1;
   overflow: hidden;
-  border-radius: 24px 24px 8px 8px;
+  border-radius: 18px;
   margin-bottom: var(--espace-xs);
   box-shadow: var(--ombre-douce);
   background-color: var(--nabe-sable);

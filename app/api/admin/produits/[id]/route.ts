@@ -14,6 +14,9 @@ function validerPayloadProduit(body: any) {
   ) {
     return 'Indiquez un délai de fabrication pour un bijou fabriqué sur commande.';
   }
+  if ('categorieId' in body && (typeof body.categorieId !== 'string' || !body.categorieId.trim())) {
+    return 'Choisissez une catégorie pour ce bijou.';
+  }
   return '';
 }
 

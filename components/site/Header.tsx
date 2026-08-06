@@ -48,8 +48,7 @@ export default function Header() {
 
           <nav className="nabe-header__nav" aria-label="Navigation principale">
             <Link href="/nos-bijoux">Nos bijoux</Link>
-            <Link href="/nos-bijoux">Nouveautés</Link>
-            <Link href="/sur-mesure">Sur mesure</Link>
+            <Link href="/mon-histoire">Notre histoire</Link>
           </nav>
 
           <Link href="/" className="nabe-header__logo">Nabe</Link>

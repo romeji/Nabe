@@ -205,48 +205,48 @@ export default function ReglagesClient({
       <div className="admin-carte reglages-client__section">
         <h2>Page d'accueil — Modules optionnels</h2>
 
-        <label className="reglages-client__toggle">
-          <input
-            type="checkbox"
-            checked={config.accueil_module_video_actif === 'true'}
-            onChange={(e) => maj('accueil_module_video_actif', e.target.checked ? 'true' : 'false')}
-          />
-          <div>
-            <strong>Afficher un module vidéo</strong>
-            <p>Bloc éditorial pour montrer l'atelier, une fabrication ou une collection. Désactivé par défaut.</p>
-          </div>
-        </label>
+        <div className="reglages-client__sous-champ">
+          <label className="reglages-client__toggle">
+            <input
+              type="checkbox"
+              checked={config.instagram_module_actif === 'true'}
+              onChange={(e) => maj('instagram_module_actif', e.target.checked ? 'true' : 'false')}
+            />
+            <div>
+              <strong>Afficher les vidéos Instagram avant les avis</strong>
+              <p>Ajoutez les vidéos ou Reels à afficher sur l&apos;accueil. Elles apparaîtront juste avant « Vos mots précieux ».</p>
+            </div>
+          </label>
 
-        {config.accueil_module_video_actif === 'true' && (
-          <div className="reglages-client__sous-champ">
-            <label>Titre</label>
-            <input
-              type="text"
-              value={config.accueil_module_video_titre || ''}
-              onChange={(e) => maj('accueil_module_video_titre', e.target.value)}
-            />
-            <label>Texte</label>
-            <textarea
-              rows={3}
-              value={config.accueil_module_video_texte || ''}
-              onChange={(e) => maj('accueil_module_video_texte', e.target.value)}
-            />
-            <label>URL vidéo</label>
-            <input
-              type="url"
-              value={config.accueil_module_video_url || ''}
-              onChange={(e) => maj('accueil_module_video_url', e.target.value)}
-              placeholder="https://... ou /videos/atelier.mp4"
-            />
-            <label>Image de couverture vidéo (optionnel)</label>
-            <input
-              type="url"
-              value={config.accueil_module_video_poster || ''}
-              onChange={(e) => maj('accueil_module_video_poster', e.target.value)}
-              placeholder="https://... ou /images/video-cover.jpg"
-            />
-          </div>
-        )}
+          {config.instagram_module_actif === 'true' && (
+            <>
+              <label>Identifiant affiché</label>
+              <input
+                type="text"
+                value={config.instagram_identifiant || ''}
+                onChange={(e) => maj('instagram_identifiant', e.target.value)}
+                placeholder="@nabe.bijoux"
+              />
+              <label>Lien vers votre profil Instagram</label>
+              <input
+                type="url"
+                value={config.instagram_profil_url || ''}
+                onChange={(e) => maj('instagram_profil_url', e.target.value)}
+                placeholder="https://www.instagram.com/votre.compte/"
+              />
+              <label>Vidéos à afficher</label>
+              <textarea
+                rows={6}
+                value={config.instagram_videos || ''}
+                onChange={(e) => maj('instagram_videos', e.target.value)}
+                placeholder={'Une URL par ligne :\nhttps://www.instagram.com/reel/.../\nhttps://.../video.mp4'}
+              />
+              <p className="formulaire-produit__aide">
+                Vous pouvez ajouter jusqu&apos;à 5 URLs HTTPS : Reels Instagram ou fichiers MP4/WebM hébergés. La connexion automatique au compte nécessite une application Meta et un compte Instagram professionnel.
+              </p>
+            </>
+          )}
+        </div>
 
         <label className="reglages-client__toggle" style={{ marginTop: '1rem' }}>
           <input

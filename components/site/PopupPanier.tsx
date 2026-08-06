@@ -200,7 +200,7 @@ export default function PopupPanier({ ouverte, onFermer }: PopupPanierProps) {
               <line x1="3" y1="6" x2="21" y2="6"/>
               <path d="M16 10a4 4 0 01-8 0"/>
             </svg>
-            <p>Votre panier est vide</p>
+            <p>Vous n&apos;avez pas encore d&apos;article dans votre panier.</p>
             <button className="popup-panier__btn-continuer" onClick={onFermer}>
               Découvrir nos créations
             </button>
