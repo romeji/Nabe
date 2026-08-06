@@ -35,7 +35,10 @@ export default function InstagramModule({ config }: InstagramModuleProps) {
     .filter(estUrlValide)
     .slice(0, 5);
 
-  if (config.instagram_module_actif !== 'true' || urls.length === 0) return null;
+  // The section is kept visible as an inviting empty state before a first Reel
+  // is selected in the administration. Once videos exist, the admin switch can
+  // still hide the entire module.
+  if (config.instagram_module_actif === 'false' && urls.length > 0) return null;
 
   const profil = estUrlValide(config.instagram_profil_url || '')
     ? config.instagram_profil_url
@@ -64,6 +67,7 @@ export default function InstagramModule({ config }: InstagramModuleProps) {
         )}
       </div>
 
+      {urls.length > 0 ? (
       <div className="instagram-module__videos">
         {urls.map((url, index) => {
           const embed = urlEmbedInstagram(url);
@@ -87,6 +91,18 @@ export default function InstagramModule({ config }: InstagramModuleProps) {
           );
         })}
       </div>
+      ) : (
+        <a className="instagram-module__attente" href={profil} target="_blank" rel="noreferrer noopener">
+          <span className="instagram-module__attente-icone" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <rect x="3" y="3" width="18" height="18" rx="5" />
+              <circle cx="12" cy="12" r="4" />
+              <circle cx="17.2" cy="6.8" r="0.6" fill="currentColor" stroke="none" />
+            </svg>
+          </span>
+          <span><strong>Les prochaines vidÃ©os arrivent ici.</strong> Retrouvez dÃ¨s maintenant les coulisses de Nabe sur Instagram.</span>
+        </a>
+      )}
 
       {profil && (
         <p className="instagram-module__pied">

@@ -82,26 +82,6 @@ body {
 }
 
 /* Cadre latéral constant de l'univers de marque, y compris hors accueil. */
-body::before,
-body::after {
-  content: '';
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  z-index: 90;
-  width: 1px;
-  background: rgba(56, 41, 31, 0.13);
-  pointer-events: none;
-}
-
-body::before { left: max(1rem, calc((100vw - 1216px) / 2)); }
-body::after { right: max(1rem, calc((100vw - 1216px) / 2)); }
-
-@media (max-width: 900px) {
-  body::before,
-  body::after { display: none; }
-}
-
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-titres);
   font-weight: 500;

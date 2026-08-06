@@ -71,6 +71,40 @@
   font-size: 1.35rem;
 }
 
+.instagram-module__attente {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  min-height: 9.5rem;
+  padding: 1.5rem 2rem;
+  border-radius: 22px;
+  background: #f1dfcc;
+  color: var(--texte-principal);
+  text-align: center;
+  box-shadow: var(--ombre-douce);
+}
+
+.instagram-module__attente strong {
+  display: block;
+  margin-bottom: 0.18rem;
+  font-family: var(--font-titres);
+  font-size: 1.3rem;
+}
+
+.instagram-module__attente-icone {
+  display: grid;
+  flex: 0 0 auto;
+  width: 3.2rem;
+  height: 3.2rem;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--nabe-terracotta);
+  color: #fff;
+}
+
+.instagram-module__attente-icone svg { width: 1.6rem; height: 1.6rem; }
+
 .instagram-module__pied {
   margin-top: 1.75rem;
   text-align: center;
@@ -89,4 +123,5 @@
     scroll-snap-type: x mandatory;
   }
   .instagram-module__carte { flex: 0 0 62%; scroll-snap-align: start; }
+  .instagram-module__attente { align-items: flex-start; text-align: left; }
 }

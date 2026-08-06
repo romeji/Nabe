@@ -24,7 +24,7 @@ export const DEFAUTS_CONFIG: Record<string, string> = {
   accueil_module_video_texte: 'Un geste, une matière, une pièce qui prend forme lentement.',
   accueil_module_video_url: '',
   accueil_module_video_poster: '',
-  instagram_module_actif: 'false',
+  instagram_module_actif: 'true',
   instagram_profil_url: 'https://www.instagram.com/nabe.bijoux/',
   instagram_identifiant: '@nabe.bijoux',
   instagram_meta_connecte: 'false',
