@@ -9,6 +9,20 @@ type CategorieAffichee = {
   logoAccueil?: string | null;
 };
 
+// Visuels fournis dans public/images : ils prennent le relais tant qu'aucun
+// logo personnalisé n'a été choisi dans l'administration.
+function logoCategorieParDefaut(nom: string) {
+  const n = nom.toLowerCase();
+  if (n.includes('bague')) return '/images/Bague.png';
+  if (n.includes('collier')) return '/images/collierpng.png';
+  if (n.includes('boucle') || n.includes('oreille')) return '/images/boucledoreille.png';
+  if (n.includes('bracelet')) return '/images/bracelet.png';
+  if (n.includes('pendentif')) return '/images/pendentif.png';
+  if (n.includes('pièce unique') || n.includes('piece unique')) return '/images/pieceunique.png';
+  if (n.includes('cadeau') || n.includes('coffret')) return '/images/cadeau.png';
+  return null;
+}
+
 // Icône affichée dans le badge de chaque carte catégorie, choisie selon le nom.
 function IconeCategorie({ nom }: { nom: string }) {
   const n = nom.toLowerCase();
@@ -62,30 +76,33 @@ export default function CategoriesAccueil({ categories }: { categories: Categori
 
   return (
     <div className="accueil-categories__grille">
-      {categories.map((c: any) => (
-        <Link key={c.id} href={`/nos-bijoux?categorie=${c.slug}`} className="accueil-categories__carte">
-          <div className="accueil-categories__image">
-            {c.image ? (
-              <Image src={c.image} alt={c.nom} width={280} height={280} />
-            ) : (
-              <div className="accueil-categories__placeholder" />
-            )}
-          </div>
-          <div className="accueil-categories__panneau">
-            <span className="accueil-categories__icone">
-              {c.logoAccueil ? (
-                <Image src={c.logoAccueil} alt="" width={34} height={34} className="accueil-categories__logo" />
+      {categories.map((c: any) => {
+        const logo = c.logoAccueil || logoCategorieParDefaut(c.nom);
+        return (
+          <Link key={c.id} href={`/nos-bijoux?categorie=${c.slug}`} className="accueil-categories__carte">
+            <div className="accueil-categories__image">
+              {c.image ? (
+                <Image src={c.image} alt={c.nom} width={280} height={280} />
               ) : (
-                <IconeCategorie nom={c.nom} />
+                <div className="accueil-categories__placeholder" />
               )}
-            </span>
-            <span className="accueil-categories__nom">{c.nom}</span>
-            <span className="accueil-categories__fleche" aria-hidden="true">
-              →
-            </span>
-          </div>
-        </Link>
-      ))}
+            </div>
+            <div className="accueil-categories__panneau">
+              <span className="accueil-categories__icone">
+                {logo ? (
+                  <Image src={logo} alt="" width={48} height={48} className="accueil-categories__logo" />
+                ) : (
+                  <IconeCategorie nom={c.nom} />
+                )}
+              </span>
+              <span className="accueil-categories__nom">{c.nom}</span>
+              <span className="accueil-categories__fleche" aria-hidden="true">
+                →
+              </span>
+            </div>
+          </Link>
+        );
+      })}
     </div>
   );
 }
