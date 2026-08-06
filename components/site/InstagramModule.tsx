@@ -37,7 +37,9 @@ export default function InstagramModule({ config }: InstagramModuleProps) {
 
   if (config.instagram_module_actif !== 'true' || urls.length === 0) return null;
 
-  const profil = estUrlValide(config.instagram_profil_url || '') ? config.instagram_profil_url : null;
+  const profil = estUrlValide(config.instagram_profil_url || '')
+    ? config.instagram_profil_url
+    : 'https://www.instagram.com/nabe.bijoux/';
   const identifiant = config.instagram_identifiant?.trim() || '@nabe.bijoux';
 
   return (

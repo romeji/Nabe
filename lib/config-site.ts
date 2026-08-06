@@ -25,8 +25,9 @@ export const DEFAUTS_CONFIG: Record<string, string> = {
   accueil_module_video_url: '',
   accueil_module_video_poster: '',
   instagram_module_actif: 'false',
-  instagram_profil_url: '',
+  instagram_profil_url: 'https://www.instagram.com/nabe.bijoux/',
   instagram_identifiant: '@nabe.bijoux',
+  instagram_meta_connecte: 'false',
   // Une URL de vidéo ou de Reel Instagram par ligne. Les URLs .mp4 sont lues
   // directement ; les Reels sont affichés dans l'embed officiel.
   instagram_videos: '',
@@ -89,6 +90,20 @@ export const DEFAUTS_CONFIG: Record<string, string> = {
   google_analytics_actif: 'false',
   google_analytics_id: '', // ex: G-XXXXXXXXXX
 };
+
+// Ces valeurs peuvent être enregistrées dans ConfigSite pour éviter une
+// migration dédiée. Elles ne doivent jamais quitter le serveur, même chiffrées.
+export const CLES_CONFIG_SENSIBLES = new Set([
+  'mondial_relay_cle_privee',
+  'instagram_meta_token_chiffre',
+  'instagram_meta_utilisateur_id',
+]);
+
+export function masquerConfigSensible(config: Record<string, string>): Record<string, string> {
+  return Object.fromEntries(
+    Object.entries(config).filter(([cle]) => !CLES_CONFIG_SENSIBLES.has(cle)),
+  );
+}
 
 /** Récupère toutes les valeurs de config, fusionnées avec les défauts. */
 export async function getConfigSite(): Promise<Record<string, string>> {

@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { getServerSession } from 'next-auth';
 import { prisma } from '@/lib/prisma';
 import { getContenuPage } from '@/lib/contenu';
-import { getConfigSite, configEstActive } from '@/lib/config-site';
+import { getConfigSite, configEstActive, masquerConfigSensible } from '@/lib/config-site';
 import { authClientOptions } from '@/lib/auth-client';
 import CarrouselProduits from '@/components/site/CarrouselProduits';
 import TexteRiche from '@/components/site/TexteRiche';
@@ -44,7 +44,7 @@ function serialiser(produits: any[]) {
 }
 
 export default async function PageAccueil() {
-  const config = await getConfigSite();
+  const config = masquerConfigSensible(await getConfigSite());
   const session = await avecRepli('Session client', getServerSession(authClientOptions), null);
   const clientId = (session?.user as any)?.id as string | undefined;
 

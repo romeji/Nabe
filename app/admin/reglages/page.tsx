@@ -1,7 +1,7 @@
 import { verifierSessionAdmin } from '@/lib/auth-helpers';
 import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
-import { getConfigSite } from '@/lib/config-site';
+import { getConfigSite, masquerConfigSensible } from '@/lib/config-site';
 import ReglagesClient from '@/components/admin/ReglagesClient';
 import './reglages.css';
 
@@ -10,7 +10,7 @@ export default async function PageAdminReglages() {
   if (!session) redirect('/admin/login');
 
   const [config, collections, categories, produits] = await Promise.all([
-    getConfigSite(),
+    getConfigSite().then(masquerConfigSensible),
     prisma.collection.findMany({ where: { actif: true }, orderBy: { ordre: 'asc' } }),
     prisma.categorie.findMany({ orderBy: { ordre: 'asc' } }),
     prisma.produit.findMany({ orderBy: { nom: 'asc' }, select: { id: true, nom: true, prix: true } }),

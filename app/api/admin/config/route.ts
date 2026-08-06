@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { verifierSessionAdmin } from '@/lib/auth-helpers';
-import { DEFAUTS_CONFIG, getConfigSite } from '@/lib/config-site';
+import { DEFAUTS_CONFIG, getConfigSite, masquerConfigSensible } from '@/lib/config-site';
 
 export async function GET(req: NextRequest) {
   const session = await verifierSessionAdmin();
@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
   }
 
   const config = await getConfigSite();
-  return NextResponse.json(config);
+  return NextResponse.json(masquerConfigSensible(config));
 }
 
 export async function POST(req: NextRequest) {

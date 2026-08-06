@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 type OptionSimple = { id: string; nom: string };
 type OptionProduit = { id: string; nom: string; prix: string };
+type VideoInstagram = { id: string; apercu: string | null; lien: string; titre: string; date: string | null };
 
 export default function ReglagesClient({
   configInitiale,
@@ -19,12 +20,65 @@ export default function ReglagesClient({
   const [config, setConfig] = useState(configInitiale);
   const [enregistrement, setEnregistrement] = useState(false);
   const [succes, setSucces] = useState(false);
+  const [videosInstagram, setVideosInstagram] = useState<VideoInstagram[]>([]);
+  const [chargementInstagram, setChargementInstagram] = useState(false);
+  const [erreurInstagram, setErreurInstagram] = useState('');
 
   const categoriesSelectionnees = (config.categories_accueil_ids || '').split(',').filter(Boolean);
   const collectionsSelectionnees = (config.collections_selection_ids || '').split(',').filter(Boolean);
+  const videosInstagramSelectionnees = (config.instagram_videos || '').split(/\r?\n/).map((url) => url.trim()).filter(Boolean);
+
+  async function chargerVideosInstagram() {
+    setChargementInstagram(true);
+    setErreurInstagram('');
+    try {
+      const reponse = await fetch('/api/admin/instagram/medias', { cache: 'no-store' });
+      const donnees = await reponse.json();
+      if (!reponse.ok) throw new Error(donnees.error || 'Impossible de récupérer les vidéos.');
+      setVideosInstagram(donnees.videos || []);
+    } catch (error: any) {
+      setErreurInstagram(error.message || 'Impossible de récupérer les vidéos.');
+    } finally {
+      setChargementInstagram(false);
+    }
+  }
+
+  useEffect(() => {
+    if (config.instagram_meta_connecte === 'true') void chargerVideosInstagram();
+  }, [config.instagram_meta_connecte]);
 
   function maj(cle: string, valeur: string) {
     setConfig((c) => ({ ...c, [cle]: valeur }));
+  }
+
+  function basculerVideoInstagram(lien: string) {
+    const selection = new Set(videosInstagramSelectionnees);
+    if (selection.has(lien)) {
+      selection.delete(lien);
+    } else {
+      if (selection.size >= 5) {
+        alert('Vous pouvez afficher 5 vidéos Instagram maximum.');
+        return;
+      }
+      selection.add(lien);
+    }
+    maj('instagram_videos', Array.from(selection).join('\n'));
+  }
+
+  async function deconnecterInstagram() {
+    if (!window.confirm('Déconnecter le compte Instagram ? Les vidéos déjà sélectionnées resteront enregistrées.')) return;
+    setChargementInstagram(true);
+    setErreurInstagram('');
+    try {
+      const reponse = await fetch('/api/admin/instagram/deconnexion', { method: 'DELETE' });
+      if (!reponse.ok) throw new Error();
+      maj('instagram_meta_connecte', 'false');
+      setVideosInstagram([]);
+    } catch {
+      setErreurInstagram('Impossible de déconnecter le compte Instagram.');
+    } finally {
+      setChargementInstagram(false);
+    }
   }
 
   function basculerCategorie(id: string) {
@@ -218,6 +272,51 @@ export default function ReglagesClient({
             </div>
           </label>
 
+          <div className="reglages-client__instagram-connexion">
+            <div>
+              <strong>Compte Instagram</strong>
+              <p>
+                {config.instagram_meta_connecte === 'true'
+                  ? `Compte connecté : ${config.instagram_identifiant || '@nabe.bijoux'}`
+                  : 'Connectez votre compte professionnel pour choisir vos Reels directement depuis l’administration.'}
+              </p>
+            </div>
+            {config.instagram_meta_connecte === 'true' ? (
+              <div className="reglages-client__instagram-actions">
+                <button type="button" className="btn btn-contour" onClick={() => void chargerVideosInstagram()} disabled={chargementInstagram}>
+                  {chargementInstagram ? 'Chargement…' : 'Actualiser les vidéos'}
+                </button>
+                <button type="button" className="reglages-client__lien-danger" onClick={() => void deconnecterInstagram()} disabled={chargementInstagram}>
+                  Déconnecter
+                </button>
+              </div>
+            ) : (
+              <a className="btn btn-primaire" href="/api/admin/instagram/connexion">
+                Connecter Instagram
+              </a>
+            )}
+          </div>
+
+          {erreurInstagram && <p className="reglages-client__instagram-erreur">{erreurInstagram}</p>}
+
+          {config.instagram_meta_connecte === 'true' && videosInstagram.length > 0 && (
+            <div className="reglages-client__instagram-videos">
+              <p className="reglages-client__instagram-legende">Sélectionnez jusqu&apos;à 5 vidéos à afficher</p>
+              <div className="reglages-client__instagram-grille">
+                {videosInstagram.map((video) => {
+                  const selectionnee = videosInstagramSelectionnees.includes(video.lien);
+                  return (
+                    <label className={`reglages-client__instagram-video${selectionnee ? ' actif' : ''}`} key={video.id}>
+                      {video.apercu ? <img src={video.apercu} alt="" /> : <span className="reglages-client__instagram-video-vide" />}
+                      <span>{video.titre}</span>
+                      <input type="checkbox" checked={selectionnee} onChange={() => basculerVideoInstagram(video.lien)} />
+                    </label>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           {config.instagram_module_actif === 'true' && (
             <>
               <label>Identifiant affiché</label>
@@ -242,7 +341,7 @@ export default function ReglagesClient({
                 placeholder={'Une URL par ligne :\nhttps://www.instagram.com/reel/.../\nhttps://.../video.mp4'}
               />
               <p className="formulaire-produit__aide">
-                Vous pouvez ajouter jusqu&apos;à 5 URLs HTTPS : Reels Instagram ou fichiers MP4/WebM hébergés. La connexion automatique au compte nécessite une application Meta et un compte Instagram professionnel.
+                Vous pouvez aussi saisir jusqu&apos;à 5 URLs HTTPS : Reels Instagram ou fichiers MP4/WebM hébergés. Après une sélection depuis le compte connecté, enregistrez les réglages pour publier le module.
               </p>
             </>
           )}
