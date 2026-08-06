@@ -13,9 +13,7 @@
 
 .page-accueil {
   overflow-x: hidden;
-  background:
-    radial-gradient(circle at 12% 18%, rgba(207, 169, 153, 0.18), transparent 28rem),
-    linear-gradient(180deg, var(--nabe-creme) 0%, #fbfaf8 46%, var(--nabe-creme) 100%);
+  background: var(--nabe-creme);
 }
 
 .accueil-hero {
@@ -23,24 +21,25 @@
   min-height: clamp(520px, 64vh, 700px);
   display: flex;
   align-items: center;
-  color: var(--texte-clair);
+  color: var(--texte-principal);
   isolation: isolate;
   overflow: hidden;
+  background: #f3f0ea;
 }
 
 .accueil-hero__image {
   z-index: -1;
   object-fit: cover;
-  object-position: center 36%;
+  object-position: center;
+  opacity: 0.07;
+  filter: sepia(1) saturate(0.45);
 }
 
 .accueil-hero__overlay {
   position: absolute;
   inset: 0;
   z-index: -1;
-  background:
-    linear-gradient(90deg, rgba(42, 28, 20, 0.64) 0%, rgba(42, 28, 20, 0.34) 43%, rgba(42, 28, 20, 0.08) 100%),
-    linear-gradient(180deg, rgba(42, 28, 20, 0.16) 0%, rgba(42, 28, 20, 0.32) 100%);
+  background: radial-gradient(circle at 71% 48%, #ddbfad 0 13.7rem, transparent 13.85rem);
 }
 
 .accueil-hero::after {
@@ -49,33 +48,45 @@
   left: 0;
   right: 0;
   bottom: -1px;
-  height: 13rem;
+  height: 3rem;
   z-index: -1;
-  background: linear-gradient(180deg, transparent 0%, rgba(245, 242, 238, 0.18) 50%, var(--nabe-creme) 100%);
+  background: linear-gradient(180deg, transparent 0%, var(--nabe-creme) 100%);
 }
+
+.accueil-hero__embleme {
+  position: absolute;
+  z-index: 0;
+  top: 50%;
+  left: 71%;
+  width: 8.2rem;
+  color: var(--nabe-terracotta);
+  transform: translate(-50%, -48%);
+}
+
+.accueil-hero__embleme svg { width: 100%; height: auto; }
 
 .accueil-hero__contenu {
   position: relative;
   z-index: 1;
   width: 100%;
-  max-width: 680px;
-  margin: clamp(4rem, 7vw, 6rem) 0 0 clamp(1.5rem, 10vw, 10rem);
-  padding: clamp(2rem, 4vw, 3.5rem);
+  max-width: 500px;
+  margin: clamp(2.6rem, 5vw, 4rem) 0 0 max(var(--marge-page), calc((100vw - var(--largeur-max)) / 2 + var(--marge-page)));
+  padding: clamp(1.5rem, 3vw, 2.5rem) 0;
   animation: accueilHeroEntree 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .accueil-hero__titre {
-  max-width: 12ch;
-  font-size: clamp(3.2rem, 5.7vw, 5.9rem);
-  line-height: 1;
-  margin-bottom: 1.35rem;
-  color: var(--texte-clair);
+  max-width: 11ch;
+  font-size: clamp(3rem, 4.7vw, 4.75rem);
+  line-height: 0.92;
+  margin-bottom: 1rem;
+  color: var(--texte-principal);
   letter-spacing: 0;
   text-wrap: balance;
 }
 
 .accent-clair {
-  color: var(--nabe-or-clair);
+  color: var(--nabe-terracotta);
   font-style: italic;
 }
 
@@ -84,8 +95,8 @@
   margin: 0 0 2.2rem;
   max-width: 520px;
   font-weight: 400;
-  color: rgba(255, 255, 255, 0.88);
-  text-shadow: 0 1px 18px rgba(42, 28, 20, 0.26);
+  color: var(--texte-secondaire);
+  text-shadow: none;
 }
 
 .accueil-hero__actions {
@@ -95,8 +106,8 @@
 }
 
 .accueil-hero__actions .btn {
-  min-height: 3.2rem;
-  padding-inline: 1.75rem;
+  min-height: 2.5rem;
+  padding-inline: 1.2rem;
   border-radius: 999px;
   box-shadow: 0 14px 32px rgba(42, 28, 20, 0.16);
 }
@@ -106,10 +117,9 @@
 }
 
 .accueil-hero__actions .btn-secondaire {
-  background-color: rgba(255, 255, 255, 0.09);
-  border-color: rgba(255, 255, 255, 0.74);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background-color: transparent;
+  border-color: var(--texte-principal);
+  color: var(--texte-principal);
 }
 
 @keyframes accueilHeroEntree {
@@ -134,7 +144,7 @@
   width: 100%;
   position: relative;
   z-index: 2;
-  background-color: #f8f3ec;
+  background-color: #fbfaf7;
   border-top: 1px solid rgba(207, 169, 153, 0.14);
   border-bottom: 1px solid rgba(207, 169, 153, 0.18);
 }
@@ -144,7 +154,7 @@
   align-items: center;
   gap: 0.7rem;
   color: #7b6658;
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   font-weight: 500;
   letter-spacing: 0;
   text-transform: none;
@@ -998,4 +1008,102 @@
   .accueil-newsletter__form {
     flex-direction: column;
   }
+}
+
+/* Variation éditoriale douce : rythme, cartes et aplats inspirés de la maquette. */
+.page-accueil .etiquette {
+  color: var(--nabe-terracotta);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.accueil-modules {
+  padding-top: clamp(2.5rem, 5vw, 4.5rem);
+  padding-bottom: clamp(1rem, 2vw, 2rem);
+}
+
+.accueil-module--sur-mesure {
+  min-height: 130px;
+  padding: clamp(1.6rem, 3vw, 2.5rem);
+  border-radius: 16px;
+  background: #f2e4d4;
+  box-shadow: none;
+}
+
+.accueil-module--sur-mesure .btn { box-shadow: none; }
+
+.accueil-categories-section { padding-top: clamp(3rem, 6vw, 5.5rem); }
+
+.accueil-categories__image {
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #dfc1ae;
+}
+
+.accueil-categories__panneau {
+  min-height: 0;
+  padding: 0.7rem 0.4rem 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.accueil-categories__panneau::before { display: none; }
+.accueil-categories__icone { top: -4rem; color: var(--nabe-terracotta); }
+.accueil-categories__nom { font-size: 1rem; }
+.accueil-categories__fleche { display: none; }
+
+.accueil-nouveautes { padding-top: clamp(3rem, 6vw, 5rem); }
+.accueil-nouveautes__texte h2,
+.accueil-carrousel h2,
+.accueil-temoignages h2 {
+  font-size: clamp(2.1rem, 3.4vw, 3.2rem);
+  line-height: 0.95;
+}
+
+.accueil-histoire { padding-top: clamp(3.5rem, 7vw, 6rem); }
+.accueil-histoire__carte {
+  border-radius: 18px;
+  background: #bd8064;
+  min-height: 360px;
+  overflow: hidden;
+}
+.accueil-histoire__image { opacity: 0.16; }
+.accueil-histoire__texte { max-width: 420px; }
+.accueil-histoire__texte h2 { font-size: clamp(2.2rem, 3.8vw, 3.6rem); }
+
+.accueil-pourquoi { padding-top: clamp(4rem, 7vw, 6rem); }
+.accueil-pourquoi__item h3 { font-size: 1rem; }
+.accueil-pourquoi__item p { font-size: 0.76rem; }
+
+.accueil-temoignages__carte {
+  border: 0;
+  border-radius: 10px;
+  padding: 1.35rem;
+  box-shadow: none;
+  background: #f1efec;
+  text-align: left;
+}
+
+.accueil-newsletter__carte {
+  border-radius: 16px;
+  background: #a95634;
+  box-shadow: none;
+}
+
+@media (max-width: 900px) {
+  .accueil-hero__contenu {
+    margin: 3rem auto 0;
+    padding-inline: var(--marge-page);
+  }
+  .accueil-hero__embleme { left: 74%; opacity: 0.52; }
+}
+
+@media (max-width: 600px) {
+  .accueil-hero { min-height: 560px; }
+  .accueil-hero__overlay { background: radial-gradient(circle at 78% 42%, #ddbfad 0 9rem, transparent 9.15rem); }
+  .accueil-hero__embleme { left: 78%; width: 5.5rem; }
+  .accueil-hero__contenu { margin-top: 5rem; text-align: left; }
+  .accueil-hero__titre { text-align: left; font-size: 3.3rem; }
+  .accueil-hero__actions { justify-content: flex-start; }
 }

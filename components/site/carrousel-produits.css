@@ -9,7 +9,7 @@
   flex: 1;
   min-width: 0;
   display: flex;
-  gap: 1.5rem;
+  gap: 1rem;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
@@ -22,7 +22,11 @@
 
 .carrousel-produits__carte {
   position: relative;
-  flex: 0 0 240px;
+  flex: 0 0 205px;
+  background: #fffdf9;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 8px 22px rgba(56, 41, 31, 0.09);
   scroll-snap-align: start;
   transition: transform 0.4s ease;
 }
@@ -34,11 +38,11 @@
 .carrousel-produits__image {
   position: relative;
   background-color: var(--nabe-sable);
-  border-radius: 14px;
+  border-radius: 0;
   overflow: hidden;
   aspect-ratio: 1;
-  margin-bottom: 0.85rem;
-  box-shadow: 0 20px 48px rgba(69, 41, 30, 0.08);
+  margin-bottom: 0.55rem;
+  box-shadow: none;
 }
 
 .carrousel-produits__badge-promo {
@@ -110,14 +114,16 @@
   font-family: var(--font-texte);
   font-size: 0.92rem;
   font-weight: 500;
-  margin-bottom: 0.2rem;
+  margin: 0 0 0.2rem 0.7rem;
   color: var(--nabe-brun-fonce);
 }
 
 .carrousel-produits__carte span {
   font-weight: 600;
   font-size: 0.9rem;
-  color: var(--nabe-brun);
+  color: var(--nabe-terracotta);
+  display: block;
+  padding: 0 0.7rem 0.75rem;
 }
 
 .carrousel-produits__coeur {

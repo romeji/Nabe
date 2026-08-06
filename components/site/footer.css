@@ -1,9 +1,7 @@
 .nabe-footer {
-  background:
-    linear-gradient(135deg, rgba(69, 41, 30, 0.2), transparent 38%),
-    var(--nabe-terracotta-fonce);
+  background: var(--nabe-brun-fonce);
   color: var(--texte-clair);
-  padding-top: clamp(3rem, 6vw, 5rem);
+  padding-top: clamp(2.5rem, 5vw, 4rem);
 }
 
 .nabe-footer__conteneur {
@@ -19,7 +17,7 @@
   font-family: var(--font-logo);
   font-size: clamp(3rem, 5vw, 4.4rem);
   line-height: 0.9;
-  color: var(--nabe-or);
+  color: #f5e7d9;
   display: block;
   margin-bottom: 0.7rem;
 }
@@ -67,7 +65,7 @@
   text-transform: uppercase;
   font-weight: 700;
   margin-bottom: 1rem;
-  color: var(--nabe-or-clair);
+  color: #e5bca8;
   cursor: default;
 }
 

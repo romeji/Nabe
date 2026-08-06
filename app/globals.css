@@ -10,11 +10,11 @@
    réseau vers Google ni décalage de mise en page pendant le chargement. */
 :root {
   /* Couleurs principales — palette de référence */
-  --nabe-creme: #f5f2ee;
-  --nabe-sable: #f1e0cb;
-  --nabe-argile: #cfa999;
-  --nabe-terracotta: #9f5434;
-  --nabe-terracotta-fonce: #7c4027;
+  --nabe-creme: #f7f4ef;
+  --nabe-sable: #f0dfd0;
+  --nabe-argile: #d8b6a1;
+  --nabe-terracotta: #aa5b38;
+  --nabe-terracotta-fonce: #8b452b;
 
   /* Or — identité du logo */
   --nabe-or: #b8923f;
@@ -24,9 +24,9 @@
   /* Tons additionnels dérivés de la palette, pour la profondeur */
   --nabe-sable-fonce: #e3c9a3;
   --nabe-argile-clair: #e3c7bb;
-  --nabe-brun: #6b4a3a;
-  --nabe-brun-fonce: #45291e;
-  --nabe-noir: #2a1c14;
+  --nabe-brun: #705344;
+  --nabe-brun-fonce: #38291f;
+  --nabe-noir: #2a201b;
   --nabe-blanc: #ffffff;
 
   /* Alias conservés pour compatibilité avec le code existant */
@@ -52,12 +52,12 @@
   --espace-2xl: 4.5rem;
 
   /* Mise en page — formes arrondies, esprit arche */
-  --largeur-max: 1160px;
-  --marge-page: clamp(2rem, 6vw, 6rem);
-  --rayon-bordure: 10px;
+  --largeur-max: 1080px;
+  --marge-page: clamp(1.25rem, 5vw, 4.5rem);
+  --rayon-bordure: 12px;
   --rayon-arche: 40px 40px 4px 4px;
-  --ombre-douce: 0 4px 24px rgba(69, 41, 30, 0.07);
-  --ombre-moyenne: 0 10px 36px rgba(69, 41, 30, 0.13);
+  --ombre-douce: 0 8px 26px rgba(56, 41, 31, 0.06);
+  --ombre-moyenne: 0 14px 38px rgba(56, 41, 31, 0.11);
 
   /* Transitions */
   --transition-douce: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
@@ -86,7 +86,7 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 500;
   line-height: 1.2;
   color: var(--texte-principal);
-  letter-spacing: 0.01em;
+  letter-spacing: -0.015em;
 }
 
 a {
@@ -152,11 +152,11 @@ textarea::placeholder {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0.95rem 2.2rem;
-  font-size: 0.82rem;
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  padding: 0.72rem 1.35rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.035em;
+  text-transform: none;
   border-radius: 999px;
   transition: var(--transition-douce);
   cursor: pointer;

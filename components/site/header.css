@@ -1,16 +1,16 @@
 /* Header flottant, arrondi, par-dessus la page (ne consomme aucun espace dans le flux) */
 .nabe-header {
   position: fixed;
-  top: var(--espace-sm);
+  top: 0.85rem;
   left: 50%;
   transform: translateX(-50%);
   z-index: 100;
-  max-width: var(--largeur-max);
+  max-width: 980px;
   width: calc(100% - 2 * var(--marge-page));
-  background-color: var(--nabe-creme);
-  border: 1px solid rgba(184, 146, 63, 0.18);
+  background-color: rgba(255, 253, 249, 0.96);
+  border: 1px solid rgba(112, 83, 68, 0.09);
   border-radius: 999px;
-  box-shadow: 0 8px 28px rgba(69, 41, 30, 0.16), 0 2px 8px rgba(69, 41, 30, 0.09);
+  box-shadow: 0 8px 22px rgba(56, 41, 31, 0.09);
   transition: background-color 0.25s ease, box-shadow 0.25s ease;
 }
 
@@ -26,13 +26,13 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--espace-md);
-  padding: 1.1rem 2.2rem;
+  padding: 0.65rem 1.35rem;
 }
 
 .nabe-header__logo {
   font-family: var(--font-logo);
-  font-size: 2.6rem;
-  color: var(--nabe-or);
+  font-size: 2rem;
+  color: var(--nabe-terracotta);
   line-height: 1;
   flex-shrink: 0;
   margin: 0;
@@ -56,10 +56,10 @@
 
 .nabe-header__nav a {
   color: var(--texte-principal);
-  font-size: 0.72rem;
+  font-size: 0.64rem;
   font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  text-transform: none;
   white-space: nowrap;
   transition: color 0.25s ease;
 }
@@ -83,8 +83,8 @@
 }
 
 .nabe-header__svg {
-  width: 26px;
-  height: 26px;
+  width: 20px;
+  height: 20px;
 }
 
 .nabe-header__icone {

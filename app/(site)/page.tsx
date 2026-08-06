@@ -100,6 +100,12 @@ export default async function PageAccueil() {
           className="accueil-hero__image"
         />
         <div className="accueil-hero__overlay" />
+        <div className="accueil-hero__embleme" aria-hidden="true">
+          <svg viewBox="0 0 120 120" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="60" cy="70" r="22" />
+            <path d="m48 34 12 16 12-16-6-10H54z" />
+          </svg>
+        </div>
         <div className="accueil-hero__contenu">
           <h1 className="accueil-hero__titre">
             L&apos;éclat de chaque <span className="accent-clair">histoire.</span>
