@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { getServerSession } from 'next-auth';
-import { prisma } from '@/lib/prisma';
+import { avecDelaiBase, prisma } from '@/lib/prisma';
 import { getContenuPage } from '@/lib/contenu';
 import { getConfigSite, configEstActive, masquerConfigSensible } from '@/lib/config-site';
 import { authClientOptions } from '@/lib/auth-client';
@@ -18,7 +18,7 @@ const DUREE_NOUVEAU_JOURS = 21;
 
 async function avecRepli<T>(libelle: string, promesse: Promise<T>, repli: T): Promise<T> {
   try {
-    return await promesse;
+    return await avecDelaiBase(promesse);
   } catch (error) {
     // Les sections facultatives ne doivent pas rendre toute la page d'accueil
     // indisponible pendant une courte coupure de la base de données.

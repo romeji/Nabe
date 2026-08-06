@@ -16,6 +16,168 @@
   background: var(--nabe-creme);
 }
 
+/* Ajustements finaux desktop : volumes, photo du hero et formes organiques
+   fidÃ¨les Ã  la maquette. Ces rÃ¨gles arrivent volontairement aprÃ¨s la
+   composition existante pour ne pas modifier les contenus administrables. */
+@media (min-width: 901px) {
+  .page-accueil {
+    --accueil-largeur: 1184px;
+  }
+
+  /* La bordure recherchÃ©e est une marge ample, jamais deux traits visibles. */
+  .page-accueil .conteneur {
+    max-width: 1280px;
+    padding-right: 48px;
+    padding-left: 48px;
+  }
+
+  .accueil-hero {
+    overflow: hidden;
+    background: #f8f6f2;
+  }
+
+  /* L'image administrÃ©e redevient le fond du hero, et non le disque Ã  droite. */
+  .accueil-hero__image {
+    z-index: 0;
+    top: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 0;
+    object-position: center;
+    opacity: 0.55;
+    filter: sepia(0.7) saturate(0.55) contrast(0.9);
+  }
+
+  .accueil-hero__overlay {
+    display: block;
+    z-index: 1;
+    background: linear-gradient(90deg, rgba(248, 246, 242, 0.9) 0%, rgba(248, 246, 242, 0.68) 46%, rgba(248, 246, 242, 0.42) 100%);
+  }
+
+  .accueil-hero__contenu {
+    z-index: 3;
+    width: min(var(--accueil-largeur), calc(100% - 4rem));
+  }
+
+  .accueil-hero__embleme {
+    z-index: 2;
+    left: calc(50% + 38px);
+    background: #dfbea9;
+    color: #aa5b38;
+  }
+
+  .accueil-hero__embleme svg { width: 126px; }
+
+  .accueil-categories-section {
+    padding-top: 86px;
+    padding-bottom: 78px;
+  }
+
+  .accueil-categories-section::before {
+    margin-bottom: 42px;
+    font-size: 2.85rem;
+  }
+
+  .accueil-categories__grille {
+    max-width: none;
+    gap: 30px;
+  }
+
+  .accueil-categories__image {
+    overflow: hidden;
+    border-radius: 49% 51% 47% 53% / 46% 49% 51% 54%;
+  }
+
+  .accueil-categories__carte:nth-child(2) .accueil-categories__image {
+    border-radius: 52% 48% 50% 50% / 47% 53% 46% 54%;
+  }
+
+  .accueil-categories__carte:nth-child(3) .accueil-categories__image {
+    border-radius: 47% 53% 51% 49% / 52% 46% 54% 48%;
+  }
+
+  .accueil-categories__carte:nth-child(4) .accueil-categories__image {
+    border-radius: 50% 50% 54% 46% / 47% 52% 48% 53%;
+  }
+
+  .accueil-categories__panneau { padding-top: 1.05rem; }
+  .accueil-categories__nom { font-size: 1.12rem; }
+
+  .accueil-nouveautes { padding-bottom: 136px; }
+  .accueil-nouveautes__texte p { margin-bottom: 2.35rem; }
+  .accueil-nouveautes__produits .carrousel-produits__carte,
+  .accueil-carrousel .carrousel-produits__carte {
+    flex-basis: 245px !important;
+  }
+
+  /* Chaque carte reste rectangulaire, avec une jonction d'image souple et
+     lÃ©gÃ¨rement diffÃ©rente comme sur la maquette (pas de dÃ©formation massive). */
+  .carrousel-produits__carte {
+    overflow: visible;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .carrousel-produits__lien {
+    position: relative;
+    display: block;
+    min-height: 326px;
+    overflow: hidden;
+    border-radius: 13px 11px 13px 12px;
+    background: #fffdf9;
+    box-shadow: 0 14px 24px rgba(56, 41, 31, 0.09);
+  }
+
+  .carrousel-produits__image {
+    height: 246px;
+    overflow: hidden;
+    border-radius: 13px 11px 0 0;
+  }
+
+  .carrousel-produits__lien::after {
+    content: '';
+    position: absolute;
+    z-index: 2;
+    bottom: 70px;
+    left: -9%;
+    width: 118%;
+    height: 30px;
+    border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+    background: #fffdf9;
+    transform: rotate(-1.2deg);
+    pointer-events: none;
+  }
+
+  .carrousel-produits__carte:nth-child(2) .carrousel-produits__lien {
+    border-radius: 11px 13px 12px 13px;
+  }
+  .carrousel-produits__carte:nth-child(2) .carrousel-produits__lien::after { transform: rotate(1.5deg); bottom: 69px; }
+  .carrousel-produits__carte:nth-child(3) .carrousel-produits__lien { border-radius: 12px 10px 13px 11px; }
+  .carrousel-produits__carte:nth-child(3) .carrousel-produits__lien::after { transform: rotate(-0.55deg); bottom: 71px; }
+  .carrousel-produits__carte:nth-child(4) .carrousel-produits__lien { border-radius: 12px 13px 11px 13px; }
+  .carrousel-produits__carte:nth-child(4) .carrousel-produits__lien::after { transform: rotate(1deg); bottom: 68px; }
+
+  .carrousel-produits__carte h3,
+  .carrousel-produits__carte > .carrousel-produits__lien > span {
+    position: relative;
+    z-index: 3;
+  }
+
+  .carrousel-produits__carte h3 { padding-top: 0.8rem; }
+  .accueil-carrousel { padding-bottom: 136px; }
+
+  .page-accueil .instagram-module {
+    width: min(1280px, calc(100% - 4rem));
+    max-width: none;
+    padding-right: 48px;
+    padding-left: 48px;
+  }
+}
+
 .accueil-hero {
   position: relative;
   min-height: clamp(520px, 64vh, 700px);
@@ -1634,4 +1796,324 @@
   .accueil-newsletter { padding-top: 0; padding-bottom: 100px; }
   .accueil-newsletter__carte { padding: 54px 2rem; border-radius: 30px; }
   .accueil-newsletter__carte h2 { font-size: 3.2rem; }
+}
+
+/* Surcouche finale (placÃ©e aprÃ¨s les rÃ¨gles de composition desktop). */
+@media (min-width: 901px) {
+  .page-accueil { --accueil-largeur: 1184px; }
+
+  .page-accueil .accueil-categories-section,
+  .page-accueil .accueil-nouveautes,
+  .page-accueil .accueil-histoire,
+  .page-accueil .accueil-pourquoi,
+  .page-accueil .accueil-carrousel,
+  .page-accueil .accueil-temoignages,
+  .page-accueil .accueil-newsletter {
+    width: min(1280px, calc(100% - 4rem));
+    max-width: none;
+    padding-right: 48px;
+    padding-left: 48px;
+  }
+
+  .accueil-hero {
+    overflow: hidden;
+    background: #f8f6f2;
+  }
+
+  .accueil-hero__image {
+    z-index: 0;
+    top: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 0;
+    object-position: center;
+    opacity: 0.55;
+    filter: sepia(0.7) saturate(0.55) contrast(0.9);
+  }
+
+  .accueil-hero__overlay {
+    display: block;
+    z-index: 1;
+    background: linear-gradient(90deg, rgba(248, 246, 242, 0.9) 0%, rgba(248, 246, 242, 0.68) 46%, rgba(248, 246, 242, 0.42) 100%);
+  }
+
+  .accueil-hero__contenu {
+    z-index: 3;
+    width: min(var(--accueil-largeur), calc(100% - 4rem));
+  }
+
+  .accueil-hero__embleme {
+    z-index: 2;
+    left: calc(50% + 38px);
+    background: #dfbea9;
+    color: #aa5b38;
+  }
+
+  .accueil-hero__embleme svg { width: 126px; }
+
+  .accueil-categories-section {
+    padding-top: 86px;
+    padding-bottom: 78px;
+  }
+
+  .accueil-categories-section::before {
+    margin-bottom: 42px;
+    font-size: 2.85rem;
+  }
+
+  .accueil-categories__grille {
+    max-width: none;
+    gap: 30px;
+  }
+
+  .accueil-categories__image {
+    overflow: hidden;
+    border-radius: 49% 51% 47% 53% / 46% 49% 51% 54%;
+  }
+  .accueil-categories__carte:nth-child(2) .accueil-categories__image { border-radius: 52% 48% 50% 50% / 47% 53% 46% 54%; }
+  .accueil-categories__carte:nth-child(3) .accueil-categories__image { border-radius: 47% 53% 51% 49% / 52% 46% 54% 48%; }
+  .accueil-categories__carte:nth-child(4) .accueil-categories__image { border-radius: 50% 50% 54% 46% / 47% 52% 48% 53%; }
+  .accueil-categories__panneau { padding-top: 1.05rem; }
+  .accueil-categories__nom { font-size: 1.12rem; }
+
+  .accueil-nouveautes { padding-bottom: 136px; }
+  .accueil-nouveautes__texte p { margin-bottom: 2.35rem; }
+  .accueil-nouveautes__produits .carrousel-produits__carte,
+  .accueil-carrousel .carrousel-produits__carte { flex-basis: 245px !important; }
+
+  .carrousel-produits__carte {
+    overflow: visible;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .carrousel-produits__lien {
+    position: relative;
+    display: block;
+    min-height: 326px;
+    overflow: hidden;
+    border-radius: 13px 11px 13px 12px;
+    background: #fffdf9;
+    box-shadow: 0 14px 24px rgba(56, 41, 31, 0.09);
+  }
+
+  .carrousel-produits__image {
+    height: 246px;
+    overflow: hidden;
+    border-radius: 13px 11px 0 0;
+  }
+
+  .carrousel-produits__lien::after {
+    content: '';
+    position: absolute;
+    z-index: 2;
+    bottom: 70px;
+    left: -9%;
+    width: 118%;
+    height: 30px;
+    border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+    background: #fffdf9;
+    transform: rotate(-1.2deg);
+    pointer-events: none;
+  }
+
+  .carrousel-produits__carte:nth-child(2) .carrousel-produits__lien { border-radius: 11px 13px 12px 13px; }
+  .carrousel-produits__carte:nth-child(2) .carrousel-produits__lien::after { transform: rotate(1.5deg); bottom: 69px; }
+  .carrousel-produits__carte:nth-child(3) .carrousel-produits__lien { border-radius: 12px 10px 13px 11px; }
+  .carrousel-produits__carte:nth-child(3) .carrousel-produits__lien::after { transform: rotate(-0.55deg); bottom: 71px; }
+  .carrousel-produits__carte:nth-child(4) .carrousel-produits__lien { border-radius: 12px 13px 11px 13px; }
+  .carrousel-produits__carte:nth-child(4) .carrousel-produits__lien::after { transform: rotate(1deg); bottom: 68px; }
+
+  .carrousel-produits__carte h3,
+  .carrousel-produits__carte > .carrousel-produits__lien > span {
+    position: relative;
+    z-index: 3;
+  }
+
+  .carrousel-produits__carte h3 { padding-top: 0.8rem; }
+  .accueil-carrousel { padding-bottom: 136px; }
+}
+
+/* Formes de collections : chacune reste centrée dans sa colonne mais porte
+   une silhouette souple, irrégulière et discrète comme la référence. */
+@media (min-width: 901px) {
+  .accueil-categories__grille {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    justify-items: center;
+    align-items: start;
+    gap: 30px;
+  }
+
+  .accueil-categories__carte {
+    display: grid;
+    width: 100%;
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    text-align: center;
+  }
+
+  .accueil-categories__image {
+    width: min(100%, 270px);
+    aspect-ratio: 1;
+    margin: 0 auto;
+    border-radius: 48% 52% 46% 54% / 45% 49% 51% 55%;
+    transform: rotate(-1.4deg);
+    transform-origin: center;
+  }
+
+  .accueil-categories__carte:nth-child(2) .accueil-categories__image {
+    width: min(99%, 270px);
+    border-radius: 54% 46% 51% 49% / 48% 45% 55% 52%;
+    transform: rotate(1.1deg);
+  }
+
+  .accueil-categories__carte:nth-child(3) .accueil-categories__image {
+    width: min(98%, 268px);
+    border-radius: 45% 55% 52% 48% / 50% 44% 56% 50%;
+    transform: rotate(-0.8deg);
+  }
+
+  .accueil-categories__carte:nth-child(4) .accueil-categories__image {
+    width: min(99%, 270px);
+    border-radius: 51% 49% 45% 55% / 44% 52% 48% 56%;
+    transform: rotate(1.35deg);
+  }
+
+  .accueil-categories__panneau {
+    width: 100%;
+    align-items: center;
+    text-align: center;
+  }
+
+  .accueil-categories__nom {
+    width: 100%;
+    line-height: 1;
+    text-align: center;
+  }
+}
+
+/* Cartes produit : même principe artisanal que la référence. Les blocs sont
+   alignés, mais chaque image possède une bordure haute et une coupe basse
+   légèrement différentes afin d'éviter un rendu rigide. */
+@media (min-width: 901px) {
+  .accueil-nouveautes__produits .carrousel-produits__piste,
+  .accueil-carrousel .carrousel-produits__piste {
+    align-items: flex-start;
+    gap: 28px;
+  }
+
+  .accueil-nouveautes__produits .carrousel-produits__carte,
+  .accueil-carrousel .carrousel-produits__carte {
+    flex: 0 0 245px !important;
+    text-align: left;
+  }
+
+  .carrousel-produits__lien {
+    display: block;
+    min-height: 326px;
+    border-radius: 12px 10px 13px 11px;
+  }
+
+  .carrousel-produits__image {
+    position: relative;
+    width: 104%;
+    height: 246px;
+    margin-left: -2%;
+    border-radius: 12px 10px 0 0;
+    transform: rotate(-0.75deg) translateY(-2px);
+    transform-origin: center top;
+    clip-path: polygon(0 1.3%, 100% 0, 100% 94.5%, 76% 97%, 36% 95.5%, 0 96.5%);
+  }
+
+  .carrousel-produits__image img,
+  .carrousel-produits__placeholder {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .carrousel-produits__image:not(:has(img))::after {
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .carrousel-produits__image:not(:has(img))::before {
+    top: calc(50% - 41px);
+  }
+
+  .carrousel-produits__carte:nth-child(2) .carrousel-produits__image {
+    width: 105%;
+    margin-left: -2.5%;
+    border-radius: 10px 13px 0 0;
+    transform: rotate(0.95deg) translateY(-2px);
+    clip-path: polygon(0 0, 100% 1.2%, 100% 96.5%, 68% 95%, 24% 97%, 0 95%);
+  }
+
+  .carrousel-produits__carte:nth-child(3) .carrousel-produits__image {
+    width: 103%;
+    margin-left: -1.5%;
+    border-radius: 12px 9px 0 0;
+    transform: rotate(-0.4deg) translateY(-1px);
+    clip-path: polygon(0 0.8%, 100% 0, 100% 95%, 74% 96.5%, 42% 94.5%, 0 97%);
+  }
+
+  .carrousel-produits__carte:nth-child(4) .carrousel-produits__image {
+    width: 105%;
+    margin-left: -2.5%;
+    border-radius: 10px 12px 0 0;
+    transform: rotate(0.7deg) translateY(-2px);
+    clip-path: polygon(0 1%, 100% 0, 100% 96.5%, 72% 95%, 30% 97%, 0 95.5%);
+  }
+
+  .carrousel-produits__lien::after {
+    bottom: 70px;
+    height: 28px;
+  }
+}
+
+/* Cadre latéral ample, badges contrastés et photo réellement perceptible
+   derrière le titre du hero. */
+@media (min-width: 901px) {
+  .page-accueil { --accueil-largeur: 1152px; }
+
+  .page-accueil .accueil-categories-section,
+  .page-accueil .accueil-nouveautes,
+  .page-accueil .accueil-histoire,
+  .page-accueil .accueil-pourquoi,
+  .page-accueil .accueil-carrousel,
+  .page-accueil .instagram-module,
+  .page-accueil .accueil-temoignages,
+  .page-accueil .accueil-newsletter {
+    padding-right: 64px;
+    padding-left: 64px;
+  }
+
+  .accueil-hero__image {
+    opacity: 0.78;
+    filter: sepia(0.55) saturate(0.7) contrast(0.88);
+  }
+
+  .accueil-hero__overlay {
+    background: linear-gradient(90deg, rgba(248, 246, 242, 0.78) 0%, rgba(248, 246, 242, 0.48) 48%, rgba(248, 246, 242, 0.18) 100%);
+  }
+
+  .carrousel-produits__badge-nouveau,
+  .carrousel-produits__badge-promo {
+    background: #fff8ef;
+    color: #8f472b;
+    border: 1px solid rgba(143, 71, 43, 0.18);
+    box-shadow: 0 3px 10px rgba(66, 38, 27, 0.13);
+    font-weight: 700;
+  }
+
+  .carrousel-produits__carte:nth-child(2) .carrousel-produits__badge-nouveau,
+  .carrousel-produits__carte:nth-child(2) .carrousel-produits__badge-promo {
+    background: #fffaf4;
+    color: #813d24;
+  }
 }

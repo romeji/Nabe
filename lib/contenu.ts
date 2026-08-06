@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/prisma';
+import { avecDelaiBase, prisma } from '@/lib/prisma';
 import { getDefautsPage } from '@/lib/registre-contenu';
 
 /**
@@ -15,7 +15,7 @@ export async function getContenuPage(slug: string): Promise<Record<string, strin
   const valeurs = { ...defauts };
 
   try {
-    const enregistres = await prisma.contenuPage.findMany({ where: { page: slug } });
+    const enregistres = await avecDelaiBase(prisma.contenuPage.findMany({ where: { page: slug } }));
     enregistres.forEach((item: any) => {
       if (item.valeur && item.valeur.trim() !== '') {
         valeurs[item.cle] = item.valeur;

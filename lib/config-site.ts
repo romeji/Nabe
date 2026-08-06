@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/prisma';
+import { avecDelaiBase, prisma } from '@/lib/prisma';
 
 // Registre des clés de configuration avec leur valeur par défaut.
 // Toute nouvelle option togglable depuis l'admin doit être ajoutée ici.
@@ -110,7 +110,7 @@ export async function getConfigSite(): Promise<Record<string, string>> {
   const valeurs = { ...DEFAUTS_CONFIG };
 
   try {
-    const enregistres = await prisma.configSite.findMany();
+    const enregistres = await avecDelaiBase(prisma.configSite.findMany());
     enregistres.forEach((item: any) => {
       valeurs[item.cle] = item.valeur;
     });
@@ -125,7 +125,7 @@ export async function getConfigSite(): Promise<Record<string, string>> {
 /** Récupère une seule clé de config (avec son défaut si non enregistrée). */
 export async function getConfigCle(cle: string): Promise<string> {
   try {
-    const item = await prisma.configSite.findUnique({ where: { cle } });
+    const item = await avecDelaiBase(prisma.configSite.findUnique({ where: { cle } }));
     return item?.valeur ?? DEFAUTS_CONFIG[cle] ?? '';
   } catch (error) {
     console.error('Configuration du site indisponible :', error instanceof Error ? error.name : 'erreur inconnue');
