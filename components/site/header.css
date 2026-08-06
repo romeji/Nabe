@@ -1,7 +1,7 @@
 /* Header flottant, arrondi, par-dessus la page (ne consomme aucun espace dans le flux) */
 .nabe-header {
   position: fixed;
-  top: 0.85rem;
+  top: 1.25rem;
   left: 50%;
   transform: translateX(-50%);
   z-index: 100;

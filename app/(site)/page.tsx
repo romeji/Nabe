@@ -107,6 +107,7 @@ export default async function PageAccueil() {
           </svg>
         </div>
         <div className="accueil-hero__contenu">
+          <span className="etiquette accueil-hero__etiquette">Façonné à la main</span>
           <h1 className="accueil-hero__titre">
             L&apos;éclat de chaque <span className="accent-clair">histoire.</span>
           </h1>
@@ -203,6 +204,9 @@ export default async function PageAccueil() {
       <section className="accueil-histoire conteneur">
         <div className="accueil-histoire__carte">
           <div className="accueil-histoire__image">
+            <svg className="accueil-histoire__icone" viewBox="0 0 120 100" aria-hidden="true">
+              <path d="M18 73V43c0-22 18-32 42-32s42 10 42 32v30M10 73h100M37 56v17m23-17v17m23-17v17" />
+            </svg>
             <Image
               src={contenu.histoire_image}
               alt="Artisan façonnant un bijou"

@@ -46,6 +46,12 @@ export default function Header() {
             </svg>
           </button>
 
+          <nav className="nabe-header__nav" aria-label="Navigation principale">
+            <Link href="/nos-bijoux">Nos bijoux</Link>
+            <Link href="/nos-bijoux">Nouveautés</Link>
+            <Link href="/sur-mesure">Sur mesure</Link>
+          </nav>
+
           <Link href="/" className="nabe-header__logo">Nabe</Link>
 
           <div className="nabe-header__actions">
