@@ -1,31 +1,19 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { getServerSession } from 'next-auth';
-import { avecDelaiBase, prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 import { getContenuPage } from '@/lib/contenu';
-import { getConfigSite, configEstActive, masquerConfigSensible } from '@/lib/config-site';
+import { getConfigSite, configEstActive } from '@/lib/config-site';
 import { authClientOptions } from '@/lib/auth-client';
 import CarrouselProduits from '@/components/site/CarrouselProduits';
 import TexteRiche from '@/components/site/TexteRiche';
 import CategoriesAccueil from '@/components/site/CategoriesAccueil';
 import ModulesAccueil from '@/components/site/ModulesAccueil';
-import InstagramModule from '@/components/site/InstagramModule';
 import './accueil.css';
 
 export const revalidate = 60;
 
 const DUREE_NOUVEAU_JOURS = 21;
-
-async function avecRepli<T>(libelle: string, promesse: Promise<T>, repli: T): Promise<T> {
-  try {
-    return await avecDelaiBase(promesse);
-  } catch (error) {
-    // Les sections facultatives ne doivent pas rendre toute la page d'accueil
-    // indisponible pendant une courte coupure de la base de données.
-    console.error(`${libelle} indisponible :`, error instanceof Error ? error.name : 'erreur inconnue');
-    return repli;
-  }
-}
 
 function serialiser(produits: any[]) {
   const seuilNouveau = Date.now() - DUREE_NOUVEAU_JOURS * 24 * 60 * 60 * 1000;
@@ -44,8 +32,8 @@ function serialiser(produits: any[]) {
 }
 
 export default async function PageAccueil() {
-  const config = masquerConfigSensible(await getConfigSite());
-  const session = await avecRepli('Session client', getServerSession(authClientOptions), null);
+  const config = await getConfigSite();
+  const session = await getServerSession(authClientOptions);
   const clientId = (session?.user as any)?.id as string | undefined;
 
   const collectionsSelectionActif = configEstActive(config, 'collections_selection_actif');
@@ -60,33 +48,33 @@ export default async function PageAccueil() {
     await Promise.all([
       getContenuPage('accueil'),
       collectionsSelectionActif && idsCollectionsSelection.length > 0
-        ? avecRepli('Collections accueil', prisma.collection.findMany({
+        ? prisma.collection.findMany({
             where: { id: { in: idsCollectionsSelection }, actif: true },
-          }), [])
+          })
         : Promise.resolve([]),
       carrousselBestsellerActif
-        ? avecRepli('Meilleures ventes', prisma.produit.findMany({
+        ? prisma.produit.findMany({
             where: { actif: true },
             include: { images: { orderBy: { ordre: 'asc' }, take: 1 } },
             orderBy: { nombreVentes: 'desc' },
             take: 8,
-          }), [])
+          })
         : Promise.resolve([]),
       carrousselNouvelleCollectionActif && config.carrousel_nouvelle_collection_id
-        ? avecRepli('Nouveautés accueil', prisma.produit.findMany({
+        ? prisma.produit.findMany({
             where: { actif: true, collectionId: config.carrousel_nouvelle_collection_id },
             include: { images: { orderBy: { ordre: 'asc' }, take: 1 } },
             take: 8,
-          }), [])
+          })
         : Promise.resolve([]),
       temoignagesActif
-        ? avecRepli('Témoignages accueil', prisma.temoignage.findMany({ where: { actif: true }, orderBy: { ordre: 'asc' }, take: 3 }), [])
+        ? prisma.temoignage.findMany({ where: { actif: true }, orderBy: { ordre: 'asc' }, take: 3 })
         : Promise.resolve([]),
       clientId
-        ? avecRepli('Favoris client', prisma.favori.findMany({ where: { clientId }, select: { produitId: true } }), [])
+        ? prisma.favori.findMany({ where: { clientId }, select: { produitId: true } })
         : Promise.resolve([]),
       categoriesAccueilActif && idsCategoriesAccueil.length > 0
-        ? avecRepli('Catégories accueil', prisma.categorie.findMany({ where: { id: { in: idsCategoriesAccueil } } }), [])
+        ? prisma.categorie.findMany({ where: { id: { in: idsCategoriesAccueil } } })
         : Promise.resolve([]),
     ]);
 
@@ -112,14 +100,7 @@ export default async function PageAccueil() {
           className="accueil-hero__image"
         />
         <div className="accueil-hero__overlay" />
-        <div className="accueil-hero__embleme" aria-hidden="true">
-          <svg viewBox="0 0 120 120" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="60" cy="70" r="22" />
-            <path d="m48 34 12 16 12-16-6-10H54z" />
-          </svg>
-        </div>
         <div className="accueil-hero__contenu">
-          <span className="etiquette accueil-hero__etiquette">Façonné à la main</span>
           <h1 className="accueil-hero__titre">
             L&apos;éclat de chaque <span className="accent-clair">histoire.</span>
           </h1>
@@ -133,6 +114,9 @@ export default async function PageAccueil() {
             </Link>
           </div>
         </div>
+        <span className="accueil-hero__badge" aria-hidden="true">
+          100% fait main
+        </span>
       </section>
 
       {/* REASSURANCE */}
@@ -216,9 +200,6 @@ export default async function PageAccueil() {
       <section className="accueil-histoire conteneur">
         <div className="accueil-histoire__carte">
           <div className="accueil-histoire__image">
-            <svg className="accueil-histoire__icone" viewBox="0 0 120 100" aria-hidden="true">
-              <path d="M18 73V43c0-22 18-32 42-32s42 10 42 32v30M10 73h100M37 56v17m23-17v17m23-17v17" />
-            </svg>
             <Image
               src={contenu.histoire_image}
               alt="Artisan façonnant un bijou"
@@ -323,9 +304,6 @@ export default async function PageAccueil() {
           <CarrouselProduits produits={serialiser(bestsellers)} favorisIds={idsFavoris} />
         </section>
       )}
-
-      {/* INSTAGRAM — vidéos configurées depuis l'administration */}
-      <InstagramModule config={config} />
 
       {/* TEMOIGNAGES */}
       {temoignages.length > 0 && (

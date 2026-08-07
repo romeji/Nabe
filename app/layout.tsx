@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Cormorant_Garamond, Imperial_Script, Jost } from 'next/font/google';
+import { Cormorant_Garamond, Fraunces, Imperial_Script, Jost } from 'next/font/google';
 import './globals.css';
 import PwaEnregistrement from '@/components/PwaEnregistrement';
 
@@ -18,6 +18,18 @@ const cormorantGaramond = Cormorant_Garamond({
   weight: ['300', '400', '500', '600'],
   style: ['normal', 'italic'],
   variable: '--font-cormorant',
+  display: 'swap',
+});
+
+// Fraunces : serif expressive (empattements marqués, esprit "façonné à la
+// main") utilisée pour la nouvelle direction artistique organique/artisanale.
+// Chargée en optical sizing variable pour un rendu plus caractériel sur les
+// grands titres, avec italique pour les mots d'accent.
+const fraunces = Fraunces({
+  subsets: ['latin'],
+  weight: ['400', '450', '500', '600'],
+  style: ['normal', 'italic'],
+  variable: '--font-fraunces',
   display: 'swap',
 });
 
@@ -114,7 +126,7 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="fr" className={`${cormorantGaramond.variable} ${jost.variable} ${imperialScript.variable}`}>
+    <html lang="fr" className={`${cormorantGaramond.variable} ${fraunces.variable} ${jost.variable} ${imperialScript.variable}`}>
       <head>
         <link rel="icon" href="/icons/favicon-32.png" sizes="32x32" type="image/png" media="(prefers-color-scheme: light)" />
         <link rel="icon" href="/icons/favicon-32-dark.png" sizes="32x32" type="image/png" media="(prefers-color-scheme: dark)" />

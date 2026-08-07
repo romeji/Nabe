@@ -13,169 +13,9 @@
 
 .page-accueil {
   overflow-x: hidden;
-  background: var(--nabe-creme);
-}
-
-/* Ajustements finaux desktop : volumes, photo du hero et formes organiques
-   fidÃ¨les Ã  la maquette. Ces rÃ¨gles arrivent volontairement aprÃ¨s la
-   composition existante pour ne pas modifier les contenus administrables. */
-@media (min-width: 901px) {
-  .page-accueil {
-    --accueil-largeur: 1184px;
-  }
-
-  /* La bordure recherchÃ©e est une marge ample, jamais deux traits visibles. */
-  .page-accueil .conteneur {
-    max-width: 1280px;
-    padding-right: 48px;
-    padding-left: 48px;
-  }
-
-  .accueil-hero {
-    overflow: hidden;
-    background: #f8f6f2;
-  }
-
-  /* L'image administrÃ©e redevient le fond du hero, et non le disque Ã  droite. */
-  .accueil-hero__image {
-    z-index: 0;
-    top: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    left: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
-    border-radius: 0;
-    object-position: center;
-    opacity: 0.55;
-    filter: sepia(0.7) saturate(0.55) contrast(0.9);
-  }
-
-  .accueil-hero__overlay {
-    display: block;
-    z-index: 1;
-    background: linear-gradient(90deg, rgba(248, 246, 242, 0.9) 0%, rgba(248, 246, 242, 0.68) 46%, rgba(248, 246, 242, 0.42) 100%);
-  }
-
-  .accueil-hero__contenu {
-    z-index: 3;
-    width: min(var(--accueil-largeur), calc(100% - 4rem));
-  }
-
-  .accueil-hero__embleme {
-    z-index: 2;
-    left: calc(50% + 38px);
-    background: #dfbea9;
-    color: #aa5b38;
-  }
-
-  .accueil-hero__embleme svg { width: 126px; }
-
-  .accueil-categories-section {
-    padding-top: 86px;
-    padding-bottom: 78px;
-  }
-
-  .accueil-categories-section::before {
-    margin-bottom: 42px;
-    font-size: 2.85rem;
-  }
-
-  .accueil-categories__grille {
-    max-width: none;
-    gap: 30px;
-  }
-
-  .accueil-categories__image {
-    overflow: hidden;
-    border-radius: 49% 51% 47% 53% / 46% 49% 51% 54%;
-  }
-
-  .accueil-categories__carte:nth-child(2) .accueil-categories__image {
-    border-radius: 52% 48% 50% 50% / 47% 53% 46% 54%;
-  }
-
-  .accueil-categories__carte:nth-child(3) .accueil-categories__image {
-    border-radius: 47% 53% 51% 49% / 52% 46% 54% 48%;
-  }
-
-  .accueil-categories__carte:nth-child(4) .accueil-categories__image {
-    border-radius: 50% 50% 54% 46% / 47% 52% 48% 53%;
-  }
-
-  .accueil-categories__panneau { padding-top: 1.05rem; }
-  .accueil-categories__nom { font-size: 1.12rem; }
-
-  .accueil-nouveautes { padding-bottom: 136px; }
-  .accueil-nouveautes__texte p { margin-bottom: 2.35rem; }
-  .accueil-nouveautes__produits .carrousel-produits__carte,
-  .accueil-carrousel .carrousel-produits__carte {
-    flex-basis: 245px !important;
-  }
-
-  /* Chaque carte reste rectangulaire, avec une jonction d'image souple et
-     lÃ©gÃ¨rement diffÃ©rente comme sur la maquette (pas de dÃ©formation massive). */
-  .carrousel-produits__carte {
-    overflow: visible;
-    border-radius: 0;
-    background: transparent;
-    box-shadow: none;
-  }
-
-  .carrousel-produits__lien {
-    position: relative;
-    display: block;
-    min-height: 326px;
-    overflow: hidden;
-    border-radius: 13px 11px 13px 12px;
-    background: #fffdf9;
-    box-shadow: 0 14px 24px rgba(56, 41, 31, 0.09);
-  }
-
-  .carrousel-produits__image {
-    height: 246px;
-    overflow: hidden;
-    border-radius: 13px 11px 0 0;
-  }
-
-  .carrousel-produits__lien::after {
-    content: '';
-    position: absolute;
-    z-index: 2;
-    bottom: 70px;
-    left: -9%;
-    width: 118%;
-    height: 30px;
-    border-radius: 50% 50% 0 0 / 100% 100% 0 0;
-    background: #fffdf9;
-    transform: rotate(-1.2deg);
-    pointer-events: none;
-  }
-
-  .carrousel-produits__carte:nth-child(2) .carrousel-produits__lien {
-    border-radius: 11px 13px 12px 13px;
-  }
-  .carrousel-produits__carte:nth-child(2) .carrousel-produits__lien::after { transform: rotate(1.5deg); bottom: 69px; }
-  .carrousel-produits__carte:nth-child(3) .carrousel-produits__lien { border-radius: 12px 10px 13px 11px; }
-  .carrousel-produits__carte:nth-child(3) .carrousel-produits__lien::after { transform: rotate(-0.55deg); bottom: 71px; }
-  .carrousel-produits__carte:nth-child(4) .carrousel-produits__lien { border-radius: 12px 13px 11px 13px; }
-  .carrousel-produits__carte:nth-child(4) .carrousel-produits__lien::after { transform: rotate(1deg); bottom: 68px; }
-
-  .carrousel-produits__carte h3,
-  .carrousel-produits__carte > .carrousel-produits__lien > span {
-    position: relative;
-    z-index: 3;
-  }
-
-  .carrousel-produits__carte h3 { padding-top: 0.8rem; }
-  .accueil-carrousel { padding-bottom: 136px; }
-
-  .page-accueil .instagram-module {
-    width: min(1280px, calc(100% - 4rem));
-    max-width: none;
-    padding-right: 48px;
-    padding-left: 48px;
-  }
+  background:
+    radial-gradient(circle at 12% 18%, rgba(207, 169, 153, 0.18), transparent 28rem),
+    linear-gradient(180deg, var(--nabe-creme) 0%, #fbfaf8 46%, var(--nabe-creme) 100%);
 }
 
 .accueil-hero {
@@ -183,25 +23,24 @@
   min-height: clamp(520px, 64vh, 700px);
   display: flex;
   align-items: center;
-  color: var(--texte-principal);
+  color: var(--texte-clair);
   isolation: isolate;
   overflow: hidden;
-  background: #f3f0ea;
 }
 
 .accueil-hero__image {
   z-index: -1;
   object-fit: cover;
-  object-position: center;
-  opacity: 0.07;
-  filter: sepia(1) saturate(0.45);
+  object-position: center 36%;
 }
 
 .accueil-hero__overlay {
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: radial-gradient(circle at 71% 48%, #ddbfad 0 13.7rem, transparent 13.85rem);
+  background:
+    linear-gradient(90deg, rgba(42, 28, 20, 0.64) 0%, rgba(42, 28, 20, 0.34) 43%, rgba(42, 28, 20, 0.08) 100%),
+    linear-gradient(180deg, rgba(42, 28, 20, 0.16) 0%, rgba(42, 28, 20, 0.32) 100%);
 }
 
 .accueil-hero::after {
@@ -210,45 +49,50 @@
   left: 0;
   right: 0;
   bottom: -1px;
-  height: 3rem;
+  height: 13rem;
   z-index: -1;
-  background: linear-gradient(180deg, transparent 0%, var(--nabe-creme) 100%);
+  background: linear-gradient(180deg, transparent 0%, rgba(245, 242, 238, 0.18) 50%, var(--nabe-creme) 100%);
 }
 
-.accueil-hero__embleme {
-  position: absolute;
-  z-index: 0;
-  top: 50%;
-  left: 71%;
-  width: 8.2rem;
-  color: var(--nabe-terracotta);
-  transform: translate(-50%, -48%);
+/* Transition basse "façonnée à la main" : un bord légèrement irrégulier
+   plutôt qu'une ligne parfaitement droite entre le hero et le reste de la
+   page, cohérent avec le reste des formes organiques du site. */
+.accueil-hero {
+  clip-path: none;
 }
 
-.accueil-hero__embleme svg { width: 100%; height: auto; }
+@supports (clip-path: polygon(0 0, 100% 0)) {
+  .accueil-hero {
+    clip-path: polygon(
+      0 0, 100% 0, 100% 96%,
+      92% 98.4%, 83% 97%, 74% 99.2%, 65% 97.6%, 56% 99%, 47% 97.4%,
+      38% 99.3%, 29% 97.8%, 20% 99.1%, 11% 97.5%, 0 99%
+    );
+  }
+}
 
 .accueil-hero__contenu {
   position: relative;
   z-index: 1;
   width: 100%;
-  max-width: 500px;
-  margin: clamp(2.6rem, 5vw, 4rem) 0 0 max(var(--marge-page), calc((100vw - var(--largeur-max)) / 2 + var(--marge-page)));
-  padding: clamp(1.5rem, 3vw, 2.5rem) 0;
+  max-width: 680px;
+  margin: clamp(4rem, 7vw, 6rem) 0 0 clamp(1.5rem, 10vw, 10rem);
+  padding: clamp(2rem, 4vw, 3.5rem);
   animation: accueilHeroEntree 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .accueil-hero__titre {
-  max-width: 11ch;
-  font-size: clamp(3rem, 4.7vw, 4.75rem);
-  line-height: 0.92;
-  margin-bottom: 1rem;
-  color: var(--texte-principal);
+  max-width: 12ch;
+  font-size: clamp(3.2rem, 5.7vw, 5.9rem);
+  line-height: 1;
+  margin-bottom: 1.35rem;
+  color: var(--texte-clair);
   letter-spacing: 0;
   text-wrap: balance;
 }
 
 .accent-clair {
-  color: var(--nabe-terracotta);
+  color: var(--nabe-or-clair);
   font-style: italic;
 }
 
@@ -257,8 +101,8 @@
   margin: 0 0 2.2rem;
   max-width: 520px;
   font-weight: 400;
-  color: var(--texte-secondaire);
-  text-shadow: none;
+  color: rgba(255, 255, 255, 0.88);
+  text-shadow: 0 1px 18px rgba(42, 28, 20, 0.26);
 }
 
 .accueil-hero__actions {
@@ -268,8 +112,8 @@
 }
 
 .accueil-hero__actions .btn {
-  min-height: 2.5rem;
-  padding-inline: 1.2rem;
+  min-height: 3.2rem;
+  padding-inline: 1.75rem;
   border-radius: 999px;
   box-shadow: 0 14px 32px rgba(42, 28, 20, 0.16);
 }
@@ -279,9 +123,39 @@
 }
 
 .accueil-hero__actions .btn-secondaire {
-  background-color: transparent;
-  border-color: var(--texte-principal);
-  color: var(--texte-principal);
+  background-color: rgba(255, 255, 255, 0.09);
+  border-color: rgba(255, 255, 255, 0.74);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.accueil-hero__badge {
+  position: absolute;
+  z-index: 2;
+  right: clamp(1.2rem, 6vw, 5rem);
+  bottom: clamp(2.2rem, 6vw, 4.5rem);
+  width: 108px;
+  height: 108px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 10px;
+  background: var(--nabe-terracotta);
+  color: var(--texte-clair);
+  font-family: var(--font-titres);
+  font-style: italic;
+  font-size: 0.85rem;
+  line-height: 1.25;
+  border-radius: 63% 37% 54% 46% / 55% 45% 55% 45%;
+  box-shadow: 0 20px 40px -10px rgba(159, 84, 52, 0.45);
+  transform: rotate(-8deg);
+}
+
+@media (max-width: 700px) {
+  .accueil-hero__badge {
+    display: none;
+  }
 }
 
 @keyframes accueilHeroEntree {
@@ -306,7 +180,7 @@
   width: 100%;
   position: relative;
   z-index: 2;
-  background-color: #fbfaf7;
+  background-color: #f8f3ec;
   border-top: 1px solid rgba(207, 169, 153, 0.14);
   border-bottom: 1px solid rgba(207, 169, 153, 0.18);
 }
@@ -316,7 +190,7 @@
   align-items: center;
   gap: 0.7rem;
   color: #7b6658;
-  font-size: 0.7rem;
+  font-size: 0.8rem;
   font-weight: 500;
   letter-spacing: 0;
   text-transform: none;
@@ -387,12 +261,29 @@
 }
 
 .accueil-categories__image {
-  border-radius: 50%;
+  /* Chaque carte a un blob légèrement différent : un contour "façonné à la
+     main" plutôt qu'un dôme parfaitement symétrique. */
+  border-radius: 58% 42% 63% 37% / 41% 55% 45% 59%;
   overflow: hidden;
   aspect-ratio: 1 / 1.12;
   background-color: var(--nabe-sable);
   position: relative;
   z-index: 1;
+  transition: border-radius 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.accueil-categories__carte:nth-child(2) .accueil-categories__image {
+  border-radius: 37% 63% 42% 58% / 59% 45% 55% 41%;
+}
+.accueil-categories__carte:nth-child(3) .accueil-categories__image {
+  border-radius: 63% 37% 58% 42% / 45% 59% 41% 55%;
+}
+.accueil-categories__carte:nth-child(4) .accueil-categories__image {
+  border-radius: 42% 58% 37% 63% / 55% 41% 59% 45%;
+}
+
+.accueil-categories__carte:hover .accueil-categories__image {
+  border-radius: 50% 50% 50% 50% / 45% 45% 55% 55%;
 }
 
 .accueil-categories__image img {
@@ -530,7 +421,9 @@
 
 .accueil-module--sur-mesure {
   grid-template-columns: minmax(0, 1fr) auto;
-  background: #f8f3ec;
+  background: linear-gradient(120deg, var(--nabe-sable) 0%, var(--nabe-creme) 100%);
+  border-radius: 32px;
+  border: none;
 }
 
 .accueil-module__texte h2 {
@@ -551,7 +444,7 @@
   width: 100%;
   aspect-ratio: 16 / 9;
   display: block;
-  border-radius: 6px;
+  border-radius: 28px 10px 28px 10px;
   background: var(--nabe-sable);
   object-fit: cover;
 }
@@ -670,7 +563,7 @@
 }
 
 .accueil-histoire__image {
-  border-radius: 28px;
+  border-radius: 40px 14px 40px 14px;
   overflow: hidden;
   margin: clamp(2.1rem, 4vw, 3.4rem) clamp(1.4rem, 3vw, 2.6rem) clamp(1.4rem, 3vw, 2.6rem);
   box-shadow: 0 24px 54px rgba(69, 41, 30, 0.16);
@@ -680,6 +573,19 @@
   width: 100%;
   height: clamp(320px, 36vw, 470px);
   object-fit: cover;
+}
+
+@media (min-width: 901px) {
+  .accueil-histoire__image {
+    /* Blob organique sur desktop, où l'image a la place de respirer ;
+       repasse en rectangle arrondi sur mobile pour rester lisible en
+       largeur réduite. */
+    border-radius: 0;
+    clip-path: path(
+      'M0,40 C10,10 40,0 70,4 L430,4 C455,4 460,20 458,45 L450,380 C448,415 420,428 390,424 L60,424 C25,424 5,405 4,375 Z'
+    );
+    margin: clamp(1.6rem, 3vw, 2.6rem);
+  }
 }
 
 .accueil-histoire__texte {
@@ -878,7 +784,7 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  border-radius: 18px;
+  border-radius: 26px 10px 26px 10px;
   color: var(--texte-clair);
   box-shadow: 0 24px 64px rgba(69, 41, 30, 0.12);
   isolation: isolate;
@@ -968,7 +874,7 @@
   background-color: rgba(255, 255, 255, 0.78);
   padding: clamp(1.6rem, 3vw, 2.4rem);
   border: 1px solid rgba(207, 169, 153, 0.22);
-  border-radius: 18px;
+  border-radius: 26px 10px 26px 10px;
   box-shadow: 0 22px 54px rgba(69, 41, 30, 0.07);
   transition: transform 0.35s ease, box-shadow 0.35s ease;
 }
@@ -978,6 +884,15 @@
   box-shadow: 0 28px 70px rgba(69, 41, 30, 0.1);
 }
 
+@media (min-width: 901px) {
+  .accueil-temoignages__grille > .accueil-temoignages__carte:nth-child(2) {
+    transform: translateY(-14px);
+  }
+  .accueil-temoignages__grille > .accueil-temoignages__carte:nth-child(2):hover {
+    transform: translateY(-19px);
+  }
+}
+
 .accueil-temoignages__etoiles {
   color: var(--nabe-or);
   margin-bottom: 1rem;
@@ -985,10 +900,12 @@
 }
 
 .accueil-temoignages__carte p {
+  font-family: var(--font-titres);
   font-style: italic;
+  font-size: 1.05rem;
   margin-bottom: 1rem;
-  color: var(--texte-secondaire);
-  line-height: 1.65;
+  color: var(--texte-principal);
+  line-height: 1.5;
 }
 
 .accueil-temoignages__fleche {
@@ -1026,15 +943,28 @@
   position: relative;
   text-align: center;
   padding: clamp(2.3rem, 5vw, 4.2rem) var(--espace-md);
-  background:
-    linear-gradient(135deg, rgba(159, 84, 52, 0.18), rgba(207, 169, 153, 0.92)),
-    var(--nabe-argile);
-  border-radius: 28px;
+  background: var(--nabe-terracotta);
+  border-radius: 36px 14px 36px 14px;
   overflow: hidden;
   box-shadow: 0 26px 70px rgba(69, 41, 30, 0.1);
 }
 
+.accueil-newsletter__carte::before {
+  content: '';
+  position: absolute;
+  width: 340px;
+  height: 340px;
+  background: var(--nabe-terracotta-fonce);
+  opacity: 0.4;
+  border-radius: 58% 42% 63% 37% / 41% 55% 45% 59%;
+  top: -140px;
+  right: -100px;
+  z-index: 0;
+}
+
 .accueil-newsletter__carte h2 {
+  position: relative;
+  z-index: 1;
   font-size: clamp(2.2rem, 4vw, 3.6rem);
   line-height: 1;
   margin-bottom: 0.55rem;
@@ -1076,6 +1006,7 @@
 
 .accueil-newsletter__feuille {
   position: absolute;
+  z-index: 1;
   right: 2rem;
   top: 50%;
   transform: translateY(-50%);
@@ -1169,951 +1100,5 @@
 @media (max-width: 480px) {
   .accueil-newsletter__form {
     flex-direction: column;
-  }
-}
-
-/* Variation éditoriale douce : rythme, cartes et aplats inspirés de la maquette. */
-.page-accueil .etiquette {
-  color: var(--nabe-terracotta);
-  font-size: 0.62rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-}
-
-.accueil-modules {
-  padding-top: clamp(2.5rem, 5vw, 4.5rem);
-  padding-bottom: clamp(1rem, 2vw, 2rem);
-}
-
-.accueil-module--sur-mesure {
-  min-height: 130px;
-  padding: clamp(1.6rem, 3vw, 2.5rem);
-  border-radius: 16px;
-  background: #f2e4d4;
-  box-shadow: none;
-}
-
-.accueil-module--sur-mesure .btn { box-shadow: none; }
-
-.accueil-categories-section { padding-top: clamp(3rem, 6vw, 5.5rem); }
-
-.accueil-categories__image {
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: #dfc1ae;
-}
-
-.accueil-categories__panneau {
-  min-height: 0;
-  padding: 0.7rem 0.4rem 0;
-  background: transparent;
-  box-shadow: none;
-}
-
-.accueil-categories__panneau::before { display: none; }
-.accueil-categories__icone { top: -4rem; color: var(--nabe-terracotta); }
-.accueil-categories__nom { font-size: 1rem; }
-.accueil-categories__fleche { display: none; }
-
-.accueil-nouveautes { padding-top: clamp(3rem, 6vw, 5rem); }
-.accueil-nouveautes__texte h2,
-.accueil-carrousel h2,
-.accueil-temoignages h2 {
-  font-size: clamp(2.1rem, 3.4vw, 3.2rem);
-  line-height: 0.95;
-}
-
-.accueil-histoire { padding-top: clamp(3.5rem, 7vw, 6rem); }
-.accueil-histoire__carte {
-  border-radius: 18px;
-  background: #bd8064;
-  min-height: 360px;
-  overflow: hidden;
-}
-.accueil-histoire__image { opacity: 0.16; }
-.accueil-histoire__texte { max-width: 420px; }
-.accueil-histoire__texte h2 { font-size: clamp(2.2rem, 3.8vw, 3.6rem); }
-
-.accueil-pourquoi { padding-top: clamp(4rem, 7vw, 6rem); }
-.accueil-pourquoi__item h3 { font-size: 1rem; }
-.accueil-pourquoi__item p { font-size: 0.76rem; }
-
-.accueil-temoignages__carte {
-  border: 0;
-  border-radius: 10px;
-  padding: 1.35rem;
-  box-shadow: none;
-  background: #f1efec;
-  text-align: left;
-}
-
-.accueil-newsletter__carte {
-  border-radius: 16px;
-  background: #a95634;
-  box-shadow: none;
-}
-
-@media (max-width: 900px) {
-  .accueil-hero__contenu {
-    margin: 3rem auto 0;
-    padding-inline: var(--marge-page);
-  }
-  .accueil-hero__embleme { left: 74%; opacity: 0.52; }
-}
-
-@media (max-width: 600px) {
-  .accueil-hero { min-height: 560px; }
-  .accueil-hero__overlay { background: radial-gradient(circle at 78% 42%, #ddbfad 0 9rem, transparent 9.15rem); }
-  .accueil-hero__embleme { left: 78%; width: 5.5rem; }
-  .accueil-hero__contenu { margin-top: 5rem; text-align: left; }
-  .accueil-hero__titre { text-align: left; font-size: 3.3rem; }
-  .accueil-hero__actions { justify-content: flex-start; }
-}
-
-/* La photographie fournie par l'administration devient le visuel central du hero. */
-@media (min-width: 901px) {
-  .accueil-hero {
-    min-height: 590px;
-  }
-
-  .accueil-hero__image {
-    z-index: 0;
-    top: 50% !important;
-    right: max(var(--marge-page), calc((100vw - var(--largeur-max)) / 2)) !important;
-    bottom: auto !important;
-    left: auto !important;
-    width: clamp(300px, 38vw, 465px) !important;
-    height: clamp(300px, 38vw, 465px) !important;
-    border-radius: 50%;
-    opacity: 1;
-    filter: none;
-    object-fit: cover;
-    object-position: center;
-    transform: translateY(-43%) !important;
-    box-shadow: 0 20px 48px rgba(56, 41, 31, 0.08);
-  }
-
-  .accueil-hero__overlay {
-    z-index: -1;
-    background: linear-gradient(180deg, #f7f4ef 0%, #f3efe8 100%);
-  }
-
-  .accueil-hero__embleme {
-    left: auto;
-    right: max(calc(var(--marge-page) + 1rem), calc((100vw - var(--largeur-max)) / 2 + 1rem));
-    top: 68%;
-    width: 6rem;
-    padding: 1.15rem;
-    border-radius: 50%;
-    background: var(--nabe-terracotta);
-    color: #fff;
-    transform: none;
-    box-shadow: 0 10px 22px rgba(56, 41, 31, 0.14);
-  }
-
-  .accueil-hero__contenu {
-    z-index: 2;
-  }
-}
-
-.accueil-histoire__image { opacity: 1; }
-.accueil-histoire__image img { filter: sepia(0.12) saturate(0.78); }
-
-@media (max-width: 900px) {
-  .accueil-hero__image {
-    z-index: 0;
-    top: 6.5rem !important;
-    right: 1.2rem !important;
-    bottom: auto !important;
-    left: auto !important;
-    width: 14rem !important;
-    height: 14rem !important;
-    border-radius: 50%;
-    opacity: 0.9;
-    filter: none;
-    object-fit: cover;
-  }
-
-  .accueil-hero__overlay {
-    z-index: -1;
-    background: linear-gradient(180deg, #f7f4ef 0%, #f3efe8 100%);
-  }
-
-  .accueil-hero__embleme {
-    z-index: 1;
-    padding: 0.7rem;
-    border-radius: 50%;
-    background: var(--nabe-terracotta);
-    color: #fff;
-  }
-}
-
-@media (max-width: 600px) {
-  .accueil-hero__image {
-    top: 5.6rem !important;
-    right: 0.65rem !important;
-    width: 10rem !important;
-    height: 10rem !important;
-    opacity: 0.7;
-  }
-  .accueil-hero__embleme { top: 9rem; }
-}
-
-/* ========================================================================
-   COMPOSITION "NABÉ" — règles de mise en page de la maquette desktop.
-   Ces règles redéfinissent les volumes des modules sans modifier leur contenu
-   piloté dans l'administration.
-   ======================================================================== */
-@media (min-width: 901px) {
-  .page-accueil {
-    --accueil-largeur: 1216px;
-    background: #f8f6f2;
-  }
-
-  .accueil-hero {
-    min-height: 0;
-    height: 692px;
-    display: block;
-    background: #f8f6f2;
-    overflow: visible;
-  }
-
-  .accueil-hero__overlay { display: none; }
-
-  .accueil-hero__image {
-    display: block;
-    z-index: 1;
-    top: 139px !important;
-    right: auto !important;
-    bottom: auto !important;
-    left: calc(50% - 95px) !important;
-    width: 452px !important;
-    height: 452px !important;
-    border-radius: 50%;
-    object-fit: cover;
-    opacity: 1;
-    filter: none;
-    transform: none !important;
-    box-shadow: none;
-  }
-
-  .accueil-hero__contenu {
-    width: min(var(--accueil-largeur), calc(100% - 4rem));
-    max-width: none;
-    margin: 0 auto;
-    padding: 220px 0 0;
-    position: relative;
-    z-index: 2;
-  }
-
-  .accueil-hero__etiquette {
-    display: flex;
-    margin: 0 0 1.1rem;
-  }
-
-  .accueil-hero__titre {
-    max-width: 510px;
-    margin: 0 0 1.65rem;
-    font-size: 4.15rem;
-    line-height: 0.94;
-    letter-spacing: -0.04em;
-  }
-
-  .accueil-hero__soustitre {
-    max-width: 430px;
-    margin-bottom: 2rem;
-    font-size: 1rem;
-    line-height: 1.55;
-  }
-
-  .accueil-hero__actions { gap: 1rem; }
-  .accueil-hero__actions .btn { min-height: 2.7rem; padding-inline: 1.45rem; }
-
-  .accueil-hero__embleme {
-    z-index: 2;
-    top: 139px;
-    left: calc(50% - 95px);
-    right: auto;
-    width: 452px;
-    height: 452px;
-    padding: 0;
-    border-radius: 50%;
-    /* La photo administrée constitue désormais le disque du hero : l'icône
-       se superpose sans la masquer. */
-    background: transparent;
-    color: #aa5b38;
-    box-shadow: none;
-    transform: none;
-  }
-
-  .accueil-hero__embleme svg {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 150px;
-    transform: translate(-50%, -50%);
-  }
-
-  .accueil-hero__embleme::after {
-    content: '100% fait main';
-    position: absolute;
-    bottom: -46px;
-    left: -28px;
-    display: grid;
-    place-items: center;
-    width: 112px;
-    height: 112px;
-    border-radius: 50%;
-    background: #aa5b38;
-    color: #fff8f2;
-    font-family: var(--font-titres);
-    font-size: 0.92rem;
-    font-style: italic;
-    transform: rotate(-9deg);
-    box-shadow: 0 16px 28px rgba(56, 41, 31, 0.14);
-  }
-
-  .accueil-reassurance {
-    width: min(var(--accueil-largeur), calc(100% - 4rem));
-    margin: 0 auto;
-    padding: 1.35rem 0 1.45rem;
-    justify-content: space-between;
-    background: transparent;
-    border-top: 1px solid rgba(56, 41, 31, 0.13);
-    border-bottom: 0;
-  }
-
-  .accueil-reassurance__item {
-    padding: 0;
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: #634c3f;
-  }
-
-  .accueil-reassurance__item:not(:last-child)::after { display: none; }
-  .accueil-reassurance__item svg { color: #b15f3a; width: 18px; height: 18px; }
-
-  .accueil-modules,
-  .accueil-categories-section,
-  .accueil-nouveautes,
-  .accueil-histoire,
-  .accueil-pourquoi,
-  .accueil-carrousel,
-  .accueil-temoignages,
-  .accueil-newsletter {
-    width: min(var(--accueil-largeur), calc(100% - 4rem));
-    max-width: none;
-    padding-left: 0;
-    padding-right: 0;
-  }
-
-  .accueil-modules {
-    display: block;
-    padding-top: 58px;
-    padding-bottom: 0;
-  }
-
-  .accueil-module {
-    border: 0;
-    box-shadow: none;
-    border-radius: 0;
-  }
-
-  .accueil-module--video {
-    display: grid;
-    grid-template-columns: 405px 1fr;
-    align-items: center;
-    gap: 70px;
-    min-height: 760px;
-    padding: 0;
-    background: transparent;
-    position: relative;
-  }
-
-  .accueil-module--video .accueil-module__texte { padding-top: 112px; }
-  .accueil-module__texte h2 {
-    max-width: 310px;
-    margin: 0.5rem 0 1.2rem;
-    font-size: 2rem;
-    line-height: 0.93;
-  }
-  .accueil-module__texte p { max-width: 355px; font-size: 0.95rem; line-height: 1.58; }
-
-  .accueil-module__media {
-    width: 100%;
-    height: 684px;
-    aspect-ratio: auto;
-    border-radius: 120px 14px 120px 14px;
-    background: #302219;
-    box-shadow: 0 24px 44px rgba(56, 41, 31, 0.1);
-    object-fit: cover;
-  }
-  .accueil-module--video::after {
-    content: '▶';
-    position: absolute;
-    top: 50%;
-    right: calc((100% - 475px) / 2 - 25px);
-    display: grid;
-    place-items: center;
-    width: 64px;
-    height: 64px;
-    padding-left: 4px;
-    border-radius: 50%;
-    background: #fff;
-    color: #aa5b38;
-    font-size: 1.1rem;
-    box-shadow: 0 0 0 15px rgba(255, 255, 255, 0.14);
-    pointer-events: none;
-  }
-
-  .accueil-module--sur-mesure {
-    min-height: 278px;
-    grid-template-columns: 1fr auto;
-    gap: 2rem;
-    padding: 50px 58px;
-    border-radius: 28px;
-    background: linear-gradient(100deg, #f2e1ca, #f7f2eb);
-  }
-  .accueil-module--sur-mesure .accueil-module__texte h2 { font-size: 2.45rem; max-width: 420px; }
-  .accueil-module--sur-mesure .btn { margin-right: 10px; }
-
-  .accueil-categories-section {
-    padding-top: 110px;
-    padding-bottom: 82px;
-  }
-  .accueil-categories-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  .accueil-categories-section .etiquette { order: 1; margin-bottom: 0.55rem; }
-  .accueil-categories-section::before {
-    content: 'Trouvez la pièce\A qui vous ressemble';
-    display: block;
-    margin: 0 auto 54px;
-    color: var(--texte-principal);
-    font-family: var(--font-titres);
-    font-size: 3.25rem;
-    font-weight: 600;
-    line-height: 0.9;
-    white-space: pre;
-    order: 2;
-  }
-
-  .accueil-categories__grille { order: 3; width: 100%; gap: 30px; max-width: 1000px; margin-left: 0; }
-  .accueil-categories__carte { position: relative; }
-  .accueil-categories__image {
-    aspect-ratio: 1;
-    border-radius: 50%;
-    background: #e4c5ae;
-  }
-  .accueil-categories__image img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  .accueil-categories__panneau {
-    position: static;
-    min-height: 0;
-    padding: 1.35rem 0 0;
-    background: transparent;
-    box-shadow: none;
-  }
-  .accueil-categories__icone {
-    top: 42%;
-    left: 50%;
-    color: #aa5b38;
-    transform: translate(-50%, -50%);
-  }
-  .accueil-categories__icone svg { width: 40px; height: 40px; stroke-width: 1.3; }
-  .accueil-categories__logo { width: 48px; height: 48px; filter: sepia(0.8) saturate(1.6) hue-rotate(332deg); }
-  .accueil-categories__nom { font-size: 1.25rem; font-weight: 600; }
-  .accueil-categories__nom::after { content: ' pièces'; display: block; font-family: var(--font-texte); font-size: 0.68rem; font-weight: 600; }
-  .accueil-categories__fleche,
-  .accueil-categories-section__cta { display: none; }
-
-  .accueil-nouveautes {
-    padding-top: 10px;
-    padding-bottom: 165px;
-  }
-  .accueil-nouveautes__grille { display: block; }
-  .accueil-nouveautes__texte h2 { max-width: none; font-size: 3.5rem; margin: 0.45rem 0 0.8rem; }
-  .accueil-nouveautes__texte p { max-width: 600px; font-size: 1rem; margin-bottom: 3rem; }
-  .accueil-nouveautes__lien { display: none; }
-  .accueil-nouveautes__produits .carrousel-produits { padding-right: 0; }
-  .accueil-nouveautes__produits .carrousel-produits__piste { overflow: hidden; gap: 28px; }
-  .accueil-nouveautes__produits .carrousel-produits__carte { flex: 0 0 215px !important; }
-  .carrousel-produits__fleche { display: none !important; }
-
-  .carrousel-produits__carte {
-    border-radius: 15px;
-    box-shadow: 0 14px 24px rgba(56, 41, 31, 0.09);
-    background: #fffdf9;
-  }
-  .carrousel-produits__image {
-    height: 238px;
-    aspect-ratio: auto;
-    margin: 0;
-    border-radius: 15px 15px 0 0;
-    background: #e2c1aa;
-  }
-  .carrousel-produits__image img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  .carrousel-produits__image:not(:has(img))::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 62px;
-    height: 62px;
-    border: 4px solid #aa5b38;
-    border-radius: 50%;
-    background: none;
-    transform: translate(-50%, -31%);
-  }
-  .carrousel-produits__image:not(:has(img))::before {
-    content: '';
-    position: absolute;
-    z-index: 2;
-    top: calc(50% - 40px);
-    left: calc(50% - 11px);
-    width: 22px;
-    height: 22px;
-    border: 4px solid #aa5b38;
-    border-radius: 5px;
-    transform: rotate(45deg);
-  }
-  .carrousel-produits__carte:nth-child(2) .carrousel-produits__image { background: #bd7d60; }
-  .carrousel-produits__carte:nth-child(2) .carrousel-produits__image:not(:has(img))::after { border-color: #fff; }
-  .carrousel-produits__carte:nth-child(2) .carrousel-produits__image:not(:has(img))::before { border-color: #fff; }
-  .carrousel-produits__carte:nth-child(3) .carrousel-produits__image { background: #f4e8d8; }
-  .carrousel-produits__carte h3 { margin: 0; padding: 0.85rem 1.2rem 0.18rem; font-family: var(--font-titres); font-size: 1.17rem; }
-  .carrousel-produits__carte span { padding: 0 1.2rem 0.9rem; font-size: 0.86rem; }
-  .carrousel-produits__coeur { display: none !important; }
-  .carrousel-produits__badge-nouveau,
-  .carrousel-produits__badge-promo { top: 12px; left: 12px; z-index: 3; background: #aa5b38; color: #fff; border-radius: 9px 9px 9px 0; }
-
-  .accueil-histoire {
-    padding-top: 0;
-    padding-bottom: 160px;
-  }
-  .accueil-histoire__carte {
-    grid-template-columns: 1fr 1.22fr;
-    min-height: 565px;
-    border-radius: 30px;
-    background: #be8165;
-    box-shadow: none;
-  }
-  .accueil-histoire__image {
-    position: relative;
-    height: 100%;
-    margin: 0;
-    border-radius: 30px 0 0 30px;
-    background: #aa5937;
-    overflow: hidden;
-  }
-  .accueil-histoire__image::after {
-    content: '';
-    position: absolute;
-    inset: auto 0 0;
-    height: 65px;
-    background: #cf9c83;
-    border-radius: 50% 50% 0 0 / 24% 24% 0 0;
-  }
-  .accueil-histoire__image img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    opacity: 0.68;
-    mix-blend-mode: normal;
-  }
-  .accueil-histoire__icone {
-    position: absolute;
-    z-index: 2;
-    top: 50%;
-    left: 50%;
-    width: 150px;
-    transform: translate(-50%, -50%);
-    fill: none;
-    stroke: #fff;
-    stroke-width: 4;
-  }
-  .accueil-histoire__texte { padding: 104px 78px; color: #fff; }
-  .accueil-histoire__texte h2 { font-size: 3.25rem; max-width: 390px; color: #fff; margin: 0.75rem 0 1.4rem; }
-  .accueil-histoire__texte .accent-clair,
-  .accueil-histoire__texte p,
-  .accueil-histoire__lien,
-  .etiquette--claire { color: #fff; }
-  .etiquette--claire::before { background: #fff; }
-  .accueil-histoire__texte p { font-size: 1rem; max-width: 455px; }
-  .accueil-histoire__feuille { display: none; }
-
-  .accueil-pourquoi {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-top: 5px;
-    padding-bottom: 130px;
-  }
-  .accueil-pourquoi .etiquette { order: 1; margin-bottom: 0.5rem; }
-  .accueil-pourquoi::before {
-    content: 'Le fait-main, sans\A compromis';
-    display: block;
-    margin-bottom: 52px;
-    font-family: var(--font-titres);
-    font-size: 3.25rem;
-    font-weight: 600;
-    line-height: 0.92;
-    white-space: pre;
-    order: 2;
-  }
-  .accueil-pourquoi__grille { order: 3; width: 100%; padding-top: 0; }
-  .accueil-pourquoi__item { padding: 0 1.5rem; }
-  .accueil-pourquoi__item:not(:last-child)::after { display: none; }
-  .accueil-pourquoi__item svg { width: 34px; height: 34px; color: #aa5b38; }
-  .accueil-pourquoi__item h3 { font-family: var(--font-titres); font-size: 1.22rem; }
-  .accueil-pourquoi__item p { font-size: 0.86rem; max-width: 235px; }
-
-  .accueil-carrousel { text-align: left; padding-top: 0; padding-bottom: 155px; }
-  .accueil-carrousel .etiquette--centre { display: flex; justify-content: flex-start; margin-bottom: 0.5rem; }
-  .accueil-carrousel h2 { font-size: 3.5rem; text-align: left; margin: 0 0 3rem; }
-  .accueil-carrousel .carrousel-produits__piste { overflow: hidden; gap: 28px; padding: 0 0 1rem; }
-  .accueil-carrousel .carrousel-produits__carte { flex: 0 0 215px !important; }
-
-  .accueil-temoignages { padding-top: 0; padding-bottom: 132px; }
-  .accueil-temoignages h2 { font-size: 3.25rem; margin: 0.25rem 0 3rem; }
-  .accueil-temoignages__rangee { display: block; }
-  .accueil-temoignages__grille { gap: 25px; }
-  .accueil-temoignages__carte { min-height: 162px; padding: 1.6rem 1.9rem; border-radius: 16px; }
-  .accueil-temoignages__fleche { display: none; }
-
-  .accueil-newsletter { padding-top: 0; padding-bottom: 100px; }
-  .accueil-newsletter__carte { padding: 54px 2rem; border-radius: 30px; }
-  .accueil-newsletter__carte h2 { font-size: 3.2rem; }
-}
-
-/* Surcouche finale (placÃ©e aprÃ¨s les rÃ¨gles de composition desktop). */
-@media (min-width: 901px) {
-  .page-accueil { --accueil-largeur: 1184px; }
-
-  .page-accueil .accueil-categories-section,
-  .page-accueil .accueil-nouveautes,
-  .page-accueil .accueil-histoire,
-  .page-accueil .accueil-pourquoi,
-  .page-accueil .accueil-carrousel,
-  .page-accueil .accueil-temoignages,
-  .page-accueil .accueil-newsletter {
-    width: min(1280px, calc(100% - 4rem));
-    max-width: none;
-    padding-right: 48px;
-    padding-left: 48px;
-  }
-
-  .accueil-hero {
-    overflow: hidden;
-    background: #f8f6f2;
-  }
-
-  .accueil-hero__image {
-    z-index: 0;
-    top: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    left: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
-    border-radius: 0;
-    object-position: center;
-    opacity: 0.55;
-    filter: sepia(0.7) saturate(0.55) contrast(0.9);
-  }
-
-  .accueil-hero__overlay {
-    display: block;
-    z-index: 1;
-    background: linear-gradient(90deg, rgba(248, 246, 242, 0.9) 0%, rgba(248, 246, 242, 0.68) 46%, rgba(248, 246, 242, 0.42) 100%);
-  }
-
-  .accueil-hero__contenu {
-    z-index: 3;
-    width: min(var(--accueil-largeur), calc(100% - 4rem));
-  }
-
-  .accueil-hero__embleme {
-    z-index: 2;
-    left: calc(50% + 38px);
-    background: #dfbea9;
-    color: #aa5b38;
-  }
-
-  .accueil-hero__embleme svg { width: 126px; }
-
-  .accueil-categories-section {
-    padding-top: 86px;
-    padding-bottom: 78px;
-  }
-
-  .accueil-categories-section::before {
-    margin-bottom: 42px;
-    font-size: 2.85rem;
-  }
-
-  .accueil-categories__grille {
-    max-width: none;
-    gap: 30px;
-  }
-
-  .accueil-categories__image {
-    overflow: hidden;
-    border-radius: 49% 51% 47% 53% / 46% 49% 51% 54%;
-  }
-  .accueil-categories__carte:nth-child(2) .accueil-categories__image { border-radius: 52% 48% 50% 50% / 47% 53% 46% 54%; }
-  .accueil-categories__carte:nth-child(3) .accueil-categories__image { border-radius: 47% 53% 51% 49% / 52% 46% 54% 48%; }
-  .accueil-categories__carte:nth-child(4) .accueil-categories__image { border-radius: 50% 50% 54% 46% / 47% 52% 48% 53%; }
-  .accueil-categories__panneau { padding-top: 1.05rem; }
-  .accueil-categories__nom { font-size: 1.12rem; }
-
-  .accueil-nouveautes { padding-bottom: 136px; }
-  .accueil-nouveautes__texte p { margin-bottom: 2.35rem; }
-  .accueil-nouveautes__produits .carrousel-produits__carte,
-  .accueil-carrousel .carrousel-produits__carte { flex-basis: 245px !important; }
-
-  .carrousel-produits__carte {
-    overflow: visible;
-    border-radius: 0;
-    background: transparent;
-    box-shadow: none;
-  }
-
-  .carrousel-produits__lien {
-    position: relative;
-    display: block;
-    min-height: 326px;
-    overflow: hidden;
-    border-radius: 13px 11px 13px 12px;
-    background: #fffdf9;
-    box-shadow: 0 14px 24px rgba(56, 41, 31, 0.09);
-  }
-
-  .carrousel-produits__image {
-    height: 246px;
-    overflow: hidden;
-    border-radius: 13px 11px 0 0;
-  }
-
-  .carrousel-produits__lien::after {
-    content: '';
-    position: absolute;
-    z-index: 2;
-    bottom: 70px;
-    left: -9%;
-    width: 118%;
-    height: 30px;
-    border-radius: 50% 50% 0 0 / 100% 100% 0 0;
-    background: #fffdf9;
-    transform: rotate(-1.2deg);
-    pointer-events: none;
-  }
-
-  .carrousel-produits__carte:nth-child(2) .carrousel-produits__lien { border-radius: 11px 13px 12px 13px; }
-  .carrousel-produits__carte:nth-child(2) .carrousel-produits__lien::after { transform: rotate(1.5deg); bottom: 69px; }
-  .carrousel-produits__carte:nth-child(3) .carrousel-produits__lien { border-radius: 12px 10px 13px 11px; }
-  .carrousel-produits__carte:nth-child(3) .carrousel-produits__lien::after { transform: rotate(-0.55deg); bottom: 71px; }
-  .carrousel-produits__carte:nth-child(4) .carrousel-produits__lien { border-radius: 12px 13px 11px 13px; }
-  .carrousel-produits__carte:nth-child(4) .carrousel-produits__lien::after { transform: rotate(1deg); bottom: 68px; }
-
-  .carrousel-produits__carte h3,
-  .carrousel-produits__carte > .carrousel-produits__lien > span {
-    position: relative;
-    z-index: 3;
-  }
-
-  .carrousel-produits__carte h3 { padding-top: 0.8rem; }
-  .accueil-carrousel { padding-bottom: 136px; }
-}
-
-/* Formes de collections : chacune reste centrée dans sa colonne mais porte
-   une silhouette souple, irrégulière et discrète comme la référence. */
-@media (min-width: 901px) {
-  .accueil-categories__grille {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    justify-items: center;
-    align-items: start;
-    gap: 30px;
-  }
-
-  .accueil-categories__carte {
-    display: grid;
-    width: 100%;
-    grid-template-columns: minmax(0, 1fr);
-    justify-items: center;
-    text-align: center;
-  }
-
-  .accueil-categories__image {
-    width: min(100%, 270px);
-    aspect-ratio: 1;
-    margin: 0 auto;
-    border-radius: 48% 52% 46% 54% / 45% 49% 51% 55%;
-    transform: rotate(-1.4deg);
-    transform-origin: center;
-  }
-
-  .accueil-categories__carte:nth-child(2) .accueil-categories__image {
-    width: min(99%, 270px);
-    border-radius: 54% 46% 51% 49% / 48% 45% 55% 52%;
-    transform: rotate(1.1deg);
-  }
-
-  .accueil-categories__carte:nth-child(3) .accueil-categories__image {
-    width: min(98%, 268px);
-    border-radius: 45% 55% 52% 48% / 50% 44% 56% 50%;
-    transform: rotate(-0.8deg);
-  }
-
-  .accueil-categories__carte:nth-child(4) .accueil-categories__image {
-    width: min(99%, 270px);
-    border-radius: 51% 49% 45% 55% / 44% 52% 48% 56%;
-    transform: rotate(1.35deg);
-  }
-
-  .accueil-categories__panneau {
-    width: 100%;
-    align-items: center;
-    text-align: center;
-  }
-
-  .accueil-categories__nom {
-    width: 100%;
-    line-height: 1;
-    text-align: center;
-  }
-}
-
-/* Cartes produit : même principe artisanal que la référence. Les blocs sont
-   alignés, mais chaque image possède une bordure haute et une coupe basse
-   légèrement différentes afin d'éviter un rendu rigide. */
-@media (min-width: 901px) {
-  .accueil-nouveautes__produits .carrousel-produits__piste,
-  .accueil-carrousel .carrousel-produits__piste {
-    align-items: flex-start;
-    gap: 28px;
-  }
-
-  .accueil-nouveautes__produits .carrousel-produits__carte,
-  .accueil-carrousel .carrousel-produits__carte {
-    flex: 0 0 245px !important;
-    text-align: left;
-  }
-
-  .carrousel-produits__lien {
-    display: block;
-    min-height: 326px;
-    border-radius: 12px 10px 13px 11px;
-  }
-
-  .carrousel-produits__image {
-    position: relative;
-    width: 104%;
-    height: 246px;
-    margin-left: -2%;
-    border-radius: 12px 10px 0 0;
-    transform: rotate(-0.75deg) translateY(-2px);
-    transform-origin: center top;
-    clip-path: polygon(0 1.3%, 100% 0, 100% 94.5%, 76% 97%, 36% 95.5%, 0 96.5%);
-  }
-
-  .carrousel-produits__image img,
-  .carrousel-produits__placeholder {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .carrousel-produits__image:not(:has(img))::after {
-    top: 50%;
-    transform: translate(-50%, -50%);
-  }
-
-  .carrousel-produits__image:not(:has(img))::before {
-    top: calc(50% - 41px);
-  }
-
-  .carrousel-produits__carte:nth-child(2) .carrousel-produits__image {
-    width: 105%;
-    margin-left: -2.5%;
-    border-radius: 10px 13px 0 0;
-    transform: rotate(0.95deg) translateY(-2px);
-    clip-path: polygon(0 0, 100% 1.2%, 100% 96.5%, 68% 95%, 24% 97%, 0 95%);
-  }
-
-  .carrousel-produits__carte:nth-child(3) .carrousel-produits__image {
-    width: 103%;
-    margin-left: -1.5%;
-    border-radius: 12px 9px 0 0;
-    transform: rotate(-0.4deg) translateY(-1px);
-    clip-path: polygon(0 0.8%, 100% 0, 100% 95%, 74% 96.5%, 42% 94.5%, 0 97%);
-  }
-
-  .carrousel-produits__carte:nth-child(4) .carrousel-produits__image {
-    width: 105%;
-    margin-left: -2.5%;
-    border-radius: 10px 12px 0 0;
-    transform: rotate(0.7deg) translateY(-2px);
-    clip-path: polygon(0 1%, 100% 0, 100% 96.5%, 72% 95%, 30% 97%, 0 95.5%);
-  }
-
-  .carrousel-produits__lien::after {
-    bottom: 70px;
-    height: 28px;
-  }
-}
-
-/* Cadre latéral ample, badges contrastés et photo réellement perceptible
-   derrière le titre du hero. */
-@media (min-width: 901px) {
-  .page-accueil { --accueil-largeur: 1152px; }
-
-  .page-accueil .accueil-categories-section,
-  .page-accueil .accueil-nouveautes,
-  .page-accueil .accueil-histoire,
-  .page-accueil .accueil-pourquoi,
-  .page-accueil .accueil-carrousel,
-  .page-accueil .instagram-module,
-  .page-accueil .accueil-temoignages,
-  .page-accueil .accueil-newsletter {
-    padding-right: 64px;
-    padding-left: 64px;
-  }
-
-  .accueil-hero__image {
-    opacity: 0.78;
-    filter: sepia(0.55) saturate(0.7) contrast(0.88);
-  }
-
-  .accueil-hero__overlay {
-    background: linear-gradient(90deg, rgba(248, 246, 242, 0.78) 0%, rgba(248, 246, 242, 0.48) 48%, rgba(248, 246, 242, 0.18) 100%);
-  }
-
-  .carrousel-produits__badge-nouveau,
-  .carrousel-produits__badge-promo {
-    background: #fff8ef;
-    color: #8f472b;
-    border: 1px solid rgba(143, 71, 43, 0.18);
-    box-shadow: 0 3px 10px rgba(66, 38, 27, 0.13);
-    font-weight: 700;
-  }
-
-  .carrousel-produits__carte:nth-child(2) .carrousel-produits__badge-nouveau,
-  .carrousel-produits__carte:nth-child(2) .carrousel-produits__badge-promo {
-    background: #fffaf4;
-    color: #813d24;
   }
 }
