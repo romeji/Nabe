@@ -9,7 +9,7 @@
   flex: 1;
   min-width: 0;
   display: flex;
-  gap: 1rem;
+  gap: 1.5rem;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
@@ -22,56 +22,68 @@
 
 .carrousel-produits__carte {
   position: relative;
-  flex: 0 0 205px;
-  background: #fffdf9;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 8px 22px rgba(56, 41, 31, 0.09);
+  flex: 0 0 240px;
   scroll-snap-align: start;
-  transition: transform 0.4s ease;
+  background: var(--nabe-blanc, #fffdfa);
+  border-radius: 28px 12px 28px 12px;
+  overflow: hidden;
+  box-shadow: 0 18px 40px -22px rgba(69, 41, 30, 0.28);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.carrousel-produits__piste > .carrousel-produits__carte:nth-child(even) {
+  transform: rotate(1.4deg);
+}
+.carrousel-produits__piste > .carrousel-produits__carte:nth-child(odd) {
+  transform: rotate(-1.4deg);
 }
 
 .carrousel-produits__carte:hover {
-  transform: translateY(-6px);
+  transform: translateY(-8px) rotate(0deg);
+  box-shadow: 0 26px 54px -20px rgba(69, 41, 30, 0.32);
+}
+
+.carrousel-produits__lien {
+  display: block;
 }
 
 .carrousel-produits__image {
   position: relative;
   background-color: var(--nabe-sable);
-  border-radius: 0;
   overflow: hidden;
   aspect-ratio: 1;
-  margin-bottom: 0.55rem;
+  margin-bottom: 0;
   box-shadow: none;
+  border-radius: 0;
 }
 
 .carrousel-produits__badge-promo {
   position: absolute;
-  top: 10px;
-  left: 10px;
-  background: rgba(255, 255, 255, 0.88);
-  color: var(--nabe-terracotta);
-  font-size: 0.54rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
+  top: 12px;
+  left: 12px;
+  background: var(--nabe-terracotta);
+  color: var(--texte-clair, #fffdfa);
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  padding: 0.18rem 0.5rem;
-  border-radius: 999px;
+  padding: 0.32rem 0.7rem;
+  border-radius: 100px 4px 100px 4px;
   z-index: 2;
 }
 
 .carrousel-produits__badge-nouveau {
   position: absolute;
-  top: 10px;
-  left: 10px;
-  background: rgba(255, 255, 255, 0.88);
-  color: var(--nabe-terracotta);
-  font-size: 0.48rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
+  top: 12px;
+  left: 12px;
+  background: var(--nabe-terracotta);
+  color: var(--texte-clair, #fffdfa);
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  padding: 0.16rem 0.44rem;
-  border-radius: 999px;
+  padding: 0.32rem 0.7rem;
+  border-radius: 100px 4px 100px 4px;
   z-index: 2;
 }
 
@@ -111,25 +123,27 @@
 }
 
 .carrousel-produits__carte h3 {
-  font-family: var(--font-texte);
-  font-size: 0.92rem;
-  font-weight: 500;
-  margin: 0 0 0.2rem 0.7rem;
+  font-family: var(--font-titres);
+  font-weight: 450;
+  font-size: 1.02rem;
+  margin: 0;
+  padding: 1.1rem 1.2rem 0;
   color: var(--nabe-brun-fonce);
 }
 
-.carrousel-produits__carte span {
-  font-weight: 600;
-  font-size: 0.9rem;
-  color: var(--nabe-terracotta);
+.carrousel-produits__carte span.carrousel-produits__prix,
+.carrousel-produits__carte span.carrousel-produits__prix--promo {
   display: block;
-  padding: 0 0.7rem 0.75rem;
+  padding: 0.35rem 1.2rem 1.3rem;
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: var(--nabe-terracotta);
 }
 
 .carrousel-produits__coeur {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 12px;
+  right: 12px;
   background-color: rgba(255, 255, 255, 0.9);
   width: 34px;
   height: 34px;
