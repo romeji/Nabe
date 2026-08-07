@@ -27,7 +27,7 @@ const cormorantGaramond = Cormorant_Garamond({
 // grands titres, avec italique pour les mots d'accent.
 const fraunces = Fraunces({
   subsets: ['latin'],
-  weight: ['400', '450', '500', '600'],
+  weight: ['400', '500', '600'],
   style: ['normal', 'italic'],
   variable: '--font-fraunces',
   display: 'swap',
