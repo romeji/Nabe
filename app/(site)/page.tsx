@@ -9,6 +9,7 @@ import CarrouselProduits from '@/components/site/CarrouselProduits';
 import TexteRiche from '@/components/site/TexteRiche';
 import CategoriesAccueil from '@/components/site/CategoriesAccueil';
 import ModulesAccueil from '@/components/site/ModulesAccueil';
+import InstagramModule from '@/components/site/InstagramModule';
 import './accueil.css';
 
 export const revalidate = 60;
@@ -304,6 +305,9 @@ export default async function PageAccueil() {
           <CarrouselProduits produits={serialiser(bestsellers)} favorisIds={idsFavoris} />
         </section>
       )}
+
+      {/* INSTAGRAM */}
+      <InstagramModule config={config} />
 
       {/* TEMOIGNAGES */}
       {temoignages.length > 0 && (

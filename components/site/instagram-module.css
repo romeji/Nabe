@@ -29,9 +29,15 @@
   padding: 0.78rem 1.25rem;
   border-radius: 999px;
   background: var(--nabe-brun-fonce);
-  color: #fff;
+  color: var(--texte-clair);
   font-size: 0.8rem;
   font-weight: 600;
+  transition: var(--transition-douce);
+}
+
+.instagram-module__suivre:hover {
+  background: var(--nabe-terracotta);
+  transform: translateY(-1px);
 }
 
 .instagram-module__suivre svg { width: 18px; height: 18px; }
@@ -47,20 +53,82 @@
   min-width: 0;
   overflow: hidden;
   aspect-ratio: 9 / 14;
-  border-radius: 18px;
-  background: linear-gradient(145deg, var(--nabe-sable), var(--nabe-terracotta));
+  border-radius: var(--rayon-arche);
+  background: linear-gradient(155deg, var(--ig-c1, var(--nabe-sable)) 0%, var(--ig-c2, var(--nabe-terracotta)) 100%);
   box-shadow: var(--ombre-douce);
+  isolation: isolate;
+}
+
+/* Cinq déclinaisons de la palette Nabe, pour varier les vignettes */
+.instagram-module__carte:nth-child(1) { --ig-c1: var(--nabe-sable); --ig-c2: var(--nabe-terracotta); }
+.instagram-module__carte:nth-child(2) { --ig-c1: var(--nabe-argile-clair); --ig-c2: var(--nabe-terracotta-fonce); }
+.instagram-module__carte:nth-child(3) { --ig-c1: var(--nabe-sable-fonce); --ig-c2: var(--nabe-argile); }
+.instagram-module__carte:nth-child(4) { --ig-c1: var(--nabe-argile); --ig-c2: var(--nabe-brun); }
+.instagram-module__carte:nth-child(5) { --ig-c1: var(--nabe-sable); --ig-c2: var(--nabe-or); }
+
+.instagram-module__carte::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(42, 28, 20, 0.55) 0%, rgba(42, 28, 20, 0) 42%);
+  z-index: 1;
+  pointer-events: none;
 }
 
 .instagram-module__carte video,
 .instagram-module__carte iframe {
+  position: relative;
   width: 100%;
   height: 100%;
   border: 0;
   object-fit: cover;
 }
 
+.instagram-module__badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  color: #fff;
+}
+
+.instagram-module__badge svg { width: 13px; height: 13px; }
+
+.instagram-module__lecture {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  color: #fff;
+  transition: var(--transition-douce);
+}
+
+.instagram-module__lecture:hover {
+  transform: translate(-50%, -50%) scale(1.08);
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.instagram-module__lecture svg { width: 15px; height: 15px; margin-left: 2px; }
+
 .instagram-module__lien-externe {
+  position: relative;
+  z-index: 2;
   display: grid;
   height: 100%;
   place-items: center;
@@ -78,8 +146,8 @@
   gap: 1rem;
   min-height: 9.5rem;
   padding: 1.5rem 2rem;
-  border-radius: 22px;
-  background: #f1dfcc;
+  border-radius: var(--rayon-arche);
+  background: var(--nabe-sable-fonce);
   color: var(--texte-principal);
   text-align: center;
   box-shadow: var(--ombre-douce);
