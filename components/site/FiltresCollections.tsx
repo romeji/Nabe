@@ -57,6 +57,15 @@ export default function FiltresCollections({
     } else {
       params.delete(cle);
     }
+    // Le filtre "Type de bijou" et la navigation par catégorie (depuis les
+    // tuiles de l'accueil, paramètre "categorie") désignent tous les deux le
+    // type de bijou pour la personne qui visite le site. Les laisser cumulés
+    // produisait des URL contradictoires comme "?categorie=bague&type=collier"
+    // (aucun bijou n'appartient aux deux à la fois) : on garde donc un seul
+    // des deux filtres actif à la fois.
+    if (cle === 'type') {
+      params.delete('categorie');
+    }
     router.push(`/nos-bijoux?${params.toString()}`);
   }
 

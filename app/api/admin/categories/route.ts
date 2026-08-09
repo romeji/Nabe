@@ -30,10 +30,18 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Le nom est requis' }, { status: 400 });
     }
 
+    // Comme pour les produits : si le nom donne un slug déjà pris, on
+    // désambiguïse automatiquement au lieu de faire échouer la création.
+    let slug = slugify(nom);
+    const existant = await prisma.categorie.findUnique({ where: { slug } });
+    if (existant) {
+      slug = `${slug}-${Date.now().toString().slice(-4)}`;
+    }
+
     const categorie = await prisma.categorie.create({
       data: {
         nom: nom.trim(),
-        slug: slugify(nom),
+        slug,
         description: description?.trim() || null,
         image: image || null,
         imageAccueilFond: imageAccueilFond || null,

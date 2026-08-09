@@ -1,3 +1,5 @@
+import { nettoyerHtml } from '@/lib/sanitize';
+
 export default function TexteRiche({
   html,
   className,
@@ -8,5 +10,5 @@ export default function TexteRiche({
   as?: 'div' | 'span';
 }) {
   const Balise = as;
-  return <Balise className={className} dangerouslySetInnerHTML={{ __html: html }} />;
+  return <Balise className={className} dangerouslySetInnerHTML={{ __html: nettoyerHtml(html) }} />;
 }

@@ -8,6 +8,10 @@ import './produit.css';
 
 export const revalidate = 60;
 
+// Même seuil que sur l'accueil : un produit publié depuis moins de 21 jours
+// est considéré comme "nouveau" et porte le badge correspondant.
+const DUREE_NOUVEAU_JOURS = 21;
+
 type Props = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: Props) {
@@ -98,6 +102,15 @@ export default async function PageProduit({ params }: Props) {
       }))
     : false;
 
+  const favorisSuggestions =
+    clientId && suggestions.length > 0
+      ? await prisma.favori.findMany({
+          where: { clientId, produitId: { in: suggestions.map((s: any) => s.id) } },
+          select: { produitId: true },
+        })
+      : [];
+  const idsFavorisSuggestions = favorisSuggestions.map((f: any) => f.produitId);
+
   // On sérialise les champs Decimal (non transmissibles tels quels du serveur au client)
   // et on met les pierres / produits composables à plat pour le composant client.
   const produitSerialise = {
@@ -111,6 +124,7 @@ export default async function PageProduit({ params }: Props) {
       couleurs: pp.pierre.couleurs.map((pc: any) => ({ nom: pc.couleurPierre.nom, codeHex: pc.couleurPierre.codeHex })),
     })),
   };
+  const seuilNouveau = Date.now() - DUREE_NOUVEAU_JOURS * 24 * 60 * 60 * 1000;
   const suggestionsSerialisees = suggestions.map((s: any) => ({
     ...s,
     prix: s.prix.toString(),
@@ -118,6 +132,7 @@ export default async function PageProduit({ params }: Props) {
     promoActive: s.promoActive,
     promoDebut: s.promoDebut ? s.promoDebut.toISOString() : null,
     promoFin: s.promoFin ? s.promoFin.toISOString() : null,
+    nouveau: new Date(s.createdAt).getTime() > seuilNouveau,
   }));
   const composables = produit.composerAvecActif
     ? produit.composeAvec.map((c: any) => ({
@@ -167,6 +182,7 @@ export default async function PageProduit({ params }: Props) {
         suggestions={suggestionsSerialisees as any}
         suggestionsActives={suggestionsActives}
         estFavori={estFavori}
+        favorisSuggestionsIds={idsFavorisSuggestions}
         composables={composables}
         galeriePosition={galeriePosition}
         popupOuvertureActive={configEstActive(config, 'popup_panier_ouverture_actif')}

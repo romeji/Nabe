@@ -19,11 +19,6 @@ export const DEFAUTS_CONFIG: Record<string, string> = {
   galerie_produit_position: 'bas', // 'gauche' (vignettes à gauche, classique) ou 'bas' (vignettes sous l'image, plus aéré)
   categories_accueil_actif: 'false',
   categories_accueil_ids: '', // jusqu'à 4 ids de Categorie séparés par des virgules
-  accueil_module_video_actif: 'false',
-  accueil_module_video_titre: "Dans les coulisses de l'atelier",
-  accueil_module_video_texte: 'Un geste, une matière, une pièce qui prend forme lentement.',
-  accueil_module_video_url: '',
-  accueil_module_video_poster: '',
   instagram_module_actif: 'true',
   instagram_profil_url: 'https://www.instagram.com/nabe.bijoux/',
   instagram_identifiant: '@nabe.bijoux',
@@ -110,7 +105,12 @@ export async function getConfigSite(): Promise<Record<string, string>> {
   const valeurs = { ...DEFAUTS_CONFIG };
 
   try {
-    const enregistres = await avecDelaiBase(prisma.configSite.findMany());
+    // Délai volontairement plus long que le défaut (1,5 s) : Neon suspend son
+    // compute après une période d'inactivité et son réveil peut dépasser 1,5 s.
+    // Comme cette fonction conditionne l'affichage de tous les modules de
+    // l'accueil, un dépassement ici faisait disparaître les modules au tout
+    // premier chargement (avant que Neon ne soit "réveillé").
+    const enregistres = await avecDelaiBase(prisma.configSite.findMany(), 5000);
     enregistres.forEach((item: any) => {
       valeurs[item.cle] = item.valeur;
     });

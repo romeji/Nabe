@@ -27,6 +27,7 @@
   --nabe-brun: #6b4a3a;
   --nabe-brun-fonce: #45291e;
   --nabe-noir: #2a1c14;
+  --nabe-encre: #2a1c14;
   --nabe-blanc: #ffffff;
 
   /* Alias conservés pour compatibilité avec le code existant */
@@ -259,9 +260,10 @@ textarea::placeholder {
   color: var(--nabe-terracotta);
 }
 
-/* Texte accent (mots colorés dans les titres) */
+/* Texte accent (mots colorés dans les titres) — doré, pour un rappel
+   récurrent de la couleur dorée à travers les titres de section du site */
 .accent {
-  color: var(--nabe-terracotta);
+  color: var(--nabe-or);
   font-style: italic;
 }
 

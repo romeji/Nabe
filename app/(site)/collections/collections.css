@@ -1,3 +1,39 @@
+.collections-fil-ariane {
+  padding: calc(var(--espace-md) + 5.5rem) var(--espace-md) 0;
+  font-size: 0.8rem;
+  color: var(--texte-secondaire);
+}
+
+.collections-fil-ariane a {
+  color: var(--texte-secondaire);
+}
+
+.collections-fil-ariane a:hover {
+  color: var(--nabe-terracotta);
+}
+
+.collections-entete {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--espace-md);
+  flex-wrap: wrap;
+  padding: var(--espace-md) var(--espace-md) 0;
+}
+
+.collections-entete h1 {
+  margin: 0.3rem 0 0.3rem;
+}
+
+.collections-entete p {
+  color: var(--texte-secondaire);
+}
+
+.collections-entete-separateur {
+  margin: var(--espace-lg) auto 0;
+  border-top: 1px solid var(--nabe-argile);
+}
+
 .collections-corps {
   display: flex;
   gap: var(--espace-xl);
@@ -9,26 +45,25 @@
   flex: 1;
 }
 
-.collections-resultats__entete {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: var(--espace-md);
-  color: var(--texte-secondaire);
-  font-size: 0.9rem;
-  flex-wrap: wrap;
-  gap: var(--espace-sm);
-}
-
 .collections-grille {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: var(--espace-md);
 }
 
 .produit-carte {
   display: block;
   position: relative;
+  background: var(--nabe-blanc, #fffdfa);
+  border-radius: 28px 12px 28px 12px;
+  overflow: hidden;
+  box-shadow: 0 18px 40px -22px rgba(69, 41, 30, 0.28);
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.produit-carte:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 26px 54px -20px rgba(69, 41, 30, 0.32);
 }
 
 .produit-carte__lien {
@@ -38,11 +73,8 @@
 .produit-carte__image {
   position: relative;
   background-color: var(--nabe-sable);
-  border-radius: 18px;
   overflow: hidden;
   aspect-ratio: 1;
-  margin-bottom: var(--espace-sm);
-  box-shadow: var(--ombre-douce);
 }
 
 .produit-carte__image img {
@@ -59,8 +91,18 @@
 .produit-carte__placeholder {
   width: 100%;
   height: 100%;
-  background-color: var(--nabe-sable-fonce);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.92);
+  background: linear-gradient(155deg, var(--c1, var(--nabe-argile-clair)) 0%, var(--c2, var(--nabe-terracotta)) 100%);
 }
+
+.produit-carte:nth-child(5n + 1) .produit-carte__placeholder { --c1: #e8c9ae; --c2: #c17f5c; }
+.produit-carte:nth-child(5n + 2) .produit-carte__placeholder { --c1: #d9a986; --c2: #a85a3c; }
+.produit-carte:nth-child(5n + 3) .produit-carte__placeholder { --c1: #efdcc6; --c2: #ce9b78; }
+.produit-carte:nth-child(5n + 4) .produit-carte__placeholder { --c1: #ddb08c; --c2: #8e4a30; }
+.produit-carte:nth-child(5n + 5) .produit-carte__placeholder { --c1: #e3c4a6; --c2: #b76b45; }
 
 .produit-carte__coeur {
   position: absolute;
@@ -74,32 +116,37 @@
   align-items: center;
   justify-content: center;
   font-size: 1rem;
-  z-index: 1;
+  z-index: 2;
   box-shadow: var(--ombre-douce);
 }
 
 .produit-carte h3 {
-  font-size: 1.05rem;
-  margin-bottom: 2px;
+  font-size: 1.02rem;
+  font-weight: 450;
+  margin: 0;
+  padding: 1.1rem 1.2rem 0;
   font-family: var(--font-titres);
+  color: var(--nabe-brun-fonce, var(--texte-principal));
 }
 
 .produit-carte__details {
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   color: var(--texte-secondaire);
-  margin-bottom: 4px;
+  margin: 0.15rem 0 0;
+  padding: 0 1.2rem;
 }
 
 .produit-carte__prix {
-  font-weight: 600;
-  color: var(--texte-principal);
+  display: block;
+  font-weight: 700;
+  color: var(--nabe-terracotta);
+  padding: 0.35rem 1.2rem 1.3rem;
 }
 
 .produit-carte__prix--promo {
-  display: inline-flex;
-  align-items: center;
+  display: flex;
+  align-items: baseline;
   gap: 0.4rem;
-  flex-wrap: wrap;
 }
 
 .produit-carte__prix-barre {
@@ -115,12 +162,33 @@
 }
 
 .produit-carte__badge-promo {
+  position: absolute;
+  top: 12px;
+  left: 12px;
   background: var(--nabe-terracotta, #9f5434);
   color: #fff;
-  font-size: 0.68rem;
-  font-weight: 700;
-  padding: 0.1rem 0.4rem;
-  border-radius: 999px;
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.32rem 0.7rem;
+  border-radius: 100px 4px 100px 4px;
+  z-index: 2;
+}
+
+.produit-carte__badge-nouveau {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: var(--nabe-terracotta, #9f5434);
+  color: #fff;
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.32rem 0.7rem;
+  border-radius: 100px 4px 100px 4px;
+  z-index: 2;
 }
 
 .collections-vide {
@@ -131,7 +199,7 @@
 
 @media (max-width: 1100px) {
   .collections-grille {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 

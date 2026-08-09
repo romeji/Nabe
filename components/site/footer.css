@@ -17,7 +17,7 @@
   font-family: var(--font-logo);
   font-size: clamp(3rem, 5vw, 4.4rem);
   line-height: 0.9;
-  color: #f5e7d9;
+  color: var(--nabe-or-clair);
   display: block;
   margin-bottom: 0.7rem;
 }

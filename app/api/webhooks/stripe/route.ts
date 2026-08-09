@@ -254,7 +254,7 @@ export async function POST(req: NextRequest) {
 
       const commande = await prisma.commande.create({
         data: {
-          numero: genererNumeroCommande(),
+          numero: await genererNumeroCommande(),
           statut: 'PAYEE',
           clientId,
           clientNom: `${meta.prenom || ''} ${meta.nom || ''}`.trim() || 'Client',
@@ -365,7 +365,7 @@ export async function POST(req: NextRequest) {
 
       const commande = await prisma.commande.create({
         data: {
-          numero: genererNumeroCommande(),
+          numero: await genererNumeroCommande(),
           statut: 'PAYEE',
           clientId,
           clientNom: session.customer_details?.name || 'Client',

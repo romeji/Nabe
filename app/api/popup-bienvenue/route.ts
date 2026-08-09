@@ -9,6 +9,18 @@ function genererSegmentCode(): string {
   return Math.random().toString(36).substring(2, 7).toUpperCase();
 }
 
+// Même précaution que pour genererNumeroCommande : `code` a une contrainte
+// @unique en base, donc on vérifie l'unicité avant de l'utiliser plutôt que
+// de faire confiance à Math.random() seul.
+async function genererCodeBienvenueUnique(): Promise<string> {
+  for (let tentative = 0; tentative < 10; tentative++) {
+    const code = `BIENVENUE-${genererSegmentCode()}`;
+    const existant = await prisma.codeReduction.findUnique({ where: { code }, select: { id: true } });
+    if (!existant) return code;
+  }
+  return `BIENVENUE-${Date.now().toString(36).toUpperCase()}`;
+}
+
 export async function POST(req: NextRequest) {
   try {
     const { autorise } = await verifierLimiteTaux('popup-bienvenue', obtenirIp(req), 5, 60);
@@ -34,7 +46,7 @@ export async function POST(req: NextRequest) {
 
     // Un code par personne : on génère un code unique à usage unique, lié à cet email
     // via l'inscription newsletter déjà faite ci-dessus.
-    const code = `BIENVENUE-${genererSegmentCode()}`;
+    const code = await genererCodeBienvenueUnique();
 
     const codeReduction = await prisma.codeReduction.create({
       data: {

@@ -31,19 +31,51 @@ function urlEmbedInstagram(url: string) {
   }
 }
 
-const IconeInstagram = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
-    <rect x="3" y="3" width="18" height="18" rx="5" />
-    <circle cx="12" cy="12" r="4" />
-    <circle cx="17.2" cy="6.8" r="0.6" fill="currentColor" stroke="none" />
-  </svg>
-);
+// Une vidéo directe (mp4/webm/mov) : lecteur minimal maison — la vidéo
+// remplit toute la carte, un bouton play est la seule chose ajoutée
+// par-dessus, et il disparaît dès que la lecture démarre. Pas de barre de
+// contrôle native du navigateur, pas de badge, pas de texte.
+function CarteVideoDirecte({ url, index }: { url: string; index: number }) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [enLecture, setEnLecture] = useState(false);
 
-const IconeLecture = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M8 5v14l11-7z" />
-  </svg>
-);
+  function basculerLecture() {
+    const video = videoRef.current;
+    if (!video) return;
+    if (video.paused) video.play();
+    else video.pause();
+  }
+
+  return (
+    <article
+      className={`instagram-module__carte${enLecture ? ' instagram-module__carte--en-lecture' : ''}`}
+      onClick={basculerLecture}
+    >
+      <video
+        ref={videoRef}
+        playsInline
+        preload="metadata"
+        src={url}
+        onPlay={() => setEnLecture(true)}
+        onPause={() => setEnLecture(false)}
+        onEnded={() => setEnLecture(false)}
+      />
+      {!enLecture && (
+        <button
+          type="button"
+          className="instagram-module__play"
+          aria-label={`Lire la vidéo ${index + 1}`}
+          onClick={(e) => {
+            e.stopPropagation();
+            basculerLecture();
+          }}
+        >
+          <svg viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z" /></svg>
+        </button>
+      )}
+    </article>
+  );
+}
 
 export default function InstagramModule({ config }: InstagramModuleProps) {
   const urls = (config.instagram_videos || '')
@@ -52,25 +84,15 @@ export default function InstagramModule({ config }: InstagramModuleProps) {
     .filter(estUrlValide)
     .slice(0, 5);
 
-  // La section reste visible comme état d'attente engageant avant qu'un
-  // premier Reel ne soit sélectionné depuis l'administration. Une fois des
-  // vidéos présentes, l'interrupteur admin peut toujours masquer le module.
+  // La section reste visible comme état d'attente engageant avant qu'un premier
+  // Reel ne soit sélectionné en administration. Une fois des vidéos présentes,
+  // l'interrupteur admin peut toujours masquer tout le module.
   if (config.instagram_module_actif === 'false' && urls.length > 0) return null;
 
   const profil = estUrlValide(config.instagram_profil_url || '')
     ? config.instagram_profil_url
     : 'https://www.instagram.com/nabe.bijoux/';
   const identifiant = config.instagram_identifiant?.trim() || '@nabe.bijoux';
-
-  const [demarrees, setDemarrees] = useState<Record<number, boolean>>({});
-  const refsVideo = useRef<Record<number, HTMLVideoElement | null>>({});
-
-  function lancerLecture(index: number) {
-    setDemarrees((etat) => ({ ...etat, [index]: true }));
-    // Le play() est déclenché après le rendu du <video autoPlay>, mais on
-    // le tente aussi ici pour les navigateurs qui en ont besoin explicitement.
-    requestAnimationFrame(() => refsVideo.current[index]?.play().catch(() => {}));
-  }
 
   return (
     <section className="instagram-module conteneur" aria-label="Vidéos Instagram">
@@ -80,11 +102,15 @@ export default function InstagramModule({ config }: InstagramModuleProps) {
           <h2>
             Nabe sur <span className="accent">Instagram</span>
           </h2>
-          <p>Dans l&apos;atelier, entre deux créations : les coulisses, les nouveautés et les pièces portées.</p>
+          <p>Dans l&apos;atelier, entre deux créations : les coulisses, les nouveautés et les pièces portées, en images.</p>
         </div>
         {profil && (
           <a className="instagram-module__suivre" href={profil} target="_blank" rel="noreferrer noopener">
-            <IconeInstagram />
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
+              <rect x="3" y="3" width="18" height="18" rx="5" />
+              <circle cx="12" cy="12" r="4" />
+              <circle cx="17.2" cy="6.8" r="0.6" fill="currentColor" stroke="none" />
+            </svg>
             {identifiant}
           </a>
         )}
@@ -94,39 +120,12 @@ export default function InstagramModule({ config }: InstagramModuleProps) {
         <div className="instagram-module__videos">
           {urls.map((url, index) => {
             const embed = urlEmbedInstagram(url);
-            const video = estVideoDirecte(url);
-            const lancee = demarrees[index];
-
+            if (estVideoDirecte(url)) {
+              return <CarteVideoDirecte key={`${url}-${index}`} url={url} index={index} />;
+            }
             return (
               <article className="instagram-module__carte" key={`${url}-${index}`}>
-                <span className="instagram-module__badge" aria-hidden="true">
-                  <IconeInstagram />
-                </span>
-
-                {video ? (
-                  <>
-                    <video
-                      ref={(el) => {
-                        refsVideo.current[index] = el;
-                      }}
-                      controls={lancee}
-                      autoPlay={lancee}
-                      playsInline
-                      preload="metadata"
-                      src={url}
-                    />
-                    {!lancee && (
-                      <button
-                        type="button"
-                        className="instagram-module__lecture"
-                        onClick={() => lancerLecture(index)}
-                        aria-label={`Lire la vidéo ${index + 1}`}
-                      >
-                        <IconeLecture />
-                      </button>
-                    )}
-                  </>
-                ) : embed ? (
+                {embed ? (
                   <iframe
                     src={embed}
                     title={`Publication Instagram ${index + 1}`}
@@ -135,7 +134,9 @@ export default function InstagramModule({ config }: InstagramModuleProps) {
                   />
                 ) : (
                   <a href={url} target="_blank" rel="noreferrer noopener" className="instagram-module__lien-externe">
-                    Voir la vidéo
+                    <span className="instagram-module__play" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z" /></svg>
+                    </span>
                   </a>
                 )}
               </article>
@@ -145,12 +146,13 @@ export default function InstagramModule({ config }: InstagramModuleProps) {
       ) : (
         <a className="instagram-module__attente" href={profil} target="_blank" rel="noreferrer noopener">
           <span className="instagram-module__attente-icone" aria-hidden="true">
-            <IconeInstagram />
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <rect x="3" y="3" width="18" height="18" rx="5" />
+              <circle cx="12" cy="12" r="4" />
+              <circle cx="17.2" cy="6.8" r="0.6" fill="currentColor" stroke="none" />
+            </svg>
           </span>
-          <span>
-            <strong>Les prochaines vidéos arrivent ici.</strong> Retrouvez dès maintenant les coulisses de Nabe sur
-            Instagram.
-          </span>
+          <span><strong>Les prochaines vidéos arrivent ici.</strong> Retrouvez dès maintenant les coulisses de Nabe sur Instagram.</span>
         </a>
       )}
 

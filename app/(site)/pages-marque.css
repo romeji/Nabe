@@ -1,12 +1,14 @@
 .page-marque {
-  --marque-fond: #fbf8f5;
-  --marque-papier: #fffdfb;
-  --marque-ligne: rgba(97, 62, 43, 0.13);
-  --marque-texte: #2f2119;
-  --marque-muted: #5f5047;
-  --marque-cuivre: #a84f2f;
-  --marque-cuivre-fonce: #8f3f24;
-  --marque-rose: #c98d77;
+  /* Repris des variables globales du site (--nabe-*) au lieu de tons propres
+     à ces pages, pour une palette identique partout sur le site. */
+  --marque-fond: var(--nabe-creme);
+  --marque-papier: var(--nabe-blanc);
+  --marque-ligne: rgba(69, 41, 30, 0.13);
+  --marque-texte: var(--nabe-brun-fonce);
+  --marque-muted: var(--texte-secondaire);
+  --marque-cuivre: var(--nabe-terracotta);
+  --marque-cuivre-fonce: var(--nabe-terracotta-fonce);
+  --marque-rose: var(--nabe-argile);
   color: var(--marque-texte);
   background: var(--marque-fond);
   overflow: hidden;
@@ -27,7 +29,7 @@
 .marque-label {
   display: block;
   margin-bottom: 1.05rem;
-  color: #603625;
+  color: var(--nabe-terracotta-fonce);
   font-size: 0.66rem;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -155,7 +157,7 @@
 .marque-frise {
   padding: clamp(2.3rem, 6vw, 4.2rem) clamp(1.35rem, 5vw, 4.5rem);
   text-align: center;
-  background: #f4dfc9;
+  background: var(--nabe-sable);
 }
 
 .marque-frise__grille,
@@ -183,7 +185,7 @@
   left: calc(50% + 2.4rem);
   width: calc(100% - 4.8rem);
   height: 1px;
-  background: #9d765d;
+  background: var(--nabe-argile);
 }
 
 .marque-frise__item h3,
@@ -231,8 +233,8 @@
 .marque-citation {
   padding: clamp(3.2rem, 7vw, 5.2rem) 1.5rem;
   text-align: center;
-  background: linear-gradient(135deg, #b96d54, #d7a28d);
-  color: #fff8f3;
+  background: linear-gradient(135deg, var(--nabe-argile-clair), var(--nabe-terracotta));
+  color: var(--nabe-blanc);
 }
 
 .marque-citation span {
@@ -327,7 +329,7 @@
 .engagements-fabrication {
   display: grid;
   grid-template-columns: 0.95fr 1.05fr;
-  background: #f2dfcd;
+  background: var(--nabe-sable);
 }
 
 .engagements-fabrication__texte {
@@ -353,7 +355,7 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   padding: clamp(2rem, 5vw, 3.8rem) clamp(1.2rem, 5vw, 4rem);
-  background: linear-gradient(90deg, #9e4327, #c75c34);
+  background: linear-gradient(90deg, var(--nabe-terracotta-fonce), var(--nabe-terracotta));
   color: #fff;
   text-align: center;
 }
@@ -443,8 +445,8 @@
   align-items: center;
   justify-content: center;
   border-radius: 999px;
-  background: #f2dfcd;
-  color: #9e6547;
+  background: var(--nabe-sable);
+  color: var(--nabe-terracotta-fonce);
   font-size: 0.78rem;
   font-weight: 700;
 }
@@ -470,7 +472,7 @@
 }
 
 .artisanat-materiaux {
-  background: #f4dfc9;
+  background: var(--nabe-sable);
 }
 
 .artisanat-materiaux__grille {
@@ -498,7 +500,7 @@
 .artisanat-qualites {
   padding: clamp(2.4rem, 6vw, 4.6rem) clamp(1.35rem, 5vw, 4rem);
   text-align: center;
-  background: linear-gradient(135deg, #bd765f, #d59b87);
+  background: linear-gradient(135deg, var(--nabe-argile-clair), var(--nabe-terracotta));
   color: #fff;
 }
 
@@ -530,7 +532,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: #a76e44;
+  color: var(--nabe-terracotta);
   border: 1px solid currentColor;
   border-radius: 999px;
 }

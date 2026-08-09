@@ -128,7 +128,7 @@
 .checkout__adresse-carte input {
   width: auto;
   margin-top: 0.2rem;
-  accent-color: var(--nabe-terracotta, #9f5434);
+  accent-color: var(--nabe-or);
 }
 
 .checkout__adresse-carte strong {
@@ -180,7 +180,7 @@
 
 .checkout__option-expedition-choix input {
   width: auto;
-  accent-color: var(--nabe-terracotta, #9f5434);
+  accent-color: var(--nabe-or);
 }
 
 .checkout__option-expedition-choix span {

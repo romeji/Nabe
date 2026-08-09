@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import PopupLaterale from './PopupLaterale';
+import { nettoyerHtml } from '@/lib/sanitize';
 import './popup-laterale.css';
 
 interface Section { cle: string; titre: string; contenu: string; }
@@ -25,7 +26,7 @@ export default function PopupEntretien({ ouverte, onFermer }: { ouverte: boolean
       <div className="popup-politique">
         {intro && (
           <>
-            <div className="popup-politique__intro" dangerouslySetInnerHTML={{ __html: intro.contenu }} />
+            <div className="popup-politique__intro" dangerouslySetInnerHTML={{ __html: nettoyerHtml(intro.contenu) }} />
             <div className="popup-politique__separateur" />
           </>
         )}
@@ -33,7 +34,7 @@ export default function PopupEntretien({ ouverte, onFermer }: { ouverte: boolean
           <div key={item.cle} className="popup-politique__section">
             <h3 className="popup-politique__section-titre">{item.titre}</h3>
             <div className="popup-politique__section-corps">
-              <div dangerouslySetInnerHTML={{ __html: item.contenu }} />
+              <div dangerouslySetInnerHTML={{ __html: nettoyerHtml(item.contenu) }} />
             </div>
             <div className="popup-politique__separateur" />
           </div>

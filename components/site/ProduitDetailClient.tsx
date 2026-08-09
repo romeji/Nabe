@@ -54,6 +54,7 @@ type Suggestion = {
   promoActive?: boolean;
   promoDebut?: string | null;
   promoFin?: string | null;
+  nouveau?: boolean;
 };
 
 type ProduitComposable = {
@@ -73,6 +74,7 @@ export default function ProduitDetailClient({
   suggestions,
   suggestionsActives,
   estFavori,
+  favorisSuggestionsIds = [],
   composables,
   galeriePosition = 'bas',
   popupOuvertureActive = true,
@@ -81,6 +83,7 @@ export default function ProduitDetailClient({
   suggestions: Suggestion[];
   suggestionsActives: boolean;
   estFavori: boolean;
+  favorisSuggestionsIds?: string[];
   composables: ProduitComposable[];
   galeriePosition?: 'gauche' | 'bas';
   popupOuvertureActive?: boolean;
@@ -381,7 +384,10 @@ export default function ProduitDetailClient({
 
       {suggestionsActives && suggestions.length > 0 && (
         <div className="produit-suggestions conteneur">
-          <h2>Découvrez également ces créations</h2>
+          <div className="produit-suggestions__entete">
+            <span className="etiquette">Complétez le look</span>
+            <h2>Découvrez également ces <span className="accent">créations</span></h2>
+          </div>
           <div className="produit-suggestions__grille">
             {suggestions.map((s: any) => {
               const sEnPromo = promoEstActive({
@@ -391,29 +397,38 @@ export default function ProduitDetailClient({
                 promoFin: s.promoFin,
               });
               return (
-                <Link key={s.id} href={`/collections/${s.slug}`} className="produit-suggestions__carte">
-                  <div className="produit-suggestions__image-conteneur">
-                    {s.images[0] ? (
-                      <Image src={s.images[0].url} alt={s.nom} width={250} height={250} />
-                    ) : (
-                      <div className="produit-suggestions__placeholder" />
-                    )}
-                    {sEnPromo && (
-                      <span className="produit-suggestions__badge-promo">
-                        -{pourcentageReduction(s.prix, s.prixPromo!)}%
+                <div key={s.id} className="produit-suggestions__carte">
+                  <Link href={`/collections/${s.slug}`} className="produit-suggestions__lien">
+                    <div className="produit-suggestions__image-conteneur">
+                      {s.images[0] ? (
+                        <Image src={s.images[0].url} alt={s.nom} width={250} height={250} />
+                      ) : (
+                        <div className="produit-suggestions__placeholder" />
+                      )}
+                      {sEnPromo ? (
+                        <span className="produit-suggestions__badge-promo">
+                          -{pourcentageReduction(s.prix, s.prixPromo!)}%
+                        </span>
+                      ) : (
+                        s.nouveau && <span className="produit-suggestions__badge-nouveau">Nouveau</span>
+                      )}
+                    </div>
+                    <p className="produit-suggestions__nom">{s.nom}</p>
+                    {sEnPromo ? (
+                      <span className="produit-suggestions__prix produit-suggestions__prix--promo">
+                        <span className="produit-suggestions__prix-barre">{formaterPrix(s.prix)}</span>
+                        <span className="produit-suggestions__prix-reduit">{formaterPrix(s.prixPromo!)}</span>
                       </span>
+                    ) : (
+                      <span className="produit-suggestions__prix">{formaterPrix(s.prix)}</span>
                     )}
-                  </div>
-                  <p>{s.nom}</p>
-                  {sEnPromo ? (
-                    <span className="produit-suggestions__prix--promo">
-                      <span className="produit-suggestions__prix-barre">{formaterPrix(s.prix)}</span>
-                      <span className="produit-suggestions__prix-reduit">{formaterPrix(s.prixPromo!)}</span>
-                    </span>
-                  ) : (
-                    <span>{formaterPrix(s.prix)}</span>
-                  )}
-                </Link>
+                  </Link>
+                  <BoutonFavori
+                    produitId={s.id}
+                    initialementFavori={favorisSuggestionsIds.includes(s.id)}
+                    className="produit-suggestions__coeur"
+                  />
+                </div>
               );
             })}
           </div>

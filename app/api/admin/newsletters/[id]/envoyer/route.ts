@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { verifierSessionAdmin } from '@/lib/auth-helpers';
 import { resend, EMAIL_EXPEDITEUR, genererHtmlNewsletter } from '@/lib/resend';
 import { genererTokenDesabonnement } from '@/lib/newsletter-token';
+import { nettoyerHtml } from '@/lib/sanitize';
 
 // Resend limite l'API batch à 100 emails par appel. On découpe donc l'envoi
 // en lots de 100, chaque email étant individuellement adressé (nécessaire
@@ -35,6 +36,10 @@ export async function POST(req: NextRequest, { params: paramsPromise }: { params
       );
     }
 
+    // Nettoyage du HTML avant envoi réel aux abonnés (protection en profondeur
+    // si un compte admin était un jour compromis — voir lib/sanitize.ts).
+    const contenuNettoye = nettoyerHtml(newsletter.contenu);
+
     // Envoi par lots de TAILLE_LOT, un email personnalisé par destinataire.
     // Important : le SDK Resend ne lève pas d'exception pour les erreurs de
     // l'API — il renvoie { data, error }. On vérifie donc explicitement.
@@ -50,7 +55,7 @@ export async function POST(req: NextRequest, { params: paramsPromise }: { params
             from: EMAIL_EXPEDITEUR,
             to: abonne.email,
             subject: newsletter.sujet,
-            html: genererHtmlNewsletter(newsletter.sujet, newsletter.contenu, abonne.email, genererTokenDesabonnement(abonne.email)),
+            html: genererHtmlNewsletter(newsletter.sujet, contenuNettoye, abonne.email, genererTokenDesabonnement(abonne.email)),
           }))
         );
         if (error) {

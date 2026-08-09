@@ -1,3 +1,5 @@
+import { prisma } from './prisma';
+
 export function formaterPrix(prix: number | string): string {
   const valeur = typeof prix === 'string' ? parseFloat(prix) : prix;
   return new Intl.NumberFormat('fr-FR', {
@@ -16,10 +18,36 @@ export function slugify(texte: string): string {
     .replace(/(^-|-$)/g, '');
 }
 
-export function genererNumeroCommande(): string {
+/**
+ * Génère un numéro de commande unique (ex: NABE-2026-0001).
+ *
+ * BUG CORRIGÉ : l'ancienne version tirait un nombre aléatoire à 4 chiffres
+ * (1000-9999, donc seulement 9000 valeurs possibles par an) SANS jamais
+ * vérifier son unicité en base — alors que la colonne `numero` a une
+ * contrainte @unique. Au-delà d'une centaine de commandes dans la même
+ * année, une collision devenait statistiquement probable (paradoxe des
+ * anniversaires). Comme cette fonction est appelée depuis le webhook Stripe
+ * APRÈS que le client a payé, une collision provoquait un échec silencieux
+ * de la création de la commande : le paiement était capturé mais aucune
+ * commande ni e-mail de confirmation n'étaient jamais générés.
+ *
+ * Désormais : vérification d'unicité en base avec nouvelle tentative en cas
+ * de collision (comme pour `genererReference` côté produits).
+ */
+export async function genererNumeroCommande(): Promise<string> {
   const annee = new Date().getFullYear();
-  const aleatoire = Math.floor(1000 + Math.random() * 9000);
-  return `NABE-${annee}-${aleatoire}`;
+
+  for (let tentative = 0; tentative < 10; tentative++) {
+    const aleatoire = Math.floor(1000 + Math.random() * 9000);
+    const numero = `NABE-${annee}-${aleatoire}`;
+
+    const existant = await prisma.commande.findUnique({ where: { numero }, select: { id: true } });
+    if (!existant) return numero;
+  }
+
+  // Repli extrêmement improbable (10 collisions de suite) : on garantit
+  // l'unicité avec un suffixe temporel au lieu de faire échouer la commande.
+  return `NABE-${annee}-${Date.now().toString().slice(-6)}`;
 }
 
 export const LABELS_TYPE_BIJOU: Record<string, string> = {

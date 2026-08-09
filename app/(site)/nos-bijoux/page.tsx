@@ -3,13 +3,58 @@ import Image from 'next/image';
 import { getServerSession } from 'next-auth';
 import { prisma } from '@/lib/prisma';
 import { formaterPrix, promoEstActive, pourcentageReduction } from '@/lib/utils';
-import { getContenuPage } from '@/lib/contenu';
 import { authClientOptions } from '@/lib/auth-client';
 import FiltresCollections from '@/components/site/FiltresCollections';
 import TriCollections from '@/components/site/TriCollections';
 import BoutonFavori from '@/components/site/BoutonFavori';
-import '../hero-commun.css';
 import '../collections/collections.css';
+
+// Icône affichée en filigrane quand un produit n'a pas encore de photo,
+// choisie selon son type de bijou.
+function IconePlaceholderProduit({ type }: { type: string }) {
+  if (type === 'BAGUE') {
+    return (
+      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
+        <circle cx="12" cy="15.5" r="5.8" />
+        <path d="M9.6 10 12 4l2.4 6" />
+      </svg>
+    );
+  }
+  if (type === 'COLLIER') {
+    return (
+      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
+        <path d="M4.5 4.5c0 5.8 3.4 9.5 7.5 9.5s7.5-3.7 7.5-9.5" />
+        <circle cx="12" cy="16.8" r="2.4" />
+      </svg>
+    );
+  }
+  if (type === 'BOUCLES_OREILLES') {
+    return (
+      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
+        <circle cx="9.5" cy="6" r="2.4" />
+        <path d="M9.5 8.4v3.2a3 3 0 0 0 6 0" />
+        <circle cx="14.5" cy="6" r="2.4" />
+      </svg>
+    );
+  }
+  if (type === 'BRACELET') {
+    return (
+      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
+        <circle cx="12" cy="12" r="7.8" />
+        <circle cx="12" cy="4.6" r="1.2" fill="currentColor" stroke="none" />
+        <circle cx="19" cy="12" r="1.2" fill="currentColor" stroke="none" />
+        <circle cx="12" cy="19.4" r="1.2" fill="currentColor" stroke="none" />
+        <circle cx="5" cy="12" r="1.2" fill="currentColor" stroke="none" />
+      </svg>
+    );
+  }
+  return (
+    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
+      <path d="M6 3h12l3.5 5L12 21 2.5 8z" />
+      <path d="M2.5 8h19M9 3l-2 5 5 13 5-13-2-5" />
+    </svg>
+  );
+}
 
 export const metadata = {
   title: 'Nos bijoux artisanaux',
@@ -25,6 +70,10 @@ export const metadata = {
 };
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
+
+// Même seuil que sur l'accueil et la fiche produit : un produit publié depuis
+// moins de 21 jours est considéré comme "nouveau" et porte le badge correspondant.
+const DUREE_NOUVEAU_JOURS = 21;
 
 type Props = {
   searchParams: Promise<{
@@ -78,9 +127,8 @@ export default async function PageCollections({ searchParams: searchParamsPromis
   const session = await getServerSession(authClientOptions);
   const clientId = (session?.user as any)?.id as string | undefined;
 
-  const [contenu, produits, totalActifs, matieresBrutes, pierresBrutes, couleursBrutes, bornesPrix, favorisIds, comptesParType, comptesParDispo] =
+  const [produits, totalActifs, matieresBrutes, pierresBrutes, couleursBrutes, bornesPrix, favorisIds, comptesParType, comptesParDispo] =
     await Promise.all([
-      getContenuPage('collections'),
       prisma.produit.findMany({
         where,
         include: { images: { orderBy: { ordre: 'asc' }, take: 1 }, matiere: true },
@@ -143,13 +191,19 @@ export default async function PageCollections({ searchParams: searchParamsPromis
 
   return (
     <div className="page-collections">
-      <section className="hero-commun" style={{ backgroundImage: "url('/images/collections-hero.jpg')" }}>
-        <div className="hero-commun__overlay" />
-        <div className="hero-commun__contenu">
+      <div className="collections-fil-ariane conteneur">
+        <Link href="/">Accueil</Link> / <span>Nos bijoux</span>
+      </div>
+
+      <div className="collections-entete conteneur">
+        <div>
+          <span className="etiquette">Boutique</span>
           <h1>Nos bijoux</h1>
-          <p>{contenu.hero_soustitre}</p>
+          <p>{totalActifs} pièces façonnées à la main</p>
         </div>
-      </section>
+        <TriCollections />
+      </div>
+      <div className="collections-entete-separateur conteneur" />
 
       <div className="collections-corps conteneur">
         <FiltresCollections
@@ -163,18 +217,21 @@ export default async function PageCollections({ searchParams: searchParamsPromis
         />
 
         <div className="collections-resultats">
-          <div className="collections-resultats__entete">
-            <span>{totalActifs} créations</span>
-            <TriCollections />
-          </div>
-
           {produits.length === 0 ? (
             <p className="collections-vide">
               Aucune création ne correspond à ces critères pour le moment.
             </p>
           ) : (
             <div className="collections-grille">
-              {produits.map((produit: any) => (
+              {produits.map((produit: any) => {
+                const enPromo = promoEstActive({
+                  promoActive: produit.promoActive,
+                  prixPromo: produit.prixPromo?.toString() ?? null,
+                  promoDebut: produit.promoDebut,
+                  promoFin: produit.promoFin,
+                });
+                const estNouveau = new Date(produit.createdAt).getTime() > Date.now() - DUREE_NOUVEAU_JOURS * 24 * 60 * 60 * 1000;
+                return (
                 <div key={produit.id} className="produit-carte">
                   <Link href={`/collections/${produit.slug}`} className="produit-carte__lien">
                     <div className="produit-carte__image">
@@ -186,23 +243,24 @@ export default async function PageCollections({ searchParams: searchParamsPromis
                           height={300}
                         />
                       ) : (
-                        <div className="produit-carte__placeholder" />
+                        <div className="produit-carte__placeholder">
+                          <IconePlaceholderProduit type={produit.type} />
+                        </div>
                       )}
                     </div>
+                    {enPromo ? (
+                      <span className="produit-carte__badge-promo">
+                        -{pourcentageReduction(produit.prix.toString(), produit.prixPromo!.toString())}%
+                      </span>
+                    ) : (
+                      estNouveau && <span className="produit-carte__badge-nouveau">Nouveau</span>
+                    )}
                     <h3>{produit.nom}</h3>
                     <p className="produit-carte__details">{produit.matiere?.nom || ''}</p>
-                    {promoEstActive({
-                      promoActive: produit.promoActive,
-                      prixPromo: produit.prixPromo?.toString() ?? null,
-                      promoDebut: produit.promoDebut,
-                      promoFin: produit.promoFin,
-                    }) ? (
+                    {enPromo ? (
                       <span className="produit-carte__prix produit-carte__prix--promo">
                         <span className="produit-carte__prix-barre">{formaterPrix(produit.prix.toString())}</span>
                         <span className="produit-carte__prix-reduit">{formaterPrix(produit.prixPromo!.toString())}</span>
-                        <span className="produit-carte__badge-promo">
-                          -{pourcentageReduction(produit.prix.toString(), produit.prixPromo!.toString())}%
-                        </span>
                       </span>
                     ) : (
                       <span className="produit-carte__prix">{formaterPrix(produit.prix.toString())}</span>
@@ -214,7 +272,8 @@ export default async function PageCollections({ searchParams: searchParamsPromis
                     className="produit-carte__coeur"
                   />
                 </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
