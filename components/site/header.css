@@ -27,15 +27,19 @@
   justify-content: space-between;
   gap: var(--espace-md);
   padding: 0.82rem 1.35rem;
+  position: relative;
 }
 
 .nabe-header__logo {
   font-family: var(--font-logo);
   font-size: 2rem;
-  color: var(--nabe-terracotta);
+  color: var(--nabe-or);
   line-height: 1;
-  flex-shrink: 0;
   margin: 0;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .nabe-header__burger {
@@ -66,12 +70,6 @@
 
 .nabe-header__nav a:hover {
   color: var(--nabe-terracotta);
-}
-
-.nabe-header__logo {
-  order: 2;
-  margin-left: auto;
-  margin-right: auto;
 }
 
 .nabe-header__actions {

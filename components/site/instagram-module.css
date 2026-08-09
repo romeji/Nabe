@@ -8,7 +8,8 @@
   align-items: end;
   justify-content: space-between;
   gap: 2rem;
-  margin-bottom: 2.5rem;
+  margin-bottom: 2.75rem;
+  flex-wrap: wrap;
 }
 
 .instagram-module h2 {
@@ -29,17 +30,13 @@
   padding: 0.78rem 1.25rem;
   border-radius: 999px;
   background: var(--nabe-brun-fonce);
-  color: var(--texte-clair);
+  color: #fff;
   font-size: 0.8rem;
   font-weight: 600;
-  transition: var(--transition-douce);
+  transition: background 0.2s ease;
 }
 
-.instagram-module__suivre:hover {
-  background: var(--nabe-terracotta);
-  transform: translateY(-1px);
-}
-
+.instagram-module__suivre:hover { background: var(--nabe-terracotta); }
 .instagram-module__suivre svg { width: 18px; height: 18px; }
 
 .instagram-module__videos {
@@ -54,55 +51,48 @@
   overflow: hidden;
   aspect-ratio: 9 / 14;
   border-radius: var(--rayon-arche);
-  background: linear-gradient(155deg, var(--ig-c1, var(--nabe-sable)) 0%, var(--ig-c2, var(--nabe-terracotta)) 100%);
+  background: linear-gradient(155deg, var(--nabe-argile-clair), var(--nabe-terracotta));
   box-shadow: var(--ombre-douce);
   isolation: isolate;
 }
-
-/* Cinq déclinaisons de la palette Nabe, pour varier les vignettes */
-.instagram-module__carte:nth-child(1) { --ig-c1: var(--nabe-sable); --ig-c2: var(--nabe-terracotta); }
-.instagram-module__carte:nth-child(2) { --ig-c1: var(--nabe-argile-clair); --ig-c2: var(--nabe-terracotta-fonce); }
-.instagram-module__carte:nth-child(3) { --ig-c1: var(--nabe-sable-fonce); --ig-c2: var(--nabe-argile); }
-.instagram-module__carte:nth-child(4) { --ig-c1: var(--nabe-argile); --ig-c2: var(--nabe-brun); }
-.instagram-module__carte:nth-child(5) { --ig-c1: var(--nabe-sable); --ig-c2: var(--nabe-or); }
 
 .instagram-module__carte::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(42, 28, 20, 0.55) 0%, rgba(42, 28, 20, 0) 42%);
-  z-index: 1;
+  background: linear-gradient(to top, rgba(30, 20, 14, 0.4) 0%, rgba(30, 20, 14, 0) 55%);
   pointer-events: none;
+  z-index: 1;
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+
+.instagram-module__carte--en-lecture::after {
+  opacity: 0;
 }
 
 .instagram-module__carte video,
 .instagram-module__carte iframe {
   position: relative;
+  z-index: 0;
+  display: block;
   width: 100%;
   height: 100%;
   border: 0;
   object-fit: cover;
+  cursor: pointer;
 }
 
-.instagram-module__badge {
-  position: absolute;
-  top: 14px;
-  left: 14px;
+.instagram-module__lien-externe {
+  position: relative;
   z-index: 2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.18);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  display: grid;
+  height: 100%;
+  place-items: center;
   color: #fff;
 }
 
-.instagram-module__badge svg { width: 13px; height: 13px; }
-
-.instagram-module__lecture {
+.instagram-module__play {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -111,33 +101,22 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 46px;
-  height: 46px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.75);
-  color: #fff;
-  transition: var(--transition-douce);
+  border: none;
+  background: rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(2px);
+  cursor: pointer;
+  transition: transform 0.25s ease, background 0.25s ease;
 }
 
-.instagram-module__lecture:hover {
+.instagram-module__carte:hover .instagram-module__play {
   transform: translate(-50%, -50%) scale(1.08);
-  background: rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.32);
 }
 
-.instagram-module__lecture svg { width: 15px; height: 15px; margin-left: 2px; }
-
-.instagram-module__lien-externe {
-  position: relative;
-  z-index: 2;
-  display: grid;
-  height: 100%;
-  place-items: center;
-  padding: 1rem;
-  color: #fff;
-  text-align: center;
-  font-family: var(--font-titres);
-  font-size: 1.35rem;
-}
+.instagram-module__play svg { width: 20px; height: 20px; margin-left: 3px; }
 
 .instagram-module__attente {
   display: flex;
@@ -146,8 +125,8 @@
   gap: 1rem;
   min-height: 9.5rem;
   padding: 1.5rem 2rem;
-  border-radius: var(--rayon-arche);
-  background: var(--nabe-sable-fonce);
+  border-radius: 22px;
+  background: #f1dfcc;
   color: var(--texte-principal);
   text-align: center;
   box-shadow: var(--ombre-douce);

@@ -8,8 +8,6 @@ type Categorie = {
   nom: string;
   slug: string;
   image?: string | null;
-  imageAccueilFond?: string | null;
-  logoAccueil?: string | null;
   _count: { produits: number };
 };
 
@@ -18,8 +16,6 @@ export default function LigneCategorie({ categorie }: { categorie: Categorie }) 
   const [edition, setEdition] = useState(false);
   const [nom, setNom] = useState(categorie.nom);
   const [image, setImage] = useState(categorie.image || '');
-  const [imageAccueilFond, setImageAccueilFond] = useState(categorie.imageAccueilFond || '');
-  const [logoAccueil, setLogoAccueil] = useState(categorie.logoAccueil || '');
   const [uploadEnCours, setUploadEnCours] = useState(false);
   const [confirmationSuppression, setConfirmationSuppression] = useState(false);
   const [enCours, setEnCours] = useState(false);
@@ -65,7 +61,7 @@ export default function LigneCategorie({ categorie }: { categorie: Categorie }) 
       const res = await fetch(`/api/admin/categories/${categorie.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nom, image, imageAccueilFond, logoAccueil }),
+        body: JSON.stringify({ nom, image }),
       });
       if (!res.ok) throw new Error();
       setEdition(false);
@@ -94,8 +90,6 @@ export default function LigneCategorie({ categorie }: { categorie: Categorie }) 
     setEdition(false);
     setNom(categorie.nom);
     setImage(categorie.image || '');
-    setImageAccueilFond(categorie.imageAccueilFond || '');
-    setLogoAccueil(categorie.logoAccueil || '');
     setErreur('');
   }
 
@@ -115,15 +109,9 @@ export default function LigneCategorie({ categorie }: { categorie: Categorie }) 
                   autoFocus
                   placeholder="Nom de la catégorie"
                 />
-                <ChampUpload label="Image principale" onChange={(e) => gererUploadImage(e, setImage)} disabled={uploadEnCours} />
-                <ChampUpload label="Fond accueil" onChange={(e) => gererUploadImage(e, setImageAccueilFond)} disabled={uploadEnCours} />
-                <ChampUpload label="Logo accueil" onChange={(e) => gererUploadImage(e, setLogoAccueil)} disabled={uploadEnCours} />
+                <ChampUpload label="Image de la catégorie" onChange={(e) => gererUploadImage(e, setImage)} disabled={uploadEnCours} />
                 {uploadEnCours && <span style={{ fontSize: '0.78rem', color: 'var(--texte-secondaire)' }}>Envoi en cours...</span>}
               </div>
-            </div>
-            <div className="admin-categories__apercus">
-              <ApercuImage url={imageAccueilFond} libelle="Fond accueil" mode="cover" />
-              <ApercuImage url={logoAccueil} libelle="Logo accueil" mode="contain" />
             </div>
             {erreur && <p className="admin-categories__erreur">{erreur}</p>}
             <div className="admin-inline-edit__actions">
@@ -208,14 +196,5 @@ function ApercuCarre({ url, mode, petit = false }: { url: string; mode: 'cover' 
       alt=""
       style={{ width: taille, height: taille, objectFit: mode, borderRadius: 6, background: '#f1e0cb', flexShrink: 0 }}
     />
-  );
-}
-
-function ApercuImage({ url, libelle, mode }: { url: string; libelle: string; mode: 'cover' | 'contain' }) {
-  return (
-    <div className="admin-categories__apercu">
-      <span>{libelle}</span>
-      <ApercuCarre url={url} mode={mode} />
-    </div>
   );
 }

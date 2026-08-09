@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import EditeurRiche from './EditeurRiche';
+import { nettoyerHtml } from '@/lib/sanitize';
 import './formulaire-newsletter.css';
 
 type NewsletterInitiale = {
@@ -145,7 +146,7 @@ export default function FormulaireNewsletter({
             placeholder="Bonjour, découvrez nos nouvelles créations..."
           />
         ) : (
-          <div className="formulaire-newsletter__contenu-figé" dangerouslySetInnerHTML={{ __html: contenu }} />
+          <div className="formulaire-newsletter__contenu-figé" dangerouslySetInnerHTML={{ __html: nettoyerHtml(contenu) }} />
         )}
         <p className="formulaire-newsletter__aide">
           Utilisez la barre d'outils pour mettre en gras, en couleur, ajouter des liens ou des listes.
@@ -212,7 +213,7 @@ export default function FormulaireNewsletter({
             <h4>{sujet || 'Sujet de votre newsletter'}</h4>
             <div
               dangerouslySetInnerHTML={{
-                __html: contenu || '<p>Le contenu de votre newsletter apparaîtra ici...</p>',
+                __html: nettoyerHtml(contenu) || '<p>Le contenu de votre newsletter apparaîtra ici...</p>',
               }}
             />
           </div>

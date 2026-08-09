@@ -457,7 +457,7 @@
 .popup-panier__boite-check {
   width: 16px;
   height: 16px;
-  accent-color: var(--nabe-terracotta, #9f5434);
+  accent-color: var(--nabe-or);
   cursor: pointer;
   flex-shrink: 0;
 }
