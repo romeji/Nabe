@@ -1,7 +1,43 @@
 .instagram-module {
-  padding-top: clamp(2rem, 4vw, 3rem);
-  padding-bottom: clamp(2rem, 4vw, 3rem);
+  padding-top: clamp(3.5rem, 7vw, 6rem);
+  padding-bottom: clamp(4rem, 8vw, 7rem);
 }
+
+.instagram-module__entete {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-bottom: 2.75rem;
+  flex-wrap: wrap;
+}
+
+.instagram-module h2 {
+  margin: 0.45rem 0 0.8rem;
+  font-size: clamp(2.4rem, 4.5vw, 4.2rem);
+}
+
+.instagram-module__entete p {
+  max-width: 34rem;
+  color: var(--texte-secondaire);
+}
+
+.instagram-module__suivre {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex: 0 0 auto;
+  padding: 0.78rem 1.25rem;
+  border-radius: 999px;
+  background: var(--nabe-brun-fonce);
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: background 0.2s ease;
+}
+
+.instagram-module__suivre:hover { background: var(--nabe-terracotta); }
+.instagram-module__suivre svg { width: 18px; height: 18px; }
 
 .instagram-module__videos {
   display: grid;
@@ -86,6 +122,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 1rem;
   min-height: 9.5rem;
   padding: 1.5rem 2rem;
   border-radius: 22px;
@@ -95,7 +132,36 @@
   box-shadow: var(--ombre-douce);
 }
 
+.instagram-module__attente strong {
+  display: block;
+  margin-bottom: 0.18rem;
+  font-family: var(--font-titres);
+  font-size: 1.3rem;
+}
+
+.instagram-module__attente-icone {
+  display: grid;
+  flex: 0 0 auto;
+  width: 3.2rem;
+  height: 3.2rem;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--nabe-terracotta);
+  color: #fff;
+}
+
+.instagram-module__attente-icone svg { width: 1.6rem; height: 1.6rem; }
+
+.instagram-module__pied {
+  margin-top: 1.75rem;
+  text-align: center;
+  color: var(--texte-secondaire);
+}
+
+.instagram-module__pied a { color: var(--nabe-terracotta); font-weight: 600; }
+
 @media (max-width: 900px) {
+  .instagram-module__entete { align-items: start; flex-direction: column; }
   .instagram-module__videos {
     display: flex;
     overflow-x: auto;
@@ -104,4 +170,5 @@
     scroll-snap-type: x mandatory;
   }
   .instagram-module__carte { flex: 0 0 62%; scroll-snap-align: start; }
+  .instagram-module__attente { align-items: flex-start; text-align: left; }
 }
