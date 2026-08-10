@@ -16,8 +16,12 @@ function estUrlValide(url: string) {
   }
 }
 
-function estVideoDirecte(url: string) {
-  return /\.(mp4|webm|mov)(\?.*)?$/i.test(url);
+function estUrlInstagram(url: string) {
+  try {
+    return /(^|\.)instagram\.com$/i.test(new URL(url).hostname);
+  } catch {
+    return false;
+  }
 }
 
 // Une vidéo directe (mp4/webm/mov) : lecteur minimal maison — la vidéo
@@ -29,12 +33,25 @@ function estVideoDirecte(url: string) {
 function CarteVideoDirecte({ url, index }: { url: string; index: number }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [enLecture, setEnLecture] = useState(false);
+  const [enErreur, setEnErreur] = useState(false);
 
   function basculerLecture() {
     const video = videoRef.current;
     if (!video) return;
     if (video.paused) video.play();
     else video.pause();
+  }
+
+  if (enErreur) {
+    return (
+      <article className="instagram-module__carte">
+        <a href={url} target="_blank" rel="noreferrer noopener" className="instagram-module__lien-externe">
+          <span className="instagram-module__play" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z" /></svg>
+          </span>
+        </a>
+      </article>
+    );
   }
 
   return (
@@ -50,6 +67,7 @@ function CarteVideoDirecte({ url, index }: { url: string; index: number }) {
         onPlay={() => setEnLecture(true)}
         onPause={() => setEnLecture(false)}
         onEnded={() => setEnLecture(false)}
+        onError={() => setEnErreur(true)}
       />
       {!enLecture && (
         <button
@@ -110,7 +128,11 @@ export default function InstagramModule({ config }: InstagramModuleProps) {
       {urls.length > 0 ? (
         <div className="instagram-module__videos">
           {urls.map((url, index) => {
-            if (estVideoDirecte(url)) {
+            // On ne considère comme "lien Instagram à ouvrir ailleurs" que les
+            // vraies URL instagram.com. Tout le reste (Cloudinary ou toute
+            // autre URL vidéo, avec ou sans extension .mp4 reconnaissable) est
+            // lu directement sur le site avec notre lecteur maison.
+            if (!estUrlInstagram(url)) {
               return <CarteVideoDirecte key={`${url}-${index}`} url={url} index={index} />;
             }
             // Pas un fichier vidéo direct (ex : lien vers un post/reel Instagram) :
