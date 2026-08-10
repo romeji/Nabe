@@ -178,11 +178,11 @@
 }
 
 .carrousel-produits__fleche--gauche {
-  margin-right: -18px;
+  margin-right: -4px;
 }
 
 .carrousel-produits__fleche--droite {
-  margin-left: -18px;
+  margin-left: -4px;
 }
 
 @media (max-width: 600px) {

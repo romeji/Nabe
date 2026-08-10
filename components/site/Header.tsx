@@ -38,18 +38,20 @@ export default function Header() {
     <>
       <header className={`nabe-header ${aDefile ? 'nabe-header--defile' : ''}`}>
         <div className="nabe-header__conteneur">
-          <button className="nabe-header__burger" onClick={() => setMenuOuvert(true)} aria-label="Menu">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="nabe-header__svg">
-              <line x1="3" y1="6" x2="21" y2="6" />
-              <line x1="3" y1="12" x2="21" y2="12" />
-              <line x1="3" y1="18" x2="21" y2="18" />
-            </svg>
-          </button>
+          <div className="nabe-header__gauche">
+            <button className="nabe-header__burger" onClick={() => setMenuOuvert(true)} aria-label="Menu">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="nabe-header__svg">
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <line x1="3" y1="12" x2="21" y2="12" />
+                <line x1="3" y1="18" x2="21" y2="18" />
+              </svg>
+            </button>
 
-          <nav className="nabe-header__nav" aria-label="Navigation principale">
-            <Link href="/nos-bijoux">Nos bijoux</Link>
-            <Link href="/mon-histoire">Notre histoire</Link>
-          </nav>
+            <nav className="nabe-header__nav" aria-label="Navigation principale">
+              <Link href="/nos-bijoux">Nos bijoux</Link>
+              <Link href="/mon-histoire">Notre histoire</Link>
+            </nav>
+          </div>
 
           <Link href="/" className="nabe-header__logo">Nabe</Link>
 

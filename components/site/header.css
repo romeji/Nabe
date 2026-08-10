@@ -42,16 +42,21 @@
   transform: translate(-50%, -50%);
 }
 
+.nabe-header__gauche {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.9rem, 1.6vw, 1.6rem);
+  min-width: 0;
+}
+
 .nabe-header__burger {
   color: var(--texte-principal);
   flex-shrink: 0;
-  order: 1;
   display: flex;
   align-items: center;
 }
 
 .nabe-header__nav {
-  order: 1;
   display: flex;
   align-items: center;
   gap: clamp(0.75rem, 1.4vw, 1.35rem);

@@ -12,6 +12,7 @@ import PopupDetailsProduit from './popups/PopupDetailsProduit';
 import LiensInfoProduit from './LiensInfoProduit';
 import ComposerAvec from './ComposerAvec';
 import BandeauReassurance from './BandeauReassurance';
+import CarrouselProduits from './CarrouselProduits';
 
 type ImageProduit = { id: string; url: string; alt: string | null };
 type PierreInfo = {
@@ -388,50 +389,21 @@ export default function ProduitDetailClient({
             <span className="etiquette">Complétez le look</span>
             <h2>Découvrez également ces <span className="accent">créations</span></h2>
           </div>
-          <div className="produit-suggestions__grille">
-            {suggestions.map((s: any) => {
-              const sEnPromo = promoEstActive({
-                promoActive: !!s.promoActive,
-                prixPromo: s.prixPromo ?? null,
-                promoDebut: s.promoDebut,
-                promoFin: s.promoFin,
-              });
-              return (
-                <div key={s.id} className="produit-suggestions__carte">
-                  <Link href={`/collections/${s.slug}`} className="produit-suggestions__lien">
-                    <div className="produit-suggestions__image-conteneur">
-                      {s.images[0] ? (
-                        <Image src={s.images[0].url} alt={s.nom} width={250} height={250} />
-                      ) : (
-                        <div className="produit-suggestions__placeholder" />
-                      )}
-                      {sEnPromo ? (
-                        <span className="produit-suggestions__badge-promo">
-                          -{pourcentageReduction(s.prix, s.prixPromo!)}%
-                        </span>
-                      ) : (
-                        s.nouveau && <span className="produit-suggestions__badge-nouveau">Nouveau</span>
-                      )}
-                    </div>
-                    <p className="produit-suggestions__nom">{s.nom}</p>
-                    {sEnPromo ? (
-                      <span className="produit-suggestions__prix produit-suggestions__prix--promo">
-                        <span className="produit-suggestions__prix-barre">{formaterPrix(s.prix)}</span>
-                        <span className="produit-suggestions__prix-reduit">{formaterPrix(s.prixPromo!)}</span>
-                      </span>
-                    ) : (
-                      <span className="produit-suggestions__prix">{formaterPrix(s.prix)}</span>
-                    )}
-                  </Link>
-                  <BoutonFavori
-                    produitId={s.id}
-                    initialementFavori={favorisSuggestionsIds.includes(s.id)}
-                    className="produit-suggestions__coeur"
-                  />
-                </div>
-              );
-            })}
-          </div>
+          <CarrouselProduits
+            produits={suggestions.map((s: any) => ({
+              id: s.id,
+              nom: s.nom,
+              slug: s.slug,
+              prix: s.prix,
+              image: s.images[0]?.url ?? null,
+              prixPromo: s.prixPromo,
+              promoActive: s.promoActive,
+              promoDebut: s.promoDebut,
+              promoFin: s.promoFin,
+              nouveau: s.nouveau,
+            }))}
+            favorisIds={favorisSuggestionsIds}
+          />
         </div>
       )}
 

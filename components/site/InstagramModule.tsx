@@ -92,30 +92,9 @@ export default function InstagramModule({ config }: InstagramModuleProps) {
   const profil = estUrlValide(config.instagram_profil_url || '')
     ? config.instagram_profil_url
     : 'https://www.instagram.com/nabe.bijoux/';
-  const identifiant = config.instagram_identifiant?.trim() || '@nabe.bijoux';
 
   return (
     <section className="instagram-module conteneur" aria-label="Vidéos Instagram">
-      <div className="instagram-module__entete">
-        <div>
-          <span className="etiquette">Suivez-nous</span>
-          <h2>
-            Nabe sur <span className="accent">Instagram</span>
-          </h2>
-          <p>Dans l&apos;atelier, entre deux créations : les coulisses, les nouveautés et les pièces portées, en images.</p>
-        </div>
-        {profil && (
-          <a className="instagram-module__suivre" href={profil} target="_blank" rel="noreferrer noopener">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
-              <rect x="3" y="3" width="18" height="18" rx="5" />
-              <circle cx="12" cy="12" r="4" />
-              <circle cx="17.2" cy="6.8" r="0.6" fill="currentColor" stroke="none" />
-            </svg>
-            {identifiant}
-          </a>
-        )}
-      </div>
-
       {urls.length > 0 ? (
         <div className="instagram-module__videos">
           {urls.map((url, index) => {
@@ -145,21 +124,8 @@ export default function InstagramModule({ config }: InstagramModuleProps) {
         </div>
       ) : (
         <a className="instagram-module__attente" href={profil} target="_blank" rel="noreferrer noopener">
-          <span className="instagram-module__attente-icone" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <rect x="3" y="3" width="18" height="18" rx="5" />
-              <circle cx="12" cy="12" r="4" />
-              <circle cx="17.2" cy="6.8" r="0.6" fill="currentColor" stroke="none" />
-            </svg>
-          </span>
-          <span><strong>Les prochaines vidéos arrivent ici.</strong> Retrouvez dès maintenant les coulisses de Nabe sur Instagram.</span>
+          Les prochaines vidéos arrivent ici.
         </a>
-      )}
-
-      {profil && (
-        <p className="instagram-module__pied">
-          Envie de voir la suite ? <a href={profil} target="_blank" rel="noreferrer noopener">Retrouvez-nous sur Instagram →</a>
-        </p>
       )}
     </section>
   );

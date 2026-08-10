@@ -75,9 +75,6 @@ export default function CategoriesAccueil({ categories }: { categories: Categori
           </div>
           <div className="accueil-categories__panneau">
             <span className="accueil-categories__nom">{c.nom}</span>
-            <span className="accueil-categories__fleche" aria-hidden="true">
-              →
-            </span>
           </div>
         </Link>
       ))}
