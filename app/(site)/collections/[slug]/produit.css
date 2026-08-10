@@ -609,6 +609,12 @@
   margin-bottom: var(--espace-xl);
 }
 
+/* Cartes plus compactes que sur l'accueil : ici il n'y en a que 4 maximum,
+   pas besoin qu'elles soient aussi grandes que dans un carrousel qui défile. */
+.produit-suggestions .carrousel-produits__carte {
+  flex: 0 0 180px;
+}
+
 @media (max-width: 900px) {
   .produit-principal {
     grid-template-columns: 1fr;

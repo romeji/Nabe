@@ -49,45 +49,25 @@ export function genererHtmlSurprisePopup(params: {
       messagePersonnalise ||
       `<p>Merci de rejoindre l'univers Nabe. Voici votre code de réduction de <strong>${pourcentage}%</strong>, valable sur votre prochaine commande :</p>`
     }
-    <p style="font-size: 24px; letter-spacing: 2px; background-color:#ede3d3; padding: 14px; border-radius:4px; color:#8b4a32; font-weight:bold; text-align:center;">${code}</p>`
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="margin: 24px 0;">
+      <tr><td style="border: 1.5px dashed #c9a15c; border-radius: 8px; background-color: #fbf3e4; padding: 20px; text-align:center;">
+        <span style="display:block; font-size:10.5px; letter-spacing:0.14em; text-transform:uppercase; color:#a3937f; margin-bottom:8px;">Votre code</span>
+        <span style="font-family: Georgia, serif; font-size: 26px; letter-spacing: 3px; color:#7c4027; font-weight:bold;">${code}</span>
+      </td></tr>
+    </table>`
   );
 }
 
 export function genererHtmlNewsletter(sujet: string, contenuHtml: string, email: string, tokenDesabonnement: string): string {
   const urlBase = process.env.NEXT_PUBLIC_SITE_URL || 'https://nabe-bijoux.fr';
   const urlDesabonnement = `${urlBase}/newsletter/desabonnement?email=${encodeURIComponent(email)}&token=${tokenDesabonnement}`;
-  return `
-  <!DOCTYPE html>
-  <html lang="fr">
-    <body style="margin:0; padding:0; background-color:#f7f1e8; font-family: Georgia, serif;">
-      <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f7f1e8; padding: 32px 0;">
-        <tr>
-          <td align="center">
-            <table width="560" cellpadding="0" cellspacing="0" style="background-color:#ffffff; border-radius:6px; overflow:hidden;">
-              <tr>
-                <td style="background-color:#8b4a32; padding: 28px; text-align:center;">
-                  <span style="font-family: Georgia, serif; font-size: 32px; color:#f7f1e8;">Nabe</span>
-                </td>
-              </tr>
-              <tr>
-                <td style="padding: 32px; color:#5c4632; line-height:1.6;">
-                  <h1 style="font-size: 20px; color:#3d2e1f; margin: 0 0 20px;">${sujet}</h1>
-                  ${contenuHtml}
-                </td>
-              </tr>
-              <tr>
-                <td style="padding: 20px 32px; background-color:#ede3d3; text-align:center; font-size: 12px; color:#7a6a55;">
-                  Vous recevez cet e-mail car vous êtes inscrit(e) à la newsletter Nabe.
-                  <br />
-                  <a href="${urlDesabonnement}" style="color:#7a6a55;">Se désabonner</a>
-                </td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-      </table>
-    </body>
-  </html>`;
+  return enveloppeEmail(
+    sujet,
+    contenuHtml,
+    `Vous recevez cet e-mail car vous êtes inscrit(e) à la newsletter Nabe.
+     <br />
+     <a href="${urlDesabonnement}" style="color:#a3937f;">Se désabonner</a>`
+  );
 }
 
 /** Email envoyé après la création d'un compte client (distinct de l'email code promo du popup d'accueil). */
@@ -133,8 +113,8 @@ export function genererHtmlReinitialisationMotDePasse(prenom: string, lien: stri
     `
     <p>Bonjour ${prenom},</p>
     ${messagePersonnalise || `<p>Vous avez demande a reinitialiser le mot de passe de votre compte Nabe.</p>`}
-    <p><a href="${lien}" style="display:inline-block; background-color:#8b4a32; color:#ffffff; padding:12px 18px; border-radius:4px; text-decoration:none;">Choisir un nouveau mot de passe</a></p>
-    <p style="font-size:13px; color:#7a6a55;">Ce lien est valable 1 heure. Si vous n'etes pas a l'origine de cette demande, vous pouvez ignorer cet e-mail.</p>`
+    ${boutonEmail('Choisir un nouveau mot de passe', lien)}
+    <p style="font-size:13px; color:#a3937f;">Ce lien est valable 1 heure. Si vous n'etes pas a l'origine de cette demande, vous pouvez ignorer cet e-mail.</p>`
   );
 }
 
@@ -196,29 +176,65 @@ export function genererHtmlNotificationSurMesure(params: {
 
 type LigneEmail = { nomProduit: string; taille?: string | null; quantite: number; prixUnitaire: number };
 
-function enveloppeEmail(titre: string, corpsHtml: string): string {
+/**
+ * Enveloppe commune à tous les e-mails envoyés par Nabe (confirmation de
+ * commande, newsletter, réinitialisation de mot de passe, etc.) — pour que
+ * chaque e-mail reçu porte la même identité que le site : le même dégradé
+ * de couleurs (brun profond, doré, terracotta, crème), le même esprit
+ * artisanal, sobre et chaleureux.
+ *
+ * Un e-mail HTML ne peut pas charger les polices ni le CSS du site : tout
+ * est fait ici en styles inline et polices "web-safe" (Georgia), avec une
+ * mise en page en tableaux pour rester fiable dans tous les clients mail
+ * (Gmail, Outlook, Apple Mail...).
+ */
+function enveloppeEmail(titre: string, corpsHtml: string, piedHtml?: string): string {
   return `
   <!DOCTYPE html>
   <html lang="fr">
-    <body style="margin:0; padding:0; background-color:#f7f1e8; font-family: Georgia, serif;">
-      <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f7f1e8; padding: 32px 0;">
-        <tr><td align="center">
-          <table width="560" cellpadding="0" cellspacing="0" style="background-color:#ffffff; border-radius:6px; overflow:hidden;">
-            <tr><td style="background-color:#8b4a32; padding: 28px; text-align:center;">
-              <span style="font-family: Georgia, serif; font-size: 32px; color:#f7f1e8;">Nabe</span>
-            </td></tr>
-            <tr><td style="padding: 32px; color:#5c4632; line-height:1.6;">
-              <h1 style="font-size: 20px; color:#3d2e1f; margin: 0 0 20px;">${titre}</h1>
-              ${corpsHtml}
-            </td></tr>
-            <tr><td style="padding: 20px 32px; background-color:#ede3d3; text-align:center; font-size: 12px; color:#7a6a55;">
-              L'équipe Nabe — L'éclat de chaque histoire.
-            </td></tr>
-          </table>
-        </td></tr>
+    <body style="margin:0; padding:0; background-color:#efe6d8; font-family: Georgia, 'Times New Roman', serif;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#efe6d8; padding: 44px 16px;">
+        <tr>
+          <td align="center">
+            <table role="presentation" width="580" cellpadding="0" cellspacing="0" style="max-width:580px; width:100%; background-color:#fffdfa; border-radius:8px; overflow:hidden; box-shadow:0 10px 32px rgba(69,41,30,0.10);">
+              <tr>
+                <td style="background-color:#3d2417; padding: 38px 32px; text-align:center;">
+                  <span style="font-family: Georgia, serif; font-size: 34px; letter-spacing:0.05em; color:#d9b273;">Nabe</span>
+                  <table role="presentation" cellpadding="0" cellspacing="0" style="margin: 16px auto 0;">
+                    <tr><td style="width:44px; height:1px; background-color:#d9b273; opacity:0.55; font-size:0; line-height:0;">&nbsp;</td></tr>
+                  </table>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding: 42px 36px 16px; color:#4a382c; line-height:1.68; font-size:15px;">
+                  <h1 style="font-size:21px; font-weight:normal; color:#3d2417; margin:0 0 22px; letter-spacing:0.01em;">${titre}</h1>
+                  ${corpsHtml}
+                </td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 36px;">
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="border-top:1px solid #ecdfc6; font-size:0; line-height:0;">&nbsp;</td></tr></table>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding: 22px 36px 34px; text-align:center; font-size:11.5px; color:#a3937f; letter-spacing:0.02em;">
+                  ${piedHtml || `Nabe — L'éclat de chaque histoire.`}
+                </td>
+              </tr>
+            </table>
+            <p style="font-size:11px; color:#a3937f; margin: 22px 0 0; letter-spacing:0.03em;">Nabe · Bijouterie artisanale</p>
+          </td>
+        </tr>
       </table>
     </body>
   </html>`;
+}
+
+/** Bouton d'action principal (lien de réinitialisation, etc.), stylé comme les boutons du site. */
+function boutonEmail(texte: string, lien: string): string {
+  return `<table role="presentation" cellpadding="0" cellspacing="0" style="margin: 22px 0;"><tr><td style="background-color:#45291e; border-radius:999px;">
+    <a href="${lien}" style="display:inline-block; padding:13px 28px; font-family: Georgia, serif; font-size:14px; color:#fffdfa; text-decoration:none; letter-spacing:0.02em;">${texte}</a>
+  </td></tr></table>`;
 }
 
 function tableauLignes(lignes: LigneEmail[]): string {

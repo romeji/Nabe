@@ -677,6 +677,7 @@
 
 @media (min-width: 901px) {
   .accueil-carrousel .carrousel-produits {
+    padding-left: 2.1rem;
     padding-right: 2.1rem;
   }
   .accueil-carrousel .carrousel-produits__piste {
@@ -689,7 +690,11 @@
     flex: 0 0 clamp(168px, 15vw, 198px);
   }
   .accueil-carrousel .carrousel-produits__fleche--gauche {
-    display: none;
+    position: absolute;
+    left: 0;
+    top: 42%;
+    transform: translateY(-50%);
+    margin-right: 0;
   }
   .accueil-carrousel .carrousel-produits__fleche--droite {
     position: absolute;

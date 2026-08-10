@@ -41,13 +41,39 @@
 }
 
 .page-404__illustration {
-  width: 180px;
+  width: 220px;
   margin: 0.5rem auto;
 }
 
 .page-404__illustration svg {
   width: 100%;
   height: auto;
+}
+
+.page-404__illustration svg g:last-of-type {
+  animation: page-404-etincelle 1.6s ease-in-out infinite;
+}
+
+@keyframes page-404-course {
+  0%, 100% { transform: translate(158px, 138px) translateY(0) rotate(-3deg); }
+  50% { transform: translate(158px, 138px) translateY(-7px) rotate(3deg); }
+}
+
+.page-404__illustration svg g[transform^="translate(158"] {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: page-404-course 0.9s ease-in-out infinite;
+}
+
+@keyframes page-404-etincelle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.25; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-404__illustration svg g {
+    animation: none !important;
+  }
 }
 
 .page-404__carte h1 {
