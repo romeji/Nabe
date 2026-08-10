@@ -26,6 +26,7 @@ export const DEFAUTS_CONFIG: Record<string, string> = {
   // Une URL de vidéo ou de Reel Instagram par ligne. Les URLs .mp4 sont lues
   // directement ; les Reels sont affichés dans l'embed officiel.
   instagram_videos: '',
+  instagram_videos_sources: '',
   accueil_module_sur_mesure_actif: 'false',
   accueil_module_sur_mesure_titre: 'Une pièce pensée pour vous',
   accueil_module_sur_mesure_texte: "Croquis, photo d'inspiration ou envie précise : envoyez votre idée, nous revenons vers vous avec un devis personnalisé.",

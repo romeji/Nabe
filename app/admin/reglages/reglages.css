@@ -129,6 +129,7 @@
 }
 
 .reglages-client__instagram-video.actif { border: 2px solid var(--nabe-terracotta); }
+.reglages-client__instagram-video.en-import { opacity: 0.6; cursor: wait; pointer-events: none; }
 .reglages-client__instagram-video img,
 .reglages-client__instagram-video-vide { width: 100%; height: 100%; object-fit: cover; background: var(--nabe-sable); }
 .reglages-client__instagram-video > span { padding: 0.45rem; font-size: 0.72rem; line-height: 1.3; }

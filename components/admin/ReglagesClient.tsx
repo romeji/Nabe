@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 
 type OptionSimple = { id: string; nom: string };
 type OptionProduit = { id: string; nom: string; prix: string };
-type VideoInstagram = { id: string; apercu: string | null; lien: string; titre: string; date: string | null };
+type VideoInstagram = { id: string; apercu: string | null; lien: string; mediaUrl: string | null; titre: string; date: string | null };
 
 export default function ReglagesClient({
   configInitiale,
@@ -23,10 +23,23 @@ export default function ReglagesClient({
   const [videosInstagram, setVideosInstagram] = useState<VideoInstagram[]>([]);
   const [chargementInstagram, setChargementInstagram] = useState(false);
   const [erreurInstagram, setErreurInstagram] = useState('');
+  const [idEnImport, setIdEnImport] = useState<string | null>(null);
 
   const categoriesSelectionnees = (config.categories_accueil_ids || '').split(',').filter(Boolean);
   const collectionsSelectionnees = (config.collections_selection_ids || '').split(',').filter(Boolean);
   const videosInstagramSelectionnees = (config.instagram_videos || '').split(/\r?\n/).map((url) => url.trim()).filter(Boolean);
+  // Associe chaque post Instagram importé (par son id) à l'URL Cloudinary
+  // obtenue lors de l'import, pour retrouver l'état "sélectionné" des cases
+  // à cocher même après avoir quitté puis rouvert cette page (l'URL stockée
+  // dans instagram_videos est désormais celle de Cloudinary, plus le lien
+  // du post Instagram — on ne peut donc plus faire le lien entre les deux
+  // sans cette table de correspondance).
+  const sourcesInstagram = Object.fromEntries(
+    (config.instagram_videos_sources || '')
+      .split(/\r?\n/)
+      .map((ligne) => ligne.split('::'))
+      .filter((paire) => paire.length === 2 && paire[1])
+  ) as Record<string, string>;
 
   async function chargerVideosInstagram() {
     setChargementInstagram(true);
@@ -51,18 +64,51 @@ export default function ReglagesClient({
     setConfig((c) => ({ ...c, [cle]: valeur }));
   }
 
-  function basculerVideoInstagram(lien: string) {
-    const selection = new Set(videosInstagramSelectionnees);
-    if (selection.has(lien)) {
-      selection.delete(lien);
-    } else {
-      if (selection.size >= 5) {
-        alert('Vous pouvez afficher 5 vidéos Instagram maximum.');
-        return;
-      }
-      selection.add(lien);
+  function retirerSourceInstagram(id: string, urlAsupprimer: string) {
+    const nouvellesUrls = videosInstagramSelectionnees.filter((u) => u !== urlAsupprimer);
+    const nouvellesSources = Object.entries(sourcesInstagram).filter(([cleId]) => cleId !== id);
+    maj('instagram_videos', nouvellesUrls.join('\n'));
+    maj('instagram_videos_sources', nouvellesSources.map(([cleId, url]) => `${cleId}::${url}`).join('\n'));
+  }
+
+  async function basculerVideoInstagram(video: VideoInstagram) {
+    const urlDejaImportee = sourcesInstagram[video.id];
+
+    if (urlDejaImportee) {
+      retirerSourceInstagram(video.id, urlDejaImportee);
+      return;
     }
-    maj('instagram_videos', Array.from(selection).join('\n'));
+
+    if (videosInstagramSelectionnees.length >= 5) {
+      alert('Vous pouvez afficher 5 vidéos Instagram maximum.');
+      return;
+    }
+    if (!video.mediaUrl) {
+      alert("Cette publication n'a pas de vidéo exploitable (peut-être une image ou un carrousel).");
+      return;
+    }
+
+    setIdEnImport(video.id);
+    setErreurInstagram('');
+    try {
+      const reponse = await fetch('/api/admin/instagram/importer-video', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mediaUrl: video.mediaUrl }),
+      });
+      const donnees = await reponse.json();
+      if (!reponse.ok) throw new Error(donnees.error || "Impossible d'importer cette vidéo.");
+
+      maj('instagram_videos', [...videosInstagramSelectionnees, donnees.url].join('\n'));
+      maj(
+        'instagram_videos_sources',
+        [...Object.entries(sourcesInstagram).map(([cleId, url]) => `${cleId}::${url}`), `${video.id}::${donnees.url}`].join('\n')
+      );
+    } catch (error: any) {
+      setErreurInstagram(error.message || "Impossible d'importer cette vidéo.");
+    } finally {
+      setIdEnImport(null);
+    }
   }
 
   async function deconnecterInstagram() {
@@ -301,15 +347,28 @@ export default function ReglagesClient({
 
           {config.instagram_meta_connecte === 'true' && videosInstagram.length > 0 && (
             <div className="reglages-client__instagram-videos">
-              <p className="reglages-client__instagram-legende">Sélectionnez jusqu&apos;à 5 vidéos à afficher</p>
+              <p className="reglages-client__instagram-legende">
+                Sélectionnez jusqu&apos;à 5 vidéos à afficher — chaque vidéo choisie est automatiquement
+                récupérée et hébergée sur notre espace de stockage, pour s&apos;afficher directement sur le
+                site sans jamais renvoyer vers Instagram.
+              </p>
               <div className="reglages-client__instagram-grille">
                 {videosInstagram.map((video) => {
-                  const selectionnee = videosInstagramSelectionnees.includes(video.lien);
+                  const selectionnee = Boolean(sourcesInstagram[video.id]);
+                  const enImport = idEnImport === video.id;
                   return (
-                    <label className={`reglages-client__instagram-video${selectionnee ? ' actif' : ''}`} key={video.id}>
+                    <label
+                      className={`reglages-client__instagram-video${selectionnee ? ' actif' : ''}${enImport ? ' en-import' : ''}`}
+                      key={video.id}
+                    >
                       {video.apercu ? <img src={video.apercu} alt="" /> : <span className="reglages-client__instagram-video-vide" />}
-                      <span>{video.titre}</span>
-                      <input type="checkbox" checked={selectionnee} onChange={() => basculerVideoInstagram(video.lien)} />
+                      <span>{enImport ? 'Import en cours…' : video.titre}</span>
+                      <input
+                        type="checkbox"
+                        checked={selectionnee}
+                        disabled={enImport}
+                        onChange={() => basculerVideoInstagram(video)}
+                      />
                     </label>
                   );
                 })}

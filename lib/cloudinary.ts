@@ -28,4 +28,23 @@ export async function deleteImageCloudinary(publicId: string) {
   return cloudinary.uploader.destroy(publicId);
 }
 
+/**
+ * Upload une vidéo (fichier, base64 ou URL distante) vers Cloudinary. Utilisé
+ * notamment pour réhéberger durablement une vidéo Instagram : les URL de
+ * media_url renvoyées par l'API Meta sont temporaires (elles expirent au
+ * bout de quelques heures/jours), donc on rapatrie le fichier une bonne fois
+ * pour toutes sur notre propre compte Cloudinary plutôt que de dépendre du
+ * lien Instagram.
+ */
+export async function uploadVideoCloudinary(source: string, folder = 'nabe/instagram') {
+  const result = await cloudinary.uploader.upload(source, {
+    folder,
+    resource_type: 'video',
+  });
+  return {
+    url: result.secure_url,
+    publicId: result.public_id,
+  };
+}
+
 export default cloudinary;

@@ -32,6 +32,7 @@ export type VideoInstagramAdmin = {
   id: string;
   apercu: string | null;
   lien: string;
+  mediaUrl: string | null;
   titre: string;
   date: string | null;
 };
@@ -190,6 +191,7 @@ export async function listerVideosInstagram(): Promise<VideoInstagramAdmin[]> {
       id: media.id,
       apercu: media.thumbnail_url || media.media_url || null,
       lien: media.permalink as string,
+      mediaUrl: media.media_url || null,
       titre: media.caption?.split('\n')[0].slice(0, 90) || 'Vidéo Instagram',
       date: media.timestamp || null,
     }));
