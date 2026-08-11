@@ -128,8 +128,11 @@ export default function RootLayout({
   return (
     <html lang="fr" className={`${cormorantGaramond.variable} ${fraunces.variable} ${jost.variable} ${imperialScript.variable}`}>
       <head>
-        <link rel="icon" href="/icons/favicon-32.png" sizes="32x32" type="image/png" media="(prefers-color-scheme: light)" />
-        <link rel="icon" href="/icons/favicon-32-dark.png" sizes="32x32" type="image/png" media="(prefers-color-scheme: dark)" />
+        {/* Favicon blanc (variante "-dark") utilisée par défaut, quel que soit
+            le thème du navigateur — c'est la version qui se lit le mieux. */}
+        <link rel="icon" href="/icons/favicon-32-dark.png" sizes="32x32" type="image/png" />
+        <link rel="icon" href="/icons/favicon-16-dark.png" sizes="16x16" type="image/png" />
+        <link rel="apple-touch-icon" href="/icons/apple-touch-icon-dark.png" />
       </head>
       <body>
         <PwaEnregistrement />

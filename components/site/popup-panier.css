@@ -356,10 +356,28 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  /* Pas de justify-content:center ici : combiné à overflow:hidden sur le
+     parent .popup-panier, dès que le contenu grandissait (ex. l'arrivée
+     des suggestions "meilleures ventes" après le chargement de la config),
+     le centrage poussait le message et l'icône hors du cadre visible —
+     ils semblaient "disparaître" au bout de quelques secondes alors qu'ils
+     étaient juste coupés. On centre "à la main" avec des marges auto, qui
+     s'annulent proprement si le contenu devient trop grand pour tenir. */
+  justify-content: flex-start;
+  overflow-y: auto;
   gap: 1rem;
   padding: 2rem;
   color: #888;
+}
+
+.popup-panier__vide::before {
+  content: '';
+  margin: auto 0 0;
+}
+
+.popup-panier__vide::after {
+  content: '';
+  margin: 0 0 auto;
 }
 .popup-panier__vide p { font-size: 0.95rem; }
 .popup-panier__btn-continuer {

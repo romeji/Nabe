@@ -177,8 +177,7 @@
   gap: 0.65rem;
 }
 
-.marque-frise__item:not(:last-child)::after,
-.marque-processus__item:not(:last-child)::after {
+.marque-frise__item:not(:last-child)::after {
   content: '';
   position: absolute;
   top: 1.32rem;
@@ -186,6 +185,20 @@
   width: calc(100% - 4.8rem);
   height: 1px;
   background: var(--nabe-argile);
+}
+
+/* Le processus "Pourquoi choisir Nalé ?" utilise des flèches entre les
+   étapes (comme sur la maquette), pas juste un trait. */
+.marque-processus__item:not(:last-child)::after {
+  content: '\2192';
+  position: absolute;
+  top: 0.55rem;
+  left: calc(50% + 2.1rem);
+  width: calc(100% - 4.2rem);
+  text-align: center;
+  color: var(--nabe-terracotta);
+  font-size: 1.1rem;
+  line-height: 1;
 }
 
 .marque-frise__item h3,
@@ -259,6 +272,9 @@
   align-items: center;
   background-position: center;
   background-size: cover;
+  /* Dégradé de secours toujours visible même sans photo réelle configurée :
+     le bandeau garde un rendu de marque plutôt qu'un aplat vide. */
+  background-color: var(--nabe-terracotta);
   isolation: isolate;
 }
 
@@ -268,6 +284,11 @@
   inset: 0;
   z-index: -1;
   background: linear-gradient(90deg, rgba(251, 248, 245, 0.96), rgba(251, 248, 245, 0.66) 45%, rgba(251, 248, 245, 0.08));
+}
+
+.marque-cta--sombre,
+.marque-cta--atelier {
+  background-image: linear-gradient(120deg, var(--nabe-brun-fonce, #2a1c14) 0%, var(--nabe-terracotta) 100%);
 }
 
 .marque-cta--sombre::before,
@@ -327,8 +348,14 @@
 }
 
 .engagements-fabrication {
+  /* Carte insérée avec la même largeur que les autres sections, comme sur
+     la maquette (au lieu d'un bandeau plein-largeur). */
+  width: min(100%, 1040px);
+  margin: 0 auto;
   display: grid;
   grid-template-columns: 0.95fr 1.05fr;
+  overflow: hidden;
+  border-radius: 20px;
   background: var(--nabe-sable);
 }
 
@@ -352,6 +379,11 @@
 }
 
 .engagements-stats {
+  /* Carte insérée (largeur contenue + coins arrondis), comme sur la
+     maquette, au lieu d'un bandeau plein-largeur. */
+  width: min(100%, 1040px);
+  margin: clamp(1.5rem, 4vw, 3rem) auto;
+  border-radius: 20px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   padding: clamp(2rem, 5vw, 3.8rem) clamp(1.2rem, 5vw, 4rem);
@@ -427,11 +459,26 @@
 }
 
 .artisanat-etapes__liste {
+  position: relative;
   display: grid;
   gap: 1rem;
 }
 
+/* Ligne pointillée verticale reliant les numéros d'étapes, comme sur la
+   maquette ("du croquis à la pièce finie"). */
+.artisanat-etapes__liste::before {
+  content: '';
+  position: absolute;
+  top: 1.2rem;
+  bottom: 1.2rem;
+  left: 1.175rem;
+  width: 0;
+  border-left: 1.5px dashed var(--nabe-argile);
+  z-index: 0;
+}
+
 .artisanat-etape {
+  position: relative;
   display: grid;
   grid-template-columns: 3.2rem minmax(170px, 320px) minmax(0, 1fr);
   gap: clamp(1rem, 3vw, 2.2rem);
@@ -439,13 +486,16 @@
 }
 
 .artisanat-etape__numero {
+  position: relative;
+  z-index: 1;
   width: 2.35rem;
   height: 2.35rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   border-radius: 999px;
-  background: var(--nabe-sable);
+  background: var(--nabe-blanc, #fffdfa);
+  border: 1.5px solid var(--nabe-terracotta);
   color: var(--nabe-terracotta-fonce);
   font-size: 0.78rem;
   font-weight: 700;
@@ -694,6 +744,13 @@
 
   .marque-frise__item:not(:last-child)::after,
   .marque-processus__item:not(:last-child)::after {
+    display: none;
+  }
+
+  .artisanat-etapes__liste::before {
+    /* La colonne "numéro" ne reste plus alignée à gauche une fois les
+       étapes empilées en 1 colonne : on masque la ligne pointillée plutôt
+       que de l'afficher au mauvais endroit. */
     display: none;
   }
 

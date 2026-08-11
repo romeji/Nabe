@@ -50,7 +50,100 @@
   padding: 0.35rem 1.55rem 1.35rem;
   display: flex;
   flex-direction: column;
-  gap: 1.2rem;
+  gap: 0.35rem;
+}
+
+/* Liens principaux toujours visibles (Nos bijoux, Sur mesure) */
+.panneau-nav__lien-principal {
+  display: block;
+  padding: 0.7rem 0;
+  color: var(--nabe-brun);
+  font-family: var(--font-titres);
+  font-size: 1.15rem;
+  font-weight: 600;
+  border-bottom: 1px solid rgba(159, 84, 52, 0.16);
+}
+
+.panneau-nav__lien-principal:hover {
+  color: var(--nabe-terracotta);
+}
+
+/* Chips Collections : peu nombreuses (3 gammes à terme), donc visibles
+   directement plutôt que cachées dans un accordéon. */
+.panneau-nav__collections {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.75rem 0 0.9rem;
+  border-bottom: 1px solid rgba(159, 84, 52, 0.16);
+}
+
+.panneau-nav__collection-chip {
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(159, 84, 52, 0.3);
+  color: var(--nabe-terracotta-fonce, var(--nabe-terracotta));
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.panneau-nav__collection-chip:hover {
+  background-color: var(--nabe-terracotta);
+  border-color: var(--nabe-terracotta);
+  color: var(--texte-clair);
+}
+.panneau-nav__accordeon {
+  border-bottom: 1px solid rgba(159, 84, 52, 0.16);
+}
+
+.panneau-nav__accordeon-entete {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.9rem 0;
+  color: var(--nabe-brun);
+  font-family: var(--font-texte);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.panneau-nav__accordeon-entete:hover {
+  color: var(--nabe-terracotta);
+}
+
+.panneau-nav__chevron {
+  color: var(--nabe-terracotta);
+  transition: transform 0.25s ease;
+  flex-shrink: 0;
+}
+
+.panneau-nav__chevron--ouvert {
+  transform: rotate(180deg);
+}
+
+.panneau-nav__accordeon-corps {
+  padding-bottom: 0.9rem;
+  animation: panneau-nav-deplie 0.2s ease;
+}
+
+@keyframes panneau-nav-deplie {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.panneau-nav__sous-titre {
+  color: var(--nabe-brun);
+  font-family: var(--font-texte);
+  font-size: 0.68rem;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  font-weight: 700;
+  margin: 0.75rem 0 0.5rem;
+  opacity: 0.75;
 }
 
 .panneau-nav__section {
@@ -197,6 +290,7 @@
   flex-direction: column;
   justify-content: center;
   gap: 1rem;
+  margin-top: 0.6rem;
   padding: 1.35rem 1.45rem;
   border-radius: 8px;
   overflow: hidden;

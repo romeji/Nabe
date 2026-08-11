@@ -157,6 +157,7 @@ export default async function PageAccueil() {
       {categoriesAccueilActif && categoriesAccueilOrdonnees.length > 0 && (
         <section className="accueil-categories-section conteneur">
           <span className="etiquette etiquette--centre">{contenu.collections_label}</span>
+          <h2 className="accueil-categories-section__titre">Trouvez la pièce qui vous ressemble</h2>
           <CategoriesAccueil
             categories={categoriesAccueilOrdonnees.map((c: any) => ({
               id: c.id,
@@ -232,6 +233,7 @@ export default async function PageAccueil() {
       {/* POURQUOI NOUS CHOISIR */}
       <section className="accueil-pourquoi conteneur">
         <span className="etiquette etiquette--centre">Pourquoi nous choisir ?</span>
+        <h2 className="accueil-pourquoi__titre">Le fait-main, sans compromis</h2>
         <div className="accueil-pourquoi__grille">
           <div className="accueil-pourquoi__item">
             <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2">

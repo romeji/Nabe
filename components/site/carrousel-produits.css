@@ -27,20 +27,15 @@
   background: var(--nabe-blanc, #fffdfa);
   border-radius: 28px 12px 28px 12px;
   overflow: hidden;
-  box-shadow: 0 18px 40px -22px rgba(69, 41, 30, 0.28);
-  transition: transform 0.4s ease, box-shadow 0.4s ease;
-}
-
-.carrousel-produits__piste > .carrousel-produits__carte:nth-child(even) {
-  transform: rotate(1.4deg);
-}
-.carrousel-produits__piste > .carrousel-produits__carte:nth-child(odd) {
-  transform: rotate(-1.4deg);
+  /* Ombre douce et homogène (tokens du thème) plutôt que la version très
+     marquée précédente ; plus proche du rendu de la maquette. */
+  box-shadow: var(--ombre-douce);
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease;
 }
 
 .carrousel-produits__carte:hover {
-  transform: translateY(-8px) rotate(0deg);
-  box-shadow: 0 26px 54px -20px rgba(69, 41, 30, 0.32);
+  transform: translateY(-6px);
+  box-shadow: var(--ombre-moyenne);
 }
 
 .carrousel-produits__lien {
@@ -49,13 +44,21 @@
 
 .carrousel-produits__image {
   position: relative;
-  background-color: var(--nabe-sable);
+  /* Même dégradé terracotta que le reste du site, visible derrière une
+     future image PNG transparente comme sous les photos jpg actuelles. */
+  background: linear-gradient(155deg, var(--c1, var(--nabe-argile-clair)) 0%, var(--c2, var(--nabe-terracotta)) 100%);
   overflow: hidden;
   aspect-ratio: 1;
   margin-bottom: 0;
   box-shadow: none;
   border-radius: 0;
 }
+
+.carrousel-produits__carte:nth-child(5n + 1) .carrousel-produits__image { --c1: #e8c9ae; --c2: #c17f5c; }
+.carrousel-produits__carte:nth-child(5n + 2) .carrousel-produits__image { --c1: #d9a986; --c2: #a85a3c; }
+.carrousel-produits__carte:nth-child(5n + 3) .carrousel-produits__image { --c1: #efdcc6; --c2: #ce9b78; }
+.carrousel-produits__carte:nth-child(5n + 4) .carrousel-produits__image { --c1: #ddb08c; --c2: #8e4a30; }
+.carrousel-produits__carte:nth-child(5n + 5) .carrousel-produits__image { --c1: #e3c4a6; --c2: #b76b45; }
 
 .carrousel-produits__badge-promo {
   position: absolute;
@@ -119,7 +122,6 @@
 .carrousel-produits__placeholder {
   width: 100%;
   height: 100%;
-  background-color: var(--nabe-argile);
 }
 
 .carrousel-produits__carte h3 {

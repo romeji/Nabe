@@ -114,19 +114,30 @@
 .accueil-hero__actions .btn {
   min-height: 3.2rem;
   padding-inline: 1.75rem;
+  /* Pilule parfaitement ronde ici (et non la pilule asymétrique du thème) :
+     c'est la forme utilisée sur les deux boutons du hero dans la maquette. */
   border-radius: 999px;
   box-shadow: 0 14px 32px rgba(42, 28, 20, 0.16);
 }
 
 .accueil-hero__actions .btn-primaire {
+  background-color: var(--nabe-terracotta-fonce);
+  border: 1.5px solid var(--nabe-terracotta-fonce);
+}
+
+.accueil-hero__actions .btn-primaire:hover {
   background-color: var(--nabe-terracotta);
+  border-color: var(--nabe-terracotta);
 }
 
 .accueil-hero__actions .btn-secondaire {
-  background-color: rgba(255, 255, 255, 0.09);
-  border-color: rgba(255, 255, 255, 0.74);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background-color: var(--nabe-blanc);
+  color: var(--nabe-brun-fonce);
+  border-color: var(--nabe-blanc);
+}
+
+.accueil-hero__actions .btn-secondaire:hover {
+  background-color: var(--nabe-creme);
 }
 
 .accueil-hero__badge {
@@ -240,6 +251,15 @@
   display: none;
 }
 
+.accueil-categories-section__titre {
+  font-family: var(--font-titres);
+  font-size: clamp(1.6rem, 2.6vw, 2.15rem);
+  font-weight: 600;
+  color: var(--texte-principal);
+  margin: 0 auto clamp(2rem, 4vw, 3rem);
+  max-width: 640px;
+}
+
 .accueil-categories__grille {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -260,11 +280,14 @@
 
 .accueil-categories__image {
   /* Chaque carte a un blob légèrement différent : un contour "façonné à la
-     main" plutôt qu'un dôme parfaitement symétrique. */
+     main" plutôt qu'un dôme parfaitement symétrique.
+     Le fond est toujours le même dégradé terracotta de la maquette, que la
+     catégorie ait une photo (jpg) ou non : une future image PNG avec un fond
+     transparent gardera ainsi le même rendu que le reste du site. */
   border-radius: 58% 42% 63% 37% / 41% 55% 45% 59%;
   overflow: hidden;
   aspect-ratio: 1 / 1.12;
-  background-color: var(--nabe-sable);
+  background: linear-gradient(155deg, var(--nabe-argile-clair) 0%, var(--nabe-terracotta) 100%);
   position: relative;
   z-index: 1;
   transition: border-radius 0.45s cubic-bezier(0.22, 1, 0.36, 1);
@@ -597,12 +620,21 @@
   text-align: center;
 }
 
+.accueil-pourquoi__titre {
+  font-family: var(--font-titres);
+  font-size: clamp(1.6rem, 2.6vw, 2.15rem);
+  font-weight: 600;
+  color: var(--texte-principal);
+  margin: 0 auto;
+  max-width: 640px;
+}
+
 .accueil-pourquoi__grille {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 0;
   margin: 0 auto;
-  padding-top: 0.9rem;
+  padding-top: 2rem;
 }
 
 .accueil-pourquoi__item {

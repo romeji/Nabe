@@ -47,8 +47,9 @@
 
 .collections-grille {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--espace-md);
+  /* 4 colonnes au lieu de 3 : cartes plus petites, comme dans la maquette. */
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--espace-sm);
 }
 
 .produit-carte {
@@ -57,13 +58,13 @@
   background: var(--nabe-blanc, #fffdfa);
   border-radius: 28px 12px 28px 12px;
   overflow: hidden;
-  box-shadow: 0 18px 40px -22px rgba(69, 41, 30, 0.28);
-  transition: transform 0.35s ease, box-shadow 0.35s ease;
+  box-shadow: var(--ombre-douce);
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease;
 }
 
 .produit-carte:hover {
   transform: translateY(-6px);
-  box-shadow: 0 26px 54px -20px rgba(69, 41, 30, 0.32);
+  box-shadow: var(--ombre-moyenne);
 }
 
 .produit-carte__lien {
@@ -72,7 +73,9 @@
 
 .produit-carte__image {
   position: relative;
-  background-color: var(--nabe-sable);
+  /* Même dégradé que le placeholder, qu'une photo soit présente ou non :
+     une future image PNG transparente gardera le rendu de la maquette. */
+  background: linear-gradient(155deg, var(--c1, var(--nabe-argile-clair)) 0%, var(--c2, var(--nabe-terracotta)) 100%);
   overflow: hidden;
   aspect-ratio: 1;
 }
@@ -98,11 +101,11 @@
   background: linear-gradient(155deg, var(--c1, var(--nabe-argile-clair)) 0%, var(--c2, var(--nabe-terracotta)) 100%);
 }
 
-.produit-carte:nth-child(5n + 1) .produit-carte__placeholder { --c1: #e8c9ae; --c2: #c17f5c; }
-.produit-carte:nth-child(5n + 2) .produit-carte__placeholder { --c1: #d9a986; --c2: #a85a3c; }
-.produit-carte:nth-child(5n + 3) .produit-carte__placeholder { --c1: #efdcc6; --c2: #ce9b78; }
-.produit-carte:nth-child(5n + 4) .produit-carte__placeholder { --c1: #ddb08c; --c2: #8e4a30; }
-.produit-carte:nth-child(5n + 5) .produit-carte__placeholder { --c1: #e3c4a6; --c2: #b76b45; }
+.produit-carte:nth-child(5n + 1) .produit-carte__image { --c1: #e8c9ae; --c2: #c17f5c; }
+.produit-carte:nth-child(5n + 2) .produit-carte__image { --c1: #d9a986; --c2: #a85a3c; }
+.produit-carte:nth-child(5n + 3) .produit-carte__image { --c1: #efdcc6; --c2: #ce9b78; }
+.produit-carte:nth-child(5n + 4) .produit-carte__image { --c1: #ddb08c; --c2: #8e4a30; }
+.produit-carte:nth-child(5n + 5) .produit-carte__image { --c1: #e3c4a6; --c2: #b76b45; }
 
 .produit-carte__coeur {
   position: absolute;
@@ -195,6 +198,12 @@
   color: var(--texte-secondaire);
   font-style: italic;
   padding: var(--espace-xl) 0;
+}
+
+@media (max-width: 1300px) {
+  .collections-grille {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 @media (max-width: 1100px) {

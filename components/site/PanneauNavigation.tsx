@@ -18,6 +18,20 @@ type MenuConfig = {
 
 const iconesCategories = ['bagues', 'colliers', 'boucles', 'bracelets', 'diamant', 'cadeau'];
 
+// Icône chevron utilisée pour les accordéons (repliés par défaut) qui
+// remplacent les longues listes de liens toujours visibles.
+function ChevronAccordeon({ ouvert }: { ouvert: boolean }) {
+  return (
+    <svg
+      className={`panneau-nav__chevron${ouvert ? ' panneau-nav__chevron--ouvert' : ''}`}
+      width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"
+      aria-hidden="true"
+    >
+      <path d="M6 9l6 6 6-6" />
+    </svg>
+  );
+}
+
 export default function PanneauNavigation({
   ouvert,
   onFermer,
@@ -35,6 +49,10 @@ export default function PanneauNavigation({
     aideActif: true,
   });
   const [monte, setMonte] = useState(false);
+  // Un seul accordéon ouvert à la fois : 'decouvrir' (catégories + collections)
+  // ou 'infos' (à propos + aide). Les deux sont repliés par défaut pour que
+  // le menu tienne sur un écran sans scroller.
+  const [sectionOuverte, setSectionOuverte] = useState<'decouvrir' | 'infos' | null>(null);
   const { data: session } = useSession();
 
   useEffect(() => setMonte(true), []);
@@ -48,6 +66,11 @@ export default function PanneauNavigation({
     return () => {
       document.body.style.overflow = overflowInitial;
     };
+  }, [ouvert]);
+
+  // Le menu repart replié à chaque nouvelle ouverture.
+  useEffect(() => {
+    if (ouvert) setSectionOuverte(null);
   }, [ouvert]);
 
   useEffect(() => {
@@ -77,6 +100,12 @@ export default function PanneauNavigation({
 
   if (!ouvert || !monte) return null;
 
+  function basculer(section: 'decouvrir' | 'infos') {
+    setSectionOuverte((actuelle) => (actuelle === section ? null : section));
+  }
+
+  const aInfos = menu.pagesActif || menu.aideActif;
+
   return createPortal(
     <div className="panneau-nav__overlay" role="presentation" onClick={onFermer}>
       <div className="panneau-nav" onClick={(e) => e.stopPropagation()}>
@@ -87,55 +116,91 @@ export default function PanneauNavigation({
         </div>
 
         <div className="panneau-nav__corps">
-          {menu.categoriesActif && (
-            <section className="panneau-nav__section">
-              <h3>
-                <Link href="/nos-bijoux" onClick={onFermer}>Nos bijoux</Link>
-              </h3>
-              {categories.map((c: any, index: number) => {
-                const logo = c.logoAccueil || c.image;
-                return (
-                  <Link key={c.id} href={`/nos-bijoux?categorie=${c.slug}`} className="panneau-nav__lien panneau-nav__lien--icone" onClick={onFermer}>
-                    {logo ? (
-                      <img src={logo} alt="" className="panneau-nav__icone panneau-nav__icone--logo" aria-hidden="true" />
-                    ) : (
-                      <span className={`panneau-nav__icone panneau-nav__icone--${iconesCategories[index] || 'bijou'}`} aria-hidden="true" />
-                    )}
-                    <span>{c.nom}</span>
-                  </Link>
-                );
-              })}
-            </section>
-          )}
+          {/* Lien principal, toujours visible */}
+          <Link href="/nos-bijoux" className="panneau-nav__lien-principal" onClick={onFermer}>
+            Nos bijoux
+          </Link>
+          <Link href="/sur-mesure" className="panneau-nav__lien-principal" onClick={onFermer}>
+            Sur mesure
+          </Link>
 
+          {/* Collections (gammes petit / moyen / haut de gamme) : peu
+              nombreuses et structurantes pour la navigation, donc affichées
+              directement en chips plutôt que cachées dans un accordéon. */}
           {menu.collectionsActif && collections.length > 0 && (
-            <section className="panneau-nav__section">
-              <h3>Collections</h3>
+            <div className="panneau-nav__collections">
               {collections.map((c: any) => (
-                <Link key={c.id} href={`/nos-bijoux?collection=${c.slug}`} className="panneau-nav__lien" onClick={onFermer}>
-                  <span>{c.nom}</span>
+                <Link key={c.id} href={`/nos-bijoux?collection=${c.slug}`} className="panneau-nav__collection-chip" onClick={onFermer}>
+                  {c.nom}
                 </Link>
               ))}
+            </div>
+          )}
+
+          {/* Accordéon : catégories, repliées par défaut */}
+          {menu.categoriesActif && categories.length > 0 && (
+            <section className="panneau-nav__accordeon">
+              <button
+                className="panneau-nav__accordeon-entete"
+                onClick={() => basculer('decouvrir')}
+                aria-expanded={sectionOuverte === 'decouvrir'}
+              >
+                <span>Découvrir par catégorie</span>
+                <ChevronAccordeon ouvert={sectionOuverte === 'decouvrir'} />
+              </button>
+
+              {sectionOuverte === 'decouvrir' && (
+                <div className="panneau-nav__accordeon-corps">
+                  {categories.map((c: any, index: number) => {
+                    const logo = c.logoAccueil || c.image;
+                    return (
+                      <Link key={c.id} href={`/nos-bijoux?categorie=${c.slug}`} className="panneau-nav__lien panneau-nav__lien--icone" onClick={onFermer}>
+                        {logo ? (
+                          <img src={logo} alt="" className="panneau-nav__icone panneau-nav__icone--logo" aria-hidden="true" />
+                        ) : (
+                          <span className={`panneau-nav__icone panneau-nav__icone--${iconesCategories[index] || 'bijou'}`} aria-hidden="true" />
+                        )}
+                        <span>{c.nom}</span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
             </section>
           )}
 
-          {menu.pagesActif && (
-            <section className="panneau-nav__section">
-              <h3>&Agrave; propos</h3>
-              <Link href="/mon-histoire" className="panneau-nav__lien" onClick={onFermer}>Mon Histoire</Link>
-              <Link href="/artisanat" className="panneau-nav__lien" onClick={onFermer}>Artisanat</Link>
-              <Link href="/engagements" className="panneau-nav__lien" onClick={onFermer}>Engagements</Link>
-              {journalActif && <Link href="/journal" className="panneau-nav__lien" onClick={onFermer}>Journal</Link>}
-            </section>
-          )}
+          {/* Accordéon 2 : à propos + aide, fusionnés et repliés par défaut */}
+          {aInfos && (
+            <section className="panneau-nav__accordeon">
+              <button
+                className="panneau-nav__accordeon-entete"
+                onClick={() => basculer('infos')}
+                aria-expanded={sectionOuverte === 'infos'}
+              >
+                <span>Informations</span>
+                <ChevronAccordeon ouvert={sectionOuverte === 'infos'} />
+              </button>
 
-          {menu.aideActif && (
-            <section className="panneau-nav__section">
-              <h3>Aide &amp; infos</h3>
-              <Link href="/livraison-retours" className="panneau-nav__lien" onClick={onFermer}>Livraison &amp; Retours</Link>
-              <Link href="/paiement-securise" className="panneau-nav__lien" onClick={onFermer}>Paiement s&eacute;curis&eacute;</Link>
-              <Link href="/faq" className="panneau-nav__lien" onClick={onFermer}>FAQ</Link>
-              <Link href="/contact" className="panneau-nav__lien" onClick={onFermer}>Contact</Link>
+              {sectionOuverte === 'infos' && (
+                <div className="panneau-nav__accordeon-corps">
+                  {menu.pagesActif && (
+                    <>
+                      <Link href="/mon-histoire" className="panneau-nav__lien" onClick={onFermer}>Mon Histoire</Link>
+                      <Link href="/artisanat" className="panneau-nav__lien" onClick={onFermer}>Artisanat</Link>
+                      <Link href="/engagements" className="panneau-nav__lien" onClick={onFermer}>Engagements</Link>
+                      {journalActif && <Link href="/journal" className="panneau-nav__lien" onClick={onFermer}>Journal</Link>}
+                    </>
+                  )}
+                  {menu.aideActif && (
+                    <>
+                      <Link href="/livraison-retours" className="panneau-nav__lien" onClick={onFermer}>Livraison &amp; Retours</Link>
+                      <Link href="/paiement-securise" className="panneau-nav__lien" onClick={onFermer}>Paiement s&eacute;curis&eacute;</Link>
+                      <Link href="/faq" className="panneau-nav__lien" onClick={onFermer}>FAQ</Link>
+                      <Link href="/contact" className="panneau-nav__lien" onClick={onFermer}>Contact</Link>
+                    </>
+                  )}
+                </div>
+              )}
             </section>
           )}
 

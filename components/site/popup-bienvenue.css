@@ -1,62 +1,161 @@
 .popup-bienvenue__overlay {
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(42, 28, 20, 0.55);
+  backdrop-filter: blur(2px);
   z-index: 550;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: var(--espace-md);
+  animation: popupBienvenueFondu 0.3s ease;
+}
+
+@keyframes popupBienvenueFondu {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes popupBienvenueMonte {
+  from { opacity: 0; transform: translateY(14px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .popup-bienvenue__modal {
   background-color: var(--nabe-blanc);
-  border-radius: var(--rayon-bordure);
-  max-width: 440px;
+  border-radius: 26px;
+  max-width: 760px;
   width: 100%;
-  padding: var(--espace-xl) var(--espace-lg);
-  text-align: center;
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  overflow: hidden;
   position: relative;
+  box-shadow: var(--ombre-moyenne);
+  animation: popupBienvenueMonte 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .popup-bienvenue__fermer {
   position: absolute;
   top: var(--espace-sm);
   right: var(--espace-sm);
-  font-size: 1.1rem;
-  color: var(--texte-secondaire);
+  z-index: 3;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.85);
+  color: var(--nabe-brun-fonce);
+  transition: var(--transition-douce);
+}
+
+.popup-bienvenue__fermer:hover {
+  background: var(--nabe-terracotta);
+  color: var(--texte-clair);
+}
+
+/* Colonne image */
+.popup-bienvenue__visuel {
+  position: relative;
+  background: linear-gradient(155deg, var(--nabe-argile-clair) 0%, var(--nabe-terracotta) 100%);
+  min-height: 220px;
+}
+
+.popup-bienvenue__photo {
+  object-fit: cover;
+  mix-blend-mode: normal;
+}
+
+.popup-bienvenue__ruban {
+  position: absolute;
+  bottom: var(--espace-md);
+  left: var(--espace-md);
+  z-index: 2;
+  background: var(--nabe-blanc);
+  color: var(--nabe-terracotta-fonce);
+  font-family: var(--font-titres);
+  font-style: italic;
+  font-weight: 600;
+  font-size: 1.05rem;
+  padding: 0.5rem 1.1rem;
+  border-radius: 63% 37% 54% 46% / 55% 45% 55% 45%;
+  box-shadow: var(--ombre-douce);
+}
+
+/* Colonne contenu */
+.popup-bienvenue__contenu {
+  padding: var(--espace-xl) var(--espace-lg) var(--espace-lg);
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+}
+
+.popup-bienvenue__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--nabe-terracotta-fonce);
+  margin-bottom: 0.7rem;
+}
+
+.popup-bienvenue__eyebrow::before {
+  content: '';
+  width: 18px;
+  height: 1px;
+  background: var(--nabe-terracotta-fonce);
+  display: inline-block;
 }
 
 .popup-bienvenue__modal h2 {
-  font-size: 1.5rem;
+  font-family: var(--font-titres);
+  font-size: 1.55rem;
+  font-weight: 600;
+  line-height: 1.15;
   margin-bottom: var(--espace-sm);
+  color: var(--texte-principal);
 }
 
 .popup-bienvenue__modal p {
   color: var(--texte-secondaire);
   margin-bottom: var(--espace-md);
-  font-size: 0.92rem;
+  font-size: 0.9rem;
+  line-height: 1.55;
 }
 
 .popup-bienvenue__modal form {
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  gap: 0.65rem;
 }
 
 .popup-bienvenue__modal input {
-  padding: 0.8rem;
+  padding: 0.85rem 1rem;
   border: 1px solid var(--nabe-argile);
-  border-radius: var(--rayon-bordure);
+  border-radius: 12px;
+  font-size: 0.88rem;
+  background-color: var(--nabe-creme);
+  transition: border-color 0.2s ease;
+}
+
+.popup-bienvenue__modal input:focus {
+  outline: none;
+  border-color: var(--nabe-terracotta);
 }
 
 .popup-bienvenue__modal form button[type='submit'] {
   margin-top: 0.4rem;
+  width: 100%;
 }
 
 .popup-bienvenue__erreur {
   color: var(--nabe-terracotta-fonce);
   font-size: 0.82rem;
+  margin-bottom: 0;
 }
 
 .popup-bienvenue__plus-tard {
@@ -64,6 +163,7 @@
   font-size: 0.8rem;
   color: var(--texte-secondaire);
   text-decoration: underline;
+  align-self: center;
 }
 
 .popup-bienvenue__succes h2 {
@@ -71,12 +171,27 @@
 }
 
 .popup-bienvenue__code {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   letter-spacing: 0.15em;
-  background-color: var(--nabe-sable);
+  background-color: var(--nabe-creme);
+  border: 1px dashed var(--nabe-argile);
   color: var(--nabe-terracotta-fonce);
   font-weight: 700;
+  text-align: center;
   padding: var(--espace-sm);
-  border-radius: var(--rayon-bordure);
+  border-radius: 12px;
   margin-bottom: var(--espace-md);
+}
+
+@media (max-width: 700px) {
+  .popup-bienvenue__modal {
+    grid-template-columns: 1fr;
+    max-width: 420px;
+  }
+  .popup-bienvenue__visuel {
+    min-height: 160px;
+  }
+  .popup-bienvenue__contenu {
+    padding: var(--espace-lg) var(--espace-md) var(--espace-md);
+  }
 }
