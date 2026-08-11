@@ -52,7 +52,7 @@ export default function PanneauNavigation({
   // Un seul accordéon ouvert à la fois : 'decouvrir' (catégories + collections)
   // ou 'infos' (à propos + aide). Les deux sont repliés par défaut pour que
   // le menu tienne sur un écran sans scroller.
-  const [sectionOuverte, setSectionOuverte] = useState<'decouvrir' | 'infos' | null>(null);
+  const [sectionOuverte, setSectionOuverte] = useState<'collections' | 'decouvrir' | 'infos' | null>(null);
   const { data: session } = useSession();
 
   useEffect(() => setMonte(true), []);
@@ -100,7 +100,7 @@ export default function PanneauNavigation({
 
   if (!ouvert || !monte) return null;
 
-  function basculer(section: 'decouvrir' | 'infos') {
+  function basculer(section: 'collections' | 'decouvrir' | 'infos') {
     setSectionOuverte((actuelle) => (actuelle === section ? null : section));
   }
 
@@ -124,17 +124,29 @@ export default function PanneauNavigation({
             Sur mesure
           </Link>
 
-          {/* Collections (gammes petit / moyen / haut de gamme) : peu
-              nombreuses et structurantes pour la navigation, donc affichées
-              directement en chips plutôt que cachées dans un accordéon. */}
+          {/* Accordéon "Nos collections" (gammes petit / moyen / haut de
+              gamme à terme), replié par défaut comme les autres. */}
           {menu.collectionsActif && collections.length > 0 && (
-            <div className="panneau-nav__collections">
-              {collections.map((c: any) => (
-                <Link key={c.id} href={`/nos-bijoux?collection=${c.slug}`} className="panneau-nav__collection-chip" onClick={onFermer}>
-                  {c.nom}
-                </Link>
-              ))}
-            </div>
+            <section className="panneau-nav__accordeon">
+              <button
+                className="panneau-nav__accordeon-entete"
+                onClick={() => basculer('collections')}
+                aria-expanded={sectionOuverte === 'collections'}
+              >
+                <span>Nos collections</span>
+                <ChevronAccordeon ouvert={sectionOuverte === 'collections'} />
+              </button>
+
+              {sectionOuverte === 'collections' && (
+                <div className="panneau-nav__accordeon-corps">
+                  {collections.map((c: any) => (
+                    <Link key={c.id} href={`/nos-bijoux?collection=${c.slug}`} className="panneau-nav__lien" onClick={onFermer}>
+                      <span>{c.nom}</span>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </section>
           )}
 
           {/* Accordéon : catégories, repliées par défaut */}

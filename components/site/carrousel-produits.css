@@ -27,14 +27,21 @@
   background: var(--nabe-blanc, #fffdfa);
   border-radius: 28px 12px 28px 12px;
   overflow: hidden;
-  /* Ombre douce et homogène (tokens du thème) plutôt que la version très
-     marquée précédente ; plus proche du rendu de la maquette. */
   box-shadow: var(--ombre-douce);
   transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease;
 }
 
+/* Légère inclinaison alternée, une carte sur deux dans l'autre sens :
+   c'est un choix de design volontaire (effet "posé à la main"), à garder. */
+.carrousel-produits__piste > .carrousel-produits__carte:nth-child(even) {
+  transform: rotate(1.4deg);
+}
+.carrousel-produits__piste > .carrousel-produits__carte:nth-child(odd) {
+  transform: rotate(-1.4deg);
+}
+
 .carrousel-produits__carte:hover {
-  transform: translateY(-6px);
+  transform: translateY(-8px) rotate(0deg);
   box-shadow: var(--ombre-moyenne);
 }
 
