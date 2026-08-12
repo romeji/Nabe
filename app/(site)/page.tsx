@@ -9,6 +9,7 @@ import CategoriesAccueil from '@/components/site/CategoriesAccueil';
 import ModulesAccueil from '@/components/site/ModulesAccueil';
 import InstagramModule from '@/components/site/InstagramModule';
 import BandeauReassuranceAccueil from '@/components/site/BandeauReassuranceAccueil';
+import ReparationScrollAccueil from '@/components/site/ReparationScrollAccueil';
 import './accueil.css';
 
 export const revalidate = 60;
@@ -125,6 +126,7 @@ export default async function PageAccueil() {
 
   return (
     <div className="page-accueil">
+      <ReparationScrollAccueil />
       {/* HERO */}
       <section className="accueil-hero">
         <Image

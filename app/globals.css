@@ -136,6 +136,12 @@ textarea::placeholder {
   color: rgba(69, 41, 30, 0.5);
 }
 
+html.nabe-scroll-verrouille,
+body.nabe-scroll-verrouille {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
 /* Conteneur centré réutilisable */
 .conteneur {
   width: 100%;

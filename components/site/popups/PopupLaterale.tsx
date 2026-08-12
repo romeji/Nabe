@@ -1,6 +1,6 @@
 'use client';
-import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import { useVerrouScroll } from '../useVerrouScroll';
 
 interface PopupLateraleProps {
   ouverte: boolean;
@@ -10,16 +10,9 @@ interface PopupLateraleProps {
 }
 
 export default function PopupLaterale({ ouverte, onFermer, titre, children }: PopupLateraleProps) {
-  useEffect(() => {
-    if (ouverte) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => { document.body.style.overflow = ''; };
-  }, [ouverte]);
+  useVerrouScroll(ouverte);
 
-  if (typeof window === 'undefined') return null;
+  if (typeof window === 'undefined' || !ouverte) return null;
 
   return createPortal(
     <>

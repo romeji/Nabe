@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePanierStore } from '@/lib/store-panier';
 import { formaterPrix } from '@/lib/utils';
+import { useVerrouScroll } from './useVerrouScroll';
 import './popup-panier.css';
 
 interface PopupPanierProps {
@@ -61,12 +62,7 @@ export default function PopupPanier({ ouverte, onFermer }: PopupPanierProps) {
 
   useEffect(() => { setMounted(true); }, []);
 
-  // Scroll du body
-  useEffect(() => {
-    if (ouverte) document.body.style.overflow = 'hidden';
-    else document.body.style.overflow = '';
-    return () => { document.body.style.overflow = ''; };
-  }, [ouverte]);
+  useVerrouScroll(ouverte);
 
   // Fermeture au clavier (touche Échap), pour les personnes qui naviguent sans souris
   useEffect(() => {
@@ -122,7 +118,9 @@ export default function PopupPanier({ ouverte, onFermer }: PopupPanierProps) {
     }
   }, [ouverte, cfg.panierVideSuggestionsActif, articles.length, bestsellers.length]);
 
-  if (!mounted) return null;
+  // Une modale fermée ne doit pas rester dans l'arbre : sur Safari mobile,
+  // un grand élément fixed/aria-modal hors écran peut capturer le geste tactile.
+  if (!mounted || !ouverte) return null;
 
   // — Helpers article bonus —
   const articleBonus = cfg.articleBonusActif && cfg.articleBonusId && cfg.articleBonusNom;

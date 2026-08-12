@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useVerrouScroll } from './useVerrouScroll';
 import { TAILLES_BAGUES } from '@/lib/tailles';
 import './guide-tailles.css';
 
@@ -8,11 +9,10 @@ export default function GuideTailles({ trigger }: { trigger?: React.ReactNode })
   const [ouvert, setOuvert] = useState(false);
   const [onglet, setOnglet] = useState<'mesurer' | 'guide' | 'faq'>('guide');
 
+  useVerrouScroll(ouvert);
+
   useEffect(() => {
     if (!ouvert) return;
-
-    const ancienOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
 
     function fermerAvecEscape(e: KeyboardEvent) {
       if (e.key === 'Escape') setOuvert(false);
@@ -20,7 +20,6 @@ export default function GuideTailles({ trigger }: { trigger?: React.ReactNode })
 
     window.addEventListener('keydown', fermerAvecEscape);
     return () => {
-      document.body.style.overflow = ancienOverflow;
       window.removeEventListener('keydown', fermerAvecEscape);
     };
   }, [ouvert]);

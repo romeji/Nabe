@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
+import { useVerrouScroll } from './useVerrouScroll';
 import './panneau-navigation.css';
 
 type ItemSimple = { id: string; nom: string; slug: string };
@@ -57,16 +58,7 @@ export default function PanneauNavigation({
 
   useEffect(() => setMonte(true), []);
 
-  useEffect(() => {
-    if (!ouvert) return;
-
-    const overflowInitial = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-
-    return () => {
-      document.body.style.overflow = overflowInitial;
-    };
-  }, [ouvert]);
+  useVerrouScroll(ouvert);
 
   // Le menu repart replié à chaque nouvelle ouverture.
   useEffect(() => {
