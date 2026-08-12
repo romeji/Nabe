@@ -9,6 +9,8 @@
   justify-content: center;
   padding: var(--espace-md);
   animation: popupBienvenueFondu 0.3s ease;
+  pointer-events: none;
+  touch-action: pan-y;
 }
 
 @keyframes popupBienvenueFondu {
@@ -32,6 +34,8 @@
   position: relative;
   box-shadow: var(--ombre-moyenne);
   animation: popupBienvenueMonte 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: auto;
+  touch-action: pan-y;
 }
 
 .popup-bienvenue__fermer {
@@ -184,9 +188,16 @@
 }
 
 @media (max-width: 700px) {
+  .popup-bienvenue__overlay {
+    align-items: flex-start;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
   .popup-bienvenue__modal {
     grid-template-columns: 1fr;
     max-width: 420px;
+    max-height: none;
+    margin: auto 0;
   }
   .popup-bienvenue__visuel {
     min-height: 160px;
