@@ -232,5 +232,7 @@
     width: 34px;
     height: 100%;
     background: var(--nabe-noir, #2a1c14);
+    transition: transform 0.12s linear;
+    will-change: transform;
   }
 }

@@ -1,3 +1,6 @@
+'use client';
+
+import { useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -58,11 +61,23 @@ function IconeCategorie({ nom }: { nom: string }) {
 }
 
 export default function CategoriesAccueil({ categories }: { categories: CategorieAffichee[] }) {
+  const pisteRef = useRef<HTMLDivElement>(null);
+  const [etapeActive, setEtapeActive] = useState(0);
+  const nombreEtapes = Math.max(1, categories.length - 3);
+
+  function mettreAJourIndicateur() {
+    const piste = pisteRef.current;
+    if (!piste) return;
+    const maximum = piste.scrollWidth - piste.clientWidth;
+    const progression = maximum > 0 ? piste.scrollLeft / maximum : 0;
+    setEtapeActive(Math.round(progression * (nombreEtapes - 1)));
+  }
+
   if (categories.length === 0) return null;
 
   return (
     <div className="accueil-categories__carrousel">
-      <div className="accueil-categories__grille">
+      <div className="accueil-categories__grille" ref={pisteRef} onScroll={mettreAJourIndicateur}>
         {categories.map((c: any) => (
           <Link key={c.id} href={`/nos-bijoux?categorie=${c.slug}`} className="accueil-categories__carte">
             <div className="accueil-categories__image">
@@ -80,9 +95,16 @@ export default function CategoriesAccueil({ categories }: { categories: Categori
           </Link>
         ))}
       </div>
-      <div className="accueil-categories__indicateur" aria-hidden="true">
-        <span />
-      </div>
+      {categories.length > 4 && (
+        <div className="accueil-categories__indicateur" aria-hidden="true">
+          {Array.from({ length: nombreEtapes }, (_, index) => (
+            <span
+              className={index === etapeActive ? 'accueil-categories__indicateur-trait--actif' : ''}
+              key={index}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

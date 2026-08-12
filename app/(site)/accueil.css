@@ -416,18 +416,26 @@
   }
 
   .accueil-categories__indicateur {
-    display: block;
-    width: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    width: auto;
     height: 2px;
     margin: 0.65rem auto 0;
-    overflow: hidden;
-    background: rgba(42, 28, 20, 0.2);
   }
 
   .accueil-categories__indicateur span {
     display: block;
-    width: 34px;
+    width: 18px;
     height: 100%;
+    flex: 0 0 auto;
+    background: rgba(42, 28, 20, 0.2);
+    transition: width 0.25s ease, background-color 0.25s ease;
+  }
+
+  .accueil-categories__indicateur span.accueil-categories__indicateur-trait--actif {
+    width: 26px;
     background: var(--nabe-noir, #2a1c14);
   }
 }

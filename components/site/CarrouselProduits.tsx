@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { formaterPrix, promoEstActive, pourcentageReduction } from '@/lib/utils';
@@ -28,6 +28,23 @@ export default function CarrouselProduits({
   favorisIds?: string[];
 }) {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const curseurRef = useRef<HTMLSpanElement>(null);
+
+  const mettreAJourIndicateur = useCallback(() => {
+    const piste = scrollRef.current;
+    const curseur = curseurRef.current;
+    if (!piste || !curseur) return;
+
+    const defilementMaximum = piste.scrollWidth - piste.clientWidth;
+    const progression = defilementMaximum > 0 ? piste.scrollLeft / defilementMaximum : 0;
+    curseur.style.transform = `translateX(${Math.max(0, Math.min(1, progression)) * 86}px)`;
+  }, []);
+
+  useEffect(() => {
+    mettreAJourIndicateur();
+    window.addEventListener('resize', mettreAJourIndicateur);
+    return () => window.removeEventListener('resize', mettreAJourIndicateur);
+  }, [mettreAJourIndicateur, produits.length]);
 
   function defiler(direction: 'gauche' | 'droite') {
     if (!scrollRef.current) return;
@@ -43,7 +60,7 @@ export default function CarrouselProduits({
         ‹
       </button>
 
-      <div className="carrousel-produits__piste" ref={scrollRef}>
+      <div className="carrousel-produits__piste" ref={scrollRef} onScroll={mettreAJourIndicateur}>
         {produits.map((p: any) => {
           const enPromo = promoEstActive({
             promoActive: !!p.promoActive,
@@ -92,7 +109,7 @@ export default function CarrouselProduits({
         ›
       </button>
       <div className="carrousel-produits__indicateur" aria-hidden="true">
-        <span />
+        <span ref={curseurRef} />
       </div>
     </div>
   );
