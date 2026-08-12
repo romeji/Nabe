@@ -1,4 +1,4 @@
-const VERSION = 'nabe-pwa-v1';
+const VERSION = 'nabe-pwa-v2';
 
 self.addEventListener('install', () => {
   self.skipWaiting();
@@ -15,9 +15,5 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Une boutique ne doit jamais afficher un prix ou un stock ancien.
-self.addEventListener('fetch', (event) => {
-  if (event.request.method === 'GET' && new URL(event.request.url).origin === self.location.origin) {
-    event.respondWith(fetch(event.request));
-  }
-});
+// Aucun intercepteur fetch : la boutique reste pilotée directement par les
+// stratégies de cache Next.js/Vercel, sans passage obligatoire par le worker.
