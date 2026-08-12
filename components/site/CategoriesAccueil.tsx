@@ -61,23 +61,28 @@ export default function CategoriesAccueil({ categories }: { categories: Categori
   if (categories.length === 0) return null;
 
   return (
-    <div className="accueil-categories__grille">
-      {categories.map((c: any) => (
-        <Link key={c.id} href={`/nos-bijoux?categorie=${c.slug}`} className="accueil-categories__carte">
-          <div className="accueil-categories__image">
-            {c.image ? (
-              <Image src={c.image} alt={c.nom} width={280} height={280} />
-            ) : (
-              <div className="accueil-categories__placeholder">
-                <IconeCategorie nom={c.nom} />
-              </div>
-            )}
-          </div>
-          <div className="accueil-categories__panneau">
-            <span className="accueil-categories__nom">{c.nom}</span>
-          </div>
-        </Link>
-      ))}
+    <div className="accueil-categories__carrousel">
+      <div className="accueil-categories__grille">
+        {categories.map((c: any) => (
+          <Link key={c.id} href={`/nos-bijoux?categorie=${c.slug}`} className="accueil-categories__carte">
+            <div className="accueil-categories__image">
+              {c.image ? (
+                <Image src={c.image} alt={c.nom} width={280} height={280} />
+              ) : (
+                <div className="accueil-categories__placeholder">
+                  <IconeCategorie nom={c.nom} />
+                </div>
+              )}
+            </div>
+            <div className="accueil-categories__panneau">
+              <span className="accueil-categories__nom">{c.nom}</span>
+            </div>
+          </Link>
+        ))}
+      </div>
+      <div className="accueil-categories__indicateur" aria-hidden="true">
+        <span />
+      </div>
     </div>
   );
 }

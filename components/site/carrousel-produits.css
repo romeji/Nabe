@@ -194,7 +194,15 @@
   margin-left: -4px;
 }
 
+.carrousel-produits__indicateur {
+  display: none;
+}
+
 @media (max-width: 600px) {
+  .carrousel-produits {
+    padding-bottom: 1.65rem;
+  }
+
   .carrousel-produits__piste {
     gap: 0.8rem;
     padding-inline: 0;
@@ -205,5 +213,24 @@
   }
   .carrousel-produits__fleche {
     display: none;
+  }
+
+  .carrousel-produits__indicateur {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    display: block;
+    width: 120px;
+    height: 2px;
+    overflow: hidden;
+    background: rgba(42, 28, 20, 0.2);
+    transform: translateX(-50%);
+  }
+
+  .carrousel-produits__indicateur span {
+    display: block;
+    width: 34px;
+    height: 100%;
+    background: var(--nabe-noir, #2a1c14);
   }
 }

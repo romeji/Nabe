@@ -91,6 +91,9 @@ export default function CarrouselProduits({
       <button className="carrousel-produits__fleche carrousel-produits__fleche--droite" onClick={() => defiler('droite')} aria-label="Suivant">
         ›
       </button>
+      <div className="carrousel-produits__indicateur" aria-hidden="true">
+        <span />
+      </div>
     </div>
   );
 }
