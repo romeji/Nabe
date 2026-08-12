@@ -27,7 +27,7 @@
 .nabe-footer__logo {
   display: block;
   margin-bottom: 1rem;
-  color: #c37a55;
+  color: var(--nabe-or);
   font-family: var(--font-logo);
   font-size: clamp(3.7rem, 5vw, 5rem);
   line-height: 0.75;

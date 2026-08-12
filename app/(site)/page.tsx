@@ -10,6 +10,7 @@ import TexteRiche from '@/components/site/TexteRiche';
 import CategoriesAccueil from '@/components/site/CategoriesAccueil';
 import ModulesAccueil from '@/components/site/ModulesAccueil';
 import InstagramModule from '@/components/site/InstagramModule';
+import BandeauReassuranceAccueil from '@/components/site/BandeauReassuranceAccueil';
 import './accueil.css';
 
 export const revalidate = 60;
@@ -130,38 +131,7 @@ export default async function PageAccueil() {
         </span>
       </section>
 
-      {/* REASSURANCE */}
-      <section className="accueil-reassurance">
-        <div className="accueil-reassurance__item">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
-            <path d="M14 3l2.5 2.5L7 15l-4 1 1-4z" />
-            <path d="M17.5 2.5 21 6l-2 2-3.5-3.5z" />
-          </svg>
-          <span>Fabrication artisanale</span>
-        </div>
-        <div className="accueil-reassurance__item">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
-            <path d="M6 3h12l3.5 5L12 21 2.5 8z" />
-            <path d="M2.5 8h19M9 3l-2 5 5 13 5-13-2-5" />
-          </svg>
-          <span>Matériaux de qualité</span>
-        </div>
-        <div className="accueil-reassurance__item">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
-            <path d="M12 2 4 5.5v6C4 16.7 7.4 20.9 12 22c4.6-1.1 8-5.3 8-10.5v-6z" />
-          </svg>
-          <span>Paiement sécurisé</span>
-        </div>
-        <div className="accueil-reassurance__item">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
-            <path d="M21 12a9 9 0 1 1-3.5-7.1" />
-            <path d="M21 3v5h-5" />
-          </svg>
-          <span>Retours sous 14 jours</span>
-        </div>
-      </section>
-
-      <ModulesAccueil config={config} />
+      <BandeauReassuranceAccueil />
 
       {/* NOS COLLECTIONS (catégories) */}
       {categoriesAccueilActif && categoriesAccueilOrdonnees.length > 0 && (
@@ -183,6 +153,8 @@ export default async function PageAccueil() {
           </div>
         </section>
       )}
+
+      <ModulesAccueil config={config} />
 
       {/* NOUVEAUTES */}
       {carrousselNouvelleCollectionActif && produitsNouvelleCollection.length > 0 && (
@@ -240,45 +212,14 @@ export default async function PageAccueil() {
         </div>
       </section>
 
-      {/* POURQUOI NOUS CHOISIR */}
-      <section className="accueil-pourquoi conteneur">
-        <span className="etiquette etiquette--centre">Pourquoi nous choisir ?</span>
-        <h2 className="accueil-pourquoi__titre">Le fait-main, sans compromis</h2>
-        <div className="accueil-pourquoi__grille">
-          <div className="accueil-pourquoi__item">
-            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2">
-              <path d="M6 3h12l3.5 5L12 21 2.5 8z" />
-              <path d="M2.5 8h19M9 3l-2 5 5 13 5-13-2-5" />
-            </svg>
-            <h3>Bijoux faits main</h3>
-            <p>Chaque pièce est unique et réalisée avec passion.</p>
-          </div>
-          <div className="accueil-pourquoi__item">
-            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2">
-              <path d="M12 2c4 3 7 7 7 11a7 7 0 1 1-14 0c0-4 3-8 7-11z" />
-            </svg>
-            <h3>Matériaux responsables</h3>
-            <p>Nous sélectionnons des matériaux durables et de qualité.</p>
-          </div>
-          <div className="accueil-pourquoi__item">
-            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2">
-              <path d="M12 2 4 5.5v6C4 16.7 7.4 20.9 12 22c4.6-1.1 8-5.3 8-10.5v-6z" />
-              <path d="M9 12l2 2 4-4" />
-            </svg>
-            <h3>Paiement sécurisé</h3>
-            <p>Vos transactions sont protégées à chaque étape.</p>
-          </div>
-          <div className="accueil-pourquoi__item">
-            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2">
-              <path d="M3 7h11v9H3z" />
-              <path d="M14 10h3.5l3.5 3v3h-7z" />
-              <circle cx="7" cy="18.5" r="1.6" />
-              <circle cx="17.5" cy="18.5" r="1.6" />
-            </svg>
-            <h3>Livraison offerte</h3>
-            <p>À partir de 100 € d&apos;achat en France métropolitaine.</p>
-          </div>
-        </div>
+      {/* MANIFESTE NABE */}
+      <section className="accueil-manifeste conteneur">
+        <span className="accueil-manifeste__logo">Nabe</span>
+        <h2>
+          Avec Nabe, c&apos;est fini d&apos;acheter des bijoux qui ne durent pas.
+          <span> Vous avez enfin des bijoux de qualité, pensés pour vous accompagner au quotidien, même dans l&apos;eau.</span>
+        </h2>
+        <Link href="/mon-histoire" className="accueil-manifeste__lien">Notre histoire</Link>
       </section>
 
       {/* NOTRE SELECTION (collections choisies en admin) */}

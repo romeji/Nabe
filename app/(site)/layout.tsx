@@ -7,6 +7,7 @@ import PopupBienvenue from '@/components/site/PopupBienvenue';
 import ConsentementCookies from '@/components/site/ConsentementCookies';
 import SuiviPageVue from '@/components/site/SuiviPageVue';
 import NotificationsApp from '@/components/site/NotificationsApp';
+import AnimationsSite from '@/components/site/AnimationsSite';
 import { getConfigSite } from '@/lib/config-site';
 import { authClientOptions } from '@/lib/auth-client';
 
@@ -39,6 +40,7 @@ export default async function SiteLayout({
   return (
     <ProvidersClient session={session}>
       <SuiviPageVue />
+      <AnimationsSite />
       <NotificationsApp actif={config.notifications_app_actif === 'true'} />
       <Header />
       <main>{children}</main>

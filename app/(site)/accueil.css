@@ -181,16 +181,26 @@
 
 /* REASSURANCE — bandeau fin sous le hero (volontairement plein écran) */
 .accueil-reassurance {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0;
   margin: 0;
-  padding: 1.05rem max(var(--marge-page), calc((100vw - var(--largeur-max)) / 2 + var(--marge-page)));
+  padding: 1rem 0;
   width: 100%;
   position: relative;
   z-index: 2;
+  overflow: hidden;
   background-color: rgba(248, 243, 236, 0.5);
+}
+
+.accueil-reassurance__piste {
+  display: flex;
+  width: max-content;
+  animation: reassurance-defilement 24s linear infinite;
+  will-change: transform;
+}
+
+.accueil-reassurance__groupe {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
 }
 
 .accueil-reassurance__item {
@@ -203,7 +213,13 @@
   letter-spacing: 0;
   text-transform: none;
   white-space: nowrap;
-  padding: 0 clamp(1.5rem, 4vw, 3.8rem);
+  min-width: clamp(210px, 25vw, 320px);
+  justify-content: center;
+  padding: 0 clamp(1rem, 3vw, 2.6rem);
+}
+
+@keyframes reassurance-defilement {
+  to { transform: translateX(-50%); }
 }
 
 .accueil-reassurance__item svg {
@@ -377,7 +393,8 @@
   }
 
   .accueil-categories__carte {
-    flex: 0 0 128px;
+    flex: 0 0 calc((100% - 3rem) / 4);
+    min-width: 0;
     scroll-snap-align: start;
   }
 
@@ -390,7 +407,12 @@
   }
 
   .accueil-categories__nom {
-    font-size: 0.96rem;
+    font-size: clamp(0.7rem, 2.6vw, 0.9rem);
+  }
+
+  .accueil-categories__placeholder svg {
+    width: clamp(30px, 9vw, 42px);
+    height: clamp(30px, 9vw, 42px);
   }
 
   .accueil-categories__indicateur {
@@ -665,73 +687,56 @@
   }
 }
 
-/* POURQUOI NOUS CHOISIR */
-.accueil-pourquoi {
-  padding-top: clamp(1.4rem, 2.8vw, 2rem);
-  padding-bottom: clamp(1.4rem, 2.8vw, 2rem);
-  text-align: center;
-}
-
-.accueil-pourquoi__titre {
-  font-family: var(--font-titres);
-  font-size: clamp(1.6rem, 2.6vw, 2.15rem);
-  font-weight: 600;
-  color: var(--texte-principal);
-  margin: 0 auto;
-  max-width: 640px;
-}
-
-.accueil-pourquoi__grille {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0;
-  margin: 0 auto;
-  padding-top: 2rem;
-}
-
-.accueil-pourquoi__item {
+/* MANIFESTE NABE — respiration éditoriale inspirée de la maquette */
+.accueil-manifeste {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.55rem;
-  padding: 0.8rem clamp(1rem, 3vw, 2.5rem);
-  position: relative;
+  padding-top: clamp(3.5rem, 7vw, 6.5rem);
+  padding-bottom: clamp(3.5rem, 7vw, 6.5rem);
+  text-align: center;
 }
 
-.accueil-pourquoi__item:not(:last-child)::after {
-  content: '';
-  position: absolute;
-  top: 18%;
-  right: 0;
-  width: 1px;
-  height: 64%;
-  background-color: rgba(159, 84, 52, 0.24);
+.accueil-manifeste__logo {
+  margin-bottom: 1.3rem;
+  color: var(--nabe-or);
+  font-family: var(--font-logo);
+  font-size: clamp(3.6rem, 6vw, 5.4rem);
+  line-height: 0.8;
 }
 
-.accueil-pourquoi__item svg {
-  color: var(--nabe-terracotta);
-  margin-bottom: 0.45rem;
-  width: 34px;
-  height: 34px;
-}
-
-.accueil-pourquoi__item h3 {
+.accueil-manifeste h2 {
+  max-width: 800px;
+  margin: 0;
+  color: var(--texte-principal);
   font-family: var(--font-titres);
+  font-size: clamp(1.65rem, 3.1vw, 2.65rem);
   font-weight: 450;
-  font-size: 1.05rem;
+  line-height: 1.16;
+  text-wrap: balance;
 }
 
-.accueil-pourquoi__item p {
-  color: var(--texte-secondaire);
-  font-size: 0.82rem;
-  line-height: 1.45;
-  max-width: 220px;
+.accueil-manifeste h2 span {
+  display: block;
+  color: var(--nabe-terracotta-fonce);
+  font-style: italic;
 }
 
-@media (max-width: 700px) {
-  .accueil-pourquoi__grille {
-    grid-template-columns: repeat(2, 1fr);
-  }
+.accueil-manifeste__lien {
+  margin-top: 1.8rem;
+  padding-bottom: 0.22rem;
+  border-bottom: 1px solid currentColor;
+  color: var(--texte-principal);
+  font-size: 0.72rem;
+  font-weight: 650;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transition: color 0.25s ease, letter-spacing 0.25s ease;
+}
+
+.accueil-manifeste__lien:hover {
+  color: var(--nabe-terracotta);
+  letter-spacing: 0.18em;
 }
 
 /* CARROUSELS GENERIQUES (sélection "en avant", meilleures ventes) */
@@ -1073,27 +1078,23 @@
     margin-right: auto;
     text-align: center;
   }
-  .accueil-categories__grille {
-    grid-template-columns: 1fr 1fr;
-  }
   .accueil-reassurance {
-    align-items: stretch;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.65rem;
     margin-top: 0;
-    padding: 0.85rem;
+    padding: 0.85rem 0;
     border-radius: 0;
   }
   .accueil-reassurance__item {
-    justify-content: center;
-    min-height: 3rem;
-    padding: 0.7rem 0.55rem;
-    background-color: rgba(245, 242, 238, 0.72);
-    border-radius: 999px;
-    font-size: 0.68rem;
+    min-width: 190px;
+    padding-inline: 1rem;
+    font-size: 0.72rem;
     text-align: center;
-    white-space: normal;
+    white-space: nowrap;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .accueil-reassurance__piste {
+    animation-play-state: paused;
   }
 }
 

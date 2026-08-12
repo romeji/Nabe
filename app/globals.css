@@ -262,6 +262,30 @@ textarea::placeholder {
   color: var(--nabe-terracotta);
 }
 
+/* Apparitions progressives déclenchées par AnimationsSite. Le contenu reste
+   visible sans JavaScript et pour les personnes qui réduisent les mouvements. */
+.animations-site-actives .nabe-reveal {
+  opacity: 0;
+  transform: translateY(24px) scale(0.99);
+  transition:
+    opacity 0.72s ease var(--nabe-reveal-delay, 0ms),
+    transform 0.82s cubic-bezier(0.22, 1, 0.36, 1) var(--nabe-reveal-delay, 0ms);
+}
+
+.animations-site-actives .nabe-reveal.nabe-reveal--visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animations-site-actives .nabe-reveal,
+  .animations-site-actives .nabe-reveal.nabe-reveal--visible {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
 /* Texte accent (mots colorés dans les titres) — doré, pour un rappel
    récurrent de la couleur dorée à travers les titres de section du site */
 .accent {
