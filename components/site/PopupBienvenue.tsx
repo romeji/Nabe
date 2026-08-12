@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import './popup-bienvenue.css';
 
 // localStorage (et non sessionStorage) : une fois fermée, la popup ne
@@ -11,6 +12,7 @@ import './popup-bienvenue.css';
 const CLE_STOCKAGE = 'nabe_popup_bienvenue_vue';
 
 export default function PopupBienvenue() {
+  const pathname = usePathname();
   const [config, setConfig] = useState<{ actif: boolean; titre: string; texte: string; pourcentage: string } | null>(null);
   const [ouvert, setOuvert] = useState(false);
   const [prenom, setPrenom] = useState('');
@@ -20,6 +22,11 @@ export default function PopupBienvenue() {
   const [erreur, setErreur] = useState('');
 
   useEffect(() => {
+    // Ne jamais interrompre l'arrivée sur l'accueil : sur mobile, cette
+    // modale retardée occupait presque tout l'écran et capturait le premier
+    // geste vertical, donnant l'impression que la page venait de se figer.
+    if (pathname === '/') return;
+
     const dejaVue = typeof window !== 'undefined' && localStorage.getItem(CLE_STOCKAGE);
     if (dejaVue) return;
 
@@ -37,7 +44,7 @@ export default function PopupBienvenue() {
         }
       })
       .catch(() => {});
-  }, []);
+  }, [pathname]);
 
   function fermer() {
     setOuvert(false);
