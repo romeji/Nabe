@@ -24,6 +24,8 @@ export default function ReglagesClient({
   const [chargementInstagram, setChargementInstagram] = useState(false);
   const [erreurInstagram, setErreurInstagram] = useState('');
   const [idEnImport, setIdEnImport] = useState<string | null>(null);
+  const [uploadImagePanierEnCours, setUploadImagePanierEnCours] = useState(false);
+  const [erreurImagePanier, setErreurImagePanier] = useState('');
 
   const categoriesSelectionnees = (config.categories_accueil_ids || '').split(',').filter(Boolean);
   const collectionsSelectionnees = (config.collections_selection_ids || '').split(',').filter(Boolean);
@@ -62,6 +64,35 @@ export default function ReglagesClient({
 
   function maj(cle: string, valeur: string) {
     setConfig((c) => ({ ...c, [cle]: valeur }));
+  }
+
+  async function gererUploadImagePanier(e: React.ChangeEvent<HTMLInputElement>) {
+    const fichier = e.target.files?.[0];
+    if (!fichier) return;
+
+    setUploadImagePanierEnCours(true);
+    setErreurImagePanier('');
+    try {
+      const base64 = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(fichier);
+      });
+      const reponse = await fetch('/api/admin/upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fichier: base64 }),
+      });
+      const donnees = await reponse.json();
+      if (!reponse.ok || !donnees.url) throw new Error(donnees.error || "Échec de l'upload");
+      maj('popup_panier_vide_image', donnees.url);
+    } catch (error) {
+      setErreurImagePanier(error instanceof Error ? error.message : "Impossible d'envoyer l'image.");
+    } finally {
+      setUploadImagePanierEnCours(false);
+      e.target.value = '';
+    }
   }
 
   function retirerSourceInstagram(id: string, urlAsupprimer: string) {
@@ -645,6 +676,28 @@ export default function ReglagesClient({
             <p>Affiche les meilleures ventes (bestsellers) dans la popup panier quand elle est ouverte et que le panier est vide.</p>
           </div>
         </label>
+
+        <div className="reglages-client__sous-champ">
+          <label htmlFor="popup-panier-vide-image">Image du panier vide</label>
+          <input
+            id="popup-panier-vide-image"
+            type="file"
+            accept="image/png,image/jpeg,image/webp,image/gif"
+            onChange={gererUploadImagePanier}
+            disabled={uploadImagePanierEnCours}
+          />
+          <input
+            type="url"
+            value={config.popup_panier_vide_image || ''}
+            onChange={(e) => maj('popup_panier_vide_image', e.target.value)}
+            placeholder="https://..."
+            aria-label="URL de l'image du panier vide"
+          />
+          <p className="formulaire-produit__aide">
+            {uploadImagePanierEnCours ? 'Envoi en cours…' : "Cette image apparaît sous le bouton lorsque le panier est vide."}
+          </p>
+          {erreurImagePanier && <p className="formulaire-produit__erreur">{erreurImagePanier}</p>}
+        </div>
       </div>
 
       <div className="admin-carte reglages-client__section">

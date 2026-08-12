@@ -18,6 +18,7 @@ export const DEFAUTS_CONFIG: Record<string, string> = {
   popup_bienvenue_texte: 'Inscrivez-vous et recevez un code de réduction immédiatement par e-mail.',
   popup_bienvenue_pourcentage: '10',
   popup_panier_vide_actif: 'true',
+  popup_panier_vide_image: '/images/atelier-portrait.jpg',
   galerie_produit_position: 'bas', // 'gauche' (vignettes à gauche, classique) ou 'bas' (vignettes sous l'image, plus aéré)
   categories_accueil_actif: 'true',
   categories_accueil_ids: '', // jusqu'à 4 ids de Categorie séparés par des virgules

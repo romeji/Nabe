@@ -365,35 +365,83 @@
      s'annulent proprement si le contenu devient trop grand pour tenir. */
   justify-content: flex-start;
   overflow-y: auto;
-  gap: 1rem;
-  padding: 2rem;
-  color: #888;
+  align-items: stretch;
+  gap: 0;
+  padding: 0;
+  color: var(--nabe-encre, #201813);
 }
 
-.popup-panier__vide::before {
-  content: '';
-  margin: auto 0 0;
+.popup-panier__vide-intro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem 1.75rem 2.2rem;
+  text-align: center;
 }
-
-.popup-panier__vide::after {
-  content: '';
-  margin: 0 0 auto;
+.popup-panier__vide-message {
+  margin: 0 0 1rem;
+  color: #5f574f;
+  font-size: 0.9rem;
 }
-.popup-panier__vide p { font-size: 0.95rem; }
 .popup-panier__btn-continuer {
-  padding: 0.75rem 1.5rem;
-  border: 1px solid var(--nabe-argile, #cfa999);
-  border-radius: 999px;
-  background: none;
+  min-width: 12.5rem;
+  padding: 0.9rem 1.5rem;
+  border: 1px solid #111;
+  border-radius: 7px;
+  background: #050505;
   cursor: pointer;
-  font-size: 0.82rem;
-  color: var(--nabe-encre, #2a1c14);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #fff;
   transition: all 0.2s;
 }
 .popup-panier__btn-continuer:hover {
   background: var(--nabe-terracotta-fonce, #7c4027);
   border-color: var(--nabe-terracotta-fonce, #7c4027);
-  color: #fff;
+}
+.popup-panier__compte {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin: 1.1rem 0 0;
+  font-family: var(--font-titres, Georgia, serif);
+  font-size: 1rem;
+}
+.popup-panier__compte a {
+  color: inherit;
+  font-family: var(--font-corps, inherit);
+  font-size: 0.82rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.popup-panier__editorial {
+  display: block;
+  color: var(--nabe-encre, #201813);
+  text-decoration: none;
+}
+.popup-panier__editorial-image {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 0.82;
+  overflow: hidden;
+  background: #f2eee8;
+}
+.popup-panier__editorial-image img {
+  object-fit: cover;
+  object-position: center 34%;
+  transition: transform 0.5s ease;
+}
+.popup-panier__editorial:hover img { transform: scale(1.025); }
+.popup-panier__editorial-lien {
+  display: block;
+  padding: 0.9rem 1.25rem 0.25rem;
+  font-family: var(--font-titres, Georgia, serif);
+  font-size: 1rem;
+  text-decoration: underline;
+  text-underline-offset: 4px;
 }
 
 @media (max-width: 480px) {
@@ -408,6 +456,9 @@
   .popup-panier--ouverte {
     transform: translateX(0);
   }
+  .popup-panier__entete { padding: 1.45rem 1.25rem 1rem; }
+  .popup-panier__titre { font-size: 1.25rem; }
+  .popup-panier__vide-intro { padding: 1.25rem 1.25rem 1.8rem; }
 }
 
 /* ── Boîte cadeau / article bonus ── */

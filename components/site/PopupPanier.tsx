@@ -26,6 +26,7 @@ type ConfigPopup = {
   articleBonusImage: string;
   articleBonusStock: number;
   panierVideSuggestionsActif: boolean;
+  panierVideImage: string;
 };
 
 const CFG_DEFAUT: ConfigPopup = {
@@ -35,6 +36,7 @@ const CFG_DEFAUT: ConfigPopup = {
   articleBonusNom: '', articleBonusPrix: 0, articleBonusImage: '',
   articleBonusStock: 0,
   panierVideSuggestionsActif: false,
+  panierVideImage: '/images/atelier-portrait.jpg',
 };
 
 export default function PopupPanier({ ouverte, onFermer }: PopupPanierProps) {
@@ -102,6 +104,7 @@ export default function PopupPanier({ ouverte, onFermer }: PopupPanierProps) {
         articleBonusPrix: bonusPrix, articleBonusImage: bonusImage,
         articleBonusStock: bonusStock,
         panierVideSuggestionsActif: data.popup_panier_vide_actif === 'true',
+        panierVideImage: data.popup_panier_vide_image || '/images/atelier-portrait.jpg',
       });
       setCfgChargee(true);
     } catch {}
@@ -163,7 +166,9 @@ export default function PopupPanier({ ouverte, onFermer }: PopupPanierProps) {
 
   // — Calculs —
   const articlesFiltres = articles.filter((a: any) => !a.estBonus);
-  const panierVide = articlesFiltres.length === 0 && !articleBonus;
+  // Un article bonus configuré n'est pas un article du panier. L'ancienne
+  // condition faisait donc disparaître l'état vide dès que la config arrivait.
+  const panierVide = articlesFiltres.length === 0 && !bonusDansPanier;
   const sousTotal = articles.reduce((s: any, a: any) => s + a.prix * a.quantite, 0);
   const reduction = codePromoApplique?.reduction || 0;
   const total = Math.max(0, sousTotal - reduction);
@@ -184,7 +189,7 @@ export default function PopupPanier({ ouverte, onFermer }: PopupPanierProps) {
 
         {/* En-tête */}
         <div className="popup-panier__entete">
-          <h2 className="popup-panier__titre">TON PANIER</h2>
+          <h2 className="popup-panier__titre">{panierVide ? 'TON PANIER EST VIDE' : 'TON PANIER'}</h2>
           <button className="popup-panier__fermer" onClick={onFermer} aria-label="Fermer">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
               <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" />
@@ -195,15 +200,28 @@ export default function PopupPanier({ ouverte, onFermer }: PopupPanierProps) {
         {panierVide ? (
           /* ── Panier vide ── */
           <div className="popup-panier__vide">
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
-              <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
-              <line x1="3" y1="6" x2="21" y2="6"/>
-              <path d="M16 10a4 4 0 01-8 0"/>
-            </svg>
-            <p>Vous n&apos;avez pas encore d&apos;article dans votre panier.</p>
-            <button className="popup-panier__btn-continuer" onClick={onFermer}>
-              Découvrir nos créations
-            </button>
+            <div className="popup-panier__vide-intro">
+              <p className="popup-panier__vide-message">Vous n&apos;avez pas encore d&apos;article dans votre panier.</p>
+              <button className="popup-panier__btn-continuer" onClick={onFermer}>
+                Continuer la visite
+              </button>
+              <p className="popup-panier__compte">
+                Tu possèdes un compte ?
+                <Link href="/connexion" onClick={onFermer}>Connecte-toi</Link>
+              </p>
+            </div>
+
+            <Link href="/nos-bijoux" className="popup-panier__editorial" onClick={onFermer}>
+              <span className="popup-panier__editorial-image">
+                <Image
+                  src={cfg.panierVideImage}
+                  alt="Découvrir les bijoux Nabe"
+                  fill
+                  sizes="(max-width: 480px) calc(100vw - 1rem), 440px"
+                />
+              </span>
+              <span className="popup-panier__editorial-lien">Best-Sellers <span aria-hidden="true">→</span></span>
+            </Link>
 
             {/* Suggestions bestsellers (option admin) */}
             {cfg.panierVideSuggestionsActif && bestsellers.length > 0 && (
