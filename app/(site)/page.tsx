@@ -1,10 +1,8 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { getServerSession } from 'next-auth';
-import { prisma } from '@/lib/prisma';
+import { avecDelaiBase, prisma } from '@/lib/prisma';
 import { getContenuPage } from '@/lib/contenu';
 import { getConfigSite, configEstActive } from '@/lib/config-site';
-import { authClientOptions } from '@/lib/auth-client';
 import CarrouselProduits from '@/components/site/CarrouselProduits';
 import TexteRiche from '@/components/site/TexteRiche';
 import CategoriesAccueil from '@/components/site/CategoriesAccueil';
@@ -16,6 +14,16 @@ import './accueil.css';
 export const revalidate = 60;
 
 const DUREE_NOUVEAU_JOURS = 21;
+const DELAI_DONNEES_ACCUEIL_MS = 1800;
+
+async function avecRepliAccueil<T>(requete: Promise<T>, repli: T, source: string): Promise<T> {
+  try {
+    return await avecDelaiBase(requete, DELAI_DONNEES_ACCUEIL_MS);
+  } catch (error) {
+    console.error(`Accueil : ${source} indisponible`, error instanceof Error ? error.name : 'erreur inconnue');
+    return repli;
+  }
+}
 
 function serialiser(produits: any[]) {
   const seuilNouveau = Date.now() - DUREE_NOUVEAU_JOURS * 24 * 60 * 60 * 1000;
@@ -35,8 +43,6 @@ function serialiser(produits: any[]) {
 
 export default async function PageAccueil() {
   const config = await getConfigSite();
-  const session = await getServerSession(authClientOptions);
-  const clientId = (session?.user as any)?.id as string | undefined;
 
   const collectionsSelectionActif = configEstActive(config, 'collections_selection_actif');
   const carrousselBestsellerActif = configEstActive(config, 'carrousel_bestseller_actif');
@@ -46,49 +52,67 @@ export default async function PageAccueil() {
   const idsCategoriesAccueil = (config.categories_accueil_ids || '').split(',').filter(Boolean);
   const idsCollectionsSelection = (config.collections_selection_ids || '').split(',').filter(Boolean);
 
-  const [contenu, collectionsSelection, bestsellers, produitsNouvelleCollection, temoignages, favorisIds, categoriesAccueil] =
+  const [contenu, collectionsSelection, bestsellers, produitsNouvelleCollection, temoignages, categoriesAccueil] =
     await Promise.all([
       getContenuPage('accueil'),
       collectionsSelectionActif && idsCollectionsSelection.length > 0
-        ? prisma.collection.findMany({
-            where: { id: { in: idsCollectionsSelection }, actif: true },
-          })
+        ? avecRepliAccueil(
+            prisma.collection.findMany({ where: { id: { in: idsCollectionsSelection }, actif: true } }),
+            [],
+            'collections',
+          )
         : Promise.resolve([]),
       carrousselBestsellerActif
-        ? prisma.produit.findMany({
-            where: { actif: true },
-            include: { images: { orderBy: { ordre: 'asc' }, take: 1 } },
-            orderBy: { nombreVentes: 'desc' },
-            take: 8,
-          })
+        ? avecRepliAccueil(
+            prisma.produit.findMany({
+              where: { actif: true },
+              include: { images: { orderBy: { ordre: 'asc' }, take: 1 } },
+              orderBy: { nombreVentes: 'desc' },
+              take: 8,
+            }),
+            [],
+            'meilleures ventes',
+          )
         : Promise.resolve([]),
       carrousselNouvelleCollectionActif
-        ? prisma.produit.findMany({
-            where: {
-              actif: true,
-              ...(config.carrousel_nouvelle_collection_id
-                ? { collectionId: config.carrousel_nouvelle_collection_id }
-                : {}),
-            },
-            include: { images: { orderBy: { ordre: 'asc' }, take: 1 } },
-            orderBy: { createdAt: 'desc' },
-            take: 8,
-          })
+        ? avecRepliAccueil(
+            prisma.produit.findMany({
+              where: {
+                actif: true,
+                ...(config.carrousel_nouvelle_collection_id
+                  ? { collectionId: config.carrousel_nouvelle_collection_id }
+                  : {}),
+              },
+              include: { images: { orderBy: { ordre: 'asc' }, take: 1 } },
+              orderBy: { createdAt: 'desc' },
+              take: 8,
+            }),
+            [],
+            'nouveautés',
+          )
         : Promise.resolve([]),
       temoignagesActif
-        ? prisma.temoignage.findMany({ where: { actif: true }, orderBy: { ordre: 'asc' }, take: 3 })
-        : Promise.resolve([]),
-      clientId
-        ? prisma.favori.findMany({ where: { clientId }, select: { produitId: true } })
+        ? avecRepliAccueil(
+            prisma.temoignage.findMany({ where: { actif: true }, orderBy: { ordre: 'asc' }, take: 3 }),
+            [],
+            'témoignages',
+          )
         : Promise.resolve([]),
       categoriesAccueilActif
         ? idsCategoriesAccueil.length > 0
-          ? prisma.categorie.findMany({ where: { id: { in: idsCategoriesAccueil } } })
-          : prisma.categorie.findMany({ orderBy: { ordre: 'asc' }, take: 4 })
+          ? avecRepliAccueil(
+              prisma.categorie.findMany({ where: { id: { in: idsCategoriesAccueil } } }),
+              [],
+              'catégories',
+            )
+          : avecRepliAccueil(
+              prisma.categorie.findMany({ orderBy: { ordre: 'asc' }, take: 4 }),
+              [],
+              'catégories',
+            )
         : Promise.resolve([]),
     ]);
 
-  const idsFavoris = favorisIds.map((f: any) => f.produitId);
   // On respecte l'ordre choisi par l'admin plutôt que l'ordre renvoyé par la requête
   const categoriesAccueilOrdonnees = idsCategoriesAccueil.length > 0
     ? idsCategoriesAccueil
@@ -173,7 +197,7 @@ export default async function PageAccueil() {
               </Link>
             </div>
             <div className="accueil-nouveautes__produits">
-              <CarrouselProduits produits={serialiser(produitsNouvelleCollection)} favorisIds={idsFavoris} />
+              <CarrouselProduits produits={serialiser(produitsNouvelleCollection)} />
             </div>
           </div>
         </section>
@@ -254,7 +278,7 @@ export default async function PageAccueil() {
         <section className="accueil-carrousel conteneur">
           <span className="etiquette etiquette--centre">Meilleures ventes</span>
           <h2>Vos bijoux préférés</h2>
-          <CarrouselProduits produits={serialiser(bestsellers)} favorisIds={idsFavoris} />
+          <CarrouselProduits produits={serialiser(bestsellers)} />
         </section>
       )}
 

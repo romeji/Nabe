@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
@@ -17,6 +17,10 @@ export default function BoutonFavori({
   const router = useRouter();
   const [estFavori, setEstFavori] = useState(initialementFavori);
   const [enCours, setEnCours] = useState(false);
+
+  useEffect(() => {
+    setEstFavori(initialementFavori);
+  }, [initialementFavori]);
 
   async function basculer(e: React.MouseEvent) {
     e.preventDefault();

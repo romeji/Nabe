@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { getServerSession } from 'next-auth';
+import { Suspense } from 'react';
 import Header from '@/components/site/Header';
 import Footer from '@/components/site/Footer';
 import ProvidersClient from '@/components/site/ProvidersClient';
@@ -9,7 +9,8 @@ import SuiviPageVue from '@/components/site/SuiviPageVue';
 import NotificationsApp from '@/components/site/NotificationsApp';
 import AnimationsSite from '@/components/site/AnimationsSite';
 import { getConfigSite } from '@/lib/config-site';
-import { authClientOptions } from '@/lib/auth-client';
+
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   applicationName: 'Nabe',
@@ -24,33 +25,37 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function SiteLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+async function ServicesConfigures() {
   const config = await getConfigSite();
-  // On récupère la session déjà validée côté serveur et on l'injecte dans le
-  // SessionProvider : le Header n'a ainsi jamais besoin d'attendre un fetch
-  // client pour connaître l'état de connexion, ce qui évite tout état
-  // transitoire "non connecté" incohérent avec la réalité (ex: après avoir
-  // navigué entre l'admin et le site dans le même navigateur).
-  const session = await getServerSession(authClientOptions);
 
   return (
-    <ProvidersClient session={session}>
-      <SuiviPageVue />
-      <AnimationsSite />
+    <>
       <NotificationsApp actif={config.notifications_app_actif === 'true'} />
-      <Header />
-      <main>{children}</main>
-      <Footer />
-      <PopupBienvenue />
       <ConsentementCookies
         googleAnalyticsActif={config.google_analytics_actif === 'true'}
         googleAnalyticsId={config.google_analytics_id || ''}
         googleTagManagerId={process.env.NEXT_PUBLIC_GTM_ID || ''}
       />
+    </>
+  );
+}
+
+export default function SiteLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <ProvidersClient>
+      <SuiviPageVue />
+      <AnimationsSite />
+      <Header />
+      <main>{children}</main>
+      <Footer />
+      <PopupBienvenue />
+      <Suspense fallback={null}>
+        <ServicesConfigures />
+      </Suspense>
     </ProvidersClient>
   );
 }

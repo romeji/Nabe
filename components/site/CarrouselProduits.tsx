@@ -1,8 +1,9 @@
 'use client';
 
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useSession } from 'next-auth/react';
 import { formaterPrix, promoEstActive, pourcentageReduction } from '@/lib/utils';
 import BoutonFavori from './BoutonFavori';
 import './carrousel-produits.css';
@@ -20,15 +21,37 @@ type ProduitCarrousel = {
   nouveau?: boolean;
 };
 
+const AUCUN_FAVORI: string[] = [];
+
 export default function CarrouselProduits({
   produits,
-  favorisIds = [],
+  favorisIds = AUCUN_FAVORI,
 }: {
   produits: ProduitCarrousel[];
   favorisIds?: string[];
 }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const curseurRef = useRef<HTMLSpanElement>(null);
+  const { status: statutSession } = useSession();
+  const [favorisCourants, setFavorisCourants] = useState(favorisIds);
+
+  useEffect(() => {
+    setFavorisCourants(favorisIds);
+  }, [favorisIds]);
+
+  useEffect(() => {
+    if (statutSession !== 'authenticated') return;
+
+    const controleur = new AbortController();
+    fetch('/api/favoris', { cache: 'no-store', signal: controleur.signal })
+      .then((reponse) => reponse.ok ? reponse.json() : { favoris: [] })
+      .then((donnees) => setFavorisCourants(donnees.favoris || []))
+      .catch((error) => {
+        if (error instanceof Error && error.name !== 'AbortError') setFavorisCourants([]);
+      });
+
+    return () => controleur.abort();
+  }, [statutSession]);
 
   const mettreAJourIndicateur = useCallback(() => {
     const piste = scrollRef.current;
@@ -97,7 +120,7 @@ export default function CarrouselProduits({
               </Link>
               <BoutonFavori
                 produitId={p.id}
-                initialementFavori={favorisIds.includes(p.id)}
+                initialementFavori={favorisCourants.includes(p.id)}
                 className="carrousel-produits__coeur"
               />
             </div>
