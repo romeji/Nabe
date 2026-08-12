@@ -81,11 +81,9 @@ export default async function PageAccueil() {
         ? prisma.favori.findMany({ where: { clientId }, select: { produitId: true } })
         : Promise.resolve([]),
       categoriesAccueilActif
-        ? prisma.categorie.findMany({
-            ...(idsCategoriesAccueil.length > 0
-              ? { where: { id: { in: idsCategoriesAccueil } } }
-              : { orderBy: { ordre: 'asc' }, take: 4 }),
-          })
+        ? idsCategoriesAccueil.length > 0
+          ? prisma.categorie.findMany({ where: { id: { in: idsCategoriesAccueil } } })
+          : prisma.categorie.findMany({ orderBy: { ordre: 'asc' }, take: 4 })
         : Promise.resolve([]),
     ]);
 
