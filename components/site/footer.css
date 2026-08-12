@@ -103,6 +103,14 @@
   list-style: none;
 }
 
+/* Sur ordinateur les liens restent visibles, même si les éléments details
+   n'ont volontairement plus l'attribut open utilisé par l'accordéon mobile. */
+@media (min-width: 701px) {
+  .nabe-footer__colonne:not([open]) > ul {
+    display: flex;
+  }
+}
+
 .nabe-footer__colonne a {
   display: inline-block;
   color: #e4d9d1;
@@ -254,14 +262,15 @@
   }
 
   .nabe-footer__conteneur {
-    grid-template-columns: 1fr 1fr;
-    gap: 1.7rem 2rem;
+    grid-template-columns: 1fr;
+    gap: 0;
   }
 
   .nabe-footer__logo-col {
-    grid-column: 1 / -1;
+    grid-column: auto;
     grid-row: auto;
     text-align: center;
+    padding-bottom: 1.5rem;
   }
 
   .nabe-footer__logo-col p {
@@ -270,35 +279,6 @@
 
   .nabe-footer__sociaux {
     justify-content: center;
-  }
-
-  .nabe-footer__bas {
-    flex-direction: column;
-    justify-content: center;
-    gap: 0.75rem;
-    padding-block: 1.15rem;
-    text-align: center;
-  }
-
-  .nabe-footer__bijou--bague {
-    top: 1rem;
-    right: -1.2rem;
-    transform: scale(0.72);
-  }
-}
-
-@media (max-width: 480px) {
-  .nabe-footer__conteneur {
-    grid-template-columns: 1fr;
-    gap: 0;
-  }
-
-  .nabe-footer__logo-col {
-    padding-bottom: 1.5rem;
-  }
-
-  .nabe-footer__logo {
-    font-size: 4rem;
   }
 
   .nabe-footer__colonne:not(.nabe-footer__logo-col) {
@@ -324,7 +304,7 @@
   }
 
   .nabe-footer__colonne[open] summary::after {
-    content: '−';
+    content: '\2212';
   }
 
   .nabe-footer__colonne:not([open]) ul {
@@ -334,6 +314,26 @@
   .nabe-footer__colonne ul {
     gap: 0.5rem;
     padding-bottom: 1rem;
+  }
+
+  .nabe-footer__bas {
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.75rem;
+    padding-block: 1.15rem;
+    text-align: center;
+  }
+
+  .nabe-footer__bijou--bague {
+    top: 1rem;
+    right: -1.2rem;
+    transform: scale(0.72);
+  }
+}
+
+@media (max-width: 480px) {
+  .nabe-footer__logo {
+    font-size: 4rem;
   }
 
   .nabe-footer__liens-legaux {

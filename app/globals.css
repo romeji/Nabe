@@ -181,13 +181,15 @@ textarea::placeholder {
   justify-content: center;
   gap: 0.5rem;
   padding: 0.95rem 2.2rem;
+  min-height: 3rem;
   font-size: 0.82rem;
   font-weight: 500;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   /* Pilule légèrement asymétrique plutôt que parfaitement ronde : cohérent
      avec le reste des formes "façonnées à la main" du site. */
-  border-radius: var(--rayon-pilule);
+  border: 1.5px solid transparent;
+  border-radius: 999px;
   transition: var(--transition-douce);
   cursor: pointer;
 }

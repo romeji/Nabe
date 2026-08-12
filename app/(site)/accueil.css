@@ -116,13 +116,12 @@
   padding-inline: 1.75rem;
   /* Pilule parfaitement ronde ici (et non la pilule asymétrique du thème) :
      c'est la forme utilisée sur les deux boutons du hero dans la maquette. */
-  border-radius: 999px;
   box-shadow: 0 14px 32px rgba(42, 28, 20, 0.16);
 }
 
 .accueil-hero__actions .btn-primaire {
-  background-color: var(--nabe-terracotta-fonce);
-  border: 1.5px solid var(--nabe-terracotta-fonce);
+  background-color: var(--nabe-terracotta);
+  border-color: var(--nabe-terracotta);
 }
 
 .accueil-hero__actions .btn-primaire:hover {
@@ -131,13 +130,13 @@
 }
 
 .accueil-hero__actions .btn-secondaire {
-  background-color: var(--nabe-blanc);
-  color: var(--nabe-brun-fonce);
-  border-color: var(--nabe-blanc);
+  background-color: transparent;
+  color: var(--texte-clair);
+  border-color: var(--texte-clair);
 }
 
 .accueil-hero__actions .btn-secondaire:hover {
-  background-color: var(--nabe-creme);
+  background-color: rgba(255, 255, 255, 0.18);
 }
 
 .accueil-hero__badge {
@@ -353,8 +352,22 @@
 
 @media (max-width: 700px) {
   .accueil-categories__grille {
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--espace-lg) var(--espace-md);
+    grid-template-columns: repeat(2, minmax(0, 132px));
+    justify-content: center;
+    gap: 1.5rem 1rem;
+    max-width: 300px;
+  }
+
+  .accueil-categories__image {
+    aspect-ratio: 1 / 1.04;
+  }
+
+  .accueil-categories__panneau {
+    margin-top: 0.65rem;
+  }
+
+  .accueil-categories__nom {
+    font-size: 0.96rem;
   }
 }
 

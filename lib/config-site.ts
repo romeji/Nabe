@@ -6,8 +6,10 @@ export const DEFAUTS_CONFIG: Record<string, string> = {
   collections_selection_actif: 'true',
   collections_selection_ids: '', // jusqu'à 3 ids de Collection séparés par des virgules
   carrousel_selection_actif: 'false', // ancien réglage conservé pour compatibilité
-  carrousel_bestseller_actif: 'false',
-  carrousel_nouvelle_collection_actif: 'false',
+  // Les modules structurants de l'accueil restent visibles pendant le réveil
+  // de Neon. Une valeur enregistrée dans l'admin garde la priorité.
+  carrousel_bestseller_actif: 'true',
+  carrousel_nouvelle_collection_actif: 'true',
   carrousel_nouvelle_collection_id: '', // id de la Collection à afficher dans ce carrousel
   suggestions_produit_actif: 'false',
   suggestions_produit_critere: 'meme_type', // 'meme_type' | 'nouvelle_collection' | 'moins_bonnes_ventes'
@@ -17,7 +19,7 @@ export const DEFAUTS_CONFIG: Record<string, string> = {
   popup_bienvenue_pourcentage: '10',
   popup_panier_vide_actif: 'true',
   galerie_produit_position: 'bas', // 'gauche' (vignettes à gauche, classique) ou 'bas' (vignettes sous l'image, plus aéré)
-  categories_accueil_actif: 'false',
+  categories_accueil_actif: 'true',
   categories_accueil_ids: '', // jusqu'à 4 ids de Categorie séparés par des virgules
   instagram_module_actif: 'true',
   instagram_profil_url: 'https://www.instagram.com/nabe.bijoux/',

@@ -61,10 +61,16 @@ export default async function PageAccueil() {
             take: 8,
           })
         : Promise.resolve([]),
-      carrousselNouvelleCollectionActif && config.carrousel_nouvelle_collection_id
+      carrousselNouvelleCollectionActif
         ? prisma.produit.findMany({
-            where: { actif: true, collectionId: config.carrousel_nouvelle_collection_id },
+            where: {
+              actif: true,
+              ...(config.carrousel_nouvelle_collection_id
+                ? { collectionId: config.carrousel_nouvelle_collection_id }
+                : {}),
+            },
             include: { images: { orderBy: { ordre: 'asc' }, take: 1 } },
+            orderBy: { createdAt: 'desc' },
             take: 8,
           })
         : Promise.resolve([]),
@@ -74,16 +80,22 @@ export default async function PageAccueil() {
       clientId
         ? prisma.favori.findMany({ where: { clientId }, select: { produitId: true } })
         : Promise.resolve([]),
-      categoriesAccueilActif && idsCategoriesAccueil.length > 0
-        ? prisma.categorie.findMany({ where: { id: { in: idsCategoriesAccueil } } })
+      categoriesAccueilActif
+        ? prisma.categorie.findMany({
+            ...(idsCategoriesAccueil.length > 0
+              ? { where: { id: { in: idsCategoriesAccueil } } }
+              : { orderBy: { ordre: 'asc' }, take: 4 }),
+          })
         : Promise.resolve([]),
     ]);
 
   const idsFavoris = favorisIds.map((f: any) => f.produitId);
   // On respecte l'ordre choisi par l'admin plutôt que l'ordre renvoyé par la requête
-  const categoriesAccueilOrdonnees = idsCategoriesAccueil
-    .map((id: any) => categoriesAccueil.find((c: any) => c.id === id))
-    .filter(Boolean) as typeof categoriesAccueil;
+  const categoriesAccueilOrdonnees = idsCategoriesAccueil.length > 0
+    ? idsCategoriesAccueil
+        .map((id: any) => categoriesAccueil.find((c: any) => c.id === id))
+        .filter(Boolean) as typeof categoriesAccueil
+    : categoriesAccueil;
   const collectionsSelectionOrdonnees = idsCollectionsSelection
     .map((id: any) => collectionsSelection.find((c: any) => c.id === id))
     .filter(Boolean) as typeof collectionsSelection;

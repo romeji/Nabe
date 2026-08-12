@@ -40,7 +40,7 @@ export default async function Footer() {
           </div>
         </div>
 
-        <details className="nabe-footer__colonne" open>
+        <details className="nabe-footer__colonne">
           <summary>Boutique</summary>
           <ul>
             <li><Link href="/nos-bijoux">Nos bijoux</Link></li>
@@ -51,7 +51,7 @@ export default async function Footer() {
           </ul>
         </details>
 
-        <details className="nabe-footer__colonne" open>
+        <details className="nabe-footer__colonne">
           <summary>&Agrave; propos</summary>
           <ul>
             <li><Link href="/la-maison">L&apos;Atelier</Link></li>
@@ -61,7 +61,7 @@ export default async function Footer() {
           </ul>
         </details>
 
-        <details className="nabe-footer__colonne" open>
+        <details className="nabe-footer__colonne">
           <summary>Conseils</summary>
           <ul>
             <li><Link href="/faq">FAQ</Link></li>
@@ -71,7 +71,7 @@ export default async function Footer() {
           </ul>
         </details>
 
-        <details className="nabe-footer__colonne" open>
+        <details className="nabe-footer__colonne">
           <summary>Services</summary>
           <ul>
             <li><Link href="/livraison-retours">Livraison &amp; retours</Link></li>

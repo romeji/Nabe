@@ -127,21 +127,26 @@
 
 @media (max-width: 600px) {
   .nabe-header {
-    width: calc(100% - var(--espace-md));
+    width: calc(100% - 1rem);
     top: 0.5rem;
+    border-radius: 16px;
   }
   .nabe-header__conteneur {
-    padding: 0.6rem var(--espace-md);
+    min-height: 3.75rem;
+    padding: 0.72rem 1.15rem;
   }
   .nabe-header__logo {
-    font-size: 2.1rem;
+    font-size: 2.3rem;
   }
   .nabe-header__nav {
     display: none;
   }
   .nabe-header__svg {
-    width: 20px;
-    height: 20px;
+    width: 21px;
+    height: 21px;
+  }
+  .nabe-header__actions {
+    gap: 0.8rem;
   }
 }
 
