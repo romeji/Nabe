@@ -8,6 +8,17 @@ export default async function Footer() {
 
   return (
     <footer className="nabe-footer">
+      <div className="nabe-footer__bijou nabe-footer__bijou--bague" aria-hidden="true">
+        <span className="nabe-footer__diamant" />
+        <span className="nabe-footer__anneau" />
+        <span className="nabe-footer__eclat nabe-footer__eclat--un">&#10022;</span>
+        <span className="nabe-footer__eclat nabe-footer__eclat--deux">&#10022;</span>
+      </div>
+      <div className="nabe-footer__bijou nabe-footer__bijou--pendentif" aria-hidden="true">
+        <span className="nabe-footer__chaine" />
+        <span className="nabe-footer__medaillon" />
+      </div>
+
       <div className="nabe-footer__conteneur">
         <div className="nabe-footer__colonne nabe-footer__logo-col">
           <span className="nabe-footer__logo">Nabe</span>
@@ -25,6 +36,7 @@ export default async function Footer() {
                 <path d="M16.6 3c.3 2 1.6 3.6 3.6 3.9v2.7c-1.3.1-2.6-.3-3.6-1v6.4a5.4 5.4 0 1 1-5.4-5.4c.3 0 .5 0 .8.1v2.8a2.6 2.6 0 1 0 2 2.5V3h2.6z" />
               </svg>
             </a>
+            <span>@nabe.bijoux</span>
           </div>
         </div>
 
@@ -50,14 +62,20 @@ export default async function Footer() {
         </details>
 
         <details className="nabe-footer__colonne" open>
-          <summary>Aide</summary>
+          <summary>Conseils</summary>
           <ul>
             <li><Link href="/faq">FAQ</Link></li>
             <li><Link href="/guide-des-tailles">Guide des tailles</Link></li>
             <li><Link href="/entretien-bijoux">Entretien des bijoux</Link></li>
             <li><Link href="/suivi-commande">Suivre ma commande</Link></li>
+          </ul>
+        </details>
+
+        <details className="nabe-footer__colonne" open>
+          <summary>Services</summary>
+          <ul>
             <li><Link href="/livraison-retours">Livraison &amp; retours</Link></li>
-            <li><Link href="/paiement-securise">Paiement</Link></li>
+            <li><Link href="/paiement-securise">Paiement s&eacute;curis&eacute;</Link></li>
             <li><Link href="/confidentialite">Confidentialit&eacute;</Link></li>
             <li><Link href="/contact">Contact</Link></li>
           </ul>
@@ -65,10 +83,12 @@ export default async function Footer() {
       </div>
 
       <div className="nabe-footer__bas">
-        <span>&copy; {new Date().getFullYear()} Nabe - Tous droits r&eacute;serv&eacute;s</span>
-        <Link href="/mentions-legales">Mentions l&eacute;gales</Link>
-        <Link href="/confidentialite">Confidentialit&eacute;</Link>
-        <Link href="/cgv">CGV</Link>
+        <span>&copy; {new Date().getFullYear()} Nabe &mdash; Tous droits r&eacute;serv&eacute;s</span>
+        <nav className="nabe-footer__liens-legaux" aria-label="Liens l&eacute;gaux">
+          <Link href="/mentions-legales">Mentions l&eacute;gales</Link>
+          <Link href="/confidentialite">Confidentialit&eacute;</Link>
+          <Link href="/cgv">CGV</Link>
+        </nav>
       </div>
     </footer>
   );
