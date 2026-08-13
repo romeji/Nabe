@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import { Suspense } from 'react';
 import { avecDelaiBase, prisma } from '@/lib/prisma';
 import { getContenuPage } from '@/lib/contenu';
 import { getConfigSite, configEstActive } from '@/lib/config-site';
@@ -10,6 +11,7 @@ import ModulesAccueil from '@/components/site/ModulesAccueil';
 import InstagramModule from '@/components/site/InstagramModule';
 import BandeauReassuranceAccueil from '@/components/site/BandeauReassuranceAccueil';
 import ReparationScrollAccueil from '@/components/site/ReparationScrollAccueil';
+import styles from './loading.module.css';
 import './accueil.css';
 
 export const revalidate = 60;
@@ -42,7 +44,112 @@ function serialiser(produits: any[]) {
   }));
 }
 
-export default async function PageAccueil() {
+// ---------------------------------------------------------------------------
+// Composant racine : NE FAIT AUCUNE requête réseau/base lui-même. Il s'affiche
+// donc instantanément, sans jamais attendre Neon, et la page reste scrollable
+// dès l'arrivée. Le hero et le reste du contenu sont déportés dans deux
+// composants asynchrones séparés, chacun dans sa propre frontière <Suspense> :
+// avant, tout dépendait d'un seul gros bloc de données, donc toute la page
+// restait invisible/figée jusqu'à ce que la requête la plus lente réponde, et
+// le remplacement d'un coup de tout le contenu au milieu d'un scroll donnait
+// l'impression que la page "refusait" de défiler pendant plusieurs secondes.
+// Ici, chaque bloc arrive dès qu'il est prêt, indépendamment de l'autre.
+// ---------------------------------------------------------------------------
+export default function PageAccueil() {
+  return (
+    <div className="page-accueil">
+      <ReparationScrollAccueil />
+      <Suspense fallback={<SqueletteHero />}>
+        <HeroAccueil />
+      </Suspense>
+      <Suspense fallback={<SqueletteCorps />}>
+        <CorpsAccueil />
+      </Suspense>
+    </div>
+  );
+}
+
+function SqueletteHero() {
+  return (
+    <section className={styles.hero} role="status" aria-label="Chargement">
+      <div className={styles.heroTexte}>
+        <span className={styles.ligneCourte} />
+        <span className={styles.titre} />
+        <span className={styles.texte} />
+        <span className={styles.bouton} />
+      </div>
+    </section>
+  );
+}
+
+function SqueletteCorps() {
+  return (
+    <div role="status" aria-label="Chargement">
+      <div className={styles.bandeau} />
+      <section className={styles.section}>
+        <span className={styles.ligneCourte} />
+        <span className={styles.titreSection} />
+        <div className={styles.cartes}>
+          {[0, 1, 2, 3].map((index) => <span className={styles.carte} key={index} />)}
+        </div>
+      </section>
+      <section className={styles.section}>
+        <span className={styles.titreSection} />
+        <div className={styles.produits}>
+          {[0, 1, 2, 3].map((index) => <span className={styles.produit} key={index} />)}
+        </div>
+      </section>
+    </div>
+  );
+}
+
+// Hero : ne dépend que de getContenuPage, plafonnée à 1,5 s et jamais en
+// échec (retombe toujours sur les textes par défaut). C'est donc le bloc le
+// plus rapide à streamer, celui que l'utilisateur voit en premier.
+async function HeroAccueil() {
+  const contenu = await getContenuPage('accueil');
+
+  return (
+    <>
+      <section className="accueil-hero">
+        <Image
+          src={contenu.hero_image}
+          alt="Bijoux Nabe façonnés à la main"
+          fill
+          priority
+          sizes="100vw"
+          className="accueil-hero__image"
+        />
+        <div className="accueil-hero__overlay" />
+        <div className="accueil-hero__contenu">
+          <h1 className="accueil-hero__titre">
+            L&apos;éclat de chaque <span className="accent-clair">histoire.</span>
+          </h1>
+          <TexteRiche className="accueil-hero__soustitre" html={contenu.hero_soustitre} />
+          <div className="accueil-hero__actions">
+            <Link href="/nos-bijoux" className="btn btn-primaire">
+              {contenu.hero_bouton_1}
+            </Link>
+            <Link href="/la-maison" className="btn btn-secondaire">
+              {contenu.hero_bouton_2}
+            </Link>
+          </div>
+        </div>
+        <span className="accueil-hero__badge" aria-hidden="true">
+          100% fait main
+        </span>
+      </section>
+
+      <BandeauReassuranceAccueil />
+    </>
+  );
+}
+
+// Corps : tout ce qui dépend de la config du site + des requêtes produits/
+// collections/témoignages/catégories. Ces requêtes sont toutes protégées par
+// avecRepliAccueil (1,8 s max, repli sur un tableau vide), donc ce bloc
+// n'attend jamais indéfiniment ; il streame indépendamment du hero.
+async function CorpsAccueil() {
   const config = await getConfigSite();
 
   const collectionsSelectionActif = configEstActive(config, 'collections_selection_actif');
@@ -125,40 +232,7 @@ export default async function PageAccueil() {
     .filter(Boolean) as typeof collectionsSelection;
 
   return (
-    <div className="page-accueil">
-      <ReparationScrollAccueil />
-      {/* HERO */}
-      <section className="accueil-hero">
-        <Image
-          src={contenu.hero_image}
-          alt="Bijoux Nabe façonnés à la main"
-          fill
-          priority
-          sizes="100vw"
-          className="accueil-hero__image"
-        />
-        <div className="accueil-hero__overlay" />
-        <div className="accueil-hero__contenu">
-          <h1 className="accueil-hero__titre">
-            L&apos;éclat de chaque <span className="accent-clair">histoire.</span>
-          </h1>
-          <TexteRiche className="accueil-hero__soustitre" html={contenu.hero_soustitre} />
-          <div className="accueil-hero__actions">
-            <Link href="/nos-bijoux" className="btn btn-primaire">
-              {contenu.hero_bouton_1}
-            </Link>
-            <Link href="/la-maison" className="btn btn-secondaire">
-              {contenu.hero_bouton_2}
-            </Link>
-          </div>
-        </div>
-        <span className="accueil-hero__badge" aria-hidden="true">
-          100% fait main
-        </span>
-      </section>
-
-      <BandeauReassuranceAccueil />
-
+    <>
       {/* NOS COLLECTIONS (catégories) */}
       {categoriesAccueilActif && categoriesAccueilOrdonnees.length > 0 && (
         <section className="accueil-categories-section conteneur">
@@ -333,6 +407,6 @@ export default async function PageAccueil() {
           </svg>
         </div>
       </section>
-    </div>
+    </>
   );
 }
