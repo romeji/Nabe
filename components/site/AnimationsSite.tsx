@@ -47,17 +47,23 @@ export default function AnimationsSite() {
       elements.forEach((element) => observateur?.observe(element));
     }
 
+    // Safari ne supporte toujours pas requestIdleCallback/cancelIdleCallback
+    // à l'exécution, même si les types TypeScript récents les déclarent
+    // désormais comme toujours présents sur `window`. On vérifie donc leur
+    // existence réelle avec l'opérateur `in`, que TypeScript ne considère
+    // pas comme toujours vrai, plutôt qu'un simple test de vérité.
+    const supporteIdle = 'requestIdleCallback' in window && 'cancelIdleCallback' in window;
     const fenetre = window as typeof window & {
-      requestIdleCallback?: (rappel: () => void, options?: { timeout: number }) => number;
-      cancelIdleCallback?: (identifiant: number) => void;
+      requestIdleCallback: (rappel: () => void, options?: { timeout: number }) => number;
+      cancelIdleCallback: (identifiant: number) => void;
     };
-    const identifiant = fenetre.requestIdleCallback
+    const identifiant = supporteIdle
       ? fenetre.requestIdleCallback(initialiser, { timeout: 1500 })
       : window.setTimeout(initialiser, 800);
 
     return () => {
       annule = true;
-      if (fenetre.cancelIdleCallback && fenetre.requestIdleCallback) fenetre.cancelIdleCallback(identifiant);
+      if (supporteIdle) fenetre.cancelIdleCallback(identifiant);
       else window.clearTimeout(identifiant);
       observateur?.disconnect();
       document.body.classList.remove('animations-site-actives');
