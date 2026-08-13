@@ -22,11 +22,6 @@ export default function PopupBienvenue() {
   const [erreur, setErreur] = useState('');
 
   useEffect(() => {
-    // Ne jamais interrompre l'arrivée sur l'accueil : sur mobile, cette
-    // modale retardée occupait presque tout l'écran et capturait le premier
-    // geste vertical, donnant l'impression que la page venait de se figer.
-    if (pathname === '/') return;
-
     const dejaVue = typeof window !== 'undefined' && localStorage.getItem(CLE_STOCKAGE);
     if (dejaVue) return;
 
